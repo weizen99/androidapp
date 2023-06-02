@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <style type = "text/css"> 
+      
+        
+       
+        /* <link rel=stylesheet type="text/css" href="css/color.css"> */
+         h1#text1{
+           margin:0px;padding:0px;
+           top:15px;
+           position:absolute;
+           font-size: 40px;
+           color: #FF0000;
+           margin-left: 50px;
+         }
+         h1#text2{
+           margin:0px;padding:5px;
+           
+           position:absolute;
+           font-size: 30px;
+           color: #FFFFFF;
+           top:30px;
+           margin-left: 50px;
+           z-index:1;
+           filter:glow(color=#ff0000, strength=5);
+           text-shadow: 5px 5px 5px #FF0000;
+         }
+          .consection{
+              display: block;
+              border:0px #330000 solid;
+              width: 600px;
+              left:5px;top:5px;
+              margin: auto;padding:40px;
+              font-family: "標楷體", Helvetica, sans-serif;font-size: 16px;
+          }
+         .ptest{color: saddlebrown;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px; }
+         .ptest1{color:blue;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
+         .ptest2{color: red;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
+         .ptest3{color:green;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
+         /* a:hover {border:3px green solid;text-decoration:none;}  */
+   
+         a:link, a:visited {
+             border-style: solid;
+             border-width: 5px;
+             border-color: transparent;
+             }
+             a:hover {border:3px red;text-decoration:none;background-color: green;};
+        
+        
+        
+        
+         /* <link rel="stylesheet" href="css/color.css"> */
+   
+         /* @import url(css/color.css); */
+   
+         .leftaddmg {
+             padding-left: 5px;
+             padding-right: 20px;
+         }
+   
+ .auto-style1 {
+             font-family: 標楷體;
+             font-size:x-large;
+             color: #FF0000;
+         }
+         .auto-style2 {
+             font-family: 標楷體;
+             font-size:xx-large;
+             color: #FF0000;
+         }
+     
+       
+ 
+ a {
+   color: #007bff;
+   text-decoration: none;
+   background-color: transparent;
+   -webkit-text-decoration-skip: objects;
+ }
+ /* #status {
+   width:200px; height:200px"
+ } */
+ #status {
+       display:table;
+   }
+ tr {
+       display: table-row;
+   }
+ td {
+       display: table-cell;border:2px solid #0000cc;
+   }
+ 
+ 
+ 
+ 
+         </style>
+</head>
+<body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ptest2" > 
+                <a class="navbar-brand" href="http://220.134.245.185:8888/fishnew5/selfpoke">查座標</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+              
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav mr-auto">
+
+                        <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  各版本
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item disabled" href="../tablesort/index1.html">響應式網頁版</a>
+                                        <a class="dropdown-item " href="../index.html">首頁版</a>
+                                        <a class="dropdown-item" href="../poko.html">新版</a>
+                                        <a class="dropdown-item" href="../pokomon.htm">舊版</a>
+                                        <div class="dropdown-divider"></div>
+                                        <!-- <a class="dropdown-item" href="../pokepic/斗南手機版股票.apk">座標程式下載</a>  -->
+                                        <a class="dropdown-item" href="../pokepic/響應式版.apk">座標程式下載chrome</a> 
+                                </div>
+                              </li>
+                   
+                   
+                    <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              股票資訊
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="../stock1.html">股票資訊(手機版)</a>
+                                    <a class="dropdown-item" href="../stock.html">股票資訊(電腦版)</a>
+                                    <a class="dropdown-item" href="https://www.wantgoo.com/global">玩股網</a> 
+                            </div>
+                          </li>
+
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        寶可夢資料
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="https://twpkinfo.com/ipoke.aspx">寶可夢資訊站_抓好iv</a>
+                        <a class="dropdown-item" href="https://twpkinfo.com/igym.aspx">團體戰及道館名稱查詢</a>
+                        <a class="dropdown-item" href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite">查技能等資料</a>
+                        <a class="dropdown-item" href="http://tomchun.tw/tomchun">湯姆群情報站</a>
+                        <a class="dropdown-item" href="https://forum.gamer.com.tw/B.php?bsn=29659&amp;subbsn=0">巴哈討論區</a> 
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item " href="社群日時間.html">社群日時間</a>
+                        <a class="dropdown-item " href="天氣加成.html">天氣加成</a>
+                        <a class="dropdown-item " href="伊布進化.html">伊布進化</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="http://www.sachi.somee.com/pokemapaccess.aspx">查座標24小時沒地圖</a>
+                        <a class="dropdown-item" href="http://www.sachi.somee.com/mapsql.aspx">查座標24小時有地圖</a>
+                        <a class="dropdown-item" href="basicinfo.html">webSQL寫在你的瀏覽器內(股票)</a>
+                        <a class="dropdown-item disabled" href="index1.html">webSQL寫在你的瀏覽器內(座標)</a>
+                        <a class="dropdown-item " href="../websqlpoko.html">webSQL寫在你的瀏覽器內沒放表格(座標) </a>
+                      </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              追劇網站
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <a class="dropdown-item" href="https://gimy.tv/">Gimy追劇</a>
+                              <a class="dropdown-item" href="http://www01.eyny.com/video.php?mod=channel&cid=5">伊莉影視</a>                             
+                              <a class="dropdown-item" href="http://video.yaodaojiao.com/jinguang/zxtd/">妖道角布袋戲</a>
+                                                 
+      
+                              <div class="dropdown-divider"></div>
+                              <a class="dropdown-item" href="http://vigor.enjoy101.org/">vigor網路電視</a>  
+                              <div class="dropdown-divider"></div>  
+                              <a class="dropdown-item" href="../readfilepic.html">讀圖片(沒自動縮放,要放大才看得清楚時選此)</a> 
+                              <a class="dropdown-item" href="../readfilerwd.html">讀圖片(自動縮放且看得清楚時選此)</a> 
+                            </div>
+                          </li>
+
+                  </ul>
+                  <form class="form-inline my-2 my-lg-0" name="myform">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="titleseach">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="submitform()">Search</button>
+                  </form>
+                </div>
+              </nav>
+        <img class="img-responsive  img-fluid rounded" src="天氣寶可夢.jpg"  alt="天氣加成的影響">
+
+
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+</body>
+</html>

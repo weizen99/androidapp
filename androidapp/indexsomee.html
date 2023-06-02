@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我的寶可夢網頁</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+      <style type = "text/css"> 
+      
+      aside{
+          width:600px;
+          float:left;
+          height:1000px;
+          /* background-color:#FFFFCC;background-image:url(pokepic/p1.jpg);background-repeat:no-repeat;     
+          background-size:"10% 10%"; */
+          background-color:#FFFFCC;
+      }
+
+     
+     /* <link rel=stylesheet type="text/css" href="css/color.css"> */
+      h1#text1{
+        margin:0px;padding:0px;
+        top:15px;
+        position:absolute;
+        font-size: 40px;
+        color: #FF0000;
+        margin-left: 50px;
+      }
+      h1#text2{
+        margin:0px;padding:5px;
+        
+        position:absolute;
+        font-size: 30px;
+        color: #FFFFFF;
+        top:30px;
+        margin-left: 50px;
+        z-index:1;
+        filter:glow(color=#ff0000, strength=5);
+        text-shadow: 5px 5px 5px #FF0000;
+      }
+       .consection{
+           display: block;
+           border:0px #330000 solid;
+           width: 600px;
+           left:30px;top:60px;
+           margin: auto;padding:30px;
+           font-family: "標楷體", Helvetica, sans-serif;font-size: 16px;
+       }
+      .ptest{color: saddlebrown;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px; }
+      .ptest1{color:blue;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
+      .ptest2{color: red;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
+      .ptest3{color:green;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
+      a:hover {border:3px green solid;text-decoration:none;} 
+
+      /* <link rel="stylesheet" href="css/color.css"> */
+
+      /* @import url(css/color.css); */
+
+      /* a:link, a:visited {
+            border-style: solid;
+            border-width: 5px;
+            border-color: transparent;
+            }
+            a:hover {border:3px red;text-decoration:none;background-color: green;};
+        */
+       
+       
+
+
+
+      </style>
+
+     
+</head>
+<body>   
+
+
+    <link rel="stylesheet" href="css/color.css">
+
+<header>
+        <h1  id="text1">全國景點座標</h1>
+        <h1  id="text2">前往座標地圖</h1>
+        <br/>
+        <br/>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ptest2" > 
+                <a class="navbar-brand" href="http://www.sachi.somee.com/mapsql1">景點座標查詢</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+              
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav mr-auto">
+        
+                        <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  各版本
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="tablesort/index1.html">響應式網頁版</a>
+                                        <a class="dropdown-item" href="index.html">回本機index首頁版</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="http://www.sachi.somee.com/mapsql1">景點座標查詢</a>
+                                        <a class="dropdown-item" href="http://www.eddyweb.somee.com/fourword.aspx">成語查詢eddyweb_somee(第二區)</a>
+                                        <a class="dropdown-item" href="http://www.eddyweb.somee.com/incomeedit.aspx">自選股eddyweb_somee(第二區)</a>
+                                        <a class="dropdown-item" href="http://www.eddyweb.somee.com/webyu.aspx">圖片建檔+編刪_eddyweb_somee(第二區)</a>
+                                        <div class="dropdown-divider"></div>
+                                        <!-- <a class="dropdown-item" href="pokepic/斗南手機版股票.apk">座標程式下載</a>  -->                                       
+                                        <a class="dropdown-item" href="pokepic/address_rwd.zip">斗南座標程式app下載</a> 
+                                        <a class="dropdown-item" href="pokepic/_成語測驗之國小及國中_12219547.zip">成語測驗之國小及國中之單頁app下載</a> 
+                                       <a class="dropdown-item" href="pokepic/_SQL樞紐分析選股_12219119.zip">SQL樞紐分析選股之單頁app下載</a> 
+                                </div>
+                              </li>  
+                    
+                <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  股票資訊
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="stock1.html">股票資訊(手機版)</a>
+                        <a class="dropdown-item" href="stock.html">股票資訊(電腦版)</a>
+                        <a class="dropdown-item" href="http://220.134.245.185:8888/fishnew5/trend">綜合查詢(圖形)</a> 
+                        <a class="dropdown-item" href="http://220.134.245.185:8888/fishnew5/stockgodpc3">四季紅及dmi之股神圖形查詢</a>
+                        <a class="dropdown-item" href="http://220.134.245.185:8888/fishnew5/income10">Dmi+Kd+Macd查詢</a> 
+                        <a class="dropdown-item" href="http://220.134.245.185:8888/fishnew5/poem1_stockchips">投信外資之樞紐分析表查詢</a>
+                        <a class="dropdown-item" href="http://220.134.245.185:8888/fishnew5sql/chips5date">單筆或整批自選股之多項籌碼查詢</a>
+                         <a class="dropdown-item" href="http://220.134.245.185:8888/fishnew5/line">均線乖離選股</a>
+                         <a class="dropdown-item" href="http://220.134.245.185:8888/fishnew5/favorites2">網站簡略使用說明</a>
+                        <a class="dropdown-item" href="https://www.wantgoo.com/global">玩股網</a> 
+                </div>
+              </li>
+        
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            寶可夢資料
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="https://twpkinfo.com/ipoke.aspx">寶可夢資訊站_抓好iv</a>
+            <a class="dropdown-item" href="https://twpkinfo.com/igym.aspx">團體戰及道館名稱查詢</a>
+            <a class="dropdown-item" href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite">查技能等資料</a>
+            <a class="dropdown-item" href="http://tomchun.tw/tomchun">湯姆群情報站</a>
+            <a class="dropdown-item" href="https://forum.gamer.com.tw/B.php?bsn=29659&amp;subbsn=0">巴哈討論區</a>                        
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item " href="pokepic/社群日時間.html">社群日時間</a>
+            <a class="dropdown-item " href="pokepic/天氣加成.html">天氣加成</a>
+            <a class="dropdown-item " href="pokepic/伊布進化.html">伊布進化</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="http://www.sachi.somee.com/pokemapaccess.aspx">查座標24小時沒地圖</a>
+            <a class="dropdown-item" href="http://www.sachi.somee.com/mapsql.aspx">查座標24小時有地圖</a>
+            <a class="dropdown-item" href="tablesort/basicinfo.html">webSQL寫在你的瀏覽器內(股票)</a>
+            <a class="dropdown-item " href="tablesort/index1.html">webSQL寫在你的瀏覽器內(座標)</a>
+            <a class="dropdown-item " href="fourword.html">webSQL寫在你的瀏覽器內(成語)</a>
+            <a class="dropdown-item " href="websqlpoko.html">webSQL寫在你的瀏覽器內沒放表格(座標) </a>
+          </div>
+        </li>
+        
+        <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  追劇網站
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="https://gimy.tv/">Gimy追劇</a>
+                  <a class="dropdown-item" href="http://www01.eyny.com/video.php?mod=channel&cid=5">伊莉影視</a>                             
+                  <a class="dropdown-item" href="http://video.yaodaojiao.com/jinguang/zxtd/">妖道角布袋戲</a>
+                                     
+        
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="http://vigor.enjoy101.org/">vigor網路電視</a>  
+                  <div class="dropdown-divider"></div>  
+                  <a class="dropdown-item" href="readfilepic.html">讀圖片(沒自動縮放,要放大才看得清楚時選此)</a> 
+                  <a class="dropdown-item" href="readfilerwd.html">讀圖片(自動縮放且看得清楚時選此)</a> 
+                  <a class="dropdown-item" href="http://www.sachi.somee.com/poemaccess">外部somee網站24小時(本機關機時可查座標)</a> 
+                  <a class="dropdown-item" href="http://big5.quanben5.com/n/xueyinglingzhu/xiaoshuo.html">雪鷹領主小說</a>
+                  <a class="dropdown-item" href="https://www.twfanti.com/DouLuoDaLu/read_1.html">斗羅大陸小說</a>
+                </div>
+              </li>
+        
+        </ul>
+    </div>
+</nav>
+    
+</header>
+<div class="container-fluid">
+<ASIde>
+    <NAV>
+        <UL>
+
+            <LI> <a class="ptest2" href="http://220.134.245.185:8888/fishnew5/selfpoke">查斗南附近座標(同時移至同一座標)</a></LI>
+            <LI> <a class="ptest1" href="https://twpkinfo.com/ipoke.aspx">寶可夢資訊站_抓好iv</a></LI>
+            <LI> <a  class="ptest" href="https://twpkinfo.com/igym.aspx">團體戰及道館名稱查詢</a></LI>
+            <LI> <a class="ptest1" href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite">查尋寶可夢最佳技能等資料</a></LI>
+            <LI> <a class="ptest" href="http://tomchun.tw/tomchun">湯姆群情報站</a></LI>           
+            <LI> <a class="ptest1" href="https://forum.gamer.com.tw/B.php?bsn=29659&amp;subbsn=0">巴哈討論區</a></LI>
+            <LI> <a class="ptest" href="pokepic/社群日時間.html">社群日時間</a></LI>
+            <LI> <a class="ptest1" href="pokepic/天氣加成.html">天氣加成</a></LI>
+            <LI> <a class="ptest" href="pokepic/伊布進化.html">伊布進化</a></LI>
+            <LI> <a class="ptest1" href="https://gimy.tv/">Gimy追劇</a></LI>
+            <LI> <a class="ptest" href="http://www01.eyny.com/video.php?mod=channel&cid=5">伊莉影視</a></LI>
+            <LI> <a class="ptest1" href="http://video.yaodaojiao.com/jinguang/zxtd/">妖道角布袋戲</a></LI>            
+            <LI> <a class="ptest" href="stock1.html">股票資訊(手機版)</a></LI>
+            <LI> <a class="ptest1" href="stock.html">股票資訊(電腦版)</a></LI>
+            <LI> <a class="ptest" href="http://www.sachi.somee.com/pokemapaccess">查座標24小時沒地圖</a></LI>
+            <LI> <a class="ptest1" href="http://www.sachi.somee.com/mapsql">查座標24小時有地圖</a></LI>
+            <LI> <a class="ptest" href="http://vigor.enjoy101.org/">vigor網路電視</a></LI>
+            <LI> <a class="ptest1" href="https://www.wantgoo.com/global">玩股網</a></LI>
+        </UL>
+    </NAV>
+</ASIde>
+    
+<article>
+        <NAV>
+                <UL>                   
+                    <LI> <a class="ptest2" href="pokepic/address_rwd.zip">斗南座標程式app下載</a></LI>
+                    <LI> <a class="ptest2" href="pokepic/_成語測驗之國小及國中_12219547.zip">成語測驗之國小及國中之單頁app下載</a></LI>
+                    <LI> <a class="ptest2" href="pokepic/_SQL樞紐分析選股_12219119.zip">SQL樞紐分析選股之單頁app下載</a></LI>
+                    <LI> <a class="ptest" href="tablesort/index1.html">響應式網頁版</a></LI>
+                    <LI> <a class="ptest" href="poko.html">新版</a></LI>
+                    <LI> <a class="ptest" href="pokomon.htm">舊版</a></LI>
+                    <LI> <a class="ptest1" href="fourword.html">webSQL寫在你的瀏覽器內(成語)</a></LI>
+                    <LI> <a class="ptest1" href="tablesort/basicinfo.html">webSQL寫在你的瀏覽器內(股票)</a></LI>
+                    <LI> <a class="ptest1" href="websqlpoko.html">webSQL寫在你的瀏覽器內(座標)</a></LI>
+                    <LI> <a class="ptest1" href="http://220.134.245.185:8888/work/test3.aspx">成語(國中及國小)</a></LI>
+                    <LI> <a class="ptest1" href="readfilepic.html">讀圖</a></LI>
+                </UL>
+            </NAV>   
+    <section class="consection">
+        <fieldset>
+            <legend>最新消息!</legend>
+            發現新座標可自己增加進去 <br>
+            按編輯去修改 <br>
+            詳細說明如下: <br>
+            <ul>
+                <li>資料庫尚有包含技能的超連結,直拉貼上網址即可查詢</li>
+                <li>請拉至最下面做編輯修改</li>
+                <li>沒開新增的功能只能修改</li>
+                <li>請從首頁版右半邊下載安裝或上方選單</li>
+            </ul>
+
+        </fieldset>
+       
+
+    </section>
+<div class="consection">
+    <!-- <img src="img/puppy1.jpg" width="120"> -->
+    <!-- <img class="img-responsive figure-img img-fluid rounded" width="180px" src="img/puppy2.jpg" >
+    <img class="img-responsive figure-img img-fluid rounded" width="180px" src="img/puppy3.jpg" > -->
+</div>
+
+</article>
+
+
+<footer> 歡迎光臨我的網站!! 
+
+       
+
+</footer>
+
+</div>
+      
+<br>
+<br>
+<br>
+   
+    
+    <p>　</p>
+    
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    
+</body>
+
+</html>

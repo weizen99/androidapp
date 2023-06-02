@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+      <link href="Content/bootstrap.css" rel="stylesheet" />
+    <style type="text/css">
+
+         html, body,form,#map-canvas {
+              height: 100%;
+              margin: 0px;
+              padding: 3px
+            }  
+
+
+.leftaddmg {
+            padding-left: 5px;
+            padding-right: 20px;
+        }
+  *,
+  *::before,
+  *::after {
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+  
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+.auto-style1 {
+            font-family: 標楷體;
+            font-size:x-large;
+            color: #FF0000;
+        }
+        .auto-style2 {
+            font-family: 標楷體;
+            font-size:xx-large;
+            color: #FF0000;
+        }
+    
+        table {
+  border-collapse: collapse;
+}
+
+th {
+  text-align: inherit;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  background-color: transparent;
+  -webkit-text-decoration-skip: objects;
+}
+
+    </style>
+    <%--getElementById("map") ""內是要在下戶顯示的名字 ,而 function load() 的 load()要放在<body onload = "load()">  內, 另html, body,form,#map-canvas{},要加上form,不然可能無法顯示 --%>
+    <%--下以這版有問題--%>
+    <script type="text/javascript">
+
+         function load() {
+             if (GBrowserIsCompatible()) {
+                 var map = new GMap2(document.getElementById("map"));
+                 map.addControl(new GSmallMapControl());
+                 map.addControl(new GMapTypeControl());
+                 var center = new GLatLng(23.672931, 120.48088);
+                 map.setCenter(center, 14);
+                 map.setMapType(G_SATELLITE_MAP);
+                 geocoder = new GClientGeocoder();
+                 
+                 var marker = new GMarker(center, { draggable: true });
+                 map.addOverlay(marker);
+                
+                 document.getElementById("lat").value = center.lat();
+                 document.getElementById("lng").value = center.lng();
+
+                 geocoder = new GClientGeocoder();
+
+                 GEvent.addListener(marker, "dragend", function() {
+                     var point = marker.getPoint();
+                     map.panTo(point);
+                     alert(point);
+                     document.getElementById("lat").value = point.lat();
+                     document.getElementById("lng").value = point.lng();
+                 });
+
+                 GEvent.addListener(map, "moveend", function() {
+                     map.clearOverlays();
+                     var center = map.getCenter();
+                     var marker = new GMarker(center, { draggable: true });
+                     map.addOverlay(marker);
+                     document.getElementById("lat").value = center.lat();
+                     document.getElementById("lng").value = center.lng();
+
+                     GEvent.addListener(marker, "dragend", function() {
+                     var point = marker.getPoint();
+                    
+                         map.panTo(point);
+                         document.getElementById("lat").value = point.lat();
+                         document.getElementById("lng").value = point.lng();
+                     });
+                 });
+             }
+         }
+
+         function showAddress(address) {
+             
+             var map = new GMap2(document.getElementById("map"));
+             map.addControl(new GSmallMapControl());
+             map.addControl(new GMapTypeControl());
+             if (geocoder) {
+                 geocoder.getLatLng(
+address,
+function(point) {
+    if (!point) {
+        alert(address + " city not found !");
+    }
+    else {
+        document.getElementById("lat").value = point.lat();
+        document.getElementById("lng").value = point.lng();
+        map.clearOverlays()
+        map.setCenter(point, 14);
+        var marker = new GMarker(point, { draggable: true });
+        map.addOverlay(marker);
+
+        GEvent.addListener(marker, "dragend", function() {
+            var pt = marker.getPoint();
+            map.panTo(pt);
+            document.getElementById("lat").value = pt.lat();
+            document.getElementById("lng").value = pt.lng();
+        });
+
+        GEvent.addListener(map, "moveend", function() {
+            map.clearOverlays();
+            var center = map.getCenter();
+            var marker = new GMarker(center, { draggable: true });
+            map.addOverlay(marker);
+            document.getElementById("lat").value = center.lat();
+            document.getElementById("lng").value = center.lng();
+
+            GEvent.addListener(marker, "dragend", function() {
+                var pt = marker.getPoint();
+                map.panTo(pt);
+                document.getElementById("lat").value = pt.lat();
+                document.getElementById("lng").value = pt.lng();
+            });
+        });
+    } 
+}
+);
+             } 
+         }
+    </script>
+
+
+
+</head>
+<body onload = "initMap()" >
+   <script language="JavaScript">
+<!--
+         var message = "";
+         function clickIE() { if (document.all) { (message); return false; } }
+         function clickNS(e) {
+             if
+(document.layers || (document.getElementById && !document.all)) {
+                 if (e.which == 2 || e.which == 3) { (message); return false; }
+             }
+         }
+         if (document.layers)
+         { document.captureEvents(Event.MOUSEDOWN); document.onmousedown = clickNS; }
+         else { document.onmouseup = clickNS; document.oncontextmenu = clickIE; }
+         document.oncontextmenu = new Function("return false")
+// -->
+    </script>
+     <form id="form1" runat="server">
+  
+       <%--  <br />--%><%-- <div class="container-fluid col-xs-6 col-sm-6 col-md-3">--%>
+         <ul class="nav nav-tabs auto-style1">
+             <li class="nav-item"><a class="nav-link" href="http://220.134.245.185:8888/fishnew5/selfpokeedit.aspx">座標名稱編輯</a> </li>
+             <li class="nav-item"><a class="nav-link" href="https://twpkinfo.com/ipoke.aspx">找寶貝網站</a> </li>                    
+             <li class="nav-item"><a class="nav-link" href="https://twpkinfo.com/igym.aspx">團體戰及道館查詢</a> </li>  
+             <li class="nav-item"><a class="nav-link" href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite">寶可夢最佳技能</a> </li>  
+           
+             
+         </ul>
+        <ul class="nav nav-tabs auto-style1">
+            
+             <li class="nav-item"><a class="nav-link" href="image/斗南手機版股票.zip">座標程式下載</a> </li> 
+             <li class="nav-item"><a class="nav-link active" href="mapsql.aspx">可依距離查詢(SOL版)</a> </li> 
+             <li class="nav-item"><a class="nav-link" href="pokemapaccess.aspx">(Access版)</a> </li> 
+         </ul>
+
+         <%-- </div>--%>
+        <br />
+        &nbsp;&nbsp;<asp:Label ID="Label1" runat="server" Font-Names="標楷體" Font-Size="X-Large" ForeColor="#CC0000" Text="寶可夢道館座標(方便手機複製座標)" ToolTip="點到座標格即可按複製全部來選取座標再貼到定位程式內"></asp:Label>
+        &nbsp;<br />
+         &nbsp;
+        <span class="auto-style2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+
+        </span>
+        <br />
+
+          <div class="container-fluid  leftaddmg">
+            <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-3 cotext-left btn-default">
+              
+                    <asp:TextBox ID="keyword" runat="server" BackColor="Aqua" CssClass="auto-style5" Font-Size="XX-Large" Height="50px" Width="122px" ToolTip="輸入相似字或按右邊的下拉選單輸入">宮</asp:TextBox>
+            
+                </div>
+               <div class="col-xs-6 col-sm-6 col-md-3 tcotext-left  btn-default">
+                   
+         <asp:DropDownList ID="DropDownList2" class="btn btn-primary " runat="server" AutoPostBack="True" Width="115px" BackColor="#99FF66" Font-Names="標楷體" ForeColor="#003300" Height="50px" Font-Size="X-Large">
+         </asp:DropDownList>
+
+              </div>
+
+              <div class="col-xs-6 col-sm-6 col-md-3 cotext-left  btn-default">
+            <span class="auto-style2"> <asp:Button ID="poem1_stock相似搜尋" runat="server" Height="50px" Text="相似搜尋" 
+
+            Width="153px" CssClass="auto-style5" ToolTip="輸入相似字並列出符合的道館名稱" BackColor="#000066" Font-Size="XX-Large" ForeColor="White" />
+             </span>           
+            
+           </div>
+
+<div class="col-xs-6 col-sm-6 col-md-3 tcotext-left  btn-default">
+              
+                   <span class="btn btn-default" style="width: 104px"><span class="auto-style1"><span class="auto-style9"><span class="auto-style10">
+         <asp:DropDownList ID="DropDownList1" runat="server" AutoPostBack="True" Width="115px" BackColor="Maroon" Font-Names="標楷體" ForeColor="White" Height="50px" Font-Size="X-Large" ToolTip="下拉選擇含有此字的道館">
+         </asp:DropDownList>
+         </span></span></span></span>
+
+              </div>
+               
+            </div>
+        </div>  
+                <br />          
+
+          <div class="container-fluid  leftaddmg">
+            <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-3 cotext-left btn-default">
+           
+
+         <asp:Label ID="Label2" runat="server" Text="x值:" Font-Names="標楷體" Font-Size="XX-Large"></asp:Label>
+
+                    <asp:TextBox ID="valuex" runat="server" BackColor="Aqua" CssClass="auto-style5" Font-Size="XX-Large" Height="50px" Width="193px" ToolTip="地圖的x軸座標可連動顯示地圖">23.6729</asp:TextBox>
+
+                </div>
+              
+               <div class="col-xs-6 col-sm-6 col-md-3 tcotext-left  btn-default">
+
+         <asp:Label ID="Label3" runat="server" Text="y值:" Font-Names="標楷體" Font-Size="XX-Large"></asp:Label>
+
+
+                   <asp:TextBox ID="valuey" runat="server" BackColor="Aqua" CssClass="auto-style5" Font-Size="XX-Large" Height="50px" Width="190px" ToolTip="地圖的y軸座標可連動顯示地圖">120.48088</asp:TextBox>
+
+              </div>
+
+             <div class="col-xs-6 col-sm-6 col-md-3 tcotext-left  btn-default">
+                   <asp:Label ID="Label4" runat="server" Text="道館:" Font-Names="標楷體" Font-Size="XX-Large"></asp:Label>
+
+                  <asp:TextBox ID="valuename" runat="server" BackColor="Aqua" CssClass="auto-style5" Font-Size="XX-Large" Height="50px" Width="190px" ToolTip="地圖顯示的名稱,可連動顯示地圖">斗南火車站</asp:TextBox>
+
+                    </div>
+
+<div class="col-xs-6 col-sm-6 col-md-3 tcotext-left  btn-default">
+              
+                   <span class="auto-style2"> <asp:Button ID="Button2" runat="server" Height="50px" Text="依距離" 
+
+            Width="153px" CssClass="auto-style5" ToolTip="依距離所選取的道館的遠近排序" BackColor="#000066" Font-Size="XX-Large" ForeColor="White" />
+             </span>  
+            
+           </div>
+       </div>
+             
+        <div class="container-fluid leftaddmg">
+              </div>
+                <asp:GridView ID="GridView4" runat="server" AutoGenerateColumns="False" CellPadding="4" Font-Names="標楷體" Font-Size="XX-Large" ForeColor="#333333" GridLines="None">
+                    <AlternatingRowStyle BackColor="White" />
+                    <Columns>
+                        <asp:CommandField ShowSelectButton="True" />
+                        <asp:BoundField DataField="name1" HeaderText="道館" SortExpression="name1" />
+                        <asp:TemplateField HeaderText="座標" SortExpression="mail1">
+                            <EditItemTemplate>
+                                <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("mail1") %>'></asp:TextBox>
+                            </EditItemTemplate>
+                            <ItemTemplate>
+                                <asp:TextBox ID="TextBox2" runat="server" Height="42px" Text='<%# Bind("mail1") %>' Width="500px"></asp:TextBox>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField DataField="x軸" HeaderText="x軸" SortExpression="x軸" />
+                        <asp:BoundField DataField="y軸" HeaderText="y軸" SortExpression="y軸" />
+                        <asp:BoundField DataField="識別碼" HeaderText="識別碼" SortExpression="識別碼" />
+                        <asp:BoundField DataField="x加y" HeaderText="經緯度距離" SortExpression="x加y" />
+                    </Columns>
+                    <FooterStyle BackColor="#990000" Font-Bold="True" ForeColor="White" />
+                    <HeaderStyle BackColor="#990000" Font-Bold="True" ForeColor="White" />
+                    <PagerStyle BackColor="#FFCC66" ForeColor="#333333" HorizontalAlign="Center" />
+                    <RowStyle BackColor="#FFFBD6" ForeColor="#333333" />
+                    <SelectedRowStyle BackColor="#FFCC66" Font-Bold="True" ForeColor="Navy" />
+                    <SortedAscendingCellStyle BackColor="#FDF5AC" />
+                    <SortedAscendingHeaderStyle BackColor="#4D0000" />
+                    <SortedDescendingCellStyle BackColor="#FCF6C0" />
+                    <SortedDescendingHeaderStyle BackColor="#820000" />
+                </asp:GridView>
+        <br />
+                  
+        
+                    <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:mapsqlConnectionString %>" SelectCommand="SELECT name1, mail1, x軸, y軸 識別碼 FROM textmsg"></asp:SqlDataSource>
+                  
+      
+</div>
+      
+         <!-- 宣告使用新版的地圖不用key v3 -->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+          <script>
+        var map;
+        function initMap() {
+            //map = new google.maps.Map(document.getElementById('map'), {
+            //  center: {lat: 23.672931, lng: 120.48088},
+            //   zoom: 16,         
+
+            //取得目標的經緯度 23.672931	120.48088
+            //map不在表頭.event.event.latLng.lat() = document.getElementById("valuex").value
+            //map不在表頭.event.event.latLng.lng() = document.getElementById("valuey").value
+            //map不在表頭.title = document.getElementById("valuename").value
+
+            //var latlng = new google.maps.LatLng(23.672931, 120.48088);
+
+
+            //var newlatlng ;
+            //newlatlng = document.getElementById("valuex").value + ", " + document.getElementById("valuey").value;
+            //var latlng = new google.maps.LatLng(newlatlng);
+
+            //alert("地圖座標是: google.maps.latling(" + newlatlng + " )");
+
+            var latlng = new google.maps.LatLng(23.6729, 120.48088);
+            //latlng.lat = document.getElementById("valuex").value;
+            //latlng.lng = document.getElementById("valuey").value;
+            latlng = new google.maps.LatLng(23.67542029921727, 120.47341346740722);
+
+            //var latlngx = new google.maps.LatLng.lat() = 23.672931;
+            //var latlngy = new google.maps.LatLng.lng() = 120.48088;
+            //latlng.lat() = 23.672931
+                //document.getElementById("valuex").value
+            //latlng.lng() = 120.48088
+                //document.getElementById("valuey").value
+            //標記在 Google 地圖上的經緯度
+            
+            //map.latLng.lng() = document.getElementById("valuey").value
+            //設定地圖的選項
+            var mapOptions = {
+                zoom: 15, //地圖縮放的層級
+                center:latlng,
+                mapTypeId: google.maps.MapTypeId.TERRAIN, //地圖呈現的方式 ROADMAP：一般的 2D 地圖模式（預設樣式）SATELLITE：衛星空拍圖  HYBRID：衛星空拍圖加上道路、城市名稱等的顯著圖層 TERRAIN：地形圖
+                mapTypeControl:true,
+                fullscreenControl:true,
+                rotateControl:true,
+                scaleControl:true,
+                streetViewControl:true,
+                zoomControl:true,
+                mapTypeControlOptions:{position:google.maps.ControlPosition.TOP_CENTER},
+                fullscreenControlOptions:{position:google.maps.ControlPosition.TOP_RIGHT},
+                rotateControlOptions:{position:google.maps.ControlPosition.RIGHT_CENTER},
+                scaleControlOptions:{position:google.maps.ControlPosition.RIGHT_BOTTOM},
+                streetViewControlOptions:{position:google.maps.ControlPosition.TOP_LEFT},
+                zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
+
+            };
+
+            //把地圖放在頁面的 div 裡
+            var map = new google.maps.Map(document.getElementById('map不在表頭'), mapOptions);
+            var newlatlng ;
+            newlatlng = document.getElementById("valuex").value + ", " + document.getElementById("valuey").value;
+           
+            map.setCenter(new google.maps.LatLng(document.getElementById("valuex").value, document.getElementById("valuey").value), 13);
+          
+            //宣告地圖標記選項
+            var markerOptions = {
+                //地圖標記位置
+                position: latlng,
+                //設定要套用的地圖
+                map: map,
+                //地圖標記要顯示的文字
+                //title: "斗南火車站"
+                title: document.getElementById("valuename").value
+                //map不在表頭.value = document.getElementById("valuename").value
+            }
+
+            //把地圖標記標示在地圖上
+            //var marker = new google.maps.Marker(map);
+
+            var marker = new google.maps.Marker({
+                position: map.center,
+                map: map,
+                animation: google.maps.Animation.BOUNCE,
+                //label: '看',
+                title: document.getElementById("valuename").value,
+                //icon: 'http://www.oxxostudio.tw/img/articles/201801/google-maps-3-marker-icon.png'
+            });
+
+            //攔截 map 的 click event
+            google.maps.event.addListener(map, 'click', function (event) {
+                var location = event.latLng;
+                alert(location.lat() + ',' + location.lng() + " 確認後表單的x軸 y軸巳改變,加入名稱可加入資料庫");
+                document.getElementById("lat").value = location.lat();
+                document.getElementById("lng").value = location.lng();
+            });
+
+            function seachaddr() {
+            var address = document.getElementById("addressinput").value;
+            geocoder = new google.maps.Geocoder();
+            if (geocoder) {
+                geocoder.geocode({
+                    "addressinput": address}, function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            map.setCenter(results[0].geometry.location);
+                            if (marder != null) {
+                                marker.setMap(null);
+                            }
+                            var marker = new google.maps.Marker({
+                                position: results[0].geometry.location,
+                                map: map,
+                                title: results[0].formatted_address
+                            });
+                        } else {
+                            alert("編碼失敗,原因:" + status);
+                        }                   
+                });             
+            }
+
+        }
+
+
+        }
+
+        
+       
+        
+
+  </script>
+  <%--舊版宣告要key:   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback=initMap"  async defer></script>--%>
+
+        <br />
+                    <%-- <div id="map1_stop"style="width: 300px; height:300px">
+                     </div>--%>
+         
+
+
+        
+                <asp:Label ID="Label7" runat="server" Text="x軸:"></asp:Label><asp:TextBox    runat="server" id="lat" name="latitude">資料庫的欄位</asp:TextBox>
+               <asp:Label ID="Label8" runat="server" Text="y軸:"></asp:Label><asp:TextBox   runat="server" id="lng" name="longitude">資料庫的欄位</asp:TextBox>
+  
+        <%-- <asp:Label ID="Label5" runat="server" Text="x軸:"></asp:Label>
+&nbsp;<asp:TextBox ID="lat1" runat="server"></asp:TextBox>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         <asp:Label ID="Label6" runat="server" Text="y軸:"></asp:Label>
+         <asp:TextBox ID="lng1" runat="server"></asp:TextBox>--%>
+         <br/>
+         <asp:TextBox ID="addressinupt" runat="server" Width="350px" >請輸入地址</asp:TextBox>
+          <asp:Button ID="Button4" runat="server" Text="Button" OnClick="seachaddr()" />
+          <br/>
+  
+                     <div  class="leftaddmg" id="map不在表頭"style="width: 600px; height:500px">
+                     </div>
+      
+
+         <%--function processFormData() {
+  const form = document.forms['form'];    // 取得 name 屬性為 form 的表單
+  const name = form.elements.name.value;  // 取得 elements 集合中 name 屬性為 name 的值
+  const email = form.elements.email.value;// 取得 elements 集合中 name 屬性為 email 的值
+  alert("你的姓名是 " + name + "\n電子郵件是 " + email);
+}--%>
+
+         
+
+
+
+       <%--   <input type="text" id="iconUrl" value="http://api.tgos.tw/TGOSMAPAPI/images/marker.png"size="80"/>
+                  <br>
+              //標題:
+                  <input type="text" id="title" value="標記一"size="20"/>
+                      //Marker大小:
+              <input type="text" id="SizeW"value="33" size="1"/>
+                             <input type="text" id="SizeH" value="33"size="1"/>px<br>
+                                 //Marker位移:
+              <input type="text" id="anchorX"value="16" size="1"/>px *
+                             <input type="text" id="anchorY" value="33"size="1"/>px<br>
+                  <input type="checkbox" id="shadow"/>是否移除陰影
+                  <input type="checkbox" id="draggable" />是否可以拖曳<br>
+                  <input type="button" value="加入標記點"onclick="AddMarker();"/>
+                             <input type="button" value="清除所有標記點" onclick="RmvMarker();"/>--%>
+  <br />
+            Title
+             <asp:TextBox   runat="server" id="Titles" name="Titles">資料庫的欄位</asp:TextBox>
+             <br /> Description
+             <asp:TextBox   runat="server" id="Description" name="Description">資料庫的欄位</asp:TextBox>
+
+            <br />
+            <asp:Button ID="Button1" runat="server" Text="加到資料庫" OnClick="Button1_Click" BackColor="Maroon" Font-Names="標楷體" Font-Size="X-Large" ForeColor="White" />
+           
+      
+        <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="id" DataSourceID="SqlDataSource1" AllowCustomPaging="True" AllowPaging="True" AllowSorting="True" CellPadding="4" Font-Names="標楷體" Font-Size="X-Large" ForeColor="#333333" GridLines="None">
+            <AlternatingRowStyle BackColor="White" />
+            <Columns>
+                <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" ShowSelectButton="True" />
+                <asp:BoundField DataField="id" HeaderText="id" InsertVisible="False" ReadOnly="True" SortExpression="id" />
+                <asp:BoundField DataField="lat" HeaderText="x軸" SortExpression="lat" />
+                <asp:BoundField DataField="lng" HeaderText="y軸" SortExpression="lng" />
+                <asp:BoundField DataField="Description" HeaderText="Description" SortExpression="Description" />
+                <asp:BoundField DataField="Titles" HeaderText="Titles" SortExpression="Titles" />
+            </Columns>
+            <EditRowStyle BackColor="#2461BF" />
+            <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
+            <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
+            <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
+            <RowStyle BackColor="#EFF3FB" />
+            <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
+            <SortedAscendingCellStyle BackColor="#F5F7FB" />
+            <SortedAscendingHeaderStyle BackColor="#6D95E1" />
+            <SortedDescendingCellStyle BackColor="#E9EBEF" />
+            <SortedDescendingHeaderStyle BackColor="#4870BE" />
+        </asp:GridView>
+         <br/>
+        <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
+            ConflictDetection="CompareAllValues" 
+            ConnectionString="<%$ ConnectionStrings:mapsqlConnectionString1 %>" 
+            DeleteCommand="DELETE FROM [Google map info] WHERE [id] = @original_id AND (([lat] = @original_lat) OR ([lat] IS NULL AND @original_lat IS NULL)) AND (([lng] = @original_lng) OR ([lng] IS NULL AND @original_lng IS NULL)) AND (([Description] = @original_Description) OR ([Description] IS NULL AND @original_Description IS NULL)) AND (([Titles] = @original_Titles) OR ([Titles] IS NULL AND @original_Titles IS NULL))" 
+            InsertCommand="INSERT INTO [Google map info] ([lat], [lng], [Description], [Titles]) VALUES (@lat, @lng, @Description, @Titles)" 
+            OldValuesParameterFormatString="original_{0}" 
+            SelectCommand="SELECT * FROM [Google map info] order by id desc" 
+            UpdateCommand="UPDATE [Google map info] SET [lat] = @lat, [lng] = @lng, [Description] = @Description, [Titles] = @Titles WHERE [id] = @original_id AND (([lat] = @original_lat) OR ([lat] IS NULL AND @original_lat IS NULL)) AND (([lng] = @original_lng) OR ([lng] IS NULL AND @original_lng IS NULL)) AND (([Description] = @original_Description) OR ([Description] IS NULL AND @original_Description IS NULL)) AND (([Titles] = @original_Titles) OR ([Titles] IS NULL AND @original_Titles IS NULL))">
+            <DeleteParameters>
+                <asp:Parameter Name="original_id" Type="Int32" />
+                <asp:Parameter Name="original_lat" Type="String" />
+                <asp:Parameter Name="original_lng" Type="String" />
+                <asp:Parameter Name="original_Description" Type="String" />
+                <asp:Parameter Name="original_Titles" Type="String" />
+            </DeleteParameters>
+            <InsertParameters>
+              <asp:ControlParameter ControlID="lat" Name="lat" Type="String" />
+              <asp:ControlParameter ControlID="lng" Name="lng" Type="String" />
+              <asp:ControlParameter ControlID="Description"  Name="Description" Type="String" />
+              <asp:ControlParameter ControlID="Titles"  Name="Titles" Type="String" />
+            </InsertParameters>
+            <UpdateParameters>
+                <asp:Parameter Name="lat" Type="String" />
+                <asp:Parameter Name="lng" Type="String" />
+                <asp:Parameter Name="Description" Type="String" />
+                <asp:Parameter Name="Titles" Type="String" />
+                <asp:Parameter Name="original_id" Type="Int32" />
+                <asp:Parameter Name="original_lat" Type="String" />
+                <asp:Parameter Name="original_lng" Type="String" />
+                <asp:Parameter Name="original_Description" Type="String" />
+                <asp:Parameter Name="original_Titles" Type="String" />
+            </UpdateParameters>
+        </asp:SqlDataSource>
+        <br />
+
+    <div>
+    </div>
+    </form>
+     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script src="Scripts/jquery-3.3.1.js"></script>   
+    <script src="Scripts/bootstrap.js"></script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style type="text/css"> 
+        /* html { height: 100% }
+        body { height: 100%; margin: 0px; padding: 0px }
+        #map_canvas { height:100% } */
+       
+    </style>
+ <!-- 宣告使用新版的地圖不用key v3 -->
+ <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script> 
+ <%--https://maps-api-ssl.google.com/maps/api/js?v=3&sensor=true_or_false"--%> 
+ <script type="text/javascript"> 
+
+var map;
+function initMap() {
+    //map = new google.maps.Map(document.getElementById('map'), {
+    //  center: {lat: 23.672931, lng: 120.48088},
+    //   zoom: 16,         
+
+    //取得目標的經緯度 23.672931	120.48088
+    //map不在表頭.event.event.latLng.lat() = document.getElementById("valuex").value
+    //map不在表頭.event.event.latLng.lng() = document.getElementById("valuey").value
+    //map不在表頭.title = document.getElementById("valuename").value
+
+    //var latlng = new google.maps.LatLng(23.672931, 120.48088);
+
+
+    //var newlatlng ;
+    //newlatlng = document.getElementById("valuex").value + ", " + document.getElementById("valuey").value;
+    //var latlng = new google.maps.LatLng(newlatlng);
+
+    //alert("地圖座標是: google.maps.latling(" + newlatlng + " )");
+
+    var latlng = new google.maps.LatLng(23.6729, 120.48088);
+    //latlng.lat = document.getElementById("valuex").value;
+    //latlng.lng = document.getElementById("valuey").value;
+    latlng = new google.maps.LatLng(23.67542029921727, 120.47341346740722);
+
+    //var latlngx = new google.maps.LatLng.lat() = 23.672931;
+    //var latlngy = new google.maps.LatLng.lng() = 120.48088;
+    //latlng.lat() = 23.672931
+        //document.getElementById("valuex").value
+    //latlng.lng() = 120.48088
+        //document.getElementById("valuey").value
+    //標記在 Google 地圖上的經緯度
+    //alert(document.getElementById("maptext").value)
+    //map.latLng.lng() = document.getElementById("valuey").value
+    //設定地圖的選項
+    var mapOptions = {
+        zoom: 15, //地圖縮放的層級
+        center:latlng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,                            //地圖呈現的方式  document.getElementById("maptext").textContent,  google.maps.MapTypeId.TERRAIN,   ROADMAP：一般的 2D 地圖模式（預設樣式）SATELLITE：衛星空拍圖  HYBRID：衛星空拍圖加上道路、城市名稱等的顯著圖層 TERRAIN：地形圖
+            //mapTypeId: google.maps.MapTypeId.HYBRID,
+        mapTypeControl:true,
+        fullscreenControl:true,
+        rotateControl:true,
+        scaleControl:true,
+        streetViewControl:true,
+        zoomControl:true,
+        mapTypeControlOptions:{position:google.maps.ControlPosition.TOP_CENTER},
+        fullscreenControlOptions:{position:google.maps.ControlPosition.TOP_RIGHT},
+        rotateControlOptions:{position:google.maps.ControlPosition.RIGHT_CENTER},
+        scaleControlOptions:{position:google.maps.ControlPosition.RIGHT_BOTTOM},
+        streetViewControlOptions:{position:google.maps.ControlPosition.TOP_LEFT},
+        zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
+
+    };
+   
+    //把地圖放在頁面的 div 裡
+    var map = new google.maps.Map(document.getElementById('map不在表頭'), mapOptions);
+    var newlatlng ;
+    newlatlng = document.getElementById("valuex").value + ", " + document.getElementById("valuey").value;           
+    map.setCenter(new google.maps.LatLng(document.getElementById("valuex").value, document.getElementById("valuey").value), 13);
+    //map.setMapTypeId(document.getElementById("maptext"));
+    //map.setMapTypeId(google.maps.MapTypeId.CONSTANT);            
+    //宣告地圖標記選項
+    var markerOptions = {
+        //地圖標記位置
+        position: latlng,
+        //設定要套用的地圖
+        map: map,
+        //地圖標記要顯示的文字
+        //title: "斗南火車站"
+        title: document.getElementById("valuename").value,
+        //map不在表頭.value = document.getElementById("valuename").value
+        //mapTypeId: document.getElementById("maptext").value,
+        //setMapTypeId(document.getElementById("maptext")),          setMapTypeId(MapTypeId)
+        mapTypeControl: true,
+        fullscreenControl: true,
+        rotateControl: true,
+        scaleControl: true,
+        streetViewControl: true,
+        zoomControl: true,
+        mapTypeControlOptions: { position: google.maps.ControlPosition.TOP_CENTER },
+        fullscreenControlOptions: { position: google.maps.ControlPosition.TOP_RIGHT },
+        rotateControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
+        scaleControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
+        streetViewControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+        zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
+    }
+
+    //把地圖標記標示在地圖上
+    //var marker = new google.maps.Marker(map);
+    var marker = new google.maps.Marker({
+        position: map.center,
+        map: map,
+        animation: google.maps.Animation.BOUNCE,
+        //label: '看',
+        title: document.getElementById("valuename").value,
+        //icon: 'http://www.oxxostudio.tw/img/articles/201801/google-maps-3-marker-icon.png',
+        
+    });
+
+    //攔截 map 的 click event
+    google.maps.event.addListener(map, 'click', function (event) {
+        var location = event.latLng;
+        alert(location.lat() + ',' + location.lng() + " 確認後表單的x軸 y軸巳改變,加入名稱可加入資料庫");
+        document.getElementById("lat").value = location.lat();
+        document.getElementById("lng").value = location.lng();
+    });
+
+    //document.getElementById('map不在表頭1').style.visibility = "hidden";
+    //document.getElementById('map不在表頭').style.display = "";
+   
+
+}
+
+      //SetMapType(document.getElementById("maptext").value);
+//$("div").("#map不在表頭"){
+//    setmapTypeId: "google.maps.MapTypeId." + typemap;        //}
+
+function SetMapType() {   
+    var latlng = new google.maps.LatLng(23.6729, 120.48088);         
+    var mapOptions = {
+        zoom: 15, //地圖縮放的層級
+        center: latlng,
+        mapTypeId: google.maps.MapTypeId.HYBRID,                            //地圖呈現的方式  document.getElementById("maptext").textContent,  google.maps.MapTypeId.TERRAIN,   ROADMAP：一般的 2D 地圖模式（預設樣式）SATELLITE：衛星空拍圖  HYBRID：衛星空拍圖加上道路、城市名稱等的顯著圖層 TERRAIN：地形圖
+        //mapTypeId: google.maps.MapTypeId.HYBRID,
+        mapTypeControl: true,
+        fullscreenControl: true,
+        rotateControl: true,
+        scaleControl: true,
+        streetViewControl: true,
+        zoomControl: true,
+        mapTypeControlOptions: { position: google.maps.ControlPosition.TOP_CENTER },
+        fullscreenControlOptions: { position: google.maps.ControlPosition.TOP_RIGHT },
+        rotateControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
+        scaleControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
+        streetViewControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+        zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
+    };
+
+    var map1 = new google.maps.Map(document.getElementById('map不在表頭1'), mapOptions);
+    var newlatln2;
+    newlatlng2 = document.getElementById("valuex").value + ", " + document.getElementById("valuey").value;
+    map1.setCenter(new google.maps.LatLng(document.getElementById("valuex").value, document.getElementById("valuey").value), 13);
+  
+    var markerOptions = {              
+        position: newlatln2,
+        map: map1,              
+        title: document.getElementById("valuename").value,
+    }
+
+    //把地圖標記標示在地圖上
+    //var marker = new google.maps.Marker(map);
+    var marker = new google.maps.Marker({
+        position: map1.center,
+        map: map1,
+        animation: google.maps.Animation.BOUNCE,
+        //label: '看',
+        title: document.getElementById("valuename").value,
+        //icon: 'http://www.oxxostudio.tw/img/articles/201801/google-maps-3-marker-icon.png',
+
+    });
+
+    //攔截 map 的 click event
+    google.maps.event.addListener(map, 'click', function (event) {
+        var location = map1.event.latLng;
+        alert(location.lat() + ',' + location.lng() + " 確認後表單的x軸 y軸巳改變,加入名稱可加入資料庫");
+        document.getElementById("lat").value = location.lat();
+        document.getElementById("lng").value = location.lng();
+    });
+    //document.getElementById('map不在表頭').style.visibility = "hidden";
+    //document.getElementById('map不在表頭1').style.display = "";
+             
+    showmap1();
+}
+
+function hidemap1() {
+    alert("再按一次上方的下拉選單會再次顯示");
+    document.getElementById('map不在表頭1').css(style.height = "0px");
+    document.getElementById('map不在表頭1').css(style.display = "none");
+    document.getElementById('hidemap1btn').css(style.height = "0px");
+    document.getElementById('hidemap1btn').css(style.text = "顯示地圖");
+   
+    //document.getElementById('map不在表頭1').style.display = "none";
+    //"map不在表頭1"style="width: 600px; height:500px"
+    //document.getElementById('map不在表頭1').style.height = "2px"
+    //document.getElementById('hidemap1btn').style.display = "none";
+    //document.getElementById('hidemap1btn').style.height = "0px";
+    //document.getElementById('hidemap1btn').text = "顯示地圖";
+   
+}
+function showmap1() {
+    document.getElementById('map不在表頭1').style.display = "";
+    document.getElementById('map不在表頭1').style.height = "500px"
+    document.getElementById('hidemap1btn').style.display = "";
+    document.getElementById('hidemap1btn').style.height = "30px";
+    document.getElementById('hidemap1btn').text = "不顯示地圖";
+}
+
+function seachaddr() {
+    var address = document.getElementById("addressinput").value;
+    geocoder = new google.maps.Geocoder();
+    if (geocoder) {
+        geocoder.geocode({
+            "addressinput": address}, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    if (marder != null) {
+                        marker.setMap(null);
+                    }
+                    var marker = new google.maps.Marker({
+                        position: results[0].geometry.location,
+                        map: map,
+                        title: results[0].formatted_address
+                    });
+                } else {
+                    alert("編碼失敗,原因:" + status);
+                }                   
+        });             
+    }
+
+}
+
+</script>
+
+</head>
+<body onload =  SetMapType() >
+    set initMap(23.681986,120.473874)
+    <script>
+        var map;
+        function initMap() {
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 23.681986 , lng: 120.473874},
+            zoom: 16,        
+            mapTypeControl:true,
+            fullscreenControl:true,
+            rotateControl:true,
+            scaleControl:true,
+            streetViewControl:true,
+            zoomControl:true,
+            mapTypeControlOptions:{position:google.maps.ControlPosition.TOP_CENTER},
+            fullscreenControlOptions:{position:google.maps.ControlPosition.TOP_RIGHT},
+            rotateControlOptions:{position:google.maps.ControlPosition.RIGHT_CENTER},
+            scaleControlOptions:{position:google.maps.ControlPosition.RIGHT_BOTTOM},
+            streetViewControlOptions:{position:google.maps.ControlPosition.TOP_LEFT},
+            zoomControlOptions:{position:google.maps.ControlPosition.RIGHT_BOTTOM}
+          });
+        }
+      </script>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback=initMap" async defer></script>
+      
+      <div id="map"style="width: 500px; height:500px">
+              
+      </div>
+
+
+
+      <script>
+        var map1;
+        function initMap1() {
+          map1 = new google.maps.Map(document.getElementById('map1'), {
+            center: {lat: 23.672931 , lng: 120.48088},
+            zoom: 16,        
+            mapTypeControl:true,
+            fullscreenControl:true,
+            rotateControl:true,
+            scaleControl:true,
+            streetViewControl:true,
+            zoomControl:true,
+            mapTypeControlOptions:{position:google.maps.ControlPosition.TOP_CENTER},
+            fullscreenControlOptions:{position:google.maps.ControlPosition.TOP_RIGHT},
+            rotateControlOptions:{position:google.maps.ControlPosition.RIGHT_CENTER},
+            scaleControlOptions:{position:google.maps.ControlPosition.RIGHT_BOTTOM},
+            streetViewControlOptions:{position:google.maps.ControlPosition.TOP_LEFT},
+            zoomControlOptions:{position:google.maps.ControlPosition.RIGHT_BOTTOM}
+          });
+        }
+      </script>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback=initMap" async defer></script>
+    
+      <br/>
+      <!-- <text name="address1" id="addressinupt" Width="350px">新北市新店區中興路二段215號</text>
+      <!-- <asp:TextBox ID="addressinupt" runat="server" Width="350px" >請輸入地址</asp:TextBox> -->
+      <button ID="Button4" OnClick="seachaddr()">執行地址seach</button>
+       <!-- <asp:Button ID="Button4" runat="server" Text="Button" OnClick="seachaddr()" /> -->
+       <br/>
+    <div id="map1"style="width: 500px; height:500px">
+        
+    </div> -->
+
+<input type="text" id="test">
+<input type="text" id="title" value="標記一"size="20"/>
+
+function initMap() {
+}
+
+function initMap1() {
+}
+
+
+
+
+
+</body>
+</html>

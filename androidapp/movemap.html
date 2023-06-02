@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>map</title>
+    <style type="text/css"> 
+        html { height: 100% }
+        body { height: 100%; margin: 0px; padding: 0px }
+        #map_canvas { height:100% }
+       
+    </style>
+
+<script type="text/javascript" src="http://union.mapbar.com/apis/maps/free?f=mapi&v=31.3&k=aCW9cItqL7sqT7AxaB0zdHZoZSWmbBsuT7JhMHTsMeD6ZIl9NzFsZHT=@JBL979@Iu7lJJZWWq0IDu9xZMzMxq7I9AhH7LAAA6hqzZHZZLTbZZauxlDz7C7DD9ZCFGT="></script>
+<script type="text/javascript">
+function $$(id){return document.getElementById(id);}
+
+//靜態變量
+var cx=116.39087;
+var cy=39.91978;
+var cc="北京市";
+
+var marker = null; 
+var maplet = null;
+var flag = false;
+
+function initMap(){
+	maplet = new Maplet("mapbar");
+	maplet.centerAndZoom(new MPoint(cx,cy),9);
+	maplet.addControl(new MStandardControl());
+	maplet.clickToCenter = false;
+	$$("keyword").focus();
+}
+
+window.onload=function(){
+	$$("cccity").innerHTML=cc;
+	$$("city").value=cc;
+	document.title=cc;
+	initMap();
+	resizemap();
+	window.onresize=function(){
+		resizemap();
+	}
+}
+
+//自適應窗口大小
+function resizemap(){
+	if(maplet){
+		var xx=document.body.clientWidth;
+		var yy=document.body.clientHeight-80;
+		if(xx<800)xx=800;	//寬度不得小於800
+		if(yy<300)yy=300;	//高度不得小於300
+		maplet.resize(xx,yy);
+	}
+}
+
+//點擊監聽
+var myEventListener;
+function add(){
+	myEventListener = MEvent.addListener(maplet,"click",function(evt,point){
+		if(flag) {maplet.clearOverlays();}
+
+		if(!point) alert("獲取經緯度失敗，請刷新頁面後重新操作。");
+		//alert(point.lon,point.lat);
+		$$("x").value = point.lon;
+		$$("y").value = point.lat;
+
+		marker = new MMarker(point,new MIcon("http://union.mapbar.com/apidoc/images/tb1.gif",32,32,18,32)); 
+		maplet.addOverlay(marker); 
+		marker.setEditable(false); 
+		flag = true;
+		dells();	//標記點後移除監聽事件
+	});
+}
+
+//移除監聽，清空顯示框
+function del(){
+	maplet.clearOverlays();
+	dells();
+	$$("x").value='';
+	$$("y").value='';
+}
+
+//移除監聽
+function dells(){
+	MEvent.removeListener(myEventListener);
+}
+
+//設置中心點
+function setCenter(x,y,z){
+	maplet.centerAndZoom(new MPoint(x,y), z);
+}
+
+//顯示中心點
+function getCenter(){
+	var mPoint=maplet.getCenter();
+	if($$("center")){$$("center").value=mPoint.lon+","+mPoint.lat+','+maplet.getZoomLevel();}
+		else alert("中心點座標:("+mPoint.lon+","+mPoint.lat+")"+maplet.getZoomLevel());
+}
+
+//查詢mapbar
+function search(){
+	var city    = $$("city").value;
+	var keyword = $$("keyword").value;
+	if(keyword=="")keyword="故宮";
+	var url = "http://www.mapbar.com/localsearch/index.jsp#ac=lc&keyword="+keyword+"&city="+city;
+	var newWin = window.open(url,'newwindow');
+	newWin.focus();
+}
+
+
+</script>
+
+
+</head>
+<body>
+    <div align=center >
+<div style="float:left; margin-left:10px; margin-top:15px; margin-bottom:10px;">
+<input type="button" value="添加" onclick="add()" style="padding:7px; ">
+<input type="button" value="刪除" onclick="del()" style="padding:7px; ">
+</div>
+
+<div style="float:left; height:50px; margin-left:10px; margin-top:10px; margin-bottom:10px;">
+<table>
+<tr><td>經度X：<input id="x" type="text" id='x'/></td></tr>
+<tr><td>緯度Y：<input id="y" type="text" id='y'/></td></tr>
+</table>
+</div>
+
+<div style="float:left; margin-top:20px;margin-left:10px;">
+<span><a href='#' onclick='javascript:setCenter(cx,cy,8)' id="cccity"></a></span>
+</div>
+
+<div style="float:left; margin-top:15px; margin-left:5px;">
+<input id="center"><br/><input type=button value='顯示中心點' onclick="getCenter()">
+</div>
+
+<div style="float:left; height:50px; margin-left:5px; margin-top:10px; margin-bottom:10px;">
+<table>
+<form onsubmit="return false;">
+
+<tr><td>城市：<input id="city" value=""></td><td><font color="red" size="3">外部搜索</font></td></tr>
+<tr><td>查詢：<input id="keyword" ></td><td><input type=submit onsubmit="return false;" value='查詢mapbar' onclick="search()"></td></tr>
+</form>
+</table>
+</div>
+
+<div id="mapbar" style="width:382px;height:340px;float:left;"></div>
+
+
+</body>
+</html>

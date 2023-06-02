@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+
+<script >
+
+var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+var msg;
+ 
+ db.transaction(function (tx) {
+    tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)');
+    tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "菜鸟教程")');
+    tx.executeSql('INSERT INTO LOGS (id, log) VALUES (2, "www.runoob.com")');
+
+
+
+    msg = '<p>数据表已创建，且插入了两条数据。</p>';
+    document.querySelector('#status').innerHTML =  msg;
+ });
+ 
+ db.transaction(function (tx) {
+      tx.executeSql('DELETE FROM LOGS  WHERE id=1');
+      msg = '<p>巳刪除第一筆記錄。</p>';
+      document.querySelector('#status1').innerHTML =  msg;
+     
+ });
+ 
+ db.transaction(function (tx) {
+     tx.executeSql('UPDATE LOGS SET log="新修改1" WHERE id=2');
+      msg = '<p>巳更新第二筆記錄。</p>';
+      document.querySelector('#status').innerHTML =  msg;
+ });
+ 
+ db.transaction(function (tx) {
+    tx.executeSql('SELECT * FROM LOGS', [], function (tx, results) {
+       var len = results.rows.length, i;
+       msg = "<p>資料庫內總筆數: " + len + "</p>";
+       document.querySelector('#status').innerHTML +=  msg;
+       document.querySelector('#status').innerHTML +=  "列出全部資料如下:";
+    //    "列出全部資料如下:" += msg;
+       for (i = 0; i < len; i++){
+          msg = "<p><b>" + results.rows.item(i).log + "</b></p>";
+          document.querySelector('#status').innerHTML +=  msg;
+       }
+    }, null);
+ });
+
+
+</script>
+
+</head>
+<body>
+        <div id = "status1"></div>
+    <div id = "status"></div>
+</body>
+</html>

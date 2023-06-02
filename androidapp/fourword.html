@@ -1,0 +1,1725 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Document</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <!-- <link rel="stylesheet" type="text/css" href="tablesort/style.css" media="all" />
+    <script type="text/javascript" src="tablesort/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="tablesort/jquery.tablesorter.js"></script>  -->
+
+
+    <script>
+
+ var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+var msg;
+
+function firstaddPublication() {
+ db.transaction(function (tx) {
+tx.executeSql('CREATE TABLE IF NOT EXISTS textmsg2 (識別碼 int PRIMARY KEY, name1 varchar(50),mail1 varchar(50),word1 varchar(200),時間戳記 int)');
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1,'歡聲雷動','國小一年級(下)','歡笑的聲音象雷一樣響著。形容熱烈歡呼的動人場面。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (2,'欣喜若狂','國小一年級(下)','欣喜：快樂;若：好象;狂：失去控制。形容高興到了極點。示例：全班同學～，向取得第一名的同學慶祝。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (3,'載歌載舞','國小一年級(下)','邊唱歌，邊跳舞。形容盡情歡樂。示例：春節晚會上，穿著節日盛裝的各族代表，在舞台上載歌載舞，歡慶節日。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (4,'燈火輝煌','國小一年級(下)','形容夜晚燈光明亮的繁華景象。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (5,'春暖花開','國小一年級(下)','春天氣候溫暖，百花盛開，景色優美。比喻遊覽、觀賞的大好時機。示例：～，我帶著孩子們在田園裡做活。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (6,'春色滿園','國小一年級(下)','園內到處都是春天美麗的景色。比喻欣欣向榮的景象。出處：宋·葉紹翁《遊園不值》：「應憐屐齒印蒼苔，小扣柴扉久不開。春色滿園關不住，一枝紅杏出牆來。」',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (7,'春光明媚','國小一年級(下)','明媚：美好，可愛。形容春天的景物鮮明可愛。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (8,'春意盎然','國小一年級(下)','意：意味;盎然：洋溢，深厚。春天的意味正濃。示例：北國依然春寒料峭，南國卻已～了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (9,'精衛填海','國小一年級(下)','古代神話中的鳥名。精衛銜來木石，決心填平大海。舊時比喻仇恨極深，立志報復。後比喻意志堅決，不畏艱難。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (10,'愚公移山','國小一年級(下)','比喻堅持不懈地改造自然和堅定不移地進行鬥爭。示例：在現代化建設中，我們要發揚～的精神。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (11,'百折不回','國小一年級(下)','折：挫折。比喻意志堅強，無論受到多少次挫折，毫不動搖退縮。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (12,'勇往直前','國小一年級(下)','勇敢地一直向前進。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (13,'痛癢相關','國小一年級(下)','形容彼此關係密切。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (14,'情深似海','國小一年級(下)','形容情愛深厚，像大海一樣不可量。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (15,'恩重如山','國小一年級(下)','恩情深厚，像山一樣深重。示例：神僧～，寡人酬謝不盡。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (16,'循序漸進','國小一年級(下)','指學習工作等按照一定的步驟逐漸深入或提高。示例：她通常是從一個角度寫，而不是從幾個角度寫;還只是～地寫，而不是錯綜交叉地寫。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (17,'由淺入深','國小一年級(下)','從淺到深。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (18,'日積月累','國小一年級(下)','一天一天地、一月一月地不斷積累。指長時間不斷地積累。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (19,'溫故知新','國小一年級(下)','溫：溫習;故：舊的。溫習舊的知識，得到新的理解和體會。也指回憶過去，能更好地認識現在。示例：～是學習上的重要方法。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (20,'漫山遍野','國小一年級(下)','漫：滿;遍：到處。山上和田野里到處都是。形容很多。示例：春天來了，～都披上了綠裝。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (21,'綠葉成陰','國小一年級(下)','指女子出嫁生了子女。也比喻綠葉繁茂覆蓋成蔭。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (22,'天長地久','國小一年級(下)','跟天和地存在的時間那樣長。形容時間悠久。也形容永遠不變(多指愛情)。示例：讓我們的友誼天長地久吧。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (23,'樹大根深','國小一年級(下)','比喻勢力強大，根基牢固。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (24,'人無遠慮，必有近憂','國小一年級(下)','慮：考慮;憂：憂愁。人沒有長遠的考慮，一定會出現眼前的憂患。表示看事做事應該有遠大的眼光，周密的考慮。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (25,'有備無患','國小一年級(下)','患：禍患，災難。事先有準備，就可以避免禍患。示例：只有認真複習，考試時才能有備無患、胸有成竹，考出好成績。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (26,'防患未然','國小一年級(下)','患：災禍;未然：沒有這樣，指尚未形成。防止事故或禍害於尚未發生之前。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (27,'臨危不懼','國小一年級(下)','臨：遇到;危：危險;懼：怕。遇到危難的時候，一點也不怕。示例：一位民警同志,在汽車上為了和壞人作鬥爭,臨危不懼。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (28,'多謀善斷','國小一年級(下)','很有智謀，又善於判斷。示例：朱元璋雖然多謀善斷,卻未免心狠手辣,殺自己的功臣,比殺敵人還來勁兒。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (29,'從容不迫','國小一年級(下)','從容：不慌不忙，很鎮靜;不迫：不急促。不慌不忙，沉著鎮定。示例：面對勁敵，他依然從容不迫地冷靜面對。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (30,'方寸不亂','國小一年級(下)','方寸：指心。心緒不亂。形容人遇到特殊緊急的情況時能夠從容鎮定。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (31,'金鳳送爽','國小二年級(上)','不是成語示例：在金鳳送爽的九月，同學們紛紛回到了學校。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (32,'雁過留聲','國小二年級(上)','比喻留名聲於身後。示例：雁過留聲，人過留名，給子孫後代留個好印象吧。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (33,'秋色宜人','國小二年級(上)','不是成語。示例：這樣迷人的景色,我們可以用一個成語來概括,就是'秋色宜人「。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (34,'天朗氣清','國小二年級(上)','朗：明朗。形容天空晴朗，空氣清新。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (35,'日月如梭','國小二年級(上)','梭：織布時牽引緯線的工具。太陽和月亮象穿梭一樣地來去。形容時間過得很快。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (36,'光陰似箭','國小二年級(上)','光陰：時間。時間如箭，迅速流逝。形容時間過得極快。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (37,'寒來暑往','國小二年級(上)','盛夏已過，寒冬將至。泛指時光流逝。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (38,'星移物換','國小二年級(上)','星移：星辰移位;物換：景物變幻。景物改變了，星辰的位置也移動了。比喻時間的變化。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (39,'風吹草動','國小二年級(上)','風稍一吹，草就搖晃。比喻微小的變動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (40,'雨過天晴','國小二年級(上)','雨後轉晴。也比喻政治上由黑暗到光明。示例：～的早晨，空氣清新極了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (41,'瓜熟蒂落','國小二年級(上)','蒂：花或瓜果跟枝莖相連的部分。瓜熟了，瓜蒂自然脫落。指時機一旦成熟，事情自然成功。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (42,'水到渠成','國小二年級(上)','渠：水道。水流到的地方自然形成一條水道。比喻條件成熟，事情自然會成功。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (43,'學無止境','國小二年級(上)','指學業上是沒有盡頭的，應奮進不息。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (44,'一往無前','國小二年級(上)','一直往前，無所阻擋。形容勇猛無畏地前進。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (45,'滴水成冰','國小二年級(上)','水滴下去就結成冰。形容天氣十分寒冷。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (46,'鵝毛大雪','國小二年級(上)','像鵝毛一樣的雪花。形容雪下得大而猛。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (47,'雪兆豐年','國小二年級(上)','指冬天大雪是來年豐收的預兆。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (48,'勤能補拙','國小二年級(上)','勤奮能夠彌補不足。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (49,'笨鳥先飛','國小二年級(上)','行動笨拙的鳥要先飛。比喻能力差的人怕落後，做事比別人先動手。示例：女兒刻苦、自覺、用功，全靠～保持了各門功課全班第一。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (50,'人一己百','國小二年級(上)','別人一次就做好或學會的，自己做一百次，學一百次。比喻以百倍的努力趕上別人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (51,'奮起直追','國小二年級(上)','振作起來，緊緊趕上去。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (52,'寧折不彎','國小二年級(上)','本指白楊木受到外力作用，只會斷折，不會彎曲變形。後用來比喻寧可死也絕不屈服妥協。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (53,'義正詞嚴','國小二年級(上)','義：道理。詞：言辭。道理正當公允，嚴肅的措詞。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (54,'威武不屈','國小二年級(上)','威武：權勢，武力;屈：屈服。強暴的壓力不能使之屈服。表示堅貞頑強。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (55,'大義凜然','國小二年級(上)','大義：正義;凜然：嚴肅、或敬畏的樣子。由於胸懷正義而神態莊嚴，令人敬畏。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (56,'火樹銀花','國小二年級(上)','火樹：火紅的樹，指樹上掛滿燈彩;銀花：銀白色的花，指燈光雪亮。形容張燈結彩或大放焰火的燦爛夜景。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (57,'數不勝數','國小二年級(上)','數：計算。數都數不過來。形容數量極多，很難計算。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (58,'觀者如堵','國小二年級(上)','堵：牆壁。觀看的人象一堵牆一樣。形容觀看人數眾多。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (59,'張燈結彩','國小二年級(下)','掛上燈籠，系上彩綢。形容節日或有喜慶事情的景象。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (60,'歡聚一堂','國小二年級(下)','歡樂地聚集在一起。示例：人們～，慶祝春節。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (61,'普天同慶','國小二年級(下)','天下的人或全國的人共同慶祝。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (62,'喜氣洋洋','國小二年級(下)','洋洋：得意的樣子。充滿了歡喜的神色或氣氛。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (63,'爭奇鬥豔','國小二年級(下)','奇：奇異;艷：色彩鮮艷。形容百花競放，十分艷麗。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (64,'五彩繽紛','國小二年級(下)','五彩：各種顏色;繽紛：繁多交錯的樣子。指顏色繁多，非常好看。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (65,'色色俱全','國小二年級(下)','各種各樣的東西都很齊全。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (66,'跋山涉水','國小二年級(下)','跋山：翻過山嶺;涉水：用腳趟著水渡過大河。翻山越嶺，趟水過河。形容走遠路的艱苦。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (67,'餐風飲露','國小二年級(下)','形容旅途或野外生活的艱苦。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (68,'賞心悅目','國小二年級(下)','悅目：看了舒服。指看到美好的景色而心情愉快。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (69,'舐犢之愛','國小二年級(下)','舐：舔。犢：小牛。母牛舔小牛表現對它愛護。比喻對子女的疼愛。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (70,'烏鳥私情','國小二年級(下)','烏鳥：古時傳說，小烏能反哺老烏。比喻侍奉尊親的孝心。示例：臣已離家日久，老母現在抱病垂危，望陛下賜臣還鄉，少遂～。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (71,'天倫之樂','國小二年級(下)','天倫：舊指父子、兄弟等親屬關係。泛指家庭的樂趣。示例：這時父親如果能夠保持著相當豐裕的收入，家中當然充滿一片～。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (72,'其樂無窮','國小二年級(下)','其中的樂趣沒有窮盡。指朝廷某一工作，感到樂在其中。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (73,'摩拳擦掌','國小二年級(下)','形容戰鬥或勞動之前，人們精神振奮，躍躍欲試的樣子。示例：這是第一次出馬，人們都～，心裡突突跳著準備戰鬥。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (74,'生龍活虎','國小二年級(下)','形容活潑矯健，富有生氣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (75,'身強力壯','國小二年級(下)','形容身體強壯有力。示例：那時，忠大伯還～，墩實個子，紅臉龐，短鬍子黑裡帶黃。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (76,'銅筋鐵骨','國小二年級(下)','如銅一樣的筋，如鐵一樣的骨。比喻十分健壯的身體。也指能負重任的人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (77,'莘莘學子','國小二年級(下)','莘莘，眾多的樣子。是指學習比較好，學位比較高的，刻苦學習的，比較認真的好學生。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (78,'立雪求道','國小二年級(下)','舊指學生恭敬受教。比喻尊師。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (79,'春風化雨','國小二年級(下)','化：化生和養育。指適宜於草木生長的風雨。比喻良好的薰陶薰陶和教育。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (80,'孺子可教','國小二年級(下)','指年輕人可培養。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (81,'感人肺腑','國小二年級(下)','使人內心深深感動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (82,'可歌可泣','國小二年級(下)','泣，不出聲地流淚。值得歌頌、讚美，使人感動流淚。形容英勇悲壯的感人事跡',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (83,'艱苦卓絕','國小二年級(下)','卓絕：極不平凡。堅忍刻苦的精神超過尋常。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (84,'驚天動地','國小二年級(下)','驚，驚動;動：震撼。使天地驚動。形容某個事件的聲勢或意義。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (85,'披星戴月','國小二年級(下)','身披星星，頭戴月亮。形容連夜奔波或早出晚歸，十分辛苦。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (86,'流星趕月','國小二年級(下)','象流星追趕月亮一樣。形容行動迅速。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (87,'眾星捧月','國小二年級(下)','許多星星襯托著月亮。比喻眾人擁護著一個他們所尊敬愛戴的人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (88,'烘雲托月','國小二年級(下)','烘，渲染;托，襯托。原指一種畫月亮的傳統手法。後比喻從側面渲染以顯示或突出主體。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (89,'大雨滂沱','國小三年級(上)','滂沱：雨大而多的樣子。形容雨下得很大。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (90,'夕陽西下','國小三年級(上)','指傍晚日落時的景象。也比喻遲暮之年或事物走向衰落。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (91,'草長鶯飛','國小三年級(上)','鶯：黃鸝。形容江南暮春的景色。示例：這樣看來，花香鳥語，～，都是大自然的語言。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (92,'連綿不斷','國小三年級(上)','連綿：連續不斷的樣子。形容連續不止，從不中斷。示例：～的高山阻擋我們的去路。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (93,'根深固本','國小三年級(上)','根基牢固，難以動搖。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (94,'澆樹澆根','國小三年級(上)','後半句是交人交心。指要善於抓住問題的關鍵。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (95,'根深葉茂','國小三年級(上)','茂：繁茂。根扎得深，葉子就茂盛。比喻基礎牢固，就會興旺發展。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (96,'高堂廣廈','國小三年級(上)','指高大、寬闊的廳堂、房屋。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (97,'玉宇瓊樓','國小三年級(上)','瓊：美玉;宇：房屋。指月中宮殿，仙界樓台。也形容富麗堂皇的建築物。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (98,'湖光山色','國小三年級(上)','湖的風光，山的景色。指有水有山，風景秀麗。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (99,'雛鷹展翅','國小三年級(上)','雛：幼鳥。幼鷹展開翅膀飛翔。比喻青年人開始獨立生活、工作。示例：大學已經畢業了，這正是他～的時侯。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (100,'意味深長','國小三年級(上)','意味：情調，趣味。意思含畜深遠，耐人尋味。示例：書中所述的人生哲理，～。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (101,'錯落有致','國小三年級(上)','錯落：參差不齊。致：情趣。形容事物的布局雖然參差不齊，但卻極有情趣，使人看了有好感。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (102,'曲徑通幽','國小三年級(上)','曲：彎曲;徑：小路;幽：指深遠僻靜之處。彎曲的小路，通到幽深僻靜的地方。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (103,'千岩競秀','國小三年級(上)','岩：山崖;競：競賽。重山疊嶺的風景好象互相比美。形容山景秀麗。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (104,'萬壑爭流','國小三年級(上)','壑：深溝，借指溪流。許多溪水競相奔流。形容山中勝景。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (105,'雞飛狗跳','國小三年級(上)','把雞嚇得飛起來，把狗嚇得到處亂跳。形容驚慌得亂成一團。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (106,'山崩地裂','國小三年級(上)','山嶽倒塌，大地裂開。形容響聲巨大或變化劇烈。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (107,'驚濤拍岸','國小三年級(上)','洶湧的波濤不斷地向岸邊湧來。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (108,'驕陽似火','國小三年級(上)','強烈的太陽光像火那樣熱，把樹葉都曬蔫了。形容天氣非常炎熱。例：夏天的中午驕陽似火，人們都不願出門。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (109,'形態各異','國小三年級(上)','事物的形狀或表現各不相同。例：元宵燈會上，形態各異的花燈吸引了成千上萬的遊人前去觀賞。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (110,'一碧如洗','國小三年級(上)','藍天仿佛被水沖洗過一樣，非常美麗。例：天空一碧如洗，讓人心曠神怡。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (111,'五彩斑斕','國小三年級(上)','形容顏色燦爛多彩，艷麗奪目。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (112,'波光粼粼','國小三年級(上)','形容波光明凈。波光：陽光或月光照在水波上反射過來的光。粼粼：形容水石明凈。示例：波光粼粼的湖面上，漁帆點點。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (113,'茁壯成長','國小三年級(上)','健康地成長。示例：看到下一代健康活潑地～，為人父母者無不感到十分欣慰。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (114,'競相開放','國小三年級(上)','互相爭著開放。例：春天裡，各種花競相開放。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (115,'稱霸一方','國小三年級(上)','倚仗權勢，欺壓別人，成為一方的霸主。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (116,'連綿起伏','國小三年級(上)','或高或低，接連不斷的樣子。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (117,'滔天巨浪','國小三年級(上)','形容波浪極大。例：海面上掀起了滔天巨浪。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (118,'興風作浪','國小三年級(上)','比喻挑起事端或進行破壞活動。例：孫悟空殺了那條興風作浪的惡龍。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (119,'胡作非為','國小三年級(上)','不顧法紀或輿論，任意行為。例：我們怎麼能容忍他胡作非為呢?',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (120,'唉聲嘆氣','國小三年級(上)','因傷感、煩悶或痛苦而發出的嘆息聲。例：遇到困難只會唉聲嘆氣，是不能解決問題的。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (121,'萬般無奈','國小三年級(上)','形容一點兒辦法都沒有。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (122,'忍辱負重','國小三年級(上)','忍受恥辱，承當重任。指為了一切而承受屈辱。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (123,'以曲求伸','國小三年級(上)','胸有大志，能在逆境中生存。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (124,'發奮圖強','國小三年級(上)','下定決心，努力謀求富強。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (125,'救亡圖存','國小三年級(上)','拯救祖國的危亡。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (126,'臥薪嘗膽','國小三年級(上)','形容人刻苦自勵，立志為國家報仇雪恥。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (127,'催人奮進','國小三年級(上)','激勵人奮發進取。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (128,'羽翼豐滿','國小三年級(上)','羽翼，翅膀，比喻輔佐的人或力量。比喻已經成熟，力量已經壯大。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (129,'報仇雪恨','國小三年級(上)','通過報仇而徹底消除心頭之恨。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (130,'葉落歸根','國小三年級(上)','樹葉總凋落在樹根旁。比喻人或事物都要有一定的歸宿。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (131,'一帆風順','國小三年級(上)',' 船掛著滿帆順風行駛。比喻很順利，沒有任何阻礙。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (132,'老馬識途','國小三年級(上)','比喻有經驗的人能提出解決問題的辦法，起到引導作用。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (133,'目不暇接','國小三年級(上)',' 指東西很多，眼睛都看不過來。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (134,'美不勝收','國小三年級(上)',' 形容好的東西很多，一時看不過來。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (135,'魚貫而人','國小三年級(上)','如魚頭尾相接般連續進入。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (136,'傾巢而出','國小三年級(上)','比喻全部出動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (137,'狼奔豕突','國小三年級(上)','豕：豬。像狼和豬那樣奔跑亂竄。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (138,'群龍無首','國小三年級(上)','比喻人多而沒有領頭的人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (139,'狡兔三窟','國小三年級(上)','狡猾的兔子有三個洞穴。比喻藏身的地方多。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (140,'大街小巷','國小三年級(上)','形容到處都是，覆蓋的地域廣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (141,'人頭攢動','國小三年級(上)','形容人很多。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (142,'風馳電掣','國小三年級(上)','形容非常迅速，急閃而過。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (143,'車水馬龍','國小三年級(上)','形容車馬來往不絕的繁華熱鬧景象。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (144,'華燈初上','國小三年級(上)','夜晚來臨，裝飾精美、光輝燦爛的燈剛剛開放。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (145,'流光溢彩','國小三年級(上)','指燈光絢爛多彩。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (146,'美輪美奐','國小三年級(上)','形容房屋高大華麗，多用來讚美新屋美景。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (147,'巧奪天工','國小三年級(上)','奪：超過。形容製作技藝高超。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (148,'和風細雨','國小三年級(上)','比喻做事態度溫和，方式和緩，不粗暴。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (149,'春風化雨','國小三年級(上)','適於草木生長的風雨，比喻良好的教育。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (150,'呼風喚雨','國小三年級(上)','比喻能夠支配自然。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (151,'櫛風沐雨','國小三年級(上)','形容奔波勞碌，不避風雨。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (152,'見風是雨','國小三年級(上)','比喻只看到一點跡象，就輕率地信以為真。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (153,'淒風苦雨','國小三年級(上)','形容天氣惡劣。比喻境遇悲慘淒涼。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (154,'暴風驟雨','國小三年級(上)','來勢迅猛的風雨。比喻聲勢浩大、發展迅猛的群眾運動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (155,'戎馬一生','國小三年級(上)','一輩子都從事軍事活動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (156,'身經百戰','國小三年級(上)','親身經歷過許多次戰鬥。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (157,'刮骨療毒','國小三年級(上)','用刀在骨頭上刮，來治療骨頭裡的毒。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (158,'傳為美談','國小三年級(上)','被人們廣泛稱道或讚頌。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (159,'約法三章','國小三年級(上)','原指軍隊法紀嚴明，後泛指約好或提出幾條規定，大家共同遵守。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (160,'秋毫無犯','國小三年級(上)','形容軍隊紀律嚴明，對百姓沒有絲毫侵犯。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (161,'運籌帷幄','國小三年級(上)','常指在後方決定作戰方案。泛指主持大計，考慮決策。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (162,'好謀善斷','國小三年級(上)','喜歡出謀劃策，善於作出判斷。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (163,'學海無涯','國小三年級(上)','學習像是在海上航行，沒有邊際，要學的知識無窮無盡。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (164,'書山有路','國小三年級(上)','讀書就像是登山，有路可走的，路徑是什麼?就是勤奮。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (165,'九牛一毛','國小三年級(上)','像是九頭牛身上的一根毛，比喻極大數量中微不足道的數量。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (166,'滄海一粟','國小三年級(上)','大海里的一顆穀粒，形容非常渺小。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (167,'孜孜以求','國小三年級(上)','不斷追求，不知勞累。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (168,'全力以赴','國小三年級(上)','付出所有的精力去做成一件事情。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (169,'百尺竿頭，更進一步','國小三年級(上)','比喻在學問、技術等方面達到了很高的程度後，再繼續努力，向前發展。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (170,'氣象萬千','國小三年級(下)','氣象：情景。形容景象或事物壯麗而多變化。示例：這莊嚴秀麗、～的長江真是美極了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (171,'風雲變幻','國小三年級(下)','象風雲那樣變化不定。比喻時局變化迅速，動向難以預料。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (172,'若隱若現','國小三年級(下)','隱隱約約，看不清楚。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (173,'騰雲駕霧','國小三年級(下)','乘著雲，駕著霧。原是傳說中指會法術的人乘雲霧飛行，後形容奔馳迅速或頭腦發昏。示例：這簡直不是馬，是一條～的白龍!一條白龍。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (174,'飄飄欲仙','國小三年級(下)','欲：將要。飄飛上升，像要超脫塵世而成仙。多指人的感受輕鬆爽快。亦形容詩文、書法等的情致輕快飄逸。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (175,'白雲蒼狗','國小三年級(下)','蒼：灰白色。浮雲象白衣裳，頃刻又變得象蒼狗。比喻事物變化不定。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (176,'瞬息萬變','國小三年級(下)','瞬：一眨眼;息：呼吸。在極短的時間內就有很多變化。形容變化很多很快。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (177,'有利可圖','國小三年級(下)','圖：謀求.有利益可謀求.',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (178,'有機可乘','國小三年級(下)','機：機會.乘：趁.有機會可以利用,指有空子可以鑽.',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (179,'有根有底','國小三年級(下)','有開始也有結尾.指做事能夠堅持到底.',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (180,'有始有終','國小三年級(下)','有開頭也有收尾。指做事能堅持到底。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (181,'有口難言','國小三年級(下)','有話不便說或不敢說.',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (182,'有恃無恐','國小三年級(下)','因為有依靠而不害怕,沒有顧忌.多含貶義.',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (183,'有求必應','國小三年級(下)','只要有人請求幫助,就一定答應.',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (184,'有志竟成','國小三年級(下)','指只要意志堅定,事情一定能夠辦成.',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (185,'風華正茂','國小三年級(下)','風華：風采和才華。茂：旺盛。風采和才華正茂盛。形容青年朝氣蓬勃、奮發有為的精神面貌。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (186,'出類拔萃','國小三年級(下)','出：超出。類：同類。拔：高出。萃：指聚在一起的人或物。人的品德才能出眾，高出同類之上。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (187,'才思敏捷','國小三年級(下)','形容人思維敏捷，才華出眾。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (188,'後生可畏','國小三年級(下)','年輕人是新生力量，很可能超過前人，因而值得敬畏。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (189,'文思如泉','國小三年級(下)','行文思路像泉水奔涌那樣迅速、豐富、流暢。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (190,'手不停揮','國小三年級(下)','手不停地揮寫。形容文思敏捷，寫作極快。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (191,'筆下生花','國小三年級(下)','形容文章寫得很出色。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (192,'力透紙背','國小三年級(下)','形容書法繪畫筆力遒勁有力。也形容詩文作品深刻有力。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (193,'精妙絕倫','國小三年級(下)','精：精巧。絕倫：無與倫比。精巧美妙到了極點。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (194,'爐火純青','國小三年級(下)','純：純粹。道士煉丹，認為煉到爐里發出純青色的火焰就算成功了。後用來比喻功夫達到了純熟完美的境界。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (195,'活靈活現','國小三年級(下)','形容神情逼真，使人感到好象親眼看到一般。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (196,'栩栩如生','國小三年級(下)','栩栩：活潑生動的樣子。指藝術形象非常逼真，如同活的一樣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (197,'夢筆生花','國小三年級(下)','比喻寫作能力大有進步。也形容文章寫得很出色。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (198,'渾然天成','國小三年級(下)','形容詩文結構嚴密自然，用詞運典毫無斧鑿痕跡。亦形容人的才德完美自然。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (199,'斗酒百篇','國小三年級(下)','飲一斗酒，作百篇詩。形容才思敏捷。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (200,'鬼斧神工','國小三年級(下)','象是鬼神製作出來的。形容藝術技巧高超，不是人力所能達到的。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (201,'自強不息','國小三年級(下)','自強：自己努力向上;息：停止。自覺地努力向上，永不鬆懈。例：一個國家要想強盛，必須要有～的精神。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (202,'忍辱負重','國小三年級(下)','忍受委屈，承擔重任。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (203,'始終如一','國小三年級(下)','自始至終都一樣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (204,'飛沙走石','國小三年級(下)','沙土飛揚，石塊滾動。形容風勢狂暴。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (205,'志在千里','國小三年級(下)','有遠大的抱負和理想。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (206,'義無反顧','國小三年級(下)','義：道義。反顧：回頭看。指為了正義事業而勇往直前，毫無猶豫。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (207,'堅定不移','國小三年級(下)','形容人立場、觀點、主張等固定專一，毫無動搖。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (208,'坐觀成敗','國小三年級(下)','指冷眼旁觀別人的成功失敗而不幫助。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (209,'按兵不動','國小三年級(下)','控制軍隊，使暫時不行動，以等待時機。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (210,'操之過急','國小三年級(下)','操：辦理，從事。急：急噪。辦事過於急噪。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (211,'輕舉妄動','國小三年級(下)','輕：輕率，不慎重。妄：隨便，胡亂。指未經慎重考慮，輕率、盲目地採取行動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (212,'興風作浪','國小三年級(下)','作：興起。比喻煽動挑撥，製造事端。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (213,'蠢蠢欲動','國小三年級(下)','蠢蠢：蟲子爬動的樣子。形容像蟲子一樣緩慢移動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (214,'雷厲風行','國小三年級(下)','像打雷那樣猛烈，像颳風那樣迅速。形容做事聲勢猛烈，行動迅速。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (215,'聞風而動','國小三年級(下)','聽到風聲或消息就立刻行動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (216,'煙波浩渺','國小三年級(下)','煙波：霧靄蒼茫的水面;浩渺：水面遼闊。形容煙霧籠罩的江湖水面廣闊無邊。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (217,'談笑風生','國小三年級(下)','有說有笑，興致高。形容談話談得高興而有風趣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (218,'一帆風順','國小三年級(下)','船掛著滿帆順風行駛。比喻非常順利，沒有任何阻礙。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (219,'風平浪靜','國小三年級(下)','指沒有風浪。比喻平靜無事。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (220,'鷗水相依','國小三年級(下)','比喻離不開賴以生存的環境。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (221,'心曠神怡','國小三年級(下)','心情舒暢，精神愉快。例：站在紫金山頂，一切盡受眼底，令人心曠神怡。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (222,'揠苗助長','國小三年級(下)','把苗拔起來，幫助苗快長。比喻違反事物的發展規律，急於求成，只能事與願違。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (223,'杯弓蛇影','國小三年級(下)','比喻疑神疑鬼，自相驚擾。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (224,'螳螂捕蟬，黃雀在後','國小三年級(下)','螳螂正要捉蟬，不知黃雀在它後面正要吃它。比喻目光短淺，只想到算計別人，沒想到別人在算計他。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (225,'鷸蚌相爭','國小三年級(下)','「鷸蚌相爭，漁翁得利」的省語。比喻雙方相持不下，而使第三者從中得利。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (226,'鄭人買履','國小三年級(下)','用來諷刺只信教條，不顧實際的人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (227,'葉公好龍','國小三年級(下)','葉公：春秋時楚國貴族，名子高，封於葉(古邑名，今河南葉縣)。比喻口頭上說愛好某事物，實際上並不真愛好。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (228,'狐假虎威','國小三年級(下)','假：憑藉。比喻倚仗別人的威勢嚇唬人，欺壓人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (229,'黔驢技窮','國小三年級(下)','黔：今貴州省一帶;技：技能;窮：盡。比喻有限的一點本領也已經用完了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (230,'文思敏捷','國小四年級(上)','指寫文章的靈感和思路非常順暢。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (231,'聰明過人','國小四年級(上)','形容人資質穎慧，超過一般人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (232,'青出於藍','國小四年級(上)','比喻學生超過老師或後人勝過前人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (233,'一鳴驚人','國小四年級(上)','比喻平時沒有突出的表現，一下子做出驚人的成績。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (234,'桃李爭艷','國小四年級(上)','指春天桃花和李花爭相開放。形容春光美麗。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (235,'後繼有人','國小四年級(上)','有後人繼承前人的事業。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (236,'十年樹木，百年樹人','國小四年級(上)','樹，種植。比喻培養人才是長久之計，也表示培養人才很不容易。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (237,'以身許國','國小四年級(上)','把自己獻給國家，忠心報國。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (238,'碧血丹心','國小四年級(上)','珍貴的熱血，赤誠的忠心。用以稱頌為正義事業犧牲的烈士。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (239,'疾惡如仇','國小四年級(上)','痛恨壞人壞事就跟對待仇敵一樣。形容正義感極強。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (240,'大義滅親','國小四年級(上)','為了維護正義，對犯罪的親屬不徇私情，使其受到法律的制裁。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (241,'敢怒敢言','國小四年級(上)','心裡憤怒也敢講出來。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (242,'憂國憂民','國小四年級(上)','憂慮國家的命運和人民的疾苦。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (243,'橫眉冷對','國小四年級(上)','形容對敵人堅決鬥爭，決不屈服。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (244,'浩氣長存','國小四年級(上)','正大剛直的精神，永遠長存。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (245,'湖光山色','國小四年級(上)','山水的風光和景色。形容美好的自然風景。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (246,'人間天堂','國小四年級(上)','比喻人世間極其幸福美好的生活環境。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (247,'明月清風','國小四年級(上)','本指皎潔的圓月，清爽的微風。後指擺脫塵世羈絆的悠閒生活。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (248,'桂子飄香','國小四年級(上)','桂花散發著濃濃清香。形容秋天的佳景。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (249,'水光接天','國小四年級(上)','水的光色與天的光色相連接。指水域寬廣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (250,'相得益彰','國小四年級(上)','兩者相互配合協調，雙方的優點和長處就更能顯露出來。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (251,'江山如畫','國小四年級(上)','比喻山河美麗如畫。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (252,'魚米之鄉','國小四年級(上)','盛產魚和米的鄉村。泛指農副水產豐富的地方。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (253,'混沌不分','國小四年級(上)','指天地渾然一體，分不清楚。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (254,'昏天黑地','國小四年級(上)','形容天色昏暗。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (255,'大刀闊斧','國小四年級(上)','比喻辦事果斷而有魄力。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (256,'開天闢地','國小四年級(上)','比喻開創歷史，也比喻前所未有。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (257,'與日俱增','國小四年級(上)','形容不斷增長或增長速度很快。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (258,'頂天立地','國小四年級(上)','形容形象高大，氣概雄偉豪邁。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (259,'變化萬端','國小四年級(上)','形容變化的項目、樣子極多。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (260,'改天換地','國小四年級(上)','指從根本上改變大自然，也比喻巨大變革。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (261,'學富五車','國小四年級(上)','形容讀書多，學問淵博。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (262,'滿腹經綸','國小四年級(上)','形容很有學問和才能。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (263,'學貫中西','國小四年級(上)','有關中西方的學問都通曉。形容學問淵博。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (264,'博古通今','國小四年級(上)','對古代的事知道很多，又通曉現代的事情。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (265,'功成名就','國小四年級(上)','功業建立了，名譽也就有了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (266,'著作等身','國小四年級(上)','著述之多，堆起來和身體一樣高。形容著作極豐。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (267,'溫文爾雅','國小四年級(上)','態度溫和，舉止文雅端莊。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (268,'文質彬彬','國小四年級(上)','原形容人既文雅又樸實，後來形容人文雅有禮貌。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (269,'肝膽相照','國小四年級(上)','比喻以真心相見，赤誠相待。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (270,'開誠相見','國小四年級(上)','跟人接觸時，誠懇地對待。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (271,'同舟共濟','國小四年級(上)','同乘一條船過河。比喻團結一致，共同戰勝困難。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (272,'心照不宣','國小四年級(上)','彼此心裡明白而不需要說出來。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (273,'志同道合','國小四年級(上)','志向相同，意見相合。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (274,'親密無間','國小四年級(上)','形容非常親密，沒有任何隔閡。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (275,'榮辱與共','國小四年級(上)','光榮和恥辱一同承擔。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (276,'唇亡齒寒','國小四年級(上)','嘴唇沒有了，牙齒就會覺得冷。比喻關係密切，利害相關。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (277,'春滿人間','國小四年級(上)','整個人間都瀰漫著春的氣息。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (278,'欣欣向榮','國小四年級(上)','形容草木長得茂盛。也比喻事業蓬勃發展、興旺昌盛。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (279,'千帆競發','國小四年級(上)','許多船隻爭著出發前行，形容聲勢浩大。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (280,'萬馬奔騰','國小四年級(上)','形容聲勢浩大，進展迅速，氣氛熱烈。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (281,'六畜興旺','國小四年級(上)','六蓄指牛、馬、羊、雞、犬、豕。比喻養殖業興旺發達。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (282,'五穀豐登','國小四年級(上)','五穀指稻、黍(小米)、稷(高粱)、麥、菽(豆)，泛指農作物。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (283,'國泰民安','國小四年級(上)','國家太平，人民生活安定。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (284,'人壽年豐','國小四年級(上)','人健康，年成好，形容生活安樂美好。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (285,'春深似海','國小四年級(下)','春天美麗的景色像大海一樣深廣。形容大地上到處充滿明媚的春光。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (286,'風月無邊','國小四年級(下)','形容美好的景色。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (287,'世外桃源','國小四年級(下)','指不受外界影響的生活安樂而環境幽美的地方或幻想中的脫離現實的場所或境地。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (288,'山外有山','國小四年級(下)','形容群山環繞的景象。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (289,'飛瀑流泉','國小四年級(下)','瀑布飛瀉，泉水流淌。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (290,'古木參天','國小四年級(下)','古老的樹木高聳在天空中。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (291,'詩情畫意','國小四年級(下)','詩畫一般的美好意境。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (292,'蔚為壯觀','國小四年級(下)','豐富多彩，成為盛大的景象。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (293,'淺嘗輒止','國小四年級(下)','形容對事物不深入鑽研，不求甚解。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (294,'囫圇吞棗','國小四年級(下)','不加咀嚼，不辨滋味，把棗整個兒吞下去。比喻不加分析，不求理解，生吞活剝。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (295,'浮光掠影','國小四年級(下)','比喻印象很不深刻，像水面的反光和一閃而過的影子，一晃就過去了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (296,'不甚了了','國小四年級(下)','不很明白地就結束了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (297,'天道酬勤','國小四年級(下)','上天會酬報勤奮的人。指下了苦功夫必然會有成就。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (298,'熟能生巧','國小四年級(下)','技能熟練就會產生靈巧的辦法。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (299,'尋根問底','國小四年級(下)','尋求根源，追究底細，形容什麼事都要問個所以然。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (300,'無所不曉','國小四年級(下)','沒有什麼不知道的。形容人廣見博識。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (301,'挺身而出','國小四年級(下)','形容不避艱險，勇敢地站出來。例：面對險情，解放軍戰士挺身而出，保護國家財產和人民的生命安全。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (302,'兩全其美','國小四年級(下)','做一件事顧全兩方面，使兩方面都好。例：做家務事，既可以鍛鍊自己獨立生活的能力，又能減輕父母的負擔，這不是兩全其美嗎?',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (303,'初出茅廬','國小四年級(下)','初次出來做事。或比喻剛參加工作缺乏經驗，還很幼稚。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (304,'才華橫溢','國小四年級(下)','才能充分顯露。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (305,'料事如神','國小四年級(下)','形容預料未來的事情非常準確。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (306,'膽大心細','國小四年級(下)','做事既果斷又謹慎。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (307,'鞠躬盡瘁，死而後已','國小四年級(下)','竭盡全力去效勞，一直到死為止。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (308,'獨木難支','國小四年級(下)','比喻崩潰之形勢，非一個人的力量所能支持、挽救。也比喻艱巨的事情非一個人所能勝任。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (309,'回天無力','國小四年級(下)','比喻無法挽回嚴重的局勢或病情。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (310,'白衣天使','國小四年級(下)','是人們對醫護工作者的尊稱。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (311,'玉潔冰清','國小四年級(下)','像玉和冰一樣潔凈。比喻人的操行潔白。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (312,'救死扶傷','國小四年級(下)','救活快要死的人，幫助受傷的人。形容醫務工作者全心全意為人民服務的精神。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (313,'處變不驚','國小四年級(下)','面對變亂，能鎮定自若，不驚慌。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (314,'萬眾一心','國小四年級(下)','千千萬萬的人一條心。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (315,'眾志成城','國小四年級(下)','大家同心協力，就像城牆一樣的牢固。比喻大家團結一致，就能克服困難，得到成功。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (316,'含辛茹苦','國小四年級(下)','經受艱辛困苦。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (317,'捨生忘死','國小四年級(下)','形容不顧生命危險。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (318,'倦鳥知還','國小四年級(下)','累了的小鳥知道回到巢中。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (319,'成群結隊','國小四年級(下)','人們聚集起來成了群，結合成了隊伍。形容人很多。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (320,'一唱一和','國小四年級(下)','一人唱歌，一人附合。比喻雙方彼此呼應，互相配合。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (321,'呼朋引類','國小四年級(下)','招呼朋友，帶領同類。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (322,'歡呼雀躍','國小四年級(下)','高興得大叫起來，像麻雀似的跳躍著。形容歡樂的情景。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (323,'如痴如醉','國小四年級(下)','形容入迷的樣子。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (324,'夜深人靜','國小四年級(下)','夜深了，沒有人聲，一片寂靜。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (325,'昏昏欲睡','國小四年級(下)','昏沉沉的想睡覺。形容極其疲勞或精神萎靡不振的樣子。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (326,'欲言又止','國小四年級(下)','想說話卻又住口了。形容吞吞吐吐的樣子。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (327,'吞吞吐吐','國小四年級(下)','形容有顧慮，有話不敢直說或說話含混不清。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (328,'閃爍其詞','國小四年級(下)','形容說話吞吞吐吐，不肯坦率地把意見講清楚。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (329,'支支吾吾','國小四年級(下)','說話含混躲閃。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (330,'口若懸河','國小四年級(下)','說話滔滔不絕，如河水不斷奔涌流瀉。形容能言善辯。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (331,'妙語連珠','國小四年級(下)','美妙的語言有如晶瑩圓 的珍珠。形容語言很精彩。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (332,'高談闊論','國小四年級(下)','說說笑笑，談得很有趣味。形容談話興致很高，氣氛活躍，又有風趣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (333,'眉飛色舞','國小四年級(下)','形容人喜悅或得意的神態。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (334,'繼往開來','國小四年級(下)','繼承前人的事業，為未來開闢道路。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (335,'革故鼎新','國小四年級(下)','除去舊的，建立新的。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (336,'一衣帶水','國小四年級(下)','像一條衣帶那樣寬的水。形容一水之隔，極其鄰近。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (337,'以德為鄰','國小四年級(下)','跟美德做鄰居。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (338,'唯才是舉','國小四年級(下)','推薦人才，只根據他的才能。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (339,'知人善任','國小四年級(下)','能識別人的賢愚善惡，能很好地使用人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (340,'科教興國','國小四年級(下)','搞好科學技術和教育才能振興國家。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (341,'與時俱進','國小四年級(下)','與時代的步伐一起前進。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (342,'刻舟求劍','國小五年級(上)','比喻死心眼，不懂得變通。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (343,'守株待兔','國小五年級(上)','株，樹樁子。比喻不經過努力而想獲得成功的僥倖心理。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (344,'螳臂當車','國小五年級(上)','當，阻擋。比喻自不量力去做辦不到的事，必然失敗。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (345,'濫竽充數','國小五年級(上)','比喻沒有真才實學的人混在行家裡充數，或拿不好的東西混在好的東西里充數。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (346,'掩耳盜鈴','國小五年級(上)','比喻自己欺騙自己，明明掩蓋不住的事情偏要想法子掩蓋。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (347,'買櫝還珠','國小五年級(上)','櫝，木匣子。比喻沒有眼光，取捨不當。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (348,'東施效顰','國小五年級(上)','顰，皺眉。比喻胡亂模仿，效果很壞。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (349,'邯鄲學步','國小五年級(上)','比喻模仿別人不成，反而喪失了原有的技能。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (350,'哀鴻遍野','國小五年級(上)','悲鳴的大雁遍布原野。比喻到處都是流離失所的災民。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (351,'劫富濟貧','國小五年級(上)','劫，奪取。奪取富人的財產，救濟窮人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (352,'鋌而走險','國小五年級(上)','鋌，快跑的樣子。因走投無路而採取冒險行動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (353,'兵來將擋，水來土掩','國小五年級(上)','敵軍來了，就派將官率軍抵擋;洪水來了，就用土築壩攔截。比喻對待不同的情況採用不同的態度。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (354,'替天行道','國小五年級(上)','代替上天執行正道，即按照天意，在人世間做正義的事。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (355,'志存高遠','國小五年級(上)','形容志向遠大。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (356,'風流瀟洒','國小五年級(下)','瀟洒，行動舉止自然大方。指英俊有才幹，氣度大方自然。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (357,'氣宇軒昂','國小五年級(下)','軒昂，氣度不凡。形容人的精神飽滿，氣度不凡。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (358,'溫文爾雅','國小五年級(下)','態度溫和，舉止文雅。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (359,'儀態萬方','國小五年級(下)','形容姿態美麗多姿。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (360,'神采奕奕','國小五年級(下)','奕奕，精神煥發的樣子。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (361,'滿面紅光','國小五年級(下)','形容人的臉色紅潤，有光澤。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (362,'威風凜凜','國小五年級(下)','凜，嚴肅。形容氣勢威嚴，令人生畏。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (363,'相貌堂堂','國小五年級(下)','堂堂，儀容端正，有威嚴。形容人的容貌莊嚴大方。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (364,'風度翩翩','國小五年級(下)','翩翩，輕快地飛舞的樣子。指人的舉止洒脫，姿態優美。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (365,'落落大方','國小五年級(下)','落落：開朗，坦率。形容性格開朗，言談舉止自然，不拘謹。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (366,'處之泰然','國小五年級(下)','對待發生的緊急情況或困難安然自得，毫不在乎。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (367,'習以為常','國小五年級(下)','常做某種事情或常見某種現象成了習慣，就覺得很平常了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (368,'令出如山','國小五年級(下)','命令一出，就像山一樣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (369,'振臂一呼','國小五年級(下)','揮動手臂，一聲號召。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (370,'浩浩蕩蕩','國小五年級(下)','形容水勢廣闊浩大，或形容氣勢雄偉，規模宏大。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (371,'絡繹於途','國小五年級(下)','絡繹，往來不斷，前後相續。形容沿途過往的人馬車船接連不斷。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (372,'驚濤駭浪','國小五年級(下)','令人驚懼的大波浪。比喻險惡的環境遭遇或艱難的考驗。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (373,'水土不服','國小五年級(下)','出門在外，不適應當地的氣候、飲食、習慣而產生一些病。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (374,'講和通好','國小五年級(下)','指相互和解，並建立友好的關係。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (375,'觀風問俗','國小五年級(下)','指觀察了解風俗人情。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (376,'奇珍異寶','國小五年級(下)','奇異的珍寶。形容稀有的、難得的寶物。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (377,'互通有無','國小五年級(下)','用自己有的交換自己沒有的。指相互交換。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (378,'五湖四海','國小五年級(下)','泛指全國各地。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (379,'心悅誠服','國小五年級(下)','心裡喜悅而真誠佩服。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (380,'頭頭是道','國小五年級(下)','形容說話很有條理而且有理有據;做事有條不紊，很有辦法。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (381,'娓娓而談','國小五年級(下)','娓娓，說話連續不倦的樣子。形容說話不知疲倦，婉轉生動。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (382,'信口開河','國小五年級(下)','不經思索，不負責任地隨口亂說。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (383,'誇誇其談','國小五年級(下)','誇誇，說大話。說話或寫文章浮誇，不切實際。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (384,'理直氣壯','國小五年級(下)','理由正確充分，說話氣勢旺盛。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (385,'侃侃而談','國小五年級(下)','侃侃，說話從容不迫的樣子。從容不迫、理直氣壯地談論。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (386,'胡編亂造','國小五年級(下)','隨意編造、胡說。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (387,'無稽之談','國小五年級(下)','稽，查考。沒有根據，無從查考的話。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (388,'海闊天空','國小五年級(下)','比喻想像說話等無拘無束，漫無邊際。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (389,'無所不談','國小五年級(下)','什麼話都說。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (390,'拾人牙慧','國小五年級(下)','拾取人家的隻言片語當作自己的話。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (391,'老生常談','國小五年級(下)','老生，指年老的書生。原指老書生的平凡議論，今指很平常的老話。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (392,'一元復始','國小五年級(下)','新的一年又開始了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (393,'萬象更新','國小五年級(下)','宇宙間一切景象都更換了新貌，顯出一派生氣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (394,'桃紅柳綠','國小五年級(下)','桃花嫣紅，柳枝碧綠。用來形容花木繁盛、色彩鮮艷的春景。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (395,'芳草如茵','國小五年級(下)','花草密密的，如鋪上一層墊子。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (396,'萬里無云','國小五年級(下)','天空一點雲彩也沒有，形容非常晴朗。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (397,'風雪交加','國小五年級(下)','交加，兩種事物同時出現。風和雪一起襲來，用來比喻天氣惡劣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (398,'寒氣襲人','國小五年級(下)','寒冷的空氣或氣流向人撲過來。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (399,'歲月如流','國小五年級(下)','指時間像流水一樣匆匆流逝。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (400,'一刻千金','國小五年級(下)','短暫的時間價值千金，形容時間極其珍貴。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (401,'生旦凈丑','國小六年級(上)','指戲曲表演中的角色。「生」指男子;「旦」指女子;「凈」指花臉;「丑」指小丑。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (402,'喜聞樂見','國小六年級(上)','喜歡聽，樂意看。指很受歡迎。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (403,'粉墨登場','國小六年級(上)','原指演戲前塗上粉或墨，登場演戲。後比喻某些人喬裝打扮後登上政治舞台，帶譏諷之意。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (404,'鑼鼓喧天','國小六年級(上)','敲鑼打鼓的聲音響徹天空。形容歡樂喜慶的氣氛。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (405,'唱念做打','國小六年級(上)','戲曲表演中的四種基本功。泛指要有紮實的基礎，才能做好事。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (406,'有板有眼','國小六年級(上)','音樂戲曲的曲調、唱腔合乎節拍，比喻言語行動有條不紊，富有節奏或章法。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (407,'餘音繞樑','國小六年級(上)','音樂停止後，餘音仿佛正在繞著屋樑迴旋。形容歌聲或音樂優美動聽，耐人回味。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (408,'字正腔圓','國小六年級(上)','指唱戲、唱歌或念白、朗讀時吐字清晰準確，腔調圓潤悅耳。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (409,'惟妙惟肖','國小六年級(上)','形容描寫或模仿得非常好，非常逼真。惟，助詞;肖，相似。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (410,'活靈活現','國小六年級(上)','形容描述或模仿的人或事物非常逼真，使人感到好像親眼看到一樣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (411,'感人肺腑','國小六年級(上)','使人內心深受感動。肺腑，內心深處。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (412,'動人心弦','國小六年級(上)','把心比作琴，撥動了心的弦，形容事物激動人心。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (413,'寒冬臘月','國小六年級(下)','冬季最寒冷的時候。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (414,'北國風光','國小六年級(下)','祖國北方的美麗風景。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (415,'風刀霜劍','國小六年級(下)','寒風像刀，嚴霜像劍，形容氣候寒冷，刺人皮膚。比喻惡劣的環境。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (416,'塞外邊疆','國小六年級(下)','邊界上險要的地方，形容地處邊遠。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (417,'漫天飛舞','國小六年級(下)','滿天地飛舞。形容數量極多。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (418,'紛紛揚揚','國小六年級(下)','形容雪花飄落的樣子。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (419,'銀裝素裹','國小六年級(下)','形容一片潔白的雪後場景。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (420,'雪照雲光','國小六年級(下)','雪地上面天空中的白色光亮，比冰映光要亮。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (421,'狂風暴雪','國小六年級(下)','指大風大雪。也比喻猛烈的聲勢或處境險惡。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (422,'雪上加霜','國小六年級(下)','比喻一再遭受災難，損害愈加嚴重。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (423,'風捲殘雲','國小六年級(下)','比喻一下子消滅得乾乾淨淨。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (424,'神清氣爽','國小六年級(下)','形容人神志清爽，心情舒暢。也形容人長得神志清明，氣質爽朗。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (425,'齊天大聖','國小六年級(下)','指神通廣大的人。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (426,'大鬧天宮','國小六年級(下)','給當時所處環境造成大的破壞。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (427,'不避艱險','國小六年級(下)','不畏懼艱難險阻。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (428,'西天取經','國小六年級(下)','唐僧到西天取得經書，比喻克服困難達到目標。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (429,'騰雲駕霧','國小六年級(下)','原指傳說中利用法術乘雲霧飛行，現形容奔馳迅速或頭腦迷糊，感到身體輕飄飄的。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (430,'來去無蹤','國小六年級(下)','來時去時都看不見蹤影。形容出沒極為迅速或隱蔽。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (431,'千變萬化','國小六年級(下)','形容變化極多。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (432,'大顯神通','國小六年級(下)','形容充分顯示出高明的本領。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (433,'明察秋毫','國小六年級(下)','比喻為人非常精明，任何小問題都看得很清楚。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (434,'火眼金睛','國小六年級(下)','形容人眼光銳利，能夠識別真偽。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (435,'除惡務盡','國小六年級(下)','消除壞人壞事或邪惡勢力必須徹底。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (436,'天下太平','國小六年級(下)','處處平安無事。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (437,'水滴石穿','國小六年級(下)','比喻力量雖小，只要堅持不懈，事情就能成功。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (438,'一心一意','國小六年級(下)','思想、意念專一。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (439,'感激涕零','國小六年級(下)','因感激而流淚，形容非常感激。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (440,'百感交集','國小六年級(下)','各種各樣的感觸交織在一起。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (441,'深思熟慮','國小六年級(下)','深入細緻地考慮。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (442,'匪夷所思','國小六年級(下)','夷，平常。指事物怪異或人的言行離奇，不是一般人按照常理所能想像的。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (443,'時光荏苒','國小六年級(下)','時間漸漸過去了。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (444,'白駒過隙','國小六年級(下)','形容時間過得飛快，像小白馬在細小的縫隙前一閃而過。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (445,'鑑往知來','國小六年級(下)','審查過去，就可以推斷未來。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (446,'莫衷一是','國小六年級(下)','不能得出一致的結論。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (447,'迷途知返','國小六年級(下)','迷路後知道回來。比喻犯了錯誤能改正。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (448,'恍如隔世','國小六年級(下)','好像隔了一世，多用來形容對時間的變遷、事物的巨大變化的感慨。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (449,'學而不厭','國小六年級(下)','厭，滿足。學習總感到不滿足。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (450,'苦心孤詣','國小六年級(下)','指苦心鑽研，到了別人所達不到的地步。也指為尋求解決問題的辦法而煞費苦心。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (451,'聞過則喜','國小六年級(下)','指聽見別人指出自己的錯誤就很開心。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (452,'見賢思齊','國小六年級(下)','指見到有德行的人就向他看齊。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (453,'有教無類','國小六年級(下)','類，類別。指不管什麼人都可以受到教育。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (454,'不偏不倚','國小六年級(下)','倚，偏。指不偏向任何一方。表示中立或公正。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (455,'誨人不倦','國小六年級(下)','誨，教導。教導人特別耐心，從不厭倦。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (456,'樂此不疲','國小六年級(下)','因酷愛干某事而不感到厭煩。形容對某事特別愛好而沉浸其中。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (457,'托物言志','國小六年級(下)','指通過描寫客觀事物，寄託、傳達作者的某種感情、抱負和志趣。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (458,'喻之以理','國小六年級(下)','將自然界的事物作為描摹對象，在對事物細緻入微的描寫中來闡明客觀存在的事理。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (459,'逝者如斯','國小六年級(下)','時間就像這奔流的河水一樣，不論白天黑夜不停地流逝。寓意光陰似流水一樣一去不回，要倍加珍惜。',0)");
+// tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (460,'川流不息','國小六年級(下)','川，河流。形容行人、車馬等像水流一樣連續不斷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (461,'如臨大敵','國中','形容心神緊張，處於戒備狀態。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (462,'一日千里','國中','形容進步神速，或說明事業發展得很快。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (463,'安步當車','國中','形容刻苦安貧或指不著急、不慌忙地徒步行走。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (464,'不毛之地','國中','比喻貧瘠不能種植的土地。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (465,'熙熙攘攘','國中','形容人來人往、紛亂熱鬧的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (466,'牛刀小試','國中','比喻大才初次任職，就已顯露出他的才幹。或比喻大的才幹、能力。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (467,'削足適履','國中','比喻不合理的遷就湊合，或指拘泥不知變通。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (468,'割席絕交','國中','三國魏管寧發覺其友華歆貪鄙，便分開坐席與他絕交的故事。用以稱朋友之間因意氣不投、志趣不合',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (469,'力透紙背','國中','而絕交。形容書法遒勁有力，或指寫作詩、文功力深厚。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (470,'功成身退','國中','表示不貪名利，多用於官場。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (471,'春樹暮雲','國中','比喻想念遠方的朋友。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (472,'昭然若揭','國中','形容事物真相畢露，明白清楚。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (473,'朝秦暮楚','國中','比喻反覆無常。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (474,'木雕泥塑','國中','比喻神情呆滯有如木刻或泥捏的偶像。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (475,'未雨綢繆','國中','比喻事先取預防措施，或事先做好準備。綢繆，音ㄔㄡˊㄇㄡˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (476,'杯水車薪','國中','比喻力量太小，無濟於事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (477,'瑕瑜互見','國中','比喻人或事物各有其長處和短處。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (478,'瓦釜雷鳴','國中','比喻小人得志。釜，音ㄈㄨˇ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (479,'甘瓜苦蒂','國中','比喻天下沒有絕對完美的人或事物。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (480,'生花妙筆','國中','比喻具有傑出的寫作才能，所寫作品生動優美。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (481,'略識之無','國中','表示粗通文墨，並無高深學識。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (482,'當頭棒喝','國中','比喻某事給人嚴重教訓，使人醒悟。喝，音ㄏㄜˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (483,'疾風勁草','國中','比喻只有經過嚴峻的考驗，才知道誰真正堅強而不改節操。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (484,'相形見絀','國中','形容跟同類事物相比較，顯出不足。絀，音ㄔㄨˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (485,'風木之思','國中','比喻父母亡故，兒女不得奉養的悲傷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (486,'眾口鑠金','國中','形容輿論的力量大。也指眾多的流言，足以顛倒是非，混淆黑白。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (487,'眾志成城','國中','比喻集合眾人的力量，可以成就許多事情。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (488,'神氣活現','國中','形容人或物生氣勃勃的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (489,'秀外慧中','國中','形容人外貌清秀，內心聰慧。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (490,'秋扇見捐','國中','扇子到秋天無用而被棄置。比喻婦人因年老色衰而見棄。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (491,'窮兵黷武','國中','形容好戰不止。黷，音ㄉㄨˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (492,'行雲流水','國中','比喻純任自然，毫無拘束。多用以形容文章或藝術等。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (493,'克紹箕裘','國中','比喻子孫繼承父祖的遺業。箕，音ㄐㄧ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (494,'相濡以沫','國中','比喻在窮困時，彼此互助互濟。濡，音ㄖㄨˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (495,'斐然成章','國中','形容文采可觀。斐，音ㄈㄟˇ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (496,'鶼鰈情深','國中','形容夫婦感情深厚。鶼鰈，音ㄐㄧㄢㄉㄧㄝˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (497,'開誠佈公','國中','誠意待人，坦白無私。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (498,'躊躇滿志','國中','沾沾自喜、得意洋洋的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (499,'胸有成竹','國中','喻處事有定見。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (500,'腹笥甚窘','國中','比喻學識淺薄不深厚。笥，音ㄙˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (501,'宏儒碩學','國中','有大名聲、大學問的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (502,'奇貨可居','國中','比喻事物值得保存，以待往後利用，或以好價錢賣出去。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (503,'古道熱腸','國中','形容為人心腸好，能熱心幫助別人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (504,'出爾反爾','國中','指心意無定，反覆無常；或指你怎麼對待人家，人家亦用同樣方式回報你。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (505,'中流砥柱','國中','指力挽狂瀾，獨立不撓的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (506,'萬人空巷','國中','形容群眾參與某種活動的盛況。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (507,'莫衷一是','國中','形容意見分歧，難有定論。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (508,'叱咤風雲','國中','形容氣勢威力很大，可以控制整個局勢。叱咤，音ㄔˋㄓㄚˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (509,'司空見慣','國中','比喻常見的事物或現象，不足為奇。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (510,'剛柔並濟','國中','多用以指人待人處事寬猛結合，恩威並用。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (511,'奔車朽索','國中','用腐朽的繩索去駕馭狂奔的馬車。比喻隨時都會發生危險，應多加警惕小心。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (512,'孜孜矻矻','國中','孜，音ㄗ。矻，音ㄎㄨˋ。形容人勤奮不息。。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (513,'宵衣旰食','國中','旰，音ㄍㄢˋ，晚也。天未亮就穿衣起床，到很晚才吃飯。比喻人勤於事務，無暇顧及寢食生活。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (514,'寅吃卯糧','國中','比喻入不敷出，預先透支。卯，音ㄇㄠˇ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (515,'布帛菽粟','國中','布帛為日常所著，豆粟為日常所食，均衣食生活之必需品。比喻極平常而不可缺少之物。菽粟，音ㄕㄨˊㄙㄨˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (516,'恆河沙數','國中','佛家語。印度恆河裏的沙多得不可勝數。比喻為數甚多。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (517,'慘綠少年','國中','慘，暗綠色。本指穿深綠色衣服的少年。後比喻翩翩美少年。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (518,'戎馬倥傯','國中','戎馬，指戰事。倥傯，音ㄎㄨㄥˇㄗㄨㄥˇ，急促的樣子。表示因軍事而奔波忙碌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (519,'胼手胝足','國中','手腳因操勞過度而長滿厚繭。比喻極為辛勞。胼，音ㄆㄧㄢˊ。胝，音ㄓ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (520,'折衝尊俎','國中','尊，酒杯。俎，音ㄗㄨˇ，祭祀用的禮器。在宴席杯酒時制勝對方。今多指外交談判上取得勝利。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (521,'探驪得珠','國中','本指獲得極為珍貴的寶物。後引申為寫作文章能抓住重點，深得題旨的精髓。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (522,'擲地有聲','國中','形容文章言詞佷有價值，極具份量。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (523,'暴虎馮河','國中','徒手搏虎，無舟渡河。喻人有勇無謀。馮，音ㄆㄧㄥˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (524,'有腳陽春','國中','如春陽般帶給人們和煦、溫暖。用以讚譽仁民愛物的長官。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (525,'枵腹從公','國中','枵，音ㄒㄧㄠ，空虛。餓著肚子辦公。讚譽他人全心全意為公眾利益忙碌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (526,'櫛風沐雨','國中','以風來梳頭，以雨沐浴。形容長年在外奔波，旅途勞累之苦。櫛，音ㄐㄧㄝˊ。意同「風塵僕僕」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (527,'沆瀣一氣','國中','形容人氣味相投或利害相同。多用於貶義。沆瀣，音ㄏㄤˋㄒㄧㄝˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (528,'泄泄沓沓','國中','泄泄即沓沓。指因循苟且，隨聲附和，敷衍散漫。泄，音一ˋ。沓，音ㄊㄚˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (529,'淪肌浹髓','國中','淪，沈沒。浹，音ㄐㄧㄚˊ，浸濕。比喻感受甚深。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (530,'牛驥同皁','國中','牛與千里馬共用一馬槽飼養。比喻賢愚不分，均受對待。皁，音ㄗㄠˋ，同「皂」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (531,'白雲蒼狗','國中','喻世事變化無常。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (532,'矯若遊龍','國中','指身手非常矯健靈敏。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (533,'穩紮穩打','國中','形容人行事穩健踏實，循序漸進。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (534,'老生常談','國中','指非常平凡的議論。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (535,'聲名狼藉','國中','狼藉，散亂不整齊的樣子。比喻名聲非常惡劣。藉，音ㄐㄧˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (536,'肝膽相照','國中','比喻朋友間真誠相待。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (537,'膠柱鼓瑟','國中','將琴瑟的柱子以膠固定，而後擊瑟。比喻拘泥形式，而不知變通。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (538,'日就月將','國中','每日有成就，每月有進步。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (539,'芥子須彌','國中','芥子，芥菜的種子，引申為極微小的事物。須彌，專指大海中的高山。比喻以至小包容至大。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (540,'苗而不秀','國中','比喻人才質雖佳，卻未能有所成就。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (541,'菽水承歡','國中','菽，豆類之總稱。菽水，喻供養極薄。用以形容家貧卻能盡孝。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (542,'莫逆之交','國中','莫逆，沒有違逆而心靈契合。形容朋友之間心意相投，情感友善敦睦。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (543,'著作等身','國中','比喻著作極豐。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (544,'蒲柳之姿','國中','蒲柳，質性柔弱，樹葉早落。比喻衰弱的體質。蒲，音ㄆㄨˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (545,'蘭質蕙心','國中','形容女子性情聰慧。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (546,'虎尾春冰','國中','踩及虎尾，行於將融之春冰。比喻危懼之極。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (547,'蚍蜉撼樹','國中','蚍蜉，大螞蟻。撼，搖動。比喻人不自量力。蚍蜉，音ㄆㄧˊㄈㄨˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (548,'蠅頭小利','國中','形容利潤微薄。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (549,'觥籌交錯','國中','觥，音ㄍㄨㄥ，古時用兕牛角做的酒器。籌，行酒令所用者。交錯，交相錯雜。形容宴飲盡歡，熱鬧非凡的情況。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (550,'言之鑿鑿','國中','比喻立論有據，且有事實可稽。鑿，音ㄗㄨㄛˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (551,'投鼠忌器','國中','要打老鼠，卻怕敲壞旁邊的器物。比喻做事顧忌，而不敢放手去做。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (552,'人謀不臧','國中','失敗是由於人的謀畫不完善而導致的。臧，音ㄗㄤ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (553,'停雲落月','國中','陶淵明有停雲詩以懷念親友，杜甫有落月詩句（見夢李白一詩）以懷念李白。比喻思慕親友之懷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (554,'尋章摘句','國中','搜尋摘取文章中片斷詞句。指讀書侷限於文字的推求或指寫作時堆砌現成的詞句。摘，音ㄓㄞ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (555,'小家碧玉','國中','小家指小戶人家。碧玉：人名，後泛指平民家的少女。後用以比喻小戶人家年輕美麗的女子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (556,'捉襟見肘','國中','拉一拉衣襟，就露出了胳膊。用以比喻顧此失彼，窮於應付。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (557,'撫今追昔','國中','用以說明依據現今的情況，追想從前，很有感觸。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (558,'方興未艾','國中','正在發展，沒有終止。說明事物正在蓬勃向前發展的形勢。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (559,'朝齏暮鹽','國中','早晨用醃菜下飯，晚上蘸鹽佐菜。形容生活清苦。齏，音ㄐㄧ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (560,'李代桃僵','國中','桃李患難相共，蟲咬了桃樹，李樹代桃樹而枯死。比喻兄弟互助或用以比喻互相頂替或代人受過。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (561,'黃粱一夢','國中','黃米飯尚未蒸熟，而美夢已醒。比喻癡心妄想或說明虛幻夢想的破滅。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (562,'七步之才','國中','走七步就能做成一首詩的才能。形容才思敏捷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (563,'三人成虎','國中','幾個人傳說市上有老虎，大家就信以為真了。比喻謊言經多人傳播，足以混淆視聽，以假亂真。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (564,'下里巴人','國中','下里、巴人：古楚國流行的兩支通俗歌曲名。喻比喻通俗的文藝作品。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (565,'三年之艾','國中','比喻臨急求藥，終不可得。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (566,'乘人之危','國中','又作「趁人之危」。指趁人家有危難的時候打擊損壞對方。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (567,'義正辭嚴','國中','理由正當充足，措辭嚴正有力。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (568,'事必躬親','國中','形容辦事認真，一絲不苟。或指不放心別人做事，必定親自動手。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (569,'五湖四海','國中','用以泛指全國或世界各地。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (570,'交淺言深','國中','形容交情不深，談話卻非常投機或深入之意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (571,'亦步亦趨','國中','別人慢走就跟著慢走，別人快走就跟著快走。比喻缺乏主見，或為了討好而一意模仿，追隨別人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (572,'人心如面','國中','人心各不相同就好像人的面孔各不相同。說明人心各不相同，不可強求一律，或不可以己之心去推測別人的心。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (573,'飲鴆止渴','國中','比喻只求解救眼前的困難，而不顧將來的大禍患。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (574,'以人廢言','國中','以：因為。廢：廢棄不用。言：善言，好話。用以說明不要因為輕視一個人，連他的好話也予以鄙棄。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (575,'休戚相關','國中','休：喜悅。戚，憂愁。憂喜、禍福彼此相關連。形容彼此利害相關。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (576,'作壁上觀','國中','站在壁壘上旁觀雙方作戰。比喻置身事外，在一旁觀望。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (577,'促膝談心','國中','形容靠近坐著，傾心交談。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (578,'群龍無首','國中','說明做事沒有領頭的人，無法統一行動。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (579,'月暈而風','國中','月暈出現，就知即將起風。比喻事情發生前，必有徵兆。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (580,'優柔寡斷','國中','優柔：猶豫不決。寡：少。斷：決斷。指做事猶豫不果斷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (581,'允文允武','國中','允：誠，真實。用以稱人能文善武，文武兼備之意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (582,'內剛外柔','國中','內心剛強，外表柔和。形容人內心剛強，很有原則，外表柔和可親。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (583,'八面玲瓏','國中','形容為人處世手腕圓滑，能討好各種人物。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (584,'翩翩君子','國中','形容人的舉止瀟灑。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (585,'出言不遜','國中','出言：話說出口來。遜：謙遜。指說話傲慢莽撞，沒有禮貌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (586,'利欲薰心','國中','薰：薰染。指貪圖財利的欲望迷住了心竅。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (587,'判若雲泥','國中','其差別就像天上的雲彩和地上的泥土那樣。形容高低懸殊非常的明顯。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (588,'別出心裁','國中','別出：不同於眾。心裁：心中的構思或設計。意謂獨創一格，與眾不同。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (589,'功成名遂','國中','功成：事業成功。名遂：稱心，成就。說明建成了功績，有了名聲。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (590,'動如脫兔','國中','脫：逃跑。形容人的動作非常敏捷快速。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (591,'勢如破竹','國中','形勢就像劈竹子，頭幾節一劈開，以下各節就順著勢而分開。形容節節勝利，毫無阻擋。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (592,'十行俱下','國中','俱：一起，同時。十行字一起看下來。形容讀書敏捷，記憶力很強。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (593,'千載難逢','國中','一千年也難得遇到的一次機會。形容機會非常難得。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (594,'老大無成','國中','指人年老而沒有成就。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (595,'反脣相譏','國中','比喻受指責而不服氣，反過來嘲諷對方。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (596,'古色古香','國中','常用於稱讚藝術品或居室布置很有古雅風格。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (597,'各有千秋','國中','千秋：千年。一年有一秋。指各有各的特色和長處。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (598,'同室操戈','國中','指自家人內部爭吵或產生紛爭。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (599,'含沙射影','國中','古傳說有一種叫蜮的昆蟲，能在水中含沙射人或射人的影子，只要射中影子就會得病。比喻暗中攻擊或毀謗他人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (600,'含飴弄孫','國中','飴：糖膏。用以形容老人年恬適的樂趣。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (601,'老氣橫秋','國中','形容人老練而自負的神態或指人缺乏朝氣。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (602,'和風細雨','國中','比喻人態度溫和，處理事情方式和緩而不粗暴。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (603,'嗷嗷待哺','國中','嗷嗷：嗷，音ㄠˊ，眾聲嘈雜，此指哀號聲。多用於形容嬰兒啼哭等待哺乳。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (604,'因勢利導','國中','指順應事物發展的趨勢而加以引導。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (605,'在官言官','國中','多用以表示在什麼地位就說什麼話。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (606,'大而無當','國中','當：底，邊際。說話誇大得漫無邊際。用以表示誇大而不切合實際。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (607,'天馬行空','國中','比喻才氣縱橫奔放，或讚人文筆超逸。有時也指人說話浮誇，不著邊際。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (608,'天真爛漫','國中','爛漫：坦率自然，毫不做作。形容心地純真，出於自然，不矯揉造作。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (609,'失之交臂','國中','兩人擦肩而過，錯失良機。形容當面錯過機會。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (610,'肆無忌憚','國中','憚，音ㄉㄢˋ，害怕。指人行為放肆，毫無顧忌或懼怕。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (611,'離鄉背井','國中','指人遠離家鄉到外地。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (612,'孑然一身','國中','孑，音ㄐㄧㄝˊ，孤獨的樣子。用以形容無親無友。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (613,'背道而馳','國中','比喻兩者的目標或方向完全相反。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (614,'不脛而走','國中','脛，小腿。指不用腿也能走，比喻事物不用推廣，也能迅速傳播。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (615,'觀者如堵','國中','形容觀看的人多而擁擠，竟形成了一道人牆。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (616,'越俎代庖','國中','俎，音ㄗㄨˇ，比喻超出自己職務範圍，去處理別人所管的事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (617,'刀俎魚肉','國中','比喻自己受制於人，處於任人擺弄的境況。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (618,'自力更生','國中','指不依靠別人，僅靠自己的力量重新振作起來。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (619,'進退維谷','國中','維：語助詞。谷：山溝，喻困境。形容處境艱險，前進後退都困難。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (620,'金枝玉葉','國中','比喻身份尊貴。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (621,'釜底抽薪','國中','釜：鍋子。抽掉鍋底下的柴薪。從根本上解決問題。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (622,'鋌而走險','國中','鋌，音ㄊㄧㄥˇ，快走的樣子。指為環境所迫而做出冒險或越軌的事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (623,'童顏鶴髮','國中','皮膚如同兒童一般，髮白如鶴毛。指老年人身體健康。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (624,'瞻榆望杏','國中','比喻按照時令勸勉人努力耕種。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (625,'自吹自擂','國中','指人自我吹噓。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (626,'韜光養晦','國中','指懷才不遇，隱居待時。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (627,'風華正茂','國中','形容人年輕有為，正當青春，風采動人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (628,'龍行虎步','國中','行動矯健，氣概非凡。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (629,'席不暇暖','國中','席子來不及坐暖。形容事務極忙，連坐定的時間都沒有。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (630,'庸庸碌碌','國中','形容平庸無能，沒有志氣。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (631,'弦外之音','國中','比喻言外之意，即在詩文或說話裏間接透露而不明白說出的意思。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (632,'後起之秀','國中','指傑出的後輩。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (633,'快人快語','國中','爽快人說爽快話。用以稱讚人直爽，說話痛快。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (634,'自得其樂','國中','指人自己能從中得到樂趣。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (635,'情竇初開','國中','情竇：男女相愛的心竅。多用以指情意的發生或男女愛情的萌動。竇，音ㄉㄡˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (636,'宴安鴆毒','國中','貪圖逸樂無異飲鴆自殺。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (637,'拂袖而去','國中','表示生氣或很不滿而離開。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (638,'掛一漏萬','國中','形容說得不全，遺漏很多。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (639,'捷足先登','國中','用以比喻行動敏捷的人，首先取得。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (640,'數典忘祖','國中','數說典籍，反倒忘掉了自己的祖先。比喻忘本。數，音ㄕㄨˇ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (641,'明日黃花','國中','明日，指重陽節後。黃花，指菊花。比喻已過時的事物或消息。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (642,'明眸皓齒','國中','明亮的眼睛和潔白的牙齒，形容女子的美麗。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (643,'爬羅剔抉','國中','爬羅，蒐集。剔抉，選擇。爬羅剔抉形容蒐集極廣博、選擇極正確。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (644,'有聲有色','國中','形容說話、為文或表演精采生動，形象鮮明，引人入勝。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (645,'朝夕之策','國中','指只圖眼前一時過得去的臨時謀略或打算。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (646,'朝思暮想','國中','形容想念之深。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (647,'束之高閣','國中','比喻放著不用，也用以表示對事情遲延不辦。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (648,'桀驁不馴','國中','桀驁，暴躁倔強。不馴：不順服。形容性情凶暴，戾不馴。驁，音ㄠˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (649,'歌臺舞榭','國中','泛指歌舞場合。榭，音ㄒㄧㄝˋ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (650,'殫精竭慮','國中','形容使盡心力，用盡心思。殫（ㄉㄢ）、竭：盡。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (651,'民脂民膏','國中','指民眾用血汗換來的財富。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (652,'水磨工夫','國中','磨，音ㄇㄛˋ，摻水細磨。比喻精密細緻的工夫。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (653,'涸轍之鮒','國中','在即將乾枯的車轍中的鯽魚。比喻處境艱難。涸，音ㄏㄜˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (654,'與世無爭','國中','形容人恬靜自處，不與人爭。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (655,'米珠薪桂','國中','米貴得像珍珠，柴貴得像桂木。形容物價昂貴。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (656,'舉棋不定','國中','比喻做事猶豫不決，拿不定主意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (657,'芒刺在背','國中','芒刺，穀類種子殼上的細刺。像有芒和刺扎在背上一様。比喻惶恐不安。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (658,'蟾宮折桂','國中','折取宮中的桂花。舊指科舉應試得中，或泛指應試較高級的考試而得中。蟾，音ㄔㄢˊ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (659,'見風使舵','國中','比喻看勢或看人臉色行事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (660,'閒雲野鶴','國中','比喻超然脫俗，來去自由，無所羈絆的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (661,'因循坐誤','國中','依循舊規，以致耽誤了事情。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (662,'洪喬之誤','國中','比喻書信寄失。亦作「洪喬擲水」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (663,'少不更事','國中','年紀輕，閱歷淺薄。亦作「少不經事」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (664,'粥少僧多','國中','比喻東西少而需要的人多，不夠分配。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (665,'裙屐少年','國中','服飾華美的公子哥兒。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (666,'括囊守祿','國中','比喻臣子不肯建言，只知保住個人祿位。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (667,'星隕少微','國中','用於哀輓少年男性喪者通用的輓辭。少微，星座名。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (668,'倜儻不羈','國中','豪爽灑脫而不受約束。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (669,'信口開河','國中','不加思索的隨意亂說。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (670,'繼往開來','國中','承續先人的事業，並為後人開拓道路。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (671,'茅塞頓開','國中','比喻馬上開悟，忽然明白。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (672,'畫荻學書','國中','宋代歐陽修的母親以荻草的莖畫地，教歐陽修學書。後多用以稱頌母教。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (673,'鐵樹開花','國中','比喻事物罕見或極難實現。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (674,'方寸已亂','國中','形容心緒很亂。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (675,'殺雞為黍','國中','殺雞作黍飯。指盛情款待賓客。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (676,'百步穿楊','國中','本指春秋時楚國的養由基能在百步內射中柳葉。後比喻射箭技術高超或技藝高強。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (677,'貽笑大方','國中','被識見廣博或精通此道的內行人所譏笑。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (678,'桑榆晚景','國中','比喻晚年。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (679,'剪燭西窗','國中','思念妻子而盼望相聚。後亦泛指在夜晚與親友聚談。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (680,'金城湯池','國中','形容堅固不易攻破的城池。亦作「固若金湯」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (681,'狗彘不若','國中','連豬狗都不如。比喻人品低劣。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (682,'雞鳴狗盜','國中','比喻有某種卑下技能的人，或指卑微的技能。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (683,'蠅營狗苟','國中','如蒼蠅般的到處鑽營，如狗般卑劣苟且。比喻四處鑽營，只為謀利；不顧廉恥，只求偷生的生活態度。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (684,'家喻戶曉','國中','家家戶戶都知道。形容事情、名聲傳布極廣。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (685,'蓽門蓬戶','國中','蓬戶，用蓬草織製的窗戶。用以比喻貧困人家。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (686,'一勞久逸','國中','經過一次的勞苦，即能獲得永久的安逸。亦作「一勞永逸」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (687,'長治久安','國中','國家政局長期安定，永久太平。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (688,'琴韻初調','國中','用於祝賀女子出嫁的賀詞。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (689,'神籟自韻','國中','天然的聲響，自然組成美妙的音韻。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (690,'池魚林木','國中','比喻無辜受牽累而遭禍害的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (691,'焚林而畋','國中','焚毀山林以獵取野獸。比喻索取一空，不留餘地。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (692,'瑤林瓊樹','國中','比喻人品性資質高潔超凡。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (693,'綠林豪客','國中','盜匪或聚居山林反抗統治者的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (694,'辯圃學林','國中','論辯﹑研究學問的讀書人常常聚會的地方。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (695,'學際天人','國中','形容學問廣博。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (696,'指顧之際','國中','用手一指、回頭一望的時間。比喻時間十分短促。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (697,'風雲際會','國中','比喻才士賢臣為時所用。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (698,'畎畝下才','國中','比喻才能平庸、泛泛之輩。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (699,'風簷寸晷','國中','形容舊時科舉考試中分秒必爭的情形。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (700,'村夫俗子','國中','粗俗鄙陋的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (701,'口中雌黃','國中','雌黃，即雄黃，古代用來塗蓋寫錯的字。比喻不顧事實真相，隨口批評。亦作「信口雌黃」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (702,'椿齡無盡','國中','像椿樹一樣長壽，為祝人長壽之詞。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (703,'空中樓閣','國中','比喻脫離現實的幻想，不能實現，沒有意義。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (704,'中原逐鹿','國中','比喻群雄並起，爭奪天下。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (705,'風中殘燭','國中','比喻人已衰老，行將不久於世。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (706,'家道中落','國中','家境不如往昔富貴。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (707,'位列三槐','國中','泛指位高權重的高官。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (708,'錐處囊中','國中','比喻有才智的人不會被長久埋沒，很快就會顯露頭角。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (709,'醍醐灌頂','國中','比喻給人灌輸智慧，使人頭腦清醒。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (710,'潢池弄兵','國中','比喻人不自量力而發動兵亂。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (711,'綠衣黃裡','國中','古人以為黃色是正色，綠色是不正不純的雜色，將雜色置於外，正色置於裡，用來比喻正邪不分、貴賤尊卑顛倒失序。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (712,'甕裡醯雞','國中','醯雞，酒甕中生的酒蟲。指見聞狹隘、眼光淺薄的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (713,'忘年之交','國中','不拘年歲行輩而結交為友。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (714,'二八年華','國中','年齡正當十六歲的少女。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (715,'安車蒲輪','國中','古時迎聘賢士，以蒲草包裹車輪，使車子行走時減少顛簸，坐起來安穩舒適。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (716,'耳順之年','國中','指六十歲。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (717,'懸車之年','國中','指官員告老引退的年齡，通常為七十歲。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (718,'為淵敺魚','國中','水瀨想吃魚，卻把魚趕到深淵去。比喻處理不當而使結果違背最初的願望。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (719,'臨淵履薄','國中','比喻戒慎恐懼。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (720,'臨淵羨魚','國中','比喻雖有願望，但只憑空妄想，難收實效。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (721,'藍田生玉','國中','比喻名門出俊秀子弟。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (722,'求田問舍','國中','只知道購置田宅家產而沒有遠大的志向。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (723,'瓜田李下','國中','比喻容易引起懷疑的場合。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (724,'滄海桑田','國中','比喻世事無常，變化很快。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (725,'伯仲之間','國中','才能相當，不相上下。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (726,'籬壁間物','國中','自己家園所產的物品。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (727,'間不容息','國中','極言時間急迫，不容稍有喘息延遲。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (728,'終食之間','國中','吃一頓飯的時間。比喻極短的時間。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (729,'不待蓍龜','國中','不必占卜即可預知吉凶。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (730,'前車可鑒','國中','先前的失敗經驗，可作為日後的教訓。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (731,'食前方丈','國中','吃飯的食物擺滿一丈見方那麼廣。形容生活非常奢侈。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (732,'趑趄不前','國中','想要往前卻又猶豫不進。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (733,'顛沛流離','國中','遭受挫折，生活困迫不安。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (734,'顛簸不破','國中','理論真確，不能改易。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (735,'顛頭聳腦','國中','形容因高興而雀躍的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (736,'池魚籠鳥','國中','比喻身遭拘禁，失去自由。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (737,'等閒之輩','國中','平常、無足輕重的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (738,'投閒置散','國中','置於不重要的地位，不予重用。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (739,'薑桔餘辛','國中','比喻人愈老性格愈剛強。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (740,'道貌岸然','國中','學道的人，容貌莊嚴肅穆。亦指外表莊重嚴肅的樣子。後用以形容外表故作正經，而心中實不如此。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (741,'跫然足音','國中','比喻客人來訪，心中十分喜悅。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (742,'死灰復燃','國中','比喻已經平息的事情，又重新活動起來。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (743,'劬勞顧復','國中','非常辛勤勞苦的照顧撫育。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (744,'牛衣對泣','國中','牛衣，牛隻禦寒遮雨的覆蓋物。漢王章家貧，沒有被子蓋，生大病時只能睡在牛衣之中，他自料必死，於是對妻涕泣訣別。後比喻夫妻共度貧困的生活。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (745,'睚眥必報','國中','用以形容人的器量不足，凡事斤斤計較。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (746,'虛懷若谷','國中','心胸寬廣如山谷能容納萬物。形容為人謙虛，能接納他人的意見。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (747,'倚馬之材','國中','比喻才思敏捷，寫作迅速。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (748,'呆若木雞','國中','愚笨或受驚嚇而發愣的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (749,'牝雞司晨','國中','母雞代公雞執行清晨報曉的鳴啼。比喻婦人專權。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (750,'雞皮鶴髮','國中','白髮皺皮。形容老人的形貌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (751,'味如雞肋','國中','比喻沒有味道或少有實惠。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (752,'雞犬升天','國中','後比喻一個人發達得勢，左右有關係的人也跟著發跡。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (753,'價重雞林','國中','用以比喻人作品流傳廣遠，價值極高。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (754,'殺雞取卵','國中','比喻貪圖眼前微小的好處而損害更大的利益。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (755,'寸草春暉','國中','比喻父母恩情深重，子女即使竭盡心意也難以報答。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (756,'和光同塵','國中','鋒芒內斂與世無爭，而與囂雜塵俗相融合。比喻與世浮沉，隨波逐流。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (757,'草木皆兵','國中','比喻緊張、恐懼，疑神疑鬼。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (758,'草菅人命','國中','比喻輕視人命，濫殺無辜。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (759,'松蘿共倚','國中','松蘿常攀附於其他植物上生長，故以松蘿共倚比喻夫妻關係親密和樂。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (760,'小鳥依人','國中','形容女子或小孩依傍他人而嬌弱可愛的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (761,'一心二用','國中','比喻心意不專之意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (762,'一蹶不振','國中','失敗了不再振作恢復。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (763,'一鳴驚人','國中','指一個默默無聞的人，突然有了驚人的作為。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (764,'一往情深','國中','指人情感深厚，一旦投入，始終不改。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (765,'一往直前','國中','奮勇前進，無所畏懼。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (766,'一落千丈','國中','比喻成績、地位、景況、情緒或聲望等急遽下降。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (767,'參辰卯酉','國中','參，參星，在西方。辰，辰星，在東方。卯，卯時，約為早晨五點到七點。酉，酉時，約為晚上五點到七點。用以比喻彼此隔絕或互相對立。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (768,'一筆勾銷','國中','全部作廢或取消。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (769,'一日萬機','國中','形容治理國事者，一天處理很多事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (770,'入木三分','國中','本來形容筆力遒勁。後比喻評論深刻中肯或描寫精到生動。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (771,'曾參殺人','國中','比喻流言可畏或誣枉的災禍。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (772,'中流擊楫','國中','形容一個人決心達成某事時的壯烈氣概。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (773,'不見經傳','國中','比喻沒有名氣，亦用於比喻缺乏根據，沒有來歷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (774,'不二法門','國中','唯一的辦法。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (775,'不足掛齒','國中','不值得在言談上提起。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (776,'不倫不類','國中','不合規格，不像樣。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (777,'不義之財','國中','利用不正當的手段，所獲得的財富。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (778,'千篇一律','國中','所做的事情都相同，缺少變化。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (779,'久蟄思勤','國中','靜伏了很久，又想活動了。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (780,'天經地義','國中','指絕對正確而不能更改的道理。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (781,'王佐之材','國中','指人的才能足以輔助王者之業。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (782,'曲學阿世','國中','以邪曲的學說迎合世人所好。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (783,'楚材晉用','國中','楚國的人才為晉國所用，比喻人才外流。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (784,'信手拈來','國中','信手，隨手。形容寫作書畫時能夠熟練地運用各種豐富的材料。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (785,'望塵莫及','國中','指自己遠遠落於人後。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (786,'莊諧並作','國中','端莊中雜有詼諧的文字或語言。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (787,'芙蓉出水','國中','比喻文字清新。或形容美女出浴。或形容清麗淡雅的婦女。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (788,'班荊道故','國中','班，布置。荊，楚地出產的木材。相傳伍舉和聲子在鄭國野外相遇，把荊條鋪在地上，一起坐下吃東西，並談回楚國的事。後形容朋友在途中相遇，互敘舊情。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (789,'獅子搏兔','國中','形容以大敵小。或比喻力量懸殊，也要盡全力。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (790,'明珠暗投','國中','比喻人才埋沒。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (791,'電光石火','國中','比喻一件事發生的很快，結束的也很快。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (792,'法外施仁','國中','指依法處理而特予寬治。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (793,'掃眉才子','國中','有文才的女子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (794,'振振有詞','國中','形容理直氣壯，滔滔不絕的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (795,'首當其衝','國中','第一個受到攻擊，或最先遭到災難。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (796,'墨突不黔','國中','煙囪未燻黑就離去，意謂人汲汲於行道，不遑久息。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (797,'魚質龍文','國中','外表似龍而實質為魚。比喻徒有其表而無其實。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (798,'晴雲秋月','國中','是說人的胸襟高潔如晴天的白雲和秋天的月亮。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (799,'指桑罵槐','國中','手指著桑樹，口中卻罵著槐樹。比喻間接責罵別人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (800,'鶉衣百結','國中','形容衣服破爛不堪。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (801,'雞零狗碎','國中','形容東西很零亂而瑣碎。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (802,'通功易事','國中','分工合作，各自做好應做的事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (803,'華如桃李','國中','形容女子美麗的容顏，就如桃李般紅潤圓熟。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (804,'月白風清','國中','月色皎潔，清風徐徐吹來。形容夜景的美麗。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (805,'森森銀竹','國中','形容急速下降的雨。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (806,'潘安再世','國中','形容男士俊美，有如潘安重生。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (807,'無往不利','國中','形容行事順利到任何地方做任何事皆無阻礙。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (808,'羚羊掛角','國中','傳說羚羊夜眠時，將角掛在樹上，腳不著地，以免留足跡而遭人捕殺。比喻詩文意境超脫不著痕跡。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (809,'偏安一隅','國中','形容只能據地一方，而無法統治全國。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (810,'仁心仁術','國中','頌揚醫師心地善良、醫術高超的話。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (811,'咎由自取','國中','災禍是自己招來的。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (812,'百川匯宗','國中','喻任何人事物雖然源起不同，但最後皆歸於一宗。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (813,'木已成舟','國中','比喻事情已成定局，不能改變。通常用以形容女子未婚懷孕。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (814,'棄瑕錄用','國中','形容不追究以前的過失，仍然任用此人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (815,'駢肩雜遝','國中','比喻人多雜亂的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (816,'色厲內荏','國中','形容外表強悍嚴肅，內心卻膽怯懦弱。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (817,'狷介之士','國中','比喻耿介清高，不隨流俗的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (818,'忍俊不禁','國中','忍不住笑出聲來。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (819,'人才濟濟','國中','形容人才輩出，人才眾多。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (820,'以文會友','國中','以文章作為交友的媒介。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (821,'民胞物與','國中','有博愛的氣度與胸懷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (822,'煮字療飢','國中','比喻讀書人以售字賣文謀生。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (823,'甘之如飴','國中','面對困難環境或遭遇，能安心順受不以為苦。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (824,'拳拳服膺','國中','膺，音ㄧㄥ，胸。拳拳，忠謹的樣子。形容對於某人或某種道理，心悅誠服，奉行不悖。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (825,'盈不可久','國中','滿盈之後不可能長保永久，用以戒人不可長久自滿。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (826,'繞樑三日','國中','又作「餘音繞樑」，形容歌聲美妙。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (827,'罔極之恩','國中','形容父母恩重如天際般廣大無窮無盡，難以報答。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (828,'一手遮天','國中','隻手就把天遮住，形容倚仗權勢，欺上壓下使是非不分。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (829,'先入為主','國中','以先聽到的話或先接受的意見為主，以後再聽到不同的話或意見就排斥不相信。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (830,'十載寒窗','國中','長期在困苦的環境下努力學習，終有所成。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (831,'從善如流','國中','聽從別人的意見，有容人的雅量。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (832,'瞠目結舌','國中','瞪著眼睛說不出話來。形容人驚恐的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (833,'一枝之棲','國中','鳥類得一枝當做棲止的地方。比喻有一容身之地。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (834,'粉墨登場','國中','化裝登臺演戲。引申為上臺。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (835,'分道揚鑣','國中','因意見理念不合而導致分道而行。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (836,'急如星火','國中','像流星火燒一樣急速。比喻事情的緊急。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (837,'仰人鼻息','國中','指依靠別人才能活著，本身沒辦法自立。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (838,'易子而食','國中','與人互易其子而烹食，形容饑荒之慘也。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (839,'先發制人','國中','先行發動攻勢制服對方之意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (840,'自慚形穢','國中','覺得自己遠不如別人而感覺羞愧之意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (841,'自嘲自解','國中','條件不夠，達不到目的，便想出一個理由，自我安慰一番。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (842,'師直為壯','國中','理由光明正大者，就能氣壯勢盛，達成最後的成功。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (843,'人面桃花','國中','形容景物依舊，人物全非的意思。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (844,'落井下石','國中','比喻趁人危機時，加以陷害。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (845,'飛蛾撲火','國中','形容自取其禍，自取滅亡。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (846,'易如反掌','國中','事情簡易至極的意思。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (847,'磨杵成針','國中','勉人天下無難事，有志者事竟成。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (848,'燃眉之急','國中','火快燒到眉毛。形容事情萬分急迫。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (849,'迎刃而解','國中','比喻事情很順利地解決。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (850,'割蓆絕交','國中','朋友絕交，不再互相往來的意思。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (851,'脫穎而出','國中','比喻從眾人中露出卓越的才能。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (852,'推己及人','國中','把自己的感受，推想到別人的感受。即設身出處地為人著想的意思。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (853,'嚶鳴求友','國中','比喻尋求志趣相投的朋友。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (854,'墨守成規','國中','困守自己的規則而不肯變通。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (855,'拋磚引玉','國中','先拿自己的東西出來，以引出人家的好東西。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (856,'抱薪救火','國中','比喻方法不對，不但無濟於事，反而有害。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (857,'杯水車薪','國中','比喻力量微小，無濟於事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (858,'伯道無兒','國中','指沒有孩子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (859,'白面書生','國中','比喻年輕俊秀而缺乏經驗的讀書人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (860,'連篇累牘','國中','指文辭、篇幅太過冗長。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (861,'未窺全豹','國中','沒有看到事物的全部。全豹，比喻事物的全部。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (862,'名不副實','國中','名聲與實際不相稱。副，相稱、符合。亦作「名不符實」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (863,'好高騖遠','國中','比喻不切實際地追求過高或過遠的目標。騖，馬奔馳貌，引申有「追求」之意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (864,'扣槃捫燭','國中','喻認識不清而誤會。槃，音ㄆㄢˊ，木盤。捫，音ㄇㄣˊ，摸也。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (865,'扞格不通','國中','形容矛盾很多，阻力很大。扞，音ㄏㄢˋ，相牴觸。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (866,'芝蘭之室','國中','比喻良好的環境。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (867,'沽名釣譽','國中','指用種種不正當的手段極力謀取好名譽。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (868,'南箕北斗','國中','箕、斗，星名。名曰箕曰斗，而無箕斗之實用；以喻有名而無實。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (869,'高臥東山','國中','原指晉代謝安隱居東山，不出來作官；後泛指人隱居。高臥，高枕而臥。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (870,'斬釘截鐵','國中','比喻處理事情或說話果斷堅決，毫不猶豫。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (871,'瓜熟蒂落','國中','比喻時機成熟，自然成功。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (872,'鮑魚之肆','國中','賣醃魚的店舖；比較環境惡劣。鮑，音ㄅㄠˋ，醃魚，其氣腥臭。肆，店舖。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (873,'行不由徑','國中','走路不走小道，形容為人端方嚴謹。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (874,'放浪形骸','國中','指行動不受世俗禮法的約束。放浪，放蕩。形骸，形體。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (875,'一蹴而就','國中','腳一踏就成功。形容輕而易舉。蹴，音ㄘㄨˋ，踏。就，成功。亦作「一蹴可就」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (876,'模稜兩可','國中','指對事情不表示明確的意見，認為這樣也可以，那樣也可以。模稜，含含糊糊。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (877,'水到渠成','國中','比喻條件成熟，事情自然成功。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (878,'翹足引領','國中','抬起腳後跟，伸長頸子；形容殷切盼望。領，頸。亦作「翹首企足」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (879,'指鹿為馬','國中','比喻有意顛倒黑白，混淆是非。意同於「指皂為白」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (880,'無人問津','國中','比喻無人再來嘗試或過問。津，渡口。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (881,'欲蓋彌彰','國中','想要掩蓋壞事的真相，結果暴露得更加明顯。彌，更加。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (882,'瓜瓞綿綿','國中','比喻子孫繁盛、傳世久遠。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (883,'因噎廢食','國中','比喻因偶發之事而改其常度，意指因小而廢大之意。噎，音一ㄝ，食物塞住咽喉而致氣逆。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (884,'光怪陸離','國中','形容色彩斑斕，形狀奇異。光怪，光彩奇異。陸離，色彩繁雜。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (885,'防微杜漸','國中','為防患於機先，慮患於隱微，即謹慎防止之意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (886,'具體而微','國中','謂內容大體具備，而布局規模較小。具體，大體具備。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (887,'傲骨嶙峋','國中','比喻高傲之風骨。嶙峋，音ㄌㄧㄣˊㄒㄩㄣˊ，山崖突兀。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (888,'七竅生煙','國中','七竅：指耳、目、鼻、口。生煙：形容非常生氣。竅，音ㄑㄧㄠˋ。形容氣憤已極，好像耳目口鼻都要冒出火來。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (889,'涇渭分明','國中','涇水水清，渭水水濁，二水清濁不混；比喻界限清楚，是非分明。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (890,'道貌岸然','國中','形容有德者的莊嚴容貌，亦用以諷刺外貌正經嚴肅而內心邪惡的人。岸然，高峻貌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (891,'買櫝還珠','國中','把裝珍珠的木匣買下，卻退還匣中的珍珠。比喻捨本逐末，取捨不當。櫝，木匣。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (892,'器宇軒昂','國中','指儀表風度昂揚不凡。器宇，指人的儀表風度。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (893,'渙然冰釋','國中','比喻嫌隙、疑慮、誤會等完全消除。渙然，消散貌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (894,'圖窮匕見','國中','比喻事情發展到最後，真相或真意完全暴露。見，現也。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (895,'盤根錯節','國中','比喻事情極其複雜，難以處理。盤根，樹根盤曲。錯節，枝節交錯。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (896,'蹈常襲故','國中','謂墨守成法，按照常規辦事。蹈，踩，引申為循。常，常規。襲，因循、沿襲。故，舊習、成例。亦作「蹈常習故」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (897,'篳路藍縷','國中','坐著柴車，穿著破舊衣服去開闢山林。形容創業艱難。篳路，柴車。藍縷，破舊衣服。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (898,'曲肱而枕','國中','彎曲胳膊，枕著睡覺。形容為人恬淡，無憂無慮。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (899,'松柏後凋','國中','比喻只有經過艱苦惡劣環境的考驗，才能看出一個人的高尚精神本質。亦作「歲寒松柏」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (900,'信誓旦旦','國中','謂誓言之誠懇可信。旦旦，誠懇貌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (901,'馬革裹屍','國中','用馬皮包裹屍體。形容軍人戰死沙場的氣概。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (902,'動中肯綮','國中','指常常打中要害或抓住問題的關鍵。動，常常。中，切中、打中。肯綮，筋肉連結處；引申為要害或關',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (903,'彈丸之地','國中','比喻非常小的地方。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (904,'投桃報李','國中','你送桃子，我回贈以李子。用以比喻彼此間的贈答。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (905,'義憤填膺','國中','形容滿腔憤怒。膺，胸也。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (906,'履及劍及','國中','形容行動迫不及待，堅決迅速。履，泛指鞋。及，趕上。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (907,'鞠躬盡瘁','國中','恭敬勤謹，盡心竭力工作，到死為止。鞠躬，表示恭敬謹慎。盡瘁，竭盡勞苦。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (908,'驍勇善戰','國中','矯健勇猛，善於作戰。驍，音ㄒ一ㄠ。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (909,'夙興夜寐','國中','起早睡晚。形容勤勞不怠。夙，早也。興，起來。寐，睡。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (910,'自圓其說','國中','自行解釋自己牽強矛盾的說法，使無破綻。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (911,'步步蓮花','國中','形容女子走路的美妙姿態。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (912,'敝車羸馬','國中','破舊的車，瘦弱的馬。形容清廉儉約。敝，破。羸，瘦弱。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (913,'風塵僕僕','國中','形容長途奔波，辛苦勞頓。風塵，指旅途辛苦。僕僕，行路勞累貌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (914,'焚膏繼晷','國中','日落天黑後，點起燈燭來接著照明。形容夜以繼日地勤奮工作或用功學習。膏，油脂，指油燈、蠟燭。晷，日影。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (915,'摩頂放踵','國中','從頭頂到腳完全摩傷。形容辛勞艱苦。摩頂，摩傷頭頂。放，至。踵，腳跟。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (916,'一竅不通','國中','謂人對某技藝學術毫無所知者，或謂不通情理者。竅，音ㄑㄧㄠˋ，孔穴，指心竅而言。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (917,'大刀闊斧','國中','比喻辦事果斷而有魄力。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (918,'駕輕就熟','國中','駕著輕車走熟路。比喻對事情熟悉，做起來容易。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (919,'按圖索驥','國中','按照圖像去尋找駿馬。比喻遵循成規，拘泥不變，亦指用作根據而加以探求之意。驥，駿馬。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (920,'不辨菽麥','國中','形容愚昧無知。菽，豆類總稱。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (921,'如數家珍','國中','比喻對所講的事情非常熟悉。家珍，家中的珍寶。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (922,'柿葉學書','國中','勤苦鑽研書法。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (923,'拾人牙慧','國中','比喻襲用別人說過的話，自己並無真知灼見。牙慧，咀嚼後吐出來的飯菜渣滓，比喻他人言論之緒餘。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (924,'斬將搴旗','國中','斬殺敵將，拔取敵人之旗幟。形容建立戰功。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (925,'嶄露頭角','國中','比喻才能在同輩中顯得突出。嶄，高峻、高出。頭角，比喻人顯露出來的才能。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (926,'天花亂墜','國中','比喻說話或寫文章浮誇動聽，虛妄迷人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (927,'文質彬彬','國中','形容舉止文雅，態度從容不迫。彬彬，文質具備貌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (928,'曲突徙薪','國中','爲防火患，把煙囪改建成彎曲的，把旁的柴移開。比喻防患未然。曲，使彎曲。突，煙囪。徙，搬走。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (929,'好整以暇','國中','形容既嚴整而又從容不迫。整，嚴整，有秩序。以，而。暇，空閒、從容。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (930,'姍姍來遲','國中','形容行走從容緩慢，來得很晚。姍姍，行走緩慢的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (931,'治絲益棼','國中','整理絲縷，越理越亂。比喻治理事物不得法，反致紛亂而難治。棼，音ㄈㄣˊ，紛亂也。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (932,'風流倜儻','國中','形容人有文才，豪爽灑脫，不受世俗理法拘束。倜儻，音ㄊㄧˋㄊㄤˇ，灑脫，不拘束。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (933,'殷鑒不遠','國中','指前人失敗的教訓就在眼前。鑑，鏡子。殷鑑，可以作為殷朝借鑑的往事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (934,'匪夷所思','國中','不是根據常理所能想像得到的。後用以形容人的思想離奇。夷，通「彝」，常道。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (935,'郢書燕說','國中','比喻穿鑿附會，曲解原意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (936,'笑容可掬','國中','形容滿面笑容，自然可親。掬，兩手捧取。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (937,'銷聲匿跡','國中','形容隱藏起來或不公開露面。銷，消除。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (938,'齜牙咧嘴','國中','形容凶狠或疼痛難忍的樣子。齜，音ㄗ，開口見齒。咧，音ㄌㄧㄝˇ，向旁張開。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (939,'心存芥蒂','國中','指心裡對人對事有怨恨或不愉快的事情。芥蒂，本指細小梗塞物，後比喻心中的不滿或不快。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (940,'不共戴天','國中','不跟仇敵不在同一個天底下生存；謂仇恨極深，不能並存。戴，頂著。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (941,'拾遺補闕','國中','原指幫助君王糾正過失，補救政事上的缺漏。後亦指補錄著述中資料、文辭的缺漏。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (942,'汗流浹背','國中','汗水流遍了背脊；謂汗流之多。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (943,'和衷共濟','國中','同心同德，共同渡河。比喻團結一致，克服困難。衷，內心。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (944,'吳牛喘月','國中','比喻因疑心而害怕。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (945,'排山壓卵','國中','比喻事情極容易成功，毫不費力。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (946,'涕泗滂沱','國中','涕淚交流貌。涕，眼淚。泗，鼻涕。滂沱，音ㄆㄤㄊㄨㄛˊ，原指雨大貌，此處指淚多貌。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (947,'慘絕人寰','國中','形容悲慘到了極點。人寰，人世間。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (948,'噤若寒蟬','國中','形容一聲不響，亦形容不敢說話。噤，閉口不作聲。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (949,'鐘鼎山林','國中','泛指出仕和隱退。鐘鼎，「鐘鳴鼎食」的略語，指貴族生活。山林，指隱士居處。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (950,'前倨後恭','國中','起先傲慢，後來恭敬。倨，音ㄐㄩˋ，傲慢、怠慢。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (951,'班門弄斧','國中','在魯班門前耍弄斧頭；比喻在行家面前賣弄本領。班，指古代的巧匠魯班。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (952,'順水推舟','國中','比喻順勢乘便辦事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (953,'推波助瀾','國中','推動水波，助長大浪。比喻從旁助長聲勢，擴大勢態。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (954,'終南捷徑','國中','比喻謀取官職或求得名利的最方便的門徑。亦比喻達到目的的便捷途徑。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (955,'虛與委蛇','國中','對人假意敷衍應酬。委蛇，音ㄨㄟㄧˊ，勉強應酬。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (956,'探囊取物','國中','伸手到口袋裡取東西。比喻事情毫不費力就可辦到。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (957,'柳暗花明','國中','比喻在曲折艱辛之後，忽然絕處逢生，另有一番情景。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (958,'張冠李戴','國中','比喻弄錯了對象，亦喻名實不符。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (959,'錙銖必較','國中','像錙銖那樣小的分量都要計較。形容非常吝嗇刻薄。錙銖，皆數之少者，喻細微也。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (960,'罄竹難書','國中','言作惡多端，非簡冊所能盡載也。罄，音ㄑ一ㄥˋ，盡也。竹，指簡冊也。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (961,'陽春白','國中','雪是指較為深奧難懂的音樂。後亦用來比喻精深高雅的文學藝術作品。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (962,'白頭偕老','國中','形容夫妻恩愛到老。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (963,'白首窮經','國中','雖然年老，仍不斷的研讀經籍。亦作「皓首窮經」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (964,'白雲親舍','國中','比喻客居思親。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (965,'江河日下','國中','比喻情況日漸衰微，一天不如一天。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (966,'西山日薄','國中','比喻事物接近衰亡或人近老年。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (967,'日銷月鑠','國中','比喻光陰流逝。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (968,'日漸月染','國中','長久地受到薰染、浸潤，而漸漸受到影響。亦作「耳濡目染」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (969,'依人籬下','國中','寄居他人屋下生活。比喻依附他人而不能自立。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (970,'依阿兩可','國中','附和阿諛他人的話而不加可否。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (971,'相依為命','國中','互相依靠，共同生活。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (972,'百依百順','國中','凡事都能順從。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (973,'狙公分栗','國中','善用手段駕馭他人或愚弄他人；也用以指反覆無常。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (974,'城市山林','國中','塵世中幽閑僻靜的處所。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (975,'南山鐵案','國中','比喻絕對不可更改的判決或意志。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (976,'逢山開道','國中','遇山不能行，則開闢道路而行。比喻遇有困難而克服之。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (977,'目眥盡','國中','裂眼眶裂開。形容怒目而視。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (978,'曲盡人情','國中','做事十分恰合對方的心意或需要。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (979,'兔盡狗烹','國中','比喻事成之後，出過力的人即遭到殺戮或見棄的命運。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (980,'裘弊金盡','國中','皮衣破敗，錢財用盡。比喻生活窮困窘迫。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (981,'桐葉封弟','國中','意為天子無戲言，出言即為法。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (982,'玄黃翻覆','國中','天翻地覆。形容變亂很大。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (983,'直搗黃龍','國中','用以指直接攻入敵人都城要地。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (984,'黃鐘毀棄','國中','可用以校正音律的樂器卻遭到毀壞拋棄。後比喻賢才不被重用。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (985,'言若懸河','國中','比喻善用辭令，說話滔滔不絕。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (986,'管窺蠡測','國中','比喻所見狹小。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (987,'偃鼠飲河','國中','鼴鼠只喝一些河水就夠了。比喻所求不多。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (988,'擔雪填河','國中','比喻白費力氣，或徒勞無功。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (989,'入室升堂','國中','比喻人的學問或技能到達高深的境界。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (990,'日月入懷','國中','形容人氣度寬闊，神容清朗。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (991,'引水入牆','國中','比喻自招其禍。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (992,'沁入心脾','國中','形容令人感受深刻。亦作「沁人心脾」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (993,'文江學海','國中','比喻學問文章範圍的廣大豐富。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (994,'四海鼎沸','國中','比喻世局混亂，動蕩不安。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (995,'架海金梁','國中','比喻能擔負重任的傑出人物。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (996,'珠沉滄海','國中','比喻人才埋沒，不為世人所知。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (997,'棲梧食竹','國中','相傳黃帝齋戒、行禮後，鳳凰乃棲於帝之梧桐，食帝之竹實。因以喻明主禮賢，賢者擇明君而仕。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (998,'不置可否','國中','不表示任何意見。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (999,'握炭流湯','國中','手握炭火，足探沸水。比喻極為勇敢強悍。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1000,'斷梗流萍','國中','枯折的枝莖，飄泊的浮萍。比喻到處飄泊，生活不安定。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1001,'專欲難成','國中','只考慮私人欲望，則難以成事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1002,'欲壑難填','國中','形容人的欲望有如深谷，永難滿足。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1003,'山雨欲來','國中','形容重大事件發生前的緊張情勢。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1004,'呼之欲出','國中','形容人、事即將揭曉。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1005,'追本窮源','國中','窮究事物的根本源頭。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1006,'多言數窮','國中','言多必失，必有理屈的時候。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1007,'梧鼠技窮','國中','比喻技能雖多而不精。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1008,'涸轍窮魚','國中','指在乾枯車轍中的魚。後以比喻陷處困境，急需救援的人或物。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1009,'一壺千金','國中','比喻輕微之物，遇上適當時機就變得很珍貴。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1010,'千夫所指','國中','被眾人所指責。形容觸犯眾怒。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1011,'千古絕唱','國中','千古以來絕無僅有的佳作。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1012,'千巖競秀','國中','形容眾峰奇石競相爭美。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1013,'一舉千里','國中','一飛就是千里。比喻前程遠大。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1014,'里仁為美','國中','選擇住處應挑有仁風的地方。後指敦親睦鄰。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1015,'琴得焦桐','國中','漢靈帝時，蔡邕亡命江海時，見吳地人砍桐木燒火，聽其爆裂聲不凡，而取未燒著部分製琴，果然音色純美。意為善於拔擢人才。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1016,'舉目千里','國中','睜開眼睛可以看到很遠的地方。比喻視野極為遼闊。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1017,'十目十手','國中','比喻一個人的言行，均受到眾人的監視注意，不可不慎。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1018,'目不窺園','國中','比喻治學刻苦專心。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1019,'目使頤令','國中','支使人時，只用目光與動下巴示意。形容極其驕傲威風的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1020,'鼠目寸光','國中','形容人目光短淺，識見狹小。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1021,'改弦更張','國中','更，變換。張，給樂器上弦。後比喻改革變更，重新做起。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1022,'更長夢短','國中','形容焦慮不安，徹夜難眠。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1023,'堂構更新','國中','用於祝賀人新居落成的賀辭。指新居建築新穎。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1024,'滌故更新','國中','去除陳舊。比喻重新開始。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1025,'天上石麟','國中','用以稱讚他人的兒子穎慧出眾。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1026,'箭在弦上','國中','比喻為形勢所逼，欲罷不能。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1027,'掌上觀紋','國中','觀看手掌上的紋路。比喻在自己掌握之中，毫不費力就能取得。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1028,'青雲直上','國中','青雲，指顯要的地位。青雲直上比喻順利的迅速升到高位。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1029,'一琴一鶴','國中','比喻官吏的清廉。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1030,'濟濟一堂','國中','比喻許多人才聚集一起。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1031,'青梅煮酒','國中','集會共論天下事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1032,'付之一哂','國中','毫不在意，一笑置之。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1033,'層巒疊嶂','國中','山峰重疊，連綿不斷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1034,'玉樓赴召','國中','比喻有才華的文人年輕早逝。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1035,'空中樓閣','國中','空中所見的樓臺觀閣。比喻脫離現實的幻想，沒有意義。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1036,'故宮禾黍','國中','用來比喻感念故國的情思。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1037,'安堵如故','國中','形容相安無事，一切如常。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1038,'江山如故','國中','江河山岳的面貌如昔。常對喻人事的變遷快速。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1039,'革故鼎新','國中','革除舊弊，建立新制。多指朝政變革或改朝換代。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1040,'人己一視','國中','對人對己一律同等看待。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1041,'人琴俱杳','國中','用作傷悼友人去世之辭。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1042,'人謀不臧','國中','人的計畫不夠細密完備。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1043,'人非木石','國中','人有思想感情，不同於樹木石塊無知覺感情。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1044,'東央西告','國中','到處懇切的央求別人幫助。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1045,'東兔西烏','國中','月亮東升，太陽西下。比喻時間流逝。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1046,'甘言巧辭','國中','逢迎諂媚的話。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1047,'水火不辭','國中','指不避艱險。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1048,'游辭浮說','國中','浮夸不實，沒有根據的言論。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1049,'談辭如雲','國中','說話時言辭如雲般湧出。形容善於言辭。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1050,'梅妻鶴子','國中','表示清高或隱居。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1051,'鎩羽而歸','國中','比喻失敗而回。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1052,'浩如煙海','國中','廣大繁多。形容書籍、文獻資料等非常豐富。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1053,'煙蓑雨笠','國中','在山林雨霧中戴著斗笠，穿著蓑衣。比喻隱士。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1054,'梨花帶雨','國中','形容美女的淚容，有如春天沾著雨的梨花。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1055,'枯木生花','國中','比喻絕境中重獲生機。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1056,'寒花晚節','國中','在寒冬而不凋的花。比喻人老而操守愈堅。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1057,'哀梨蒸食','國中','漢時哀仲所種之梨，入口消融，美味無比，稱為哀梨。但有無知者得此好梨，卻蒸而食之。比喻好壞不辨，不識貨。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1058,'霧裡看花','國中','形容視界模糊，看不清楚。後比喻看不清楚事情的真相。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1059,'明月入懷','國中','比喻人心胸開闊明朗。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1060,'三紙無驢','國中','比喻文辭繁冗而不切中要旨。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1061,'一時瑜亮','國中','指同一個時代裡兩個同樣傑出的人才。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1062,'一傅眾咻','國中','喻學習環境的重要。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1063,'人一己百','國中','用以勉人力學以期有成。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1064,'人心叵測','國中','難以知道人心的險惡。叵，「不可」的連音。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1065,'老僧入定','國中','形容閉目靜坐，心無雜念。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1066,'箕山之志','國中','相傳堯欲將天下讓給許由，許由不受而避居箕山。故後以箕山之志指隱居避世，不慕虛榮的高尚志節。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1067,'千刀萬剮','國中','形容對人憤恨之深。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1068,'千巖萬壑','國中','形容山峰谷壑很多，十分雄偉。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1069,'口誅筆伐','國中','對壞人壞事進行口頭及書面的聲討和批判。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1070,'大相逕庭','國中','形容彼此間的言語、行為差距甚大。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1071,'寸陰尺璧','國中','喻時間之珍貴。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1072,'尸位素餐','國中','比喻人空佔著職位不好好做事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1073,'山高水長','國中','比喻人的品德高尚，也比喻恩情、友誼深厚無比。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1074,'不分畛域','國中','不分界限，今用以形容不分你我，關係良好。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1075,'中饋猶虛','國中','表示男子尚未娶妻。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1076,'五陵少年','國中','比喻富貴豪門的子弟。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1077,'方枘圓鑿','國中','比喻兩件事情差距甚大不能配合。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1078,'日薄西山','國中','比喻人衰老或事物敗壞將近死亡。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1079,'戶限為穿','國中','形容進出的人很多。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1080,'枕石漱流','國中','比喻過隱居的生活，又作「枕流漱石」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1081,'以鄰為壑','國中','把困難或災禍轉嫁到別人頭上。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1082,'玉液瓊漿','國中','形容非常名貴而美味的飲料。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1083,'光風霽月','國中','比喻人坦蕩高尚的胸懷品格。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1084,'吐哺握髮','國中','表示渴望賢才的心非常熱烈。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1085,'好問則裕','國中','指碰到事情要多多思考，不瞭解時要向別人請教，那麼學識就會越來越淵博。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1086,'如喪考妣','國中','就像父母過世一樣，形容極為傷心痛苦。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1087,'徒呼負負','國中','負負，很慚愧的意思。形容無能為力，只有愧嘆。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1088,'舌粲蓮花','國中','形容人很會說話。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1089,'妙語解頤','國中','形容言語風趣，使人發笑。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1090,'奉為圭臬','國中','指令人信服可作為準則的人事物。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1091,'河清海晏','國中','河，指黃河。晏，平靜。喻天下太平。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1092,'狗尾續貂','國中','今用以比喻把不好的東西接在好東西後面。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1093,'南橘北枳','國中','比喻生長環境的好壞會影響本質的優劣。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1094,'問道於盲','國中','向盲人問路。比喻求救於無知的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1095,'持盈保泰','國中','守住成業以維持平安。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1096,'迥然不同','國中','迥，遠。表示差別極大。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1097,'鸚鵡學舌','國中','鸚鵡學人說話。比喻別人怎麼說，自己也怎麼說，沒有自己的見解。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1098,'屠龍之技','國中','殺龍的技術。比喻技藝雖高但無用處。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1099,'動如參商','國中','用以比喻人分離後難以會面。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1100,'敝帚自珍','國中','比喻一個人珍視自己的東西，縱使不值錢也看得很貴重。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1101,'率爾操觚','國中','指以輕率的態度進行寫作。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1102,'移樽就教','國中','樽，酒杯。用以表示主動向人請教。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1103,'唾手可得','國中','唾手，往手上吐唾沫。比喻極容易取得。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1104,'焚琴煮鶴','國中','形容不解風雅的行為。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1105,'程門立雪','國中','形容尊師重道。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1106,'圓顱方趾','國中','圓頭顱、方腳趾，故用以借指人類。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1107,'跬步千里','國中','比喻只要不間斷的努力，即可獲得巨大的成功。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1108,'蝸角虛名','國中','比喻非常小的虛名。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1109,'瞠乎其後','國中','瞠，瞪眼注視。形容遠遠落後於人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1110,'擢髮難數','國中','擢，拔。拔下頭髮也數不清，形容罪行多至無法計算。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1111,'一日九遷','國中','遷，升官。形容人升官極快。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1112,'九五之尊','國中','九五，易經中的卦爻位名，指第五爻陽爻，是君王的象徵。形容天子的尊位。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1113,'人中騏驥','國中','騏驥，良馬。喻才能出眾的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1114,'入耳著心','國中','指聽到的事情都會牢記在心。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1115,'力挽狂瀾','國中','比喻盡力挽回衰敗危急的局勢。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1116,'三豕涉河','國中','指文字因為形體相近、相似而誤寫、誤讀。三豕即「己亥」之誤。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1117,'無下箸處','國中','滿桌菜餚，竟仍嫌無好菜可吃。比喻生活驕奢。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1118,'大張撻伐','國中','張，施展。撻，音ㄊㄚˋ，擊打。撻伐，征討。用武力大舉征討。比喻對人進行大規模的攻擊聲討。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1119,'大放厥辭','國中','厥，其、他的。原意是鋪陳辭藻，施展文才。後指人誇大其詞，大發議論，多含貶義。亦作「大發厥辭」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1120,'大醇小疵','國中','醇，純正。疵，疏失。指大體完美，略有小缺點。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1121,'子虛烏有','國中','指虛構、不真實的人物和事情。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1122,'己飢己溺','國中','看到他人陷於飢餓、水淹之中，就覺得好像是自己使他們如此的。形容上位者關心民間疾苦，有仁民愛物的胸懷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1123,'不容置喙','國中','喙，嘴。不容許插嘴。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1124,'不欺暗室','國中','不因暗室為不易窺見之處而做壞事。比喻為人光明正大。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1125,'不落窠臼','國中','窠臼，舊格式、老一套。比喻不落俗套，有獨創風格。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1126,'五日京兆','國中','京兆，古代國都的行政首長。比喻任職時日短暫，後或用來指凡事不做長遠打算。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1127,'天不假年','國中','假，借與。上天不多借人幾年的生命。感嘆人壽命不長。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1128,'天理昭昭','國中','天理，天道。昭昭，明顯。古代認為上天能主持公道，善惡分明，報應分毫不差。又作「天理昭彰」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1129,'蕭規曹隨','國中','漢代曹參繼蕭何為相國，舉事皆無所變更。比喻後任的人依循前任所訂的規章行事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1130,'支吾其詞','國中','說話含糊不清，應付搪塞，不肯吐露實情。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1131,'斗杓東指','國中','斗杓，指北斗七星第五顆星到第七顆星所形成的柄。指冬盡春來。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1132,'心有鴻鵠','國中','鴻鵠，天鵝。形容不專心。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1133,'牛山濯濯','國中','牛山，齊國山名。濯濯，光禿禿的樣子。形容草木不生。或指人禿頭無髮。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1134,'兄弟鬩牆','國中','鬩，爭吵。牆，牆內，指家庭。比喻內部不合，互相爭鬥。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1135,'另起爐灶','國中','另外搭起爐灶。比喻重新做起。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1136,'民胞物與','國中','與，類也。人民是我的同胞，萬物和我同類。指仁民愛物的廣大胸襟。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1137,'深厲淺揭','國中','指若涉淺水，則提起衣服過去；若涉深水，則連衣服也不必提起而直接渡水。後比喻行事隨機應變。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1138,'得魚忘筌','國中','喻得意忘言。筌是捕魚的工具，既已得魚則筌可棄絕。暗示人求道，不可執著拘泥於文字形式。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1139,'向壁虛構','國中','面向牆壁虛擬故事。比喻憑空捏造。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1140,'吉光片羽','國中','吉光，古時傳說中的神獸名。片羽，一片羽毛，此指神獸身上的一根毛。比喻殘存的珍貴藝術品。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1141,'如出一轍','國中','轍，車輪壓過的痕跡。像出於同一個車轍。比喻兩種言論或行為十分相似。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1142,'衣缽相傳','國中','泛指師生間一切思想、學術及技能的傳授。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1143,'二三其德','國中','喻三心二意而沒有節操。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1144,'否極泰來','國中','否，壞。泰，好。極，頂點。壞的到了極點，好的就來了。表示物極必反，苦盡甘來。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1145,'改絃易轍','國中','變更音樂的曲調，改換車子的路徑。比喻改變舊有的方法或制度。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1146,'虎兕出柙','國中','兕，犀牛。柙，獸欄。指老虎與犀牛跑出柵欄。比喻失職、有虧職守。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1147,'沐猴而冠','國中','沐猴，獼猴。比喻人虛有其表。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1148,'身無長物','國中','長物，多餘的東西。比喻人極為窮困。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1149,'阮囊羞澀','國中','阮，指晉朝人阮孚。囊，口袋。羞澀，難為情。比喻錢財匱乏。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1150,'咄咄逼人','國中','咄咄，令人害怕的一種聲音。形容氣勢洶洶、盛氣凌人的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1151,'始作俑者','國中','首先制訂用木俑來陪葬的人。用以比喻首先做惡事，或先開惡例的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1152,'抱痛西河','國中','西河，戰國時魏國的地名。形容人喪子之痛。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1153,'空谷足音','國中','在空曠的山谷裡，聽到腳步聲。比喻極為難能可貴的人、事、物。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1154,'綱舉目張','國中','綱，網的大繩。目，網的孔眼。綱舉目張比喻能執其要領，則細節自能順理而成。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1155,'信而有徵','國中','信，確實。徵，證據。用以比喻確實可靠而有證據。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1156,'流言蜚語','國中','蜚，同「飛」。多半指背後散佈的誹謗，或挑撥離間的壞話。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1157,'韋編三絕','國中','韋，熟牛皮。古時用竹簡寫字，竹簡用牛皮帶編連起來，稱韋編。三絕，指多次斷絕。用以形容讀書刻苦勤奮。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1158,'首如飛蓬','國中','飛蓬，秋天飛動的蓬草。比喻頭髮散亂。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1159,'倒屣相迎','國中','屣，鞋。因為急於迎接客人，把鞋子穿反了。形容待客的殷勤。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1160,'殷憂啟聖','國中','殷憂，深憂。指深憂禍亂可開導啟發聖人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1161,'一曝十寒','國中','曝，晒。晒一天，凍十天。比喻學習、做事無恆心，時常間斷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1162,'敬謝不敏','國中','恭敬的表示不能接受，或能力不行的客氣話。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1163,'十室九空','國中','十戶人家九戶空虛。形容因天災人禍造成人民貧困窮苦、流離失所的景象。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1164,'千里鵝毛','國中','千里，指相距很遠。鵝毛，形容物品的微薄。喻禮物雖輕但情意甚重。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1165,'大才槃槃','國中','槃槃，極大的樣子。形容人才能超凡。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1166,'小學大遺','國中','學習小細節卻遺漏大學問。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1167,'山楶藻梲','國中','楶，斗拱。梲，梁上之短柱。指斗拱上雕刻著山的圖形，梁上短柱畫有水藻花紋。形容屋宇之富麗華美。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1168,'不亢不卑','國中','不高傲，也不自卑。亦作「不卑不亢」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1169,'不忮不求','國中','忮，嫉妒。求，貪求。指不嫉妒，也不貪求。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1170,'五內如焚','國中','五內，五臟。形容非常憂慮的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1171,'六馬仰秣','國中','仰，抬頭。秣，馬吃的草料。仰秣，指馬停止吃草而抬頭傾聽音樂。形容音樂的優美動聽。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1172,'文過飾非','國中','文、飾，掩飾。過、非，過失、錯誤。指利用各種理由或藉口來掩飾自己的缺點錯誤。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1173,'斗筲之人','國中','筲，竹器。斗、筲兩者都是較小的器皿。比喻心胸狹窄，才短量淺。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1174,'數米而炊','國中','將米一粒粒數過後才下鍋。比喻處理事物過於煩瑣，徒勞無益。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1175,'心如懸旌','國中','旌，旗子。形容心神不安寧。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1176,'戶樞不蠹','國中','戶樞，門軸。蠹，蛀蟲。門軸因為常常轉動，所以不會生蛀蟲。比喻勞動不息，能避免退化。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1177,'文不加點','國中','形容文思敏捷、下筆成章，通篇無所塗改。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1178,'牛角掛書','國中','掛書於牛角上，且行且讀。形容勤苦向學。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1179,'以儆效尤','國中','儆，警告、告誡。效尤，照壞樣子去做。指通過對個別壞人或壞事的懲罰，來警告那些想做壞事的人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1180,'巧舌如簧','國中','簧，指管樂器中的薄片，能發出美妙悅耳的聲音。用以形容虛假巧飾的言辭。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1181,'斯文掃地','國中','斯，此。文，指文化、禮樂制度。斯文掃地本指禮樂制度破壞殆盡，後借指文人不顧操守，毫無廉恥。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1182,'生張熟魏','國中','張、魏，姓，泛指各類人。比喻互不熟悉。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1183,'白駒過隙','國中','駒，小馬，借指太陽，又引申為光陰。隙，小孔、小縫。太陽像白色小馬從縫隙前飛馳而過。比喻時間過得很快。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1184,'目不交睫','國中','交睫，上下睫毛交闔。形容人辛勞或憂慮得沒有時間睡覺。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1185,'目不見睫','國中','眼睛看不見自己的睫毛。比喻人眼光短淺或無自知之明。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1186,'振聾發聵','國中','比喻用文章或言論大聲呼籲，使頑愚的人驚覺奮起。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1187,'斷髮文身','國中','截短頭髮，在皮膚上刺畫文飾。古代吳、越一帶野蠻的風俗。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1188,'方外之人','國中','稱僧道等出家人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1189,'妄自菲薄','國中','妄，虛妄、無根據。菲薄，輕視。沒有根據地鄙視自己。形容人自輕自賤、自暴自棄。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1190,'如坐針氈','國中','好像坐在插了針的氈子上。形容人心神不寧，坐立不安。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1191,'早占勿藥','國中','勿藥，不必藥物治理。早占勿藥為祝人早日康復之',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1192,'春秋正富','國中','正當壯盛之年。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1193,'有腳書櫥','國中','對學問淵博、知識豐富者的美稱。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1194,'兩腳書櫥','國中','比喻讀書雖多，卻不知善加運用的書呆子。有反諷之意。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1195,'汗牛充棟','國中','書多得堆滿屋，往外運時，牛馬累得出汗。形容書籍數量極多。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1196,'江心補漏','國中','船隻已到江水的中心才要補漏洞。比喻事情發生後才做補救，已無濟於事。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1197,'亡羊補牢','國中','亡，丟失。牢，關牲口的欄圈。丟失了羊，趕快修補羊圈。比喻出了差錯之後立即想辦法補救，以防止更大的失誤。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1198,'老驥伏櫪','國中','驥，千里馬。櫪，馬槽。伏在馬槽上吃草的老馬，心仍然想著馳騁千里。比喻年紀雖老，仍懷雄心壯志。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1199,'自出機杼','國中','機杼，織布機。比喻文章的構思獨出心裁，與眾不同。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1200,'行將就木','國中','就要進棺材了。比喻人快死了。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1201,'兵馬倥傯','國中','倥傯，形容多事而忙碌的樣子。指戰禍不斷。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1202,'利令智昏','國中','利，金錢、利益。令，使、讓。智，理智。昏，糊塗。指因貪圖私利而使頭腦發昏，不辨是非。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1203,'晚食當肉','國中','飢餓了才吃，味道自然甘美，好像食肉一般。淡泊生活的人常引用此語。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1204,'蜀犬吠日','國中','四川多雲霧，偶而太陽破雲而出，不常見到太陽的蜀犬，竟受驚嚇而向日狂吠。後用以比喻少見多怪。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1205,'智圓行方','國中','智慮要圓通靈活，行事要方正不苟。比喻無所不知，而有所不為。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1206,'會稽之恥','國中','喻戰爭失敗的恥辱。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1207,'披沙揀金','國中','披，分開。揀，又作「簡」，挑取。從沙子裡挑出金子來。比喻從大量的事物中挑選菁華。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1208,'囫圇吞棗','國中','囫圇，完整的。指尚未咬碎棗子，就整個吞下肚。比喻理解事物或學習時，不細加領悟，只是籠統含糊地接受。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1209,'懷璧其罪','國中','懷璧其罪指身藏寶玉，因此獲罪。後比喻懷才而遭人嫉妒陷害。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1210,'惟力是視','國中','比喻依自己的能力，盡力而為。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1211,'涅而不緇','國中','涅，音ㄋㄧㄝˋ，以黑色染物。緇，音ㄗ，黑色。比喻操守不變，即使處在污濁的環境中，也不受影響。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1212,'惠而不費','國中','加惠於人而己又無所耗費。後比喻空口說白話，做順水人情。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1213,'珠圓玉潤','國中','原本是形容水明淨，微波蕩漾。後形容歌聲宛轉或文詞華美流暢。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1214,'厲兵秣馬','國中','厲，磨利。兵，兵器。秣，音ㄇㄛˋ，餵的意思。比喻做好一切戰前的準備，以迎接戰鬥。亦作「秣馬厲兵」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1215,'納屨踵決','國中','屨，音ㄐㄩˋ，鞋子。決，破裂。比喻生活極為窮困。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1216,'悖入悖出','國中','以不正當手段得來的財物，又被人巧奪或胡亂花掉。亦可比喻做出背理的行為，自然有背理的報應。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1217,'馬首是瞻','國中','是，語助詞，無義。瞻，音ㄓㄢ，向上或向前看。比喻聽從指揮或追隨他人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1218,'高瞻遠矚','國中','站得高，看得遠。形容人眼光遠大。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1219,'動輒得咎','國中','輒，音ㄓㄜˊ，總是。咎，音ㄐㄧㄡˋ，過錯。動不動就會犯錯或受到責備。形容處境艱難，容易招致過失。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1220,'強弩之末','國中','比喻原來強大的力量已耗盡，不能再起作用。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1221,'得隴望蜀','國中','比喻人貪得無厭，得寸進尺。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1222,'未定之天','國中','比喻事情尚未成定局。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1223,'掠人之美','國中','掠，音ㄌㄩㄝˋ，奪取。奪取別人的功勞、名望而佔為己有。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1224,'炳燭之明','國中','微弱的光明。後比喻人老而好學。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1225,'天籟自鳴','國中','不依靠任何外力而渾然天成的作品。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1226,'晨昏定省','國中','指子女早晚侍候探望父母的起居生活。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1227,'望穿秋水','國中','秋水，比喻明亮的眼睛。眼睛都望穿了，形容殷切的盼望。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1228,'望風披靡','國中','披靡，仆倒，在此比喻戰敗逃散的樣子。比喻看到對方的來勢極盛而不敢反抗，或不經戰鬥就潰散，惶恐逃跑。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1229,'所向披靡','國中','比喻勢力強大勇猛，力量所達之處，阻礙全被摧垮。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1230,'眾擎易舉','國中','擎，音ㄑㄧㄥˊ，舉。比喻大家團結協力，就容易把事情辦成。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1231,'移花接木','國中','比喻暗中使用手段，以假換真，欺騙他人。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1232,'抑揚頓挫','國中','抑，降低。揚，升高。頓，停頓。挫，轉折。抑揚頓挫形容詩文作品或音樂之聲響高低轉折，富變化又有節奏。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1233,'視民如傷','國中','看待人民就如同看待自己身上的傷痛一樣。形容非常愛護和關心人民。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1234,'陳陳相因','國中','比喻因循守舊不圖創新。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1235,'唾面自乾','國中','比喻受欺侮卻忍氣吞聲，不去反抗。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1236,'百歲之後','國中','比喻死後。亦作「百年之後」。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1237,'鐘鳴漏盡','國中','以天快亮之時來比喻殘年。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1238,'聲聞過情','國中','聲聞，名聲。情，實況。譏稱他人的名聲超過實質的才學。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1239,'碧血丹心','國中','形容赤忱、忠誠的心。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1240,'躍馬橫戈','國中','縱馬橫槍，向人挑戰之姿態。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1241,'車笠之盟','國中','比喻友誼深篤。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1242,'載酒問字','國中','漢揚雄家貧，酷嗜飲酒，時有好事者載酒餚向他學習，而劉棻嘗從雄學奇字。後用以比喻人勤學好問。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1243,'輕裝簡從','國中','顯貴者外出時裝扮輕便，減少隨從。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1244,'轍亂旗靡','國中','車轍痕跡紊亂，旗幟四處倒地。形容軍隊潰敗的樣子。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1245,'摧枯拉朽','國中','比喻極容易做到，毫不費力。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1246,'鳶飛魚躍','國中','比喻放任自然，各得其所，各得其樂。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1247,'逢人說項','國中','唐人項斯未聞名前，以詩謁見國子祭酒楊敬之，敬之愛項斯之才，逢人就讚揚他。後比喻到處替人遊說或替人講情。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1248,'劍拔弩張','國中','形容雙方的衝突已陷入一觸即發的局面。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1249,'履險如夷','國中','履，踏。夷，平地。比喻經歷險境而能保持鎮定，安然度過。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1250,'進如激矢','國中','喻前進之迅速。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1251,'暮鼓晨鐘','國中','佛寺中敲鐘擊鼓以報時。比喻使人覺悟的言論。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1252,'遂我初服','國中','意為得償初願。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1253,'心腹之患','國中','致命的禍患或隱藏在內部的危害。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1254,'賣官鬻爵','國中','鬻，音ㄩˋ，出賣。出賣官職爵位。比喻執政者貪汙腐敗，以官職做交易。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1255,'踔厲風發','國中','形容文章議論雄辯有力，氣勢豪邁。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1256,'養癰遺患','國中','癰，音ㄩㄥ，膿瘡。比喻姑息小事，將成大害。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1257,'曉風殘月','國中','月亮隱退，晨風微涼。形容黎明時的景象。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1258,'螓首蛾眉','國中','螓，音ㄑㄧㄣˊ，蟬的一種。螓首，指額頭。形容女子容貌美麗。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1259,'頭童齒豁','國中','童，禿頭。豁，動搖。形容人已衰老。',0)");
+tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1260,'重足側目','國中','腳不敢前進，眼睛不敢正視。形容非常恐懼的樣子。',0)");
+
+
+
+
+
+     msg = '<p>新增資料完成!!  (如果巳經有資料就不會再新增了)。</p>';
+
+
+     //tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "菜鸟教程")');
+    document.querySelector('#status').innerHTML =  msg;
+ });
+  }
+
+
+  function delPublication() {
+    db.transaction(function (tx) {
+     tx.executeSql('DELETE FROM textmsg2 WHERE 識別碼<=10000');
+     msg = '<p>巳刪除全部記錄。</p>';
+     document.querySelector('#status').innerHTML =  msg;
+
+ });
+  }
+  function deleterow() {
+    var password = window.sessionStorage.seletequery;
+    // var aa = "'%";
+    // var bb = "%'";
+    db.transaction(function (tx) {
+      var delseache1  = 'DELETE FROM textmsg2 WHERE 識別碼 = ' + document.getElementById("killnum").value;
+      // delseache1 = aa + delseache1 + bb;
+      alert(delseache1 + ' 本筆資將刪除  從' + password + "按鍵進來")
+     tx.executeSql(delseache1);
+    //  var msg1 = '<p>巳刪除識別碼=' & document.getElementById("killnum").value & '的記錄。</p>';
+    //  document.querySelector('#status').innerHTML =  msg1;
+
+switch(password){
+case "likein" :
+likePublication();
+
+case "displayin":
+displayPublication();
+
+default :
+
+// alert(password)
+// if (password = "likein"){
+//   likePublication();
+
+// } else if(password = "displayin"){
+//   displayPublication();
+// }
+}
+
+ });
+
+
+  }
+
+  function insertPublication() {
+
+}
+
+function displayPublication() {
+    db.transaction(function (tx) {
+     tx.executeSql('SELECT * FROM textmsg2', [], function (tx, results) {
+      var len = results.rows.length, i;
+      var str = ""
+      str = "全部資料如下:<br/><table><thead><tr><td >自動編號</td><td >成語</td><td >年級</td><td > 解 釋 </td><td >日期</td></tr>";
+      //str = "全部資料如下:<br/><table><thead><tr><td >自動編號</td><td >成語</td><td >年級</td><td >解釋</td><td >日期</td></tr></thead><tr><td>識別碼</td><td>name1</td><td>mail1</td><td align='center'>word1</td><td>時間戳記</td></tr>";
+                     for (var i = 0; i < len; i++)  {
+                      str += "<tr>";
+                        // item = results.rows.item(i);
+                        //  document.querySelector('#status').innerHTML +=  item('識別碼') +   item('地名') + item('地標') + item('備註') + item('時間戳記');
+                              for (var o in results.rows.item(i)) {
+
+                                  str += "<td align='left'>" + results.rows.item(i)[o] + "</td>";
+
+                            }
+                            str +=  "</tr>";
+                       }
+
+      str += "</table>";
+
+      $("#status").html(str);
+      window.sessionStorage.seletequery = "displayin";
+    }, null);
+ });
+}
+
+
+function likePublication() {
+  // window.location.reload();
+  // document.querySelector('#status').innerHTML= "";
+  wordseaceh = document.getElementById('likeseachword').value;
+  var aa = "'%";
+  var bb = "%'";
+  // var aa = "aa"
+  // var bb = "bb"
+
+  wordseaceh = aa + wordseaceh + bb;
+    //  alert(wordseaceh);
+    db.transaction(function (tx) {
+     tx.executeSql('SELECT 識別碼,name1,mail1,word1,時間戳記 FROM textmsg2 where name1 like ' +  wordseaceh , [], function (tx, results) {
+      // alert("SELECT * FROM textmsg1 where 地名 like '%" & wordseaceh & "%'");
+       var len = results.rows.length, i;
+      var str = ""
+      str = "資料如下:<br/><table><thead><tr><td >自動編號</td><td >成語</td><td >年級</td><td > 解 釋 </td><td >日期</td></tr>";
+      //str = "資料如下:<br/><table><tr><td>識別碼</td><td>name1</td><td>mail1</td><td>word1</td><td>時間戳記</td></tr>";
+                     for (var i = 0; i < len; i++)  {
+                      str += "<tr>";
+                        // item = results.rows.item(i);
+                        //  document.querySelector('#status').innerHTML +=  item('識別碼') +   item('地名') + item('地標') + item('備註') + item('時間戳記');
+                              for (var o in results.rows.item(i)) {
+
+                                  str += "<td align='left'>" + results.rows.item(i)[o] + "</td>";
+
+                            }
+                            var inputno = results.rows.item(i)["識別碼"];
+                            // alert(inputno);
+
+                          //  str += "<td>" +  $("#inputno").click() +"</td>";
+                            str +=  "</tr>";
+
+                       }
+
+      str += "</table>";
+
+      $("#status").html(str);
+      window.sessionStorage.seletequery = "likein";
+
+    }, null);
+ });
+//  $(".myTable").tablesorter({widgets: ['zebra']});
+
+
+}
+function reloadaginePublication() {
+    db.transaction(function (tx) {
+    //   window.location.reload();
+      document.querySelector('#status').innerHTML=""
+ });
+  }
+
+//  db.transaction(function (tx) {
+//     tx.executeSql('UPDATE LOGS SET log="新修改1" WHERE id=2');
+//      msg = '<p>巳更新第二筆記錄。</p>';
+//      document.querySelector('#status').innerHTML =  msg;
+//  });
+
+// $(function () {
+
+// $("#myTable").tablesorter({widgets: ['zebra']});
+
+// });
+
+
+    </script>
+    <style type="text/css">
+                /* <link rel=stylesheet type="text/css" href="css/color.css"> */
+                h1#text1 {
+                    margin: 0px;
+                    padding: 0px;
+                    top: 15px;
+                    position: absolute;
+                    font-size: 40px;
+                    color: #FF0000;
+                    margin-left: 50px;
+                }
+
+                h1#text2 {
+                    margin: 0px;
+                    padding: 5px;
+                    position: absolute;
+                    font-size: 30px;
+                    color: #FFFFFF;
+                    top: 30px;
+                    margin-left: 50px;
+                    z-index: 1;
+                    filter: glow(color=#ff0000, strength=5);
+                    text-shadow: 5px 5px 5px #FF0000;
+                }
+
+                .consection {
+                    display: block;
+                    border: 0px #330000 solid;
+                    width: 600px;
+                    left: 5px;
+                    top: 5px;
+                    margin: auto;
+                    padding: 40px;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 16px;
+                }
+
+                .ptest {
+                    color: saddlebrown;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 20px;
+                }
+
+                .ptest1 {
+                    color: blue;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 20px;
+                }
+
+                .ptest2 {
+                    color: red;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 20px;
+                }
+
+                .ptest3 {
+                    color: green;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 20px;
+                }
+                /* a:hover {border:3px green solid;text-decoration:none;}  */
+
+                a:link, a:visited {
+                    border-style: solid;
+                    border-width: 5px;
+                    border-color: transparent;
+                }
+
+                a:hover {
+                    border: 3px red;
+                    text-decoration: none;
+                    background-color: green;
+                }
+
+                ;
+                /* <link rel="stylesheet" href="css/color.css"> */
+                /* @import url(css/color.css); */
+                .leftaddmg {
+                    padding-left: 5px;
+                    padding-right: 20px;
+                }
+
+                .auto-style1 {
+                    font-family: 標楷體;
+                    font-size: x-large;
+                    color: #FF0000;
+                }
+
+                .auto-style2 {
+                    font-family: 標楷體;
+                    font-size: xx-large;
+                    color: #FF0000;
+                }
+
+
+
+                a {
+                    color: #007bff;
+                    text-decoration: none;
+                    background-color: transparent;
+                    -webkit-text-decoration-skip: objects;
+                }
+                /* #status {
+        width:200px; height:200px"
+        } */
+                #status {
+                    display: table;
+                }
+
+                tr {
+                    display: table-row;
+                }
+
+                td {
+                    display: table-cell;
+                    border: 2px solid #0000cc;
+                }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark ptest2">
+        <a class="navbar-brand" href="http://220.134.245.185:8888/fishnew5/selfpoke">查座標</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        各版本
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item disabled" href="tablesort/index1.html">響應式網頁版</a>
+                        <a class="dropdown-item " href="index.html">首頁版</a>
+                        <a class="dropdown-item" href="poko.html">新版</a>
+                        <a class="dropdown-item" href="pokomon.htm">舊版</a>
+                        <div class="dropdown-divider"></div>
+                        <!-- <a class="dropdown-item" href="pokepic/斗南手機版股票.apk">座標程式下載</a>
+                        <a class="dropdown-item" href="pokepic/手機版websql.apk">座標程式下載chrome</a>  -->
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        股票資訊
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="stock1.html">股票資訊(手機版)</a>
+                        <a class="dropdown-item" href="stock.html">股票資訊(電腦版)</a>
+                        <a class="dropdown-item" href="https://www.wantgoo.com/global">玩股網</a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        寶可夢資料
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="https://twpkinfo.com/ipoke.aspx">寶可夢資訊站_抓好iv</a>
+                        <a class="dropdown-item" href="https://twpkinfo.com/igym.aspx">團體戰及道館名稱查詢</a>
+                        <a class="dropdown-item" href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite">查技能等資料</a>
+                        <a class="dropdown-item" href="http://tomchun.tw/tomchun">湯姆群情報站</a>
+                        <a class="dropdown-item" href="https://forum.gamer.com.tw/B.php?bsn=29659&amp;subbsn=0">巴哈討論區</a>
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="http://www.sachi.somee.com/pokemapaccess.aspx">查座標24小時沒地圖</a>
+                        <a class="dropdown-item" href="http://www.sachi.somee.com/mapsql.aspx">查座標24小時有地圖</a>
+                        <a class="dropdown-item" href="tablesort/basicinfo.html">webSQL寫在你的瀏覽器內(股票)</a>
+                        <a class="dropdown-item " href="tablesort/index1.html">webSQL寫在你的瀏覽器內(座標)</a>
+                        <a class="dropdown-item disabled" href="websqlpoko.html">webSQL寫在你的瀏覽器內沒放表格(座標) </a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        追劇網站
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="https://gimy.tv/">Gimy追劇</a>
+                        <a class="dropdown-item" href="http://www01.eyny.com/video.php?mod=channel&cid=5">伊莉影視</a>
+                        <a class="dropdown-item" href="http://video.yaodaojiao.com/jinguang/zxtd/">妖道角布袋戲</a>
+
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="http://vigor.enjoy101.org/">vigor網路電視</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="readfilepic.html">讀圖片(沒自動縮放,要放大才看得清楚時選此)</a>
+                        <a class="dropdown-item" href="readfilerwd.html">讀圖片(自動縮放且看得清楚時選此)</a>
+
+                    </div>
+                </li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+
+    <!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>     -->
+    <!-- <input type="button" id="inputno" class="delitem" value="" >;> -->
+    <!-- <input type="button" id="inputno" class="delitem" value="刪除"> -->
+    <!-- <button id="inputno" class="delitem">刪除</button> -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col text-center  btn btn-default auto-style1">
+                <h1>成語筆記</h1>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+
+            <div class="col text-center  btn btn-default auto-style1">
+                <h2> 成語相似查詢</h2>
+            </div>
+
+
+
+        </div>
+    </div>
+    <!-- <input type="text"> -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-xs-6 text-center  btn btn-default">
+                <textarea class="auto-style1" name="" id="likeseachword" cols="20" rows="1">斗</textarea>
+            </div>
+            <div class="col-md-4 col-xs-6 text-center  btn btn-default">
+
+                <button id="reloadagine" class="auto-style1" onclick="reloadaginePublication()"><img src="pokepic/重新整理.JPG">重新整理網頁</button>
+            </div>
+            <div class="col-md-4 col-xs-6 text-center  btn btn-default">
+                <textarea class="auto-style1" name="" id="killnum" cols="5" rows="1">37</textarea>
+                <button id="delitemrow" class="auto-style1 " onclick="deleterow()"><img src="pokepic/減號.JPG">輸入識別碼刪除</button>
+            </div>
+        </div>
+    </div>
+    <div class="container ">
+        <div class="row">
+            <div class="col-md-3 col-xs-6 text-center  btn btn-default">
+                <button id="wordseach" class="auto-style1" onclick="likePublication()"><img src="pokepic/seachpic.png">相似搜尋</button>
+
+            </div>
+            <div class="col-md-3 col-md-6 text-center  btn btn-default">
+                <button id="selectshow" class="auto-style1" onclick="displayPublication()"><img src="pokepic/seachpic.png">查詢全部資料</button>
+
+            </div>
+
+            <div class="col-md-3 col-xs-6 text-center  btn btn-default">
+                <button id="delbtn" class="auto-style1" onclick="delPublication()"><img src="pokepic/垃圾埇.JPG">刪除全部資料</button>
+
+            </div>
+
+            <div class="col-md-3 col-xs-6 text-text  btn btn-default">
+                <button id="addbtn" class="auto-style1" onclick="firstaddPublication()"><img src="pokepic/加號.JPG">首次匯入資料</button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row ">
+            <div class="col text-center  btn btn-default">
+                <div id="status" aria-multiline="true" class="myTable"> </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <br />
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

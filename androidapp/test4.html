@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <style>
+    table{border:0;margin:0;border-collapse: collapse};
+    table td{padding:3px;}
+    </style>
+
+<script src="">
+var db;
+
+$(function(){
+    window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+    if(!window.indexedDB){
+        alert("你的瀏覽器不支援 indexedDB");
+    }
+var req = windwo.indexedDB.open("MyDatabase");
+req.onsuccess = function (e){
+db = this.result;
+
+};
+
+req.onerror = function(e){
+    $("div").html("開啟檔案錯誤:" + e.target.errorCode);
+};
+req.onupgradeneeded = function(e){
+    var objectStore = e.target.result.createObjectStore("customer",{
+        keyPath: "user_id"
+    });
+    objectStore.createIndex("name","name",{ unique: false});
+    objectStore.createIndex("birthday","birthday",{ unique: false});
+
+const customerData = [
+{user_id:"a001",name:"aaa",birthday:"2019/08/05"},
+{user_id:"a002",name:"bbb",birthday:"2019/09/05"},
+{user_id:"a003",name:"ccc",birthday:"2019/08/25"},
+{user_id:"a004",name:"ggggg",birthday:"2019/09/05"},
+{user_id:"a005",name:"bddffffffddd",birthday:"2019/09/05"},
+];
+for(var i in customerData){
+objectStore.add(customerData[i]);
+alert("第" + i + "筆寫入成功")
+}
+};
+$("findbtn").cilik(function(){
+    find_data($("#name").val(),$("#birthday_s").val(),$("#birthday_e").val(),$("#sorting:checked").val());
+});
+})
+
+function find_data(name,births,birthe,sorting){
+$("div").empty();
+var transaction = db.transaction("customer","readwrite");
+var store = transaction.createObjectStore("customer");
+
+if(name !=""){
+    range = IDBKeyRange.bound(name, name + '\uffff',false,false);
+}
+
+index = store.index("name");
+var request = index.openCursor(range,sorting);
+if(births != "" || birthe != ""){
+if(births != "" && birthe != ""){
+range = IDBKeyRange.bound(births, birthe,false,false);
+} else if(births == ""){
+    range = IDBKeyRange.upperBound(birthe,falee);
+
+} else {
+    range = IDBKeyRange.lowerBound(births,false);
+}
+index = store.index("birthday");
+var request = index.openCursor(range,sorting);
+}
+var str ="查詢結果:<table border=1><tr><tr><th>帳號</td><th>姓名</td><th>生日</td></tr>";
+request.onsuccess = function(e){
+    var cursor = e.target.result;
+    if(cursor){
+str+="<tr><td>" + cursor.value.user_id + "</td><td>" + cursor.value.birthday + "</td></tr>";
+cursor.continue();
+    }else{
+str+="</table>";
+$("div").html(str);
+    }
+};
+request.onerror = function(e){
+    $("div").html(e.target.error);
+
+}
+}
+
+
+</script>
+
+</head>
+<body>
+    搜尋條件:<br/>
+    姓名:
+    <input type="text" name="" id="name"><br/>
+    生日:
+    <input type="date" name="" id="birthday_s" value="1990-01-01" >到
+    <input type="date" name="" id="birthday_e" value="1995-12-01" ><br>
+<input type="radio" name="sorting" id="sorting" value="pre" checked>由小到大
+<input type="radio" name="sorting" id="sorting" value="next" >由大到小<br>
+<button id="findbtn">送出查詢</button>
+<div id="message"></div>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+<style>
+    #outline {border:5px #666600 outset;padding:10px;}
+</style>
+ <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+
+$(function () {
+    $("input:file").on('change',function (event){
+        $("#fileContentList").empty();
+        for(var i= 0; i < event.target.files.length; i++){
+         var file = event.target.files(i);
+         if (file){
+             var r = new FileReader();
+             r.file = file;
+             r.readAsDataURL(file);
+             r.onload = function(e){
+                 var contesns = e.target.result;
+                 var thisfile = this.file;
+                 $("#fileContentList").append("檔名:" + thisfile.name + "<br>檔安類型:"
+                 + thisfile.type + "<br>檔案大小:" + thisfile.size + " bytes <br> <img src = '"+ contesns +"'> <br/> ");
+              $("#img1").src = contesns
+
+             }
+         } else {
+             alert("選取檔案失敗!");
+         }
+        }
+    });
+})
+
+
+</script>
+
+
+</head>
+<body>
+        <br>
+        <div id="outline">
+            <h1>選取檔案</h1>
+            <input type="file" id="inputdata" multiple="multiple" accept="image/*"/>
+            <div id="fileContentList"></div>
+        </div>
+<img id="img1" alt="">
+</body>
+</html>
