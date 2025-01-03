@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style type="text/css"> 
+        /* html { height: 100% }
+        body { height: 100%; margin: 0px; padding: 0px }
+        #map_canvas { height:100% } */
+       
+    </style>
+
+<script>
+  var map;
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 23.667488445500492 , lng: 120.473874},
+      zoom: 16,        
+      mapTypeControl:true,
+      fullscreenControl:true,
+      rotateControl:true,
+      scaleControl:true,
+      streetViewControl:true,
+      zoomControl:true,
+      mapTypeControlOptions:{position:google.maps.ControlPosition.TOP_CENTER},
+      fullscreenControlOptions:{position:google.maps.ControlPosition.TOP_RIGHT},
+      rotateControlOptions:{position:google.maps.ControlPosition.RIGHT_CENTER},
+      scaleControlOptions:{position:google.maps.ControlPosition.RIGHT_BOTTOM},
+      streetViewControlOptions:{position:google.maps.ControlPosition.TOP_LEFT},
+      zoomControlOptions:{position:google.maps.ControlPosition.RIGHT_BOTTOM},
+      
+    });
+    //<![CDATA[
+// var map = new GMap(document.getElementById("map1"));
+
+//設定要顯示的控制項
+map.addControl(new GSmallMapControl());
+map.addControl(new GMapTypeControl());
+
+//決定你 Google 地圖的中心點位置和縮放大小
+map.setCenter(new GLatLng(23.672931,120.48088), 16);
+
+//標記在 Google 地圖上的經緯度
+var point = new GLatLng(23.672931,120.48088);
+var marker = new GMarker(point);
+map.addOverlay(marker);
+
+//在地圖上放置標點說明
+var html = "台南火車站";
+map.openInfoWindowHtml (map.getCenter(), html);
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback=initMap" async defer></script>
+
+<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback=initMap"
+async defer></script> -->
+
+
+</head>
+<body>
+     
+  
+
+
+
+
+    <div id="map"style="width: 800px; height:800px">
+        
+    </div>
+  
+<!--Google Map 顯示的位置，可自由決定大小-->
+<div id="map1" style="width: 800px; height: 800px"></div>
+
+<!--以下為控制Google Maps的JavaScript-->
+<script type="text/javascript">
+
+//<![CDATA[
+var map = new GMap(document.getElementById("map1"));
+
+//設定要顯示的控制項
+map.addControl(new GSmallMapControl());
+map.addControl(new GMapTypeControl());
+
+//決定你 Google 地圖的中心點位置和縮放大小
+map.setCenter(new GLatLng(22.996733, 120.212465), 16);
+
+//標記在 Google 地圖上的經緯度
+var point = new GLatLng(22.996733, 120.212465);
+var marker = new GMarker(point);
+map.addOverlay(marker);
+
+//在地圖上放置標點說明
+var html = "台南火車站";
+map.openInfoWindowHtml (map.getCenter(), html);
+
+//]]>
+</script>
+
+
+
+
+</body>
+</html>

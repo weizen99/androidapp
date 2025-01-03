@@ -1,0 +1,1626 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+   
+   
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" media="all" />
+    <script type="text/javascript" src="jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="jquery.tablesorter.js"></script>       
+   
+    
+   
+    
+    <script>
+
+    //  $("#myTable").tablesorter({
+    //   theme: "blue",
+    //   widgets: ['zebra']
+    //   });
+
+    $(function () {
+      $.noConflict();    // 让jQuery放弃$变量的控制  不同版本會相沖
+        $("#myTable").tablesorter({
+          
+
+          theme: "blue",
+          widgets: ['zebra']
+         
+          });
+        
+    });
+
+
+
+
+   
+            var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+           var msg;
+           
+           function firstaddPublication() {  
+            db.transaction(function (tx) {
+           tx.executeSql('CREATE TABLE IF NOT EXISTS textmsg1 (識別碼 int PRIMARY KEY, 地名 varchar(50),地標 varchar(50),備註 varchar(200),時間戳記 int)');
+           
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (1,'斗南火車站','23.672931,120.48088','斗南火車站',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (2,'進擊的巨神(玉皇大帝)','23.671549,120.478226','玉皇大帝',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (3,'忠義祠','23.66311,120.474266','忠義祠',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (4,'順安宮','23.675543,120.473527','順安宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (5,'小沙彌','23.751527,120.296812','小沙彌',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (6,'離菸害增健康','23.753418,120.270979','離菸害增健康',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (7,'警察局紙風車','23.719988,120.309712','警察局紙風車',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (8,'玉安宮','23.747837,120.294651','玉安宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (9,'永安宮','23.758859,120.307206','永安宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (10,'福安宮排樓','23.757976,120.263762','福安宮排樓',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (11,'鎮東宮','23.749527,120.260356','鎮東宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (12,'麥寮拱範宮','23.748278,120.255501','麥寮拱範宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (13,'圓形舞台','23.753826,120.254454','圓形舞台',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (14,'麥寮公園','23.745096,120.256264','麥寮公園',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (15,'鎮南宮','23.746947,120.251251','鎮南宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (16,'崙背奉天宮','23.7607,120.3537','崙背奉天宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (17,'裝置藝術','23.76098,120.345314','裝置藝術',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (18,'紹安客家文化館','23.763816,120.354864','紹安客家文化館',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (19,'斗南農田水利會','23.667446,120.485442','斗南農田水利會',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (20,'海天宮','23.664026,120.486446','海天宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (21,'搖搖馬','23.654799,120.483638','搖搖馬',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (22,'連芳西營廟','23.644624,120.484394','連芳西營廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (23,'鎮西營','23.649895,120.493976','鎮西營',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (24,'虎元帥爺廟','23.639862,120.482929','虎元帥爺廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (25,'石龜天后宮','23.639428,120.4833','石龜天后宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (26,'石龜水塔','23.638729,120.481316','石龜水塔',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (27,'靖興宮','23.643799,120.479307','靖興宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (28,'靖興福安宮','23.644096,120.475569','靖興福安宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (29,'南營將軍廟','23.64124,120.477175','南營將軍廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (30,'西門將軍','23.635576,120.473742','西門將軍',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (31,'石龜車站','23.639525,120.471092','石龜車站',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (32,'豐田工業區','23.642927,120.469991','豐田工業區',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (33,'鄉村小廟','23.642025,120.4668','鄉村小廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (34,'真武廟','23.642976,120.463752','真武廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (35,'土地公廟','23.647395,120.458295','土地公廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (36,'向日葵電線杆','23.633512,120.46778','向日葵電線杆',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (37,'斗南鎮立游泳池','23.670545,120.492963','斗南鎮立游泳池',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (38,'鐵牌樓','23.669815,120.49384','鐵牌樓',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (39,'溫遙宮','23.667999,120.495246','溫遙宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (40,'他里霧碑','23.661995,120.503382','他里霧碑',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (41,'佛像','23.652642,120.498128','佛像',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (42,'社區溜滑梯','23.650444,120.505312','社區溜滑梯',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (43,'東營將軍廟','23.641027,120.504758','東營將軍廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (44,'沙鹿深波圖書館','24.2332,120.5639','沙鹿深波圖書館',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (45,'祥雲寺','23.679026,120.481427','祥雲寺',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (46,'斗南田徑場','23.681986,120.473874','斗南田徑場',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (47,'他里霧親水公園','23.683641,120.472889','他里霧親水公園',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (48,'真耶穌教會','23.681476,120.469714','真耶穌教會',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (49,'工廠內的廟','23.679755,120.485553','工廠內的廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (50,'虎尾特砂雕像','23.702984,120.435959','特砂雕像',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (51,'將軍廟','23.672342,120.503695','將軍廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (52,'神居','23.672456,120.508451','神居',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (53,'微廟','23.657963,120.509109','微廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (54,'板橋玉興宮','23.654874,120.525144','板橋玉興宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (55,'靈雲寺招牌','23.633573,120.509528','靈雲寺招牌',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (56,'二重溝活動中心','23.666182,120.464851','二重溝活動中心',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (57,'五福溜滑梯','23.671707,120.477347','五福溜滑梯',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (58,'堂修感廟聖武文南斗','23.675221,120.47451','堂修感廟聖武文南斗',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (59,'蓮生吉祥','23.675906,120.473914','蓮生吉祥',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (60,'福德宮文康休閒中心','23.673713,120.468829','福德宮文康休閒中心',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (61,'福德宮','23.673995,120.468716','福德宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (62,'斗南自來水塔','23.679322,120.477927','斗南自來水塔',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (63,'長椅盪鞦韆','23.681794,120.472194','長椅盪鞦韆',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (64,'他里霧情人橋','23.683964,120.474382','他里霧情人橋',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (65,'福德宮','23.685395,120.47893','福德宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (66,'光華路邊小廟','23.6859,120.484005','光華路邊小廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (67,'燒燙燙','23.683091,120.494291','燒燙燙',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (68,'會家祠','23.684972,120.491684','會家祠',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (69,'農村風光','23.687396,120.461747','農村風光',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (70,'福臨小東','23.689715,120.465725','福臨小東',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (71,'廟廟廟','23.692067,120.479605','廟廟廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (72,'手手牆','23.692116,120.480683','手手牆',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (73,'池安宮','23.692152,120.482879','池安宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (74,'將軍小廟','23.69152,120.487168','將軍小廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (75,'高山仰止','23.702393,120.436505','高山仰止',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (76,'虎科神秘一號噴水池','23.702939,120.428397','虎科神秘一號噴水池',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (77,'基督教虎尾教會','23.708584,120.432484','基督教虎尾教會',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (78,'斗六籽公園','23.705129,120.542344','斗六籽公園',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (79,'魁士泰山敢當','23.653544,120.506979','魁士泰山敢當',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (80,'斗南照天宮','23.642991,120.502491','斗南照天宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (81,'斗南照天宮東營將軍廟','23.641026,120.504758','斗南照天宮東營將軍廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (82,'蜜蜂故事館涼亭','23.659231,120.541017','蜜蜂故事館涼亭',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (83,'雲林縣二二八紀念公園','23.654912,120.543462','雲林縣二二八紀念公園',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (84,'涼亭',' 23.686455,120.491759','涼亭',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (85,'白鐵牌樓','23.661075,120.497732','新建點',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (86,'崙子土地公','23.652642,120.498128','崙子土地公',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (87,'林子社區藝術磚牆','23.6574,120.483896','林子社區藝術磚牆',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (88,'魚躍他里霧','23.666417,120.474542','魚躍他里霧',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (89,'林子社區藝術磚牆','23.6574,120.483896','林子社區藝術磚牆',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (90,'嘉興無菸社區','23.648588,120.455433','嘉興無菸社區',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (91,'五色旗涼亭','23.646876,120.550383','五色旗涼亭',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (92,'古坑福德宮','23.647514,120.560775','古坑福德宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (93,'肖南綠色隧道','23.646475,120.563449','肖南綠色隧道',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (94,'古坑郵局','23.644638,120.561954','古坑郵局',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (95,'古坑圖書館','23.64194,120.56127','古坑圖書館',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (96,'耶穌聖心堂','23.642302,120.5621','耶穌聖心堂',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (97,'南營小廟','23.642374,120.563565','南營小廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (98,'鐵牌樓2','23.665834,120.49376','鐵牌樓2',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (99,'白鐵牌樓','23.661075,120.497732','白鐵牌樓',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (100,'將軍廟','23.672342,120.503695','將軍廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (101,'福德廟','23.674237,120.50873','福德廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (102,'玄安宮','23.669135,120.513916','玄安宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (103,'玄安宮之西營將軍廟','23.670558,120.514357','玄安宮之西營將軍廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (104,'他里霧生活美學','23.673656,120.481151','他里霧生活美學',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (105,'大水車','23.674656,120.481874','大水車',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (106,'斗南鎮中興市場門口','23.677896,120.467166','斗南鎮中興市場門口',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (107,'八德兒少公園溜滑梯','23.681499,120.468666','八德兒少公園溜滑梯',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (108,'寒林寺','23.678883,120.480733','寒林寺',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (109,'斗南魚市石碑','23.685391,120.468742','斗南魚市石碑',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (110,'福臨小東','23.689715,120.465725','福臨小東',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (111,'農村風光','23.687396,120.461747','農村風光',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (112,'圓環溜滑梯','23.676409,120.480373','圓環溜滑梯',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (113,'五榖豐登慶豐收','23.665935,120.476116','五榖豐登慶豐收',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (114,'雙人單槓','23.671265,120.472411','雙人單槓',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (115,'斗南林子金爐','23.655307,120.479162','斗南林子金爐',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (116,'五間厝福德宮','23.673995,120.468716','五間厝福德宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (117,'紅瓦瑤照瑤宮','23.673399,120.456599','紅瓦瑤照瑤宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (118,'僑真里紅瓦瑤活動中心','23.673163,120.456669','僑真里紅瓦瑤活動中心',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (119,'僑真將爺廟','23.668015,120.463369','僑真將爺廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (120,'日升咖啡民宿','23.637243,120.543138','日升咖啡民宿',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (121,'大林自行車道休憩亭','23.628809,120.466479','大林自行車道休憩亭',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (122,'潭墘橋','23.628025,120.474023','潭墘橋',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (123,'天福宮','23.683512,120.449136','天福宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (124,'泰安宮金爐','23.683753,120.460407','泰安宮金爐',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (125,'關天宮','23.682205,120.447833','關天宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (126,'埤麻新厝奉天宮','23.681262,120.454574','埤麻新厝奉天宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (127,'將軍廟(竹圍子)','23.690796,120.452638','將軍廟(竹圍子)',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (128,'海底世界壁畫','23.691180,120.466795','海底世界壁畫',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (129,'路邊小廟','23.685437,120.463198','路邊小廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (130,'朝龍宮','23.691260,120.508493','朝龍宮',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (131,'土地公廟(朝龍宮旁)','23.686851,120.509545','土地公廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (132,'打虎救父','23.681573,120.513162','打虎救父',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (133,'久安南門將軍廟','23.678957,120.513798','久安南門將軍廟',0)");
+           tx.executeSql("INSERT INTO textmsg1 (識別碼, 地名,地標,備註,時間戳記) VALUES (134,'三殿宮','23.683045,120.518764','三殿宮',0)");
+           
+           
+           
+                msg = '<p>新增資料完成!!  (如果巳經有資料就不會再新增了)。</p>';
+           
+           
+                //tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "菜鸟教程")');
+               document.querySelector('#status').innerHTML =  msg;
+            });
+             }
+           
+           
+             function delPublication() {
+               db.transaction(function (tx) {
+                tx.executeSql('DELETE FROM textmsg1 WHERE 識別碼<=10000');
+                msg = '<p>巳刪除全部記錄。</p>';
+                document.querySelector('#status').innerHTML =  msg;
+                 
+            });
+             }
+             function deleterow() {
+               var password = window.sessionStorage.seletequery;
+               // var aa = "'%";
+               // var bb = "%'";
+               db.transaction(function (tx) {
+                 var delseache1  = 'DELETE FROM textmsg1 WHERE 識別碼 = ' + document.getElementById("killnum").value;
+                 // delseache1 = aa + delseache1 + bb;
+                 alert(delseache1 + ' 本筆資將刪除  從' + password + "按鍵進來")
+                tx.executeSql(delseache1);
+               //  var msg1 = '<p>巳刪除識別碼=' & document.getElementById("killnum").value & '的記錄。</p>';
+               //  document.querySelector('#status').innerHTML =  msg1;
+           
+           switch(password){
+           case "likein" :
+           likePublication();
+           
+           case "displayin":
+           displayPublication();
+           
+           default :
+           
+           // alert(password)
+           // if (password = "likein"){
+           //   likePublication();
+             
+           // } else if(password = "displayin"){
+           //   displayPublication();
+           // }
+           }
+           
+            });
+           
+            
+             }
+           
+             function insertPublication() {
+              
+           }
+           
+           function displayPublication() {
+               db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM textmsg1', [], function (tx, results) {
+                 var len = results.rows.length, i;
+                 var str = ""
+                 str = "全部資料如下:<br/><table><tr><td>識別碼</td><td>地名</td><td>地標</td><td>備註</td><td>時間戳記</td></tr>";
+           
+                                for (var i = 0; i < len; i++)  {  
+                                 str += "<tr>";                
+                                   // item = results.rows.item(i);
+                                   //  document.querySelector('#status').innerHTML +=  item('識別碼') +   item('地名') + item('地標') + item('備註') + item('時間戳記'); 
+                                         for (var o in results.rows.item(i)) {
+                                          
+                                         str += "<td>"+results.rows.item(i)[o]+"</td>";   
+                                         
+                                       }
+                                       str +=  "</tr>";
+                                  }
+           
+                 str += "</table>";  
+               
+                 $("#status").html(str);
+                 window.sessionStorage.seletequery = "displayin";
+               }, null);
+            });
+           }
+           
+           
+           function likePublication() {
+             // window.location.reload();
+             // document.querySelector('#status').innerHTML= "";
+             wordseaceh = document.getElementById('likeseachword').value;
+             var aa = "'%";
+             var bb = "%'";
+             // var aa = "aa"
+             // var bb = "bb"
+             
+             wordseaceh = aa + wordseaceh + bb;
+               //  alert(wordseaceh);
+               db.transaction(function (tx) {
+                tx.executeSql('SELECT 識別碼,地名,地標,備註,時間戳記 FROM textmsg1 where 地名 like ' +  wordseaceh , [], function (tx, results) {
+                 // alert("SELECT * FROM textmsg1 where 地名 like '%" & wordseaceh & "%'");
+                  var len = results.rows.length, i;
+                 var str = ""
+                 str = "資料如下:<br/><table><tr><td>識別碼</td><td>地名</td><td>地標</td><td>備註</td><td>時間戳記</td></tr>";
+           
+                                for (var i = 0; i < len; i++)  {  
+                                 str += "<tr>";                
+                                   // item = results.rows.item(i);
+                                   //  document.querySelector('#status').innerHTML +=  item('識別碼') +   item('地名') + item('地標') + item('備註') + item('時間戳記'); 
+                                         for (var o in results.rows.item(i)) {
+                                          
+                                         str += "<td>"+results.rows.item(i)[o]+"</td>";   
+                                         
+                                       } 
+                                       var inputno = results.rows.item(i)["識別碼"];
+                                       // alert(inputno);  
+                                      
+                                     //  str += "<td>" +  $("#inputno").click() +"</td>";  
+                                       str +=  "</tr>"; 
+                                      
+                                  }
+           
+                 str += "</table>";  
+                
+                 $("#status").html(str);
+                 window.sessionStorage.seletequery = "likein";
+               
+               }, null);
+            });
+           //  $(".myTable").tablesorter({widgets: ['zebra']}); 
+           }
+
+           function submitform()
+              {
+                // document.myform.submit();
+ 
+             wordseaceh = document.getElementById('titleseach').value;
+             var aa = "'%";
+             var bb = "%'";           
+             
+             wordseaceh = aa + wordseaceh + bb;
+            // alert(wordseaceh);
+               db.transaction(function (tx) {
+                tx.executeSql('SELECT 識別碼,地名,地標,備註,時間戳記 FROM textmsg1 where 地名 like ' +  wordseaceh , [], function (tx, results) {
+                 // alert("SELECT * FROM textmsg1 where 地名 like '%" & wordseaceh & "%'");
+                  var len = results.rows.length, i;
+                 var str = ""
+                 str = "資料如下:<br/><table><tr><td>識別碼</td><td>地名</td><td>地標</td><td>備註</td><td>時間戳記</td></tr>";
+           
+                                for (var i = 0; i < len; i++)  {  
+                                 str += "<tr>";                
+                                   // item = results.rows.item(i);
+                                   //  document.querySelector('#status').innerHTML +=  item('識別碼') +   item('地名') + item('地標') + item('備註') + item('時間戳記'); 
+                                         for (var o in results.rows.item(i)) {
+                                          
+                                         str += "<td>"+results.rows.item(i)[o]+"</td>";   
+                                         
+                                       } 
+                                       var inputno = results.rows.item(i)["識別碼"];
+                                       // alert(inputno);  
+                                      
+                                     //  str += "<td>" +  $("#inputno").click() +"</td>";  
+                                       str +=  "</tr>"; 
+                                      
+                                  }
+           
+                 str += "</table>";  
+                
+                 $("#status").html(str);
+                 window.sessionStorage.seletequery = "likein";
+               
+               }, null);
+            });
+
+
+              }
+
+
+
+
+
+           function reloadaginePublication() {
+               db.transaction(function (tx) {
+               //   window.location.reload();
+                 document.querySelector('#status').innerHTML=""
+            });
+             }
+           
+           //  db.transaction(function (tx) {
+           //     tx.executeSql('UPDATE LOGS SET log="新修改1" WHERE id=2');
+           //      msg = '<p>巳更新第二筆記錄。</p>';
+           //      document.querySelector('#status').innerHTML =  msg;
+           //  });
+           
+           // $(function () {
+           
+           // $("#myTable").tablesorter({widgets: ['zebra']});
+           
+           // });
+           
+           
+           </script>
+    
+    
+    
+    <style type = "text/css"> 
+      
+        
+       
+       /* <link rel=stylesheet type="text/css" href="css/color.css"> */
+        h1#text1{
+          margin:0px;padding:0px;
+          top:15px;
+          position:absolute;
+          font-size: 40px;
+          color: #FF0000;
+          margin-left: 50px;
+        }
+        h1#text2{
+          margin:0px;padding:5px;
+          
+          position:absolute;
+          font-size: 30px;
+          color: #FFFFFF;
+          top:30px;
+          margin-left: 50px;
+          z-index:1;
+          filter:glow(color=#ff0000, strength=5);
+          text-shadow: 5px 5px 5px #FF0000;
+        }
+         .consection{
+             display: block;
+             border:0px #330000 solid;
+             width: 600px;
+             left:5px;top:5px;
+             margin: auto;padding:40px;
+             font-family: "標楷體", Helvetica, sans-serif;font-size: 16px;
+         }
+        .ptest{color: saddlebrown;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px; }
+        .ptest1{color:blue;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
+        .ptest2{color: red;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
+        .ptest3{color:green;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
+        /* a:hover {border:3px green solid;text-decoration:none;}  */
+  
+        a:link, a:visited {
+            border-style: solid;
+            border-width: 5px;
+            border-color: transparent;
+            }
+            a:hover {border:3px red;text-decoration:none;background-color: green;};
+       
+       
+       
+       
+        /* <link rel="stylesheet" href="css/color.css"> */
+  
+        /* @import url(css/color.css); */
+  
+        .leftaddmg {
+            padding-left: 5px;
+            padding-right: 20px;
+        }
+  
+.auto-style1 {
+            font-family: 標楷體;
+            font-size:x-large;
+            color: #FF0000;
+        }
+        .auto-style2 {
+            font-family: 標楷體;
+            font-size:xx-large;
+            color: #FF0000;
+        }
+    
+      
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  background-color: transparent;
+  -webkit-text-decoration-skip: objects;
+}
+/* #status {
+  width:200px; height:200px"
+} */
+#status {
+      display:table;
+  }
+tr {
+      display: table-row;
+  }
+td {
+      display: table-cell;border:2px solid #0000cc;
+  }
+
+
+
+
+        </style>
+
+
+
+</head>
+<body>
+   
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ptest2" > 
+                <a class="navbar-brand" href="http://220.134.245.185:8888/androidapp/index.html">回首頁</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+              
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav mr-auto">
+
+                        <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  切換至
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item disabled" href="index1.html">響應式網頁版</a>
+                                        <a class="dropdown-item " href="../index.html">首頁版</a>
+                                        <a class="dropdown-item" href="../poko.html">新版</a>
+                                        <a class="dropdown-item" href="../pokomon.htm">舊版</a>                                        
+                                    <a class="dropdown-item" href="http://www.sachi.somee.com/index.html">somee_index首頁</a>
+                                    <a class="dropdown-item" href="http://www.eddyweb.somee.com/fourword.aspx">到成語查詢eddyweb_somee(第二區)</a>
+                                    <a class="dropdown-item" href="https://fi23818394.m.icoc.cc">凡科手機版</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="fourword.html">webSQL寫在你的瀏覽器內(成語)</a>
+                                    <a class="dropdown-item" href="tablesort/basicinfo.html">webSQL寫在你的瀏覽器內(股票)</a>
+                                    <a class="dropdown-item" href="websqlpoko.html">webSQL寫在你的瀏覽器內(座標)</a>
+                                    <a class="dropdown-item" href="tablesort/travel.html">寫在你的瀏覽器內(全國景點)</a>
+                                    <a class="dropdown-item" href="tablesort/youbike.html">寫在你的瀏覽器內(YouBike大台北座標)</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="pokepic/address_rwd.zip">斗南座標程式app下載</a>
+                                    <a class="dropdown-item" href="pokepic/_成語測驗之國小及國中_12219547.zip">成語測驗之國小及國中之單頁app下載</a>
+                                    <a class="dropdown-item" href="pokepic/_SQL樞紐分析選股_12219119.zip">SQL樞紐分析選股之單頁app下載</a>
+                                    <a class="dropdown-item" href="pokepic/_somee景點_12235429.zip">景點座標用app下載</a>
+                                </div>
+                              </li>
+                   
+                   
+                    <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              股票資訊
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="../stock1.html">股票資訊(手機版)</a>
+                                    <a class="dropdown-item" href="../stock.html">股票資訊(電腦版)</a>
+                                    <a class="dropdown-item" href="https://www.wantgoo.com/global">玩股網</a> 
+                            </div>
+                          </li>
+
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        寶可夢資料
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="https://twpkinfo.com/ipoke.aspx">寶可夢資訊站_抓好iv</a>
+                        <a class="dropdown-item" href="https://twpkinfo.com/igym.aspx">團體戰及道館名稱查詢</a>
+                        <a class="dropdown-item" href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite">查技能等資料</a>
+                        <a class="dropdown-item" href="http://tomchun.tw/tomchun">湯姆群情報站</a>
+                        <a class="dropdown-item" href="https://forum.gamer.com.tw/B.php?bsn=29659&amp;subbsn=0">巴哈討論區</a> 
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item " href="../pokepic/社群日時間.html">社群日時間</a>
+                        <a class="dropdown-item " href="../pokepic/天氣加成.html">天氣加成</a>
+                        <a class="dropdown-item " href="../pokepic/伊布進化.html">伊布進化</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="http://www.sachi.somee.com/pokemapaccess.aspx">查座標24小時沒地圖</a>
+                        <a class="dropdown-item" href="http://www.sachi.somee.com/mapsql.aspx">查座標24小時有地圖</a>
+                        <a class="dropdown-item" href="../fourword.html">webSQL寫在你的瀏覽器內(成語)</a>
+                        <a class="dropdown-item" href="basicinfo.html">webSQL寫在你的瀏覽器內(股票)</a>
+                        <a class="dropdown-item disabled" href="index1.html">webSQL寫在你的瀏覽器內(座標)</a>
+                        <a class="dropdown-item " href="../websqlpoko.html">webSQL寫在你的瀏覽器內沒放表格(座標) </a>
+                      </div>
+                    </li>
+                   
+                    <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              追劇網站
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <a class="dropdown-item" href="https://gimy.tv/">Gimy追劇</a>
+                              <a class="dropdown-item" href="http://www01.eyny.com/video.php?mod=channel&cid=5">伊莉影視</a>                             
+                              <a class="dropdown-item" href="http://video.yaodaojiao.com/jinguang/zxtd/">妖道角布袋戲</a>
+                                                 
+      
+                              <div class="dropdown-divider"></div>
+                              <a class="dropdown-item" href="http://vigor.enjoy101.org/">vigor網路電視</a>    
+                              <div class="dropdown-divider"></div>
+                              <a class="dropdown-item" href="../readfilepic.html">讀圖片(沒自動縮放,要放大才看得清楚時選此)</a> 
+                              <a class="dropdown-item" href="../readfilerwd.html">讀圖片(自動縮放且看得清楚時選此)</a> 
+                            </div>
+                          </li>
+
+                  </ul>
+                  <form class="form-inline my-2 my-lg-0" name="myform">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="titleseach">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="submitform()">Search</button>
+                  </form>
+                </div>
+              </nav>
+
+
+              <div class="container">
+                    <div class="row">
+                        <div class="col text-center  btn btn-default auto-style1">
+                            <h1>座標定位</h1>
+                       </div>  
+                    
+                   </div>
+              </div>
+                 
+              <div class="container">
+                  <div class="row">
+                      
+          
+                      <div class="col text-center  btn btn-default auto-style1">
+                          <h2> 斗南附近的道館</h2>   
+                      </div>
+          
+                      
+                  
+                 </div>
+              </div>
+              <!-- <input type="text"> -->
+              <div class="container">
+                  <div class="row">
+                      <div class="col-md-4 col-xs-6 text-center  btn btn-default">          
+                          <textarea class="auto-style1" name="" id="likeseachword" cols="20" rows="1" >斗</textarea>
+                      </div>            
+                      <div class="col-md-4 col-xs-6 text-center  btn btn-default">        
+                         
+                          <button id="reloadagine" class="auto-style1" onclick="reloadaginePublication()" ><img src="../pokepic/重新整理.JPG">重新整理網頁</button>
+                     </div>
+                     <div class="col-md-4 col-xs-6 text-center  btn btn-default">
+                        <textarea class="auto-style1" name="" id="killnum" cols="5" rows="1" >37</textarea>
+                        <button id="delitemrow" class="auto-style1 " onclick="deleterow()"><img src="../pokepic/減號.JPG">輸入識別碼刪除</button>
+                    </div>
+                 </div>
+              </div>
+              <div class="container">
+                      <div class="row">
+                          <div class="col-md-3 col-xs-6 text-center  btn btn-default">              
+                              <button id="wordseach" class="auto-style1" onclick="likePublication()" ><img src="../pokepic/seachpic.png">相似搜尋</button>
+          
+                      </div>
+                          <div class="col-md-3 col-xs-6 text-center  btn btn-default">              
+                                  <button id="selectshow" class="auto-style1" onclick="displayPublication()" ><img src="../pokepic/seachpic.png">查詢全部資料</button>           
+          
+                          </div>
+          
+                          <div class="col-md-3 col-xs-6 text-center  btn btn-default">             
+                                  <button id="delbtn" class="auto-style1" onclick="delPublication()" ><img src="../pokepic/垃圾埇.JPG">刪除全部資料</button>              
+          
+                         </div>
+          
+                         <div class="col-md-3 col-xs-6 text-center  btn btn-default">              
+                              <button id="addbtn" class="auto-style1" onclick="firstaddPublication()" ><img src="../pokepic/加號.JPG">首次匯入資料</button>
+                      
+                        </div>              
+                      
+                     </div>
+                 </div>
+          
+                 <div class="container">
+                  <div class="row">
+                      <div class="col text-center  btn btn-default">              
+                       <div id = "status" aria-multiline="true"  class="myTable"> </div>
+                     </div>
+                  </div>
+                      
+                
+               </div>
+        <br/>
+  
+
+
+               <table  id="myTable" class="tablesorter">
+                    <thead><tr><th title="Field #1">識別碼</th>
+                    <th title="Field #2">name1</th>
+                    <th title="Field #3">mail1</th>
+                    <th title="Field #4">word1</th>
+                    <th title="Field #5">時間戳記</th>
+                    </tr></thead>
+                    <tbody><tr>
+               <td align="right">1</td>
+               <td>斗南火車站</td>
+               <td>23.672931,120.48088</td>
+               <td>斗南火車站</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">2</td>
+               <td>進擊的巨神(玉皇大帝)</td>
+               <td>23.671549,120.478226</td>
+               <td>玉皇大帝</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">3</td>
+               <td>忠義祠</td>
+               <td>23.66311,120.474266</td>
+               <td>忠義祠</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">4</td>
+               <td>順安宮</td>
+               <td>23.675543,120.473527</td>
+               <td>順安宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">5</td>
+               <td>小沙彌</td>
+               <td>23.751527,120.296812</td>
+               <td>小沙彌</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">6</td>
+               <td>離菸害增健康</td>
+               <td>23.753418,120.270979</td>
+               <td>離菸害增健康</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">7</td>
+               <td>警察局紙風車</td>
+               <td>23.719988,120.309712</td>
+               <td>警察局紙風車</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">8</td>
+               <td>玉安宮</td>
+               <td>23.747837,120.294651</td>
+               <td>玉安宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">9</td>
+               <td>永安宮</td>
+               <td>23.758859,120.307206</td>
+               <td>永安宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">10</td>
+               <td>福安宮排樓</td>
+               <td>23.757976,120.263762</td>
+               <td>福安宮排樓</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">11</td>
+               <td>鎮東宮</td>
+               <td>23.749527,120.260356</td>
+               <td>鎮東宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">12</td>
+               <td>麥寮拱範宮</td>
+               <td>23.748278,120.255501</td>
+               <td>麥寮拱範宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">13</td>
+               <td>圓形舞台</td>
+               <td>23.753826,120.254454</td>
+               <td>圓形舞台</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">14</td>
+               <td>麥寮公園</td>
+               <td>23.745096,120.256264</td>
+               <td>麥寮公園</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">15</td>
+               <td>鎮南宮</td>
+               <td>23.746947,120.251251</td>
+               <td>鎮南宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">16</td>
+               <td>崙背奉天宮</td>
+               <td>23.7607,120.3537</td>
+               <td>崙背奉天宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">17</td>
+               <td>裝置藝術</td>
+               <td>23.76098,120.345314</td>
+               <td>裝置藝術</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">18</td>
+               <td>紹安客家文化館</td>
+               <td>23.763816,120.354864</td>
+               <td>紹安客家文化館</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">19</td>
+               <td>斗南農田水利會</td>
+               <td>23.667446,120.485442</td>
+               <td>斗南農田水利會</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">20</td>
+               <td>海天宮</td>
+               <td>23.664026,120.486446</td>
+               <td>海天宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">21</td>
+               <td>搖搖馬</td>
+               <td>23.654799,120.483638</td>
+               <td>搖搖馬</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">22</td>
+               <td>連芳西營廟</td>
+               <td>23.644624,120.484394</td>
+               <td>連芳西營廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">23</td>
+               <td>鎮西營</td>
+               <td>23.649895,120.493976</td>
+               <td>鎮西營</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">24</td>
+               <td>虎元帥爺廟</td>
+               <td>23.639862,120.482929</td>
+               <td>虎元帥爺廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">25</td>
+               <td>石龜天后宮</td>
+               <td>23.639428,120.4833</td>
+               <td>石龜天后宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">26</td>
+               <td>石龜水塔</td>
+               <td>23.638729,120.481316</td>
+               <td>石龜水塔</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">27</td>
+               <td>靖興宮</td>
+               <td>23.643799,120.479307</td>
+               <td>靖興宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">28</td>
+               <td>靖興福安宮</td>
+               <td>23.644096,120.475569</td>
+               <td>靖興福安宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">29</td>
+               <td>南營將軍廟</td>
+               <td>23.64124,120.477175</td>
+               <td>南營將軍廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">30</td>
+               <td>西門將軍</td>
+               <td>23.635576,120.473742</td>
+               <td>西門將軍</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">31</td>
+               <td>石龜車站</td>
+               <td>23.639525,120.471092</td>
+               <td>石龜車站</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">32</td>
+               <td>豐田工業區</td>
+               <td>23.642927,120.469991</td>
+               <td>豐田工業區</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">33</td>
+               <td>鄉村小廟</td>
+               <td>23.642025,120.4668</td>
+               <td>鄉村小廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">34</td>
+               <td>真武廟</td>
+               <td>23.642976,120.463752</td>
+               <td>真武廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">35</td>
+               <td>土地公廟</td>
+               <td>23.647395,120.458295</td>
+               <td>土地公廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">36</td>
+               <td>向日葵電線杆</td>
+               <td>23.633512,120.46778</td>
+               <td>向日葵電線杆</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">37</td>
+               <td>斗南鎮立游泳池</td>
+               <td>23.670545,120.492963</td>
+               <td>斗南鎮立游泳池</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">38</td>
+               <td>鐵牌樓</td>
+               <td>23.669815,120.49384</td>
+               <td>鐵牌樓</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">39</td>
+               <td>溫遙宮</td>
+               <td>23.667999,120.495246</td>
+               <td>溫遙宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">40</td>
+               <td>他里霧碑</td>
+               <td>23.661995,120.503382</td>
+               <td>他里霧碑</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">41</td>
+               <td>佛像</td>
+               <td>23.652642,120.498128</td>
+               <td>佛像</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">42</td>
+               <td>社區溜滑梯</td>
+               <td>23.650444,120.505312</td>
+               <td>社區溜滑梯</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">43</td>
+               <td>東營將軍廟</td>
+               <td>23.641027,120.504758</td>
+               <td>東營將軍廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">44</td>
+               <td>沙鹿深波圖書館</td>
+               <td>24.2332,120.5639</td>
+               <td>沙鹿深波圖書館</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">45</td>
+               <td>祥雲寺</td>
+               <td>23.679026,120.481427</td>
+               <td>祥雲寺</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">46</td>
+               <td>斗南田徑場</td>
+               <td>23.681986,120.473874</td>
+               <td>斗南田徑場</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">47</td>
+               <td>他里霧親水公園</td>
+               <td>23.683641,120.472889</td>
+               <td>他里霧親水公園</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">48</td>
+               <td>真耶穌教會</td>
+               <td>23.681476,120.469714</td>
+               <td>真耶穌教會</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">49</td>
+               <td>工廠內的廟</td>
+               <td>23.679755,120.485553</td>
+               <td>工廠內的廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">50</td>
+               <td>虎尾特砂雕像</td>
+               <td>23.702984,120.435959</td>
+               <td>特砂雕像</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">51</td>
+               <td>將軍廟</td>
+               <td>23.672342,120.503695</td>
+               <td>將軍廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">52</td>
+               <td>神居</td>
+               <td>23.672456,120.508451</td>
+               <td>神居</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">53</td>
+               <td>微廟</td>
+               <td>23.657963,120.509109</td>
+               <td>微廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">54</td>
+               <td>板橋玉興宮</td>
+               <td>23.654874,120.525144</td>
+               <td>板橋玉興宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">55</td>
+               <td>靈雲寺招牌</td>
+               <td>23.633573,120.509528</td>
+               <td>靈雲寺招牌</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">56</td>
+               <td>二重溝活動中心</td>
+               <td>23.666182,120.464851</td>
+               <td>二重溝活動中心</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">57</td>
+               <td>五福溜滑梯</td>
+               <td>23.671707,120.477347</td>
+               <td>五福溜滑梯</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">58</td>
+               <td>堂修感廟聖武文南斗</td>
+               <td>23.675221,120.47451</td>
+               <td>堂修感廟聖武文南斗</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">59</td>
+               <td>蓮生吉祥</td>
+               <td>23.675906,120.473914</td>
+               <td>蓮生吉祥</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">60</td>
+               <td>福德宮文康休閒中心</td>
+               <td>23.673713,120.468829</td>
+               <td>福德宮文康休閒中心</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">61</td>
+               <td>福德宮</td>
+               <td>23.673995,120.468716</td>
+               <td>福德宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">62</td>
+               <td>斗南自來水塔</td>
+               <td>23.679322,120.477927</td>
+               <td>斗南自來水塔</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">63</td>
+               <td>長椅盪鞦韆</td>
+               <td>23.681794,120.472194</td>
+               <td>長椅盪鞦韆</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">64</td>
+               <td>他里霧情人橋</td>
+               <td>23.683964,120.474382</td>
+               <td>他里霧情人橋</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">65</td>
+               <td>福德宮</td>
+               <td>23.685395,120.47893</td>
+               <td>福德宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">66</td>
+               <td>光華路邊小廟</td>
+               <td>23.6859,120.484005</td>
+               <td>光華路邊小廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">67</td>
+               <td>燒燙燙</td>
+               <td>23.683091,120.494291</td>
+               <td>燒燙燙</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">68</td>
+               <td>會家祠</td>
+               <td>23.684972,120.491684</td>
+               <td>會家祠</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">69</td>
+               <td>農村風光</td>
+               <td>23.687396,120.461747</td>
+               <td>農村風光</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">70</td>
+               <td>福臨小東</td>
+               <td>23.689715,120.465725</td>
+               <td>福臨小東</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">71</td>
+               <td>廟廟廟</td>
+               <td>23.692067,120.479605</td>
+               <td>廟廟廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">72</td>
+               <td>手手牆</td>
+               <td>23.692116,120.480683</td>
+               <td>手手牆</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">73</td>
+               <td>池安宮</td>
+               <td>23.692152,120.482879</td>
+               <td>池安宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">74</td>
+               <td>將軍小廟</td>
+               <td>23.69152,120.487168</td>
+               <td>將軍小廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">75</td>
+               <td>高山仰止</td>
+               <td>23.702393,120.436505</td>
+               <td>高山仰止</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">76</td>
+               <td>虎科神秘一號噴水池</td>
+               <td>23.702939,120.428397</td>
+               <td>虎科神秘一號噴水池</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">77</td>
+               <td>基督教虎尾教會</td>
+               <td>23.708584,120.432484</td>
+               <td>基督教虎尾教會</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">78</td>
+               <td>斗六籽公園</td>
+               <td>23.705129,120.542344</td>
+               <td>斗六籽公園</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">79</td>
+               <td>魁士泰山敢當</td>
+               <td>23.653544,120.506979</td>
+               <td>魁士泰山敢當</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">80</td>
+               <td>斗南照天宮</td>
+               <td>23.642991,120.502491</td>
+               <td>斗南照天宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">81</td>
+               <td>斗南照天宮東營將軍廟</td>
+               <td>23.641026,120.504758</td>
+               <td>斗南照天宮東營將軍廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">82</td>
+               <td>蜜蜂故事館涼亭</td>
+               <td>23.659231,120.541017</td>
+               <td>蜜蜂故事館涼亭</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">83</td>
+               <td>雲林縣二二八紀念公園</td>
+               <td>23.654912,120.543462</td>
+               <td>雲林縣二二八紀念公園</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">84</td>
+               <td>涼亭</td>
+               <td> 23.686455,120.491759</td>
+               <td>涼亭</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">85</td>
+               <td>白鐵牌樓</td>
+               <td>23.661075,120.497732</td>
+               <td>新建點</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">86</td>
+               <td>崙子土地公</td>
+               <td>23.652642,120.498128</td>
+               <td>崙子土地公</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">87</td>
+               <td>林子社區藝術磚牆</td>
+               <td>23.6574,120.483896</td>
+               <td>林子社區藝術磚牆</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">88</td>
+               <td>魚躍他里霧</td>
+               <td>23.666417,120.474542</td>
+               <td>魚躍他里霧</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">89</td>
+               <td>林子社區藝術磚牆</td>
+               <td>23.6574,120.483896</td>
+               <td>林子社區藝術磚牆</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">90</td>
+               <td>嘉興無菸社區</td>
+               <td>23.648588,120.455433</td>
+               <td>嘉興無菸社區</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">91</td>
+               <td>五色旗涼亭</td>
+               <td>23.646876,120.550383</td>
+               <td>五色旗涼亭</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">92</td>
+               <td>古坑福德宮</td>
+               <td>23.647514,120.560775</td>
+               <td>古坑福德宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">93</td>
+               <td>肖南綠色隧道</td>
+               <td>23.646475,120.563449</td>
+               <td>肖南綠色隧道</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">94</td>
+               <td>古坑郵局</td>
+               <td>23.644638,120.561954</td>
+               <td>古坑郵局</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">95</td>
+               <td>古坑圖書館</td>
+               <td>23.64194,120.56127</td>
+               <td>古坑圖書館</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">96</td>
+               <td>耶穌聖心堂</td>
+               <td>23.642302,120.5621</td>
+               <td>耶穌聖心堂</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">97</td>
+               <td>南營小廟</td>
+               <td>23.642374,120.563565</td>
+               <td>南營小廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">98</td>
+               <td>鐵牌樓2</td>
+               <td>23.665834,120.49376</td>
+               <td>鐵牌樓2</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">99</td>
+               <td>白鐵牌樓</td>
+               <td>23.661075,120.497732</td>
+               <td>白鐵牌樓</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">100</td>
+               <td>將軍廟</td>
+               <td>23.672342,120.503695</td>
+               <td>將軍廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">101</td>
+               <td>福德廟</td>
+               <td>23.674237,120.50873</td>
+               <td>福德廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">102</td>
+               <td>玄安宮</td>
+               <td>23.669135,120.513916</td>
+               <td>玄安宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">103</td>
+               <td>玄安宮之西營將軍廟</td>
+               <td>23.670558,120.514357</td>
+               <td>玄安宮之西營將軍廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">104</td>
+               <td>他里霧生活美學</td>
+               <td>23.673656,120.481151</td>
+               <td>他里霧生活美學</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">105</td>
+               <td>大水車</td>
+               <td>23.674656,120.481874</td>
+               <td>大水車</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">106</td>
+               <td>斗南鎮中興市場門口</td>
+               <td>23.677896,120.467166</td>
+               <td>斗南鎮中興市場門口</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">107</td>
+               <td>八德兒少公園溜滑梯</td>
+               <td>23.681499,120.468666</td>
+               <td>八德兒少公園溜滑梯</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">108</td>
+               <td>寒林寺</td>
+               <td>23.678883,120.480733</td>
+               <td>寒林寺</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">109</td>
+               <td>斗南魚市石碑</td>
+               <td>23.685391,120.468742</td>
+               <td>斗南魚市石碑</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">110</td>
+               <td>福臨小東</td>
+               <td>23.689715,120.465725</td>
+               <td>福臨小東</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">111</td>
+               <td>農村風光</td>
+               <td>23.687396,120.461747</td>
+               <td>農村風光</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">112</td>
+               <td>圓環溜滑梯</td>
+               <td>23.676409,120.480373</td>
+               <td>圓環溜滑梯</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">113</td>
+               <td>五榖豐登慶豐收</td>
+               <td>23.665935,120.476116</td>
+               <td>五榖豐登慶豐收</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">114</td>
+               <td>雙人單槓</td>
+               <td>23.671265,120.472411</td>
+               <td>雙人單槓</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">115</td>
+               <td>斗南林子金爐</td>
+               <td>23.655307,120.479162</td>
+               <td>斗南林子金爐</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">116</td>
+               <td>五間厝福德宮</td>
+               <td>23.673995,120.468716</td>
+               <td>五間厝福德宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">117</td>
+               <td>紅瓦瑤照瑤宮</td>
+               <td>23.673399,120.456599</td>
+               <td>紅瓦瑤照瑤宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">118</td>
+               <td>僑真里紅瓦瑤活動中心</td>
+               <td>23.673163,120.456669</td>
+               <td>僑真里紅瓦瑤活動中心</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">119</td>
+               <td>僑真將爺廟</td>
+               <td>23.668015,120.463369</td>
+               <td>僑真將爺廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">120</td>
+               <td>日升咖啡民宿</td>
+               <td>23.637243,120.543138</td>
+               <td>日升咖啡民宿</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">929</td>
+               <td>大林自行車道休憩亭</td>
+               <td>23.628809,120.466479</td>
+               <td>大林自行車道休憩亭</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">930</td>
+               <td>潭墘橋</td>
+               <td>23.628025,120.474023</td>
+               <td>潭墘橋</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">931</td>
+               <td>天福宮</td>
+               <td>23.683512,120.449136</td>
+               <td>天福宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">932</td>
+               <td>泰安宮金爐</td>
+               <td>23.683753,120.460407</td>
+               <td>泰安宮金爐</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">933</td>
+               <td>關天宮</td>
+               <td>23.682205,120.447833</td>
+               <td>關天宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">934</td>
+               <td>埤麻新厝奉天宮</td>
+               <td>23.681262,120.454574</td>
+               <td>埤麻新厝奉天宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">935</td>
+               <td>將軍廟(竹圍子)</td>
+               <td>23.690796,120.452638</td>
+               <td>將軍廟(竹圍子)</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">936</td>
+               <td>海底世界壁畫</td>
+               <td>23.691180,120.466795</td>
+               <td>海底世界壁畫</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">937</td>
+               <td>路邊小廟</td>
+               <td>23.685437,120.463198</td>
+               <td>路邊小廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">938</td>
+               <td>朝龍宮</td>
+               <td>23.691260,120.508493</td>
+               <td>朝龍宮</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">939</td>
+               <td>土地公廟(朝龍宮旁)</td>
+               <td>23.686851,120.509545</td>
+               <td>土地公廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">940</td>
+               <td>打虎救父</td>
+               <td>23.681573,120.513162</td>
+               <td>打虎救父</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">941</td>
+               <td>久安南門將軍廟</td>
+               <td>23.678957,120.513798</td>
+               <td>久安南門將軍廟</td>
+               <td>0</td>
+               </tr>
+               <tr>
+               <td align="right">942</td>
+               <td>三殿宮</td>
+               <td>23.683045,120.518764</td>
+               <td>三殿宮</td>
+               <td>0</td>
+               </tr>
+               </tbody></table>
+          
+                
+          
+            <br/>
+
+          
+            <!-- <script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.30.5/css/theme.blue.min.css"></link>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.30.5/js/jquery.tablesorter.min.js"></script> -->
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+
+
+
+
+</body>
+</html>

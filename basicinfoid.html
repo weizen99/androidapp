@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <!-- <meta charset="UTF-8"> -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <title>webapi2</title>
+    <style type="text/css">
+        .leftaddmg {
+           padding-left: 20px;
+           padding-right: 70px;
+       }
+
+       .auto-style2 {
+           font-family: 標楷體;
+           font-size: large;
+           color: #FF0000;
+       }
+   
+       .auto-style10 {
+           font-family: 標楷體;
+           font-size: large;
+           color: #800080;
+       }
+       .auto-style1 {
+           font-family: 標楷體;
+           font-size: x-large;
+           color: #0000FF;
+       }
+              
+      
+       
+        * {
+ box-sizing: border-box;
+}
+       * {
+   text-shadow: none !important;
+   box-shadow: none !important;
+ }
+       *,
+ *::before,
+ *::after {
+   text-shadow: none !important;
+   box-shadow: none !important;
+ }
+ 
+
+
+       .auto-style11 {
+           color: #0000FF;
+       }
+ 
+
+
+       </style>
+</head>
+<body>  
+
+    <ul class="nav nav-tabs auto-style1">
+        <li class="nav-item"><a class="nav-link auto-style2" href="basicinfotable.html">表格式顯示</a> </li>            
+        <li class="nav-item"><a class="nav-link auto-style2" href="basicinfoid.html">文字檔格式</a> </li> 
+        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/stockchange/3017">基本資料 單筆 api</a> </li> 
+        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/stockchange">基本資料 全部 api</a> </li> 
+        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/avggolds/2330">均價均量 單筆 api</a> </li> 
+        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/avggolds">均價均量 全部 api</a> </li> 
+        
+    </ul>
+<br/><br/>
+    <h2>Web Api 文字檔式</h2>
+    <text>股票代碼:</text>
+    <input type="text" id="stockCodeInput" placeholder="2330" style="width: 100px;">
+    <button onclick="fetchData()">均價均量查詢</button>
+    <button onclick="fetchData2()">均價均量查詢全部</button>
+    <button onclick="fetchData3()">基本資料查詢</button>
+    <button onclick="fetchData4()">基本資料查詢全部</button>
+    
+    <ul id="demo"></ul>
+    <br>
+    <ul id="demo2"></ul>
+
+
+
+    <script language="javascript">
+
+    function fetchData() {
+        const stockCode = document.getElementById("stockCodeInput").value;
+        const url = `http://220.134.245.185:8888/webapi/api/avggolds/${stockCode}`;
+       
+        fetch(url, { mode: 'no-cors' })
+            .then(response => response.text())
+            .then(data => {
+                const values = data.split(",").map(item => item.trim().split(":")[1]);
+                const [autoNumber, stockName, stockCode, avgCrossCount, volCrossCount, exchangeCategory, industryCategory, stockCapital, date] = values;
+
+                let txt = `<li>自動編號: ${autoNumber}, 股票名稱: ${stockName}, 股票代號: ${stockCode}, 均價黃金交叉次數: ${avgCrossCount}, 均量黃金交叉次數: ${volCrossCount}, 產業分類: ${industryCategory}, 交易所分類: ${exchangeCategory}, 股本億: ${stockCapital}, 日期: ${date}</li>`;
+
+                document.getElementById("demo").innerHTML = txt;
+            })
+            .catch(error => console.log(error));
+    }
+
+
+    function fetchData2() {
+        const url = `http://220.134.245.185:8888/webapi/api/avggolds`;
+        
+        fetch(url,{ mode: 'no-cors' })
+            .then(response => response.json())
+            .then(data => {
+                let txt = "";
+                data.forEach(item => {
+                    txt += `<li>自動編號: ${item['自動編號']}, 股票名稱: ${item['股票名稱']}, 股票代號: ${item['股票代號']}, 均價黃金交叉次數: ${item['均價黃金交叉次數']}, 均量黃金交叉次數: ${item['均量黃金交叉次數']}, 產業分類: ${item['產業分類']}, 交易所分類: ${item['交易所分類']}, 股本億: ${item['股本億']}, 日期: ${item['日期']}</li>`;
+                });
+                document.getElementById("demo2").innerHTML = txt;
+            })
+            .catch(error => console.log(error));
+    }
+
+
+    function fetchData3() {
+        const stockCode = document.getElementById("stockCodeInput").value;
+        const url = `http://220.134.245.185:8888/webapi/api/stockchange/${stockCode}`;
+        
+        fetch(url, { mode: 'no-cors' })
+            .then(response => response.text())
+            .then(data => {
+                const values = data.split(",").map(item => item.trim().split(":")[1]);
+                const [stockName, stockCode, price, increase, amount, exchangeCategory, industry, marketvalue,listingcabinet] = values;
+
+                let txt = `<li>股票名稱: ${stockName}, 股票代號: ${stockCode}, 成交價: ${price}, 漲幅: ${increase}, 總量: ${amount}, 交易所分類: ${exchangeCategory}, 產業分類: ${industry}, 市值億: ${marketvalue}, 上市1上櫃2: ${listingcabinet}</li>`;
+
+                document.getElementById("demo").innerHTML = txt;
+            })
+            .catch(error => console.log(error));
+    }
+
+
+
+
+
+    function fetchData4() {
+        const url = `http://220.134.245.185:8888/webapi/api/stockchange`;
+        
+        fetch(url,{ mode: 'no-cors' })
+            .then(response => response.json())
+            .then(data => {
+                let txt = "";
+                data.forEach(item => {
+                    txt += `<li>自動編號: ${item['自動編號']}, K線: ${item['K線']}, 代號: ${item['代號']}, 名稱: ${item['名稱']}, 買進: ${item['買進']}, 賣出: ${item['賣出']},成交價: ${item['成交價']}, 漲跌: ${item['漲跌']}, 漲幅: ${item['漲幅']}, K棒: ${item['K棒']}, 單量: ${item['單量']}, 總量: ${item['總量']}, 最高: ${item['最高']}, 最低: ${item['最低']}, 產業分類: ${item['產業分類']},交易所分類: ${item['交易所分類']}, 上市1上櫃2: ${item['上市1上櫃2']}, 上市櫃年數: ${item['上市櫃年數']}, 股本億: ${item['股本億']}, 市值億: ${item['市值億']}</li>`;
+                });
+                document.getElementById("demo2").innerHTML = txt;
+            })
+            .catch(error => console.log(error));
+    }
+
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js" integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/" crossorigin="anonymous"></script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

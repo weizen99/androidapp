@@ -1,0 +1,422 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="big5">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Sidebars</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/sidebars/">
+
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+
+        h1#text1 {
+            margin: 0px;
+            padding: 0px;
+            top: 15px;
+            position: absolute;
+            font-size: 40px;
+            color: #FF0000;
+            margin-left: 50px;
+        }
+
+        h1#text2 {
+            margin: 0px;
+            padding: 5px;
+            position: absolute;
+            font-size: 30px;
+            color: #FFFFFF;
+            top: 30px;
+            margin-left: 50px;
+            z-index: 1;
+            filter: glow(color=#ff0000, strength=5);
+            text-shadow: 5px 5px 5px #FF0000;
+        }
+
+        .consection {
+            display: block;
+            border: 0px #330000 solid;
+            width: 600px;
+            left: 30px;
+            top: 60px;
+            margin: auto;
+            padding: 30px;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 16px;
+        }
+
+        .ptest {
+            color: saddlebrown;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        .ptest1 {
+            color: blue;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        .ptest2 {
+            color: red;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        .ptest3 {
+            color: green;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        a:hover {
+            border: 3px green solid;
+            text-decoration: none;
+        }
+
+        /* <link rel="stylesheet" href="css/color.css"> */
+
+        /* @import url(css/color.css); */
+
+        /* a:link, a:visited {
+            border-style: solid;
+            border-width: 5px;
+            border-color: transparent;
+            }
+            a:hover {border:3px red;text-decoration:none;background-color: green;};
+        */
+
+
+
+
+
+
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="sidebars.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="bootstrap" viewBox="0 0 118 94">
+            <title>Bootstrap</title>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284.214 6.14-.064 14.092-2.066 20.577C8.943 39.365 5.547 43.485 0 44.014v5.972c5.547.529 8.943 4.649 10.951 11.153 2.002 6.485 2.28 14.437 2.066 20.577C12.794 88.106 17.776 94 24.51 94H93.5c6.733 0 11.714-5.893 11.491-12.284-.214-6.14.064-14.092 2.066-20.577 2.009-6.504 5.396-10.624 10.943-11.153v-5.972c-5.547-.529-8.934-4.649-10.943-11.153-2.002-6.484-2.28-14.437-2.066-20.577C105.214 5.894 100.233 0 93.5 0H24.508zM80 57.863C80 66.663 73.436 72 62.543 72H44a2 2 0 01-2-2V24a2 2 0 012-2h18.437c9.083 0 15.044 4.92 15.044 12.474 0 5.302-4.01 10.049-9.119 10.88v.277C75.317 46.394 80 51.21 80 57.863zM60.521 28.34H49.948v14.934h8.905c6.884 0 10.68-2.772 10.68-7.727 0-4.643-3.264-7.207-9.012-7.207zM49.948 49.2v16.458H60.91c7.167 0 10.964-2.876 10.964-8.281 0-5.406-3.903-8.178-11.425-8.178H49.948z"></path>
+        </symbol>
+        <symbol id="home" viewBox="0 0 16 16">
+            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z" />
+        </symbol>
+        <symbol id="speedometer2" viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4zM3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.389.389 0 0 0-.029-.518z" />
+            <path fill-rule="evenodd" d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 1.602-2.932 1.25C11.309 13.488 9.475 13 8 13c-1.474 0-3.31.488-4.615.911-1.087.352-2.49.003-2.932-1.25A7.988 7.988 0 0 1 0 10zm8-7a7 7 0 0 0-6.603 9.329c.203.575.923.876 1.68.63C4.397 12.533 6.358 12 8 12s3.604.532 4.923.96c.757.245 1.477-.056 1.68-.631A7 7 0 0 0 8 3z" />
+        </symbol>
+        <symbol id="table" viewBox="0 0 16 16">
+            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z" />
+        </symbol>
+        <symbol id="people-circle" viewBox="0 0 16 16">
+            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+        </symbol>
+        <symbol id="grid" viewBox="0 0 16 16">
+            <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
+        </symbol>
+        <symbol id="collection" viewBox="0 0 16 16">
+            <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm2-2a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM0 13a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 16 13V6a1.5 1.5 0 0 0-1.5-1.5h-13A1.5 1.5 0 0 0 0 6v7zm1.5.5A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-13z" />
+        </symbol>
+        <symbol id="calendar3" viewBox="0 0 16 16">
+            <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z" />
+            <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+        </symbol>
+        <symbol id="chat-quote-fill" viewBox="0 0 16 16">
+            <path d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM7.194 6.766a1.688 1.688 0 0 0-.227-.272 1.467 1.467 0 0 0-.469-.324l-.008-.004A1.785 1.785 0 0 0 5.734 6C4.776 6 4 6.746 4 7.667c0 .92.776 1.666 1.734 1.666.343 0 .662-.095.931-.26-.137.389-.39.804-.81 1.22a.405.405 0 0 0 .011.59c.173.16.447.155.614-.01 1.334-1.329 1.37-2.758.941-3.706a2.461 2.461 0 0 0-.227-.4zM11 9.073c-.136.389-.39.804-.81 1.22a.405.405 0 0 0 .012.59c.172.16.446.155.613-.01 1.334-1.329 1.37-2.758.942-3.706a2.466 2.466 0 0 0-.228-.4 1.686 1.686 0 0 0-.227-.273 1.466 1.466 0 0 0-.469-.324l-.008-.004A1.785 1.785 0 0 0 10.07 6c-.957 0-1.734.746-1.734 1.667 0 .92.777 1.666 1.734 1.666.343 0 .662-.095.931-.26z" />
+        </symbol>
+        <symbol id="cpu-fill" viewBox="0 0 16 16">
+            <path d="M6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
+            <path d="M5.5.5a.5.5 0 0 0-1 0V2A2.5 2.5 0 0 0 2 4.5H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2A2.5 2.5 0 0 0 4.5 14v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14a2.5 2.5 0 0 0 2.5-2.5h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14A2.5 2.5 0 0 0 11.5 2V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5zm1 4.5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3A1.5 1.5 0 0 1 6.5 5z" />
+        </symbol>
+        <symbol id="gear-fill" viewBox="0 0 16 16">
+            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" />
+        </symbol>
+        <symbol id="speedometer" viewBox="0 0 16 16">
+            <path d="M8 2a.5.5 0 0 1 .5.5V4a.5.5 0 0 1-1 0V2.5A.5.5 0 0 1 8 2zM3.732 3.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 8a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 7.31A.91.91 0 1 0 8.85 8.569l3.434-4.297a.389.389 0 0 0-.029-.518z" />
+            <path fill-rule="evenodd" d="M6.664 15.889A8 8 0 1 1 9.336.11a8 8 0 0 1-2.672 15.78zm-4.665-4.283A11.945 11.945 0 0 1 8 10c2.186 0 4.236.585 6.001 1.606a7 7 0 1 0-12.002 0z" />
+        </symbol>
+        <symbol id="toggles2" viewBox="0 0 16 16">
+            <path d="M9.465 10H12a2 2 0 1 1 0 4H9.465c.34-.588.535-1.271.535-2 0-.729-.195-1.412-.535-2z" />
+            <path d="M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm.535-10a3.975 3.975 0 0 1-.409-1H4a1 1 0 0 1 0-2h2.126c.091-.355.23-.69.41-1H4a2 2 0 1 0 0 4h2.535z" />
+            <path d="M14 4a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" />
+        </symbol>
+        <symbol id="tools" viewBox="0 0 16 16">
+            <path d="M1 0L0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.356 3.356a1 1 0 0 0 1.414 0l1.586-1.586a1 1 0 0 0 0-1.414l-3.356-3.356a1 1 0 0 0-1.023-.242L10.5 9.5l-.96-.96 2.68-2.643A3.005 3.005 0 0 0 16 3c0-.269-.035-.53-.102-.777l-2.14 2.141L12 4l-.364-1.757L13.777.102a3 3 0 0 0-3.675 3.68L7.462 6.46 4.793 3.793a1 1 0 0 1-.293-.707v-.071a1 1 0 0 0-.419-.814L1 0zm9.646 10.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708zM3 11l.471.242.529.026.287.445.445.287.026.529L5 13l-.242.471-.026.529-.445.287-.287.445-.529.026L3 15l-.471-.242L2 14.732l-.287-.445L1.268 14l-.026-.529L1 13l.242-.471.026-.529.445-.287.287-.445.529-.026L3 11z" />
+        </symbol>
+        <symbol id="chevron-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+        </symbol>
+        <symbol id="geo-fill" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z" />
+        </symbol>
+    </svg>
+
+
+
+    <div class="container">
+        <header class="blog-header py-3">
+            <!--<div class="row flex-nowrap justify-content-between align-items-center">
+                <div class="col-4 pt-1">
+                    <a class="link-secondary" href="#">Subscribe</a>
+                </div>
+                <div class="col-4 text-center">
+                    <a class="blog-header-logo text-dark" href="#">Large</a>
+                </div>
+                <div class="col-4 d-flex justify-content-end align-items-center">
+                    <a class="link-secondary" href="#" aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5" /><path d="M21 21l-5.2-5.2" /></svg>
+                    </a>
+                    <a class="btn btn-sm btn-outline-secondary" href="#">Sign up</a>
+                </div>
+            </div>-->
+        </header>
+
+        <div class="nav-scroller py-1 mb-2">
+
+        </div>
+    </div>
+
+
+    <main>
+
+        <div class="b-example-divider"></div>
+        <div class="flex-shrink-0 p-3 bg-white" style="width: 180px;">
+            <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                <!--  <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap"/></svg>-->
+                <span class="fs-5 fw-semibold">常用連結</span>
+            </a>
+            <ul class="list-unstyled ps-0">
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+                        我的最愛網頁
+                    </button>
+                    <div class="collapse show" id="home-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a href="http://220.134.245.185:8888/fish/index2.htm" class="link-dark rounded">index2外網</a></li>
+                            <li><a href="http://192.168.0.199/fish/index1.htm" class="link-dark rounded">index1內網</a></li>
+                            <li><a href="http://220.134.245.185:8888/Mvc%20web/pricepicking.aspx" class="link-dark rounded">MVC網頁</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="border-top my-3"></li>
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+                        Google_script
+                    </button>
+                    <div class="collapse" id="dashboard-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a href="https://sites.google.com/view/weizenyan/%E9%A6%96%E9%A0%81" class="link-dark rounded">首頁</a></li>
+                            <li><a href="http://220.134.245.185:8888/androidapp/test6.html" class="link-dark rounded">黃金交叉選股</a></li>
+                            <li><a href="#" class="link-dark rounded">空白</a></li>
+                            <li><a href="#" class="link-dark rounded">空白</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="border-top my-3"></li>
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+                        遊戲區
+                    </button>
+                    <div class="collapse" id="orders-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a href="https://www.hero-wars.com//" class="link-dark rounded">herowars</a></li>
+                            <li><a href="http://220.134.245.185:8888/work/ro.aspx" class="link-dark rounded">仙境傳說</a></li>
+                            <li><a href="#" class="link-dark rounded">空白</a></li>
+                            <li><a href="#" class="link-dark rounded">空白</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="border-top my-3"></li>
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+                        音樂區
+                    </button>
+                    <div class="collapse" id="account-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a href="https://drive.google.com/drive/folders/1sg1O56CWTPurutqEQR15RmBRvFpnWwsv?usp=drive_link" class="link-dark rounded">Google雲端</a></li>
+                            <li><a href="#" class="link-dark rounded">空白</a></li>
+                            <li><a href="#" class="link-dark rounded">空白</a></li>
+                            <li><a href="#" class="link-dark rounded">空白</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="border-top my-3"></li>
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#other-collapse" aria-expanded="false">
+                        其他區
+                    </button>
+                    <div class="collapse" id="other-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a href="https://www.facebook.com/weizen.yan.1" class="link-dark rounded">facebook</a></li>
+                            <li><a href="https://www.youtube.com/" class="link-dark rounded">Youtube</a></li>
+                            <li><a href="#" class="link-dark rounded">空白</a></li>
+                            <li><a href="#" class="link-dark rounded">空白</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="border-top my-3"></li>
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#ai-collapse" aria-expanded="false">
+                        Ai區
+                    </button>
+                    <div class="collapse" id="ai-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a href="https://bard.google.com/chat" class="link-dark rounded">google bard</a></li>
+                            <li><a href="https://www.bing.com/" class="link-dark rounded">Microsoft bing</a></li>
+                            <li><a href="https://catalog.ngc.nvidia.com/orgs/nvidia/teams/ai-foundation/models/sdxl" class="link-dark rounded">NVIDIA NGC 免费生成图片</a></li>
+                            <li><a href="https://copilot.microsoft.com/" class="link-dark rounded">Microsoft copilot</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="b-example-divider"></div>
+        <div class="flex-shrink-0 p-3 bg-white" style="width: 800px;">
+
+            <H3 ADD_DATE="1672224518" LAST_MODIFIED="1686188204" PERSONAL_TOOLBAR_FOLDER="true">書籤列</H3>
+
+
+            <DT><A HREF="http://www.google.com.tw/" ADD_DATE="1416239395" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACIklEQVQ4jYWSS0iUURTHf/fe8RvHooE2VlT2FNqUGWmNEYUR9lhEEVJhUIsoXOQuap1Rq6KHNQt3LaPAIOxhlNTChUwLMU3NR1CklUzg6xvPd1ro2KhTHjjcA/e8/uf/hzmmqsUiEheRLhHxp/2TiDxQ1aK5+ZmFeSJSrwuYiMRVNZKuMxnFz51zu9T3GX/6iPGmRqS/F5WAUMEawuUVRI5UYjwPEWl2zlUYY8YMgIjUW2vPBkPfSV6uYbKvJ+uW3rZSojfuABAEQdw5d96oajHQqr7P8IUqpL8X43lEjp3EK4mBtfgt75l4+4po7U3cytWZPbcyjUlTidv642ipDu7foX7bh2zgs92jDhHpUlWdbNmuEw15OvqweqE7ZjboCAEFADrSjs1LkRM7NAt3+bWRebfYudFx9XguwFqbwePs9z/mT/6NLdAHMBpex28W0/C1Y1Zy05VFM75nUwiAZVGT/v5sgdcA3UurOPUrxvXOFhJD7fOmdn4LeNc5NbpkfWimv5mWZ8KXFKdfXqInOYBnc6gsPEjZ8mKssbQOtvEkMczYl0oK8z3un4lgppbYkhZS3Fp7bnD0Jxeba+lODmTFviFcxq29NeRHDUEQ1DnnqtNSjohIo3Nutx+keNz9gmf9zfQkB0ChYMkK9q2KcaLwMJFQGFV9Y4w5YIwZzyBBI2lRLcD9PVXN/SdFqlokInUi0iEiE9P+UUTuqurmufl/AKTzsFGmvUNUAAAAAElFTkSuQmCC">Google</A>
+            <DT><A HREF="https://www.youtube.com/" ADD_DATE="1644409647" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABx0lEQVQ4jZ2TQWtTQRDHfzO7yUsNKSG0heJJ0YKnCvVSkHrV7+BBeu7Vk9+lH8CLN6EXk4Lo1V48lGClFBELGmmSmr73djy8fS8vll4c+LO7s7OzM///LhQmBmrg+uDtZrgIBQQAKyf/YQbiBexFt9t9niSP7ji3umrW7og0UfWL0ZaOzGYjmBxn2c/BdPpJxuNz+vDwFxxnqmaqZs4V8L5AuS6haqmqXcDpO3jCEN4YmEFmkMcxrSCSGqSh8GcGIY52Am91Ce5HJ5EYBRwbG45222HmUHVS+DX2DhASuKu3oAeolGSqCiDs7gqHh8L2thCCxOQSbxFAO9BToClzNQSJokwmsLUFgwHs78P6eklnlQho6c0axUKbTVhZgUYjHpeqCwE8kMWFxYNF9uVlGA5hbw8ODuqJzajqnPENPtfYDxU2N4OtrRVzkVDfC0V8/h2G/g98AR7ESkJF8tFRcYdzkOf15iRW6y/hlD48voCz+BbmELFrvhrG8OMjPBOAV3D7qXM791R73Var00qSJRoNTyifB5Dn+eVsNv19dTX+mmWj93n+4SWciM1LKkmqy7RoImFBqPqPfH39K7t/4A18f74nAH8Bjm35s3ZkOjEAAAAASUVORK5CYII=">youtube</A>
+            <DT><A HREF="https://www.youtube.com/watch?v=_QbRXRnHMVY" ADD_DATE="1619782408" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABx0lEQVQ4jZ2TQWtTQRDHfzO7yUsNKSG0heJJ0YKnCvVSkHrV7+BBeu7Vk9+lH8CLN6EXk4Lo1V48lGClFBELGmmSmr73djy8fS8vll4c+LO7s7OzM///LhQmBmrg+uDtZrgIBQQAKyf/YQbiBexFt9t9niSP7ji3umrW7og0UfWL0ZaOzGYjmBxn2c/BdPpJxuNz+vDwFxxnqmaqZs4V8L5AuS6haqmqXcDpO3jCEN4YmEFmkMcxrSCSGqSh8GcGIY52Am91Ce5HJ5EYBRwbG45222HmUHVS+DX2DhASuKu3oAeolGSqCiDs7gqHh8L2thCCxOQSbxFAO9BToClzNQSJokwmsLUFgwHs78P6eklnlQho6c0axUKbTVhZgUYjHpeqCwE8kMWFxYNF9uVlGA5hbw8ODuqJzajqnPENPtfYDxU2N4OtrRVzkVDfC0V8/h2G/g98AR7ESkJF8tFRcYdzkOf15iRW6y/hlD48voCz+BbmELFrvhrG8OMjPBOAV3D7qXM791R73Var00qSJRoNTyifB5Dn+eVsNv19dTX+mmWj93n+4SWciM1LKkmqy7RoImFBqPqPfH39K7t/4A18f74nAH8Bjm35s3ZkOjEAAAAASUVORK5CYII=">中天新聞</A>
+            <DT><A HREF="https://shopee.tw/" ADD_DATE="1574305580" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACfUlEQVQ4jW2TP4ucZRTFf+c+z8w4MxsXV0WIFoEVQVkMaiMWWogY/30BU2gvW1jbBPUzCAGVwHYbbEyjrWAjLIJFIFgJsiiyu5nszLwz7/s+z7HIuojxlpdzz7mcc694sHT43sXxQ9762vCKIAzfb+l4l1uHjcD/BgeAQQbtQwI8ZusG0Nd193LbNi/KjI55ZE/gfUj/4P9HHO5eee71k3d3fvpv/+idnR+P3n72jQfWNeivN7e3s/IkKqceDD5BhLz+vJInABF1UevgM+QSbX+tBhcKrB/77s6vOnrr6aeURz8nxWZf3YcY2argMogYCehcW6MAh806h3K1Z7U/eSF3xe0wMZQYBAyq8SDItnJb6wHCgS4PRG4rDhgHUMygaWmCP+YLowZjQ58DAyeFehV83YW9vtQPi/3bKGRDf993L5686yY/MR3UE7EMSUB9OKd8vG6/Am1vTUefnjYdnXVYzKYhQJYkwZzZYYnbs98LlUZn8RbbkB6P8C+rtv9znIMLOS4iTysgGWEsVgeb1Lh5m15iHgJM3OuLc/gDSK/N1uX9067bXZZ6ZxoBuBoRCNDipQP6uAbVYiUJy8KoQJ0kfTxM2h+l9Mxy3V1tqn+YRgi7nIndEzgD2F4IuD9vjSNkIIcenYyHu+viSxR/mXO8qoKFwF4D5LODWgQC1TKOSMtS9uTIw+DKuumK8a0a7OjM/hAgzc4JhBrJNqjYztLzuHxh0v5p33VJcSkrPpqXUgURYMTynCDMMkVItdLKTFJcjpSuz0uZp8hMU2ysSqVUjJFCUvXy/Btx+WbV11kKhYSbWuui1JKljSQ2FqWWYhvhnBRNX477om8B/gaJaGBFM6RjeQAAAABJRU5ErkJggg==">蝦皮</A>
+            <DT><A HREF="http://192.168.0.199/fishnew5/mainstock" ADD_DATE="1653100269">簡版首首</A>
+            <DT><A HREF="http://192.168.0.199/fish/index1.htm" ADD_DATE="1604566306">上慶魚行(內)</A>
+            <DT><A HREF="http://220.134.245.185:8888/fish/index2.htm" ADD_DATE="1503027157">上慶魚行(外)</A>
+            <DT><A HREF="http://220.134.245.185:8888/Mvc%20web/pricepicking.aspx" ADD_DATE="1660148727">MVC</A>
+            <DT><A HREF="https://www.cathaybk.com.tw/cathaybk/corp/index.asp" ADD_DATE="1503027157" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABiElEQVQ4jcWSPWuUURCFnzP3rtHCWrExUQgW/oBYqQjC5qMMW2hhKxgMdtqLpRZxLSzURmzSmLggRLCw8AdYiGDCiiCklUg2vu89Fq9u1ERilwPDcOfjnLnMwH5DfweuPDp38OvIyMlDmdGc0tVW2CE/yOH+xuHBx8fnX2/+k+Di05lTB1y9yuJYK6AxNz6ZFHx2pAv3p3ofdhCcfdJuZ8e9HB7PATmaeAUUQIIUEMH7jaL5lc6Ll0OCiYfTnYBnOZkQDAyDIgxEQJIbPzQ7BbMrnd5iBhgULiXgWxFbpVFTQAhcYKuIuoaqQF3ASMBlYFHj3Zl2Cy99N8mIUDMFNMVVAXvXBVSgqVxX3KqkJIEwBVEXU5c9N5jBN3PBxo2kERSzu+BOCDks3wYPbLD/vxnYdOiOAMYWJo/bMRFW/MoazwFnfj7fCHWHuaBW5ber88ufMsDatV4f6GM02p08EnXrNNR/6oXXXcW7tevP19H2oNuXaHRiYfquzdE9/v1ldW7pxu8k+4sfjHefHOMzrCoAAAAASUVORK5CYII=">企金</A>
+            <DT><A HREF="https://herowars.me/HeroWarsTaiwanGuide" ADD_DATE="1684416339" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAC0UlEQVQ4jYVTTWxUVRg9594777123kyHpg0MtFIC6DSKYo1C0piwMO7ARpcaTYywMG6Me0JI0LBzRaKJS2PYsGBFNAYSFxCxC5CYWjH0z1hoy/TNvL7/ez83GlxQOLuzOGdxfoin4NTeyfZoiLlardZwthKlNcuyitfi5LmvFxf/5hO0/HhiYudIY/Dn48/rscn9u6GGWnBxjLk/lnD5TrWw2kum1XbqY5jwW/XB2ZlDevzlZ5pQyxWCd8+Tdx7gpbEGj79g9o2G9XnzzYdorP8OpDXImWuI/zM4/MqDHbVyX6sTpJL/BvEufKswvFOKXka5uSadAz6M1qFS/sjy+JEDK89OTcx99d5IGwCvnNvbfnPm0C9GIejPC6qNiMlnH4j0umTNiM0sk3kLW4kof6A+NHP6SvOdM7N7yjy88ck42lEvuDF98uJuHTRZlRYE6KIuRWuABAnYCiAJ5VxfavqU8wa2hNBDOocF3ZDxIFlh5VahWYKijYbeikWJYymUX0uNyjoaQMGVi3T2BGy1aQvjt1zVs5KcwP3Ne7zKthhj8GKvL8VHM7Bp6m7bAV6NhH8urfQNSCplxCJmMMgdk0fCm1Qu9JsJv/hxVD49+he/xx785Bm4KgW1YekE95ZXljez5KiBAFXh6NUN3v9ymIpsCAXGKKk3Hfd3tNy6vhQ7iJBaFBwBxEmevfYDsGrggPXbDl4AlJWDIuGcwPMEZSqijepLkXUsHlXcA+Tav9yIE6QLkLh0vHxpQ/JcYj9Q4VtvD0MpUCoRPYbNSytIHzc4BYG4CvA8Sp5Ld+Fu9mrgsesFhFiICNjIYLZbrALIoElpv6FYC6hdlEe1AZpdxxS9BqlIWX/CYRQ1JJwCr3+3JUUqGwenwDR2axfPPuzWD4soX+ivQ7Z93NnXm84LFIpU+lkadT6fxer5aYTRQ4SNsdbdIhG5Px/turD2KMT/4x+OTWDKAhftsgAAAABJRU5ErkJggg==">綠寶英雄征戰</A>
+            <DT><A HREF="https://herowars.me/WESTALWAYSLOSE" ADD_DATE="1685066059" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAC0UlEQVQ4jYVTTWxUVRg9594777123kyHpg0MtFIC6DSKYo1C0piwMO7ARpcaTYywMG6Me0JI0LBzRaKJS2PYsGBFNAYSFxCxC5CYWjH0z1hoy/TNvL7/ez83GlxQOLuzOGdxfoin4NTeyfZoiLlardZwthKlNcuyitfi5LmvFxf/5hO0/HhiYudIY/Dn48/rscn9u6GGWnBxjLk/lnD5TrWw2kum1XbqY5jwW/XB2ZlDevzlZ5pQyxWCd8+Tdx7gpbEGj79g9o2G9XnzzYdorP8OpDXImWuI/zM4/MqDHbVyX6sTpJL/BvEufKswvFOKXka5uSadAz6M1qFS/sjy+JEDK89OTcx99d5IGwCvnNvbfnPm0C9GIejPC6qNiMlnH4j0umTNiM0sk3kLW4kof6A+NHP6SvOdM7N7yjy88ck42lEvuDF98uJuHTRZlRYE6KIuRWuABAnYCiAJ5VxfavqU8wa2hNBDOocF3ZDxIFlh5VahWYKijYbeikWJYymUX0uNyjoaQMGVi3T2BGy1aQvjt1zVs5KcwP3Ne7zKthhj8GKvL8VHM7Bp6m7bAV6NhH8urfQNSCplxCJmMMgdk0fCm1Qu9JsJv/hxVD49+he/xx785Bm4KgW1YekE95ZXljez5KiBAFXh6NUN3v9ymIpsCAXGKKk3Hfd3tNy6vhQ7iJBaFBwBxEmevfYDsGrggPXbDl4AlJWDIuGcwPMEZSqijepLkXUsHlXcA+Tav9yIE6QLkLh0vHxpQ/JcYj9Q4VtvD0MpUCoRPYbNSytIHzc4BYG4CvA8Sp5Ld+Fu9mrgsesFhFiICNjIYLZbrALIoElpv6FYC6hdlEe1AZpdxxS9BqlIWX/CYRQ1JJwCr3+3JUUqGwenwDR2axfPPuzWD4soX+ivQ7Z93NnXm84LFIpU+lkadT6fxer5aYTRQ4SNsdbdIhG5Px/turD2KMT/4x+OTWDKAhftsgAAAABJRU5ErkJggg==">綠寶二</A>
+            <DT><A HREF="https://hero-wars.com//" ADD_DATE="1633082829" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAC0UlEQVQ4jYVTTWxUVRg9594777123kyHpg0MtFIC6DSKYo1C0piwMO7ARpcaTYywMG6Me0JI0LBzRaKJS2PYsGBFNAYSFxCxC5CYWjH0z1hoy/TNvL7/ez83GlxQOLuzOGdxfoin4NTeyfZoiLlardZwthKlNcuyitfi5LmvFxf/5hO0/HhiYudIY/Dn48/rscn9u6GGWnBxjLk/lnD5TrWw2kum1XbqY5jwW/XB2ZlDevzlZ5pQyxWCd8+Tdx7gpbEGj79g9o2G9XnzzYdorP8OpDXImWuI/zM4/MqDHbVyX6sTpJL/BvEufKswvFOKXka5uSadAz6M1qFS/sjy+JEDK89OTcx99d5IGwCvnNvbfnPm0C9GIejPC6qNiMlnH4j0umTNiM0sk3kLW4kof6A+NHP6SvOdM7N7yjy88ck42lEvuDF98uJuHTRZlRYE6KIuRWuABAnYCiAJ5VxfavqU8wa2hNBDOocF3ZDxIFlh5VahWYKijYbeikWJYymUX0uNyjoaQMGVi3T2BGy1aQvjt1zVs5KcwP3Ne7zKthhj8GKvL8VHM7Bp6m7bAV6NhH8urfQNSCplxCJmMMgdk0fCm1Qu9JsJv/hxVD49+he/xx785Bm4KgW1YekE95ZXljez5KiBAFXh6NUN3v9ymIpsCAXGKKk3Hfd3tNy6vhQ7iJBaFBwBxEmevfYDsGrggPXbDl4AlJWDIuGcwPMEZSqijepLkXUsHlXcA+Tav9yIE6QLkLh0vHxpQ/JcYj9Q4VtvD0MpUCoRPYbNSytIHzc4BYG4CvA8Sp5Ld+Fu9mrgsesFhFiICNjIYLZbrALIoElpv6FYC6hdlEe1AZpdxxS9BqlIWX/CYRQ1JJwCr3+3JUUqGwenwDR2axfPPuzWD4soX+ivQ7Z93NnXm84LFIpU+lkadT6fxer5aYTRQ4SNsdbdIhG5Px/turD2KMT/4x+OTWDKAhftsgAAAABJRU5ErkJggg==">英雄征戰</A>
+            <DT><A HREF="https://www.facebook.com/weizen.yan.1" ADD_DATE="1405156963" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABe0lEQVQ4jY2TvUoDURCFv7kEs9FmEXvjE2irVYKFjaAPoGghJoJgeosoqKUknX9FbO00D6D4Al6ttDKirbAiZJOIjsXmdzdKDizMHuac+bn3CiE4WU2JsqjKApAEELAqWITd2pFUuvOlFbg5df0qeYFc2LQbCoVEg12vJF7bwM2pW69yrTD1n7irqo03SHsl8QyAXyXfT7w5C48H4B8H38VGu4spf4g8gDhZTfLDc1i8NA2nq73c7RPMHXYRhnSMH3b6tbk804mvLJQtfPihUb5ZjClMSkQO46OdOHMOXjWao8KCkQEW10/cRNKEmZOVYGHjYx2utcTt+aiDASpRuj8eXnv/FWxMlUsRtlpk+R5e3oMjdIcDbq/cNHjrNRDBirOmKQzX4WqP+50xEpk/WjJMmNqZ3KhSHHSMdnWlWDuSigGof7GjYAcWg42PBPcnOIWSePUG6UE6EaUYHybtFYLHFIGT1aSzrqX3T73TJpx1fU5ktOCsaSqc/wus3Yx1Cv0t/gAAAABJRU5ErkJggg==">(1) 顏偉仁</A>
+            <DT><A HREF="https://www.wantgoo.com/global" ADD_DATE="1545542444" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACF0lEQVQ4jbVTvWsTcRh+3t/v7ppLmpq2SS53MXCmpCrYwUnQxamDg9LB6mbcdCxY6qRdBVEQEReh/0BHQbN0cFXoKA5tBjUhl4+aLxMv93sdjqaBgmjBZ3zgeZ/343mBk4EYoH9ScCiSm4A4oekRPiMZr1pWGgjbIA6rKgJ40hETvJfMLhqGsewrvkgkLjMQsO8vawCYgODYkGGxI17X1wi0wkTRGIl4l9UQIFvUUm6mlXHv1OedcwBwOOM3x8k1M+79r/HsPAAcDNsb3T5fEkDZB4NAUgmREyRpPaEZW4EeecmA9jhsX9OV8XpWM15FY8ZtACg0m21p8K05KZcGircY3NCkWKXmbO4Cm3opArKGiq/PVffe1i33hi7ktkFAl7mUquxdayVcl6LiU8DwZX903o+Km0LBBADUHPchny5ww85vA0Atc2an5yxw3c6rupNv7COR8Gz3OWcLXMu4dyd3JQHgEU99aetakYgX1mOJiClksR+oN0TwTJJLHJvSpRD3+oo/JKv7DwigqwDtHJ6QAOVZ+WdRSWu/ADBUS+sMF4cxvTgj9CddVgAwCEbqStor7zJAhycfp0qweh8AmCYBX/GLmc73Okb0sctKnBJCjFg9TXvl3c3QcJyXcZ5rSE2THX9H4N6PwcFqvtVqV+CYum2WCPxTVToraXg9TIiPoWpZMQb0Sc5Lno0zYPxtzP8L/vi2vwE5tc97j+7NOwAAAABJRU5ErkJggg==">玩股網</A>
+            <DT><A HREF="http://220.134.245.185:8888/stockquery/incomeedit1" ADD_DATE="1660135356">新自選</A>
+            <DT><A HREF="https://www.moneybar.com.tw/blogs/moneyvip/14" ADD_DATE="1599617920" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAACa0lEQVQ4jT1SS09TYRCdme/rixZKaXmE2iBUaCgIImrQBYnRuNCViTtNXPq72Gtc+mBBEA2JIEbeUqlS5FH6oMVebtt774yLG9ic5MzJJGfOHGRmEUEAQBdQRFy8pAAAAO5cAwARAYAIX0jAzAhwwUBEiAgRAUCbRm19aSHUFklP3hVhZlZKuRoCMLMwK62PctnfW6t9QyPkOPbfbKbZqG+uLCKiUqpRN49y2f3sz2q5SERK6/3d7VL+sFoulvNHmoi0Uqnx24d7u5m1ZRHY3fjeEmxVHm2cVdsisXj/YKVYuD41XTzcV1prABSRZt1Mpsdn38wY1crDZy9Dbe2u9eX5D1/ev33y4hURWbYFCCQiIOL1+f/sbNQqleHJeycHe+6tpfxBazjS2z+4NPfOTQwECBGA0LKs3M7G8M0p22r+q55mt1YrpZPcr+36uZFM30Ci4vGBx+MVEAIQJNVsmJbVHBy71ZPoJ6SGafxYnPN6/eFoZyKZag13nBbypJSIkBs0ACBg3TSi3b3+YKj2r9rZkzDPa1dToyICIEjo+iQAZIf9gRZS6rRw7K7bzWajYYY7YsZZBRHLxXy0u5dtGxFJBBBEaZ0cmVhbnHccZyA9Fu2JK9LxgaFQOLL+9bPPF4jEum3bQkRCBGZp1OuJZKrrSt/s65nyyXG871pydEJrz7eF2b3M5p37j0XEYWZmzcy+QECERWRy+lFmfWXl00ft8SitzXOjPdb14Olzf0tQRLxen1IKbduyLVtrhaQBmEixSLVUcGwrFG73B4IAwI4DiLbVRCIUYQB0/+r29LKYAOA4DiFeNh8A/gN9ik1nCKmQqwAAAABJRU5ErkJggg==">安納金</A>
+            <DT><A HREF="https://www.mybank.com.tw/pweb/" ADD_DATE="1416239395" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABiElEQVQ4jcWSPWuUURCFnzP3rtHCWrExUQgW/oBYqQjC5qMMW2hhKxgMdtqLpRZxLSzURmzSmLggRLCw8AdYiGDCiiCklUg2vu89Fq9u1ERilwPDcOfjnLnMwH5DfweuPDp38OvIyMlDmdGc0tVW2CE/yOH+xuHBx8fnX2/+k+Di05lTB1y9yuJYK6AxNz6ZFHx2pAv3p3ofdhCcfdJuZ8e9HB7PATmaeAUUQIIUEMH7jaL5lc6Ll0OCiYfTnYBnOZkQDAyDIgxEQJIbPzQ7BbMrnd5iBhgULiXgWxFbpVFTQAhcYKuIuoaqQF3ASMBlYFHj3Zl2Cy99N8mIUDMFNMVVAXvXBVSgqVxX3KqkJIEwBVEXU5c9N5jBN3PBxo2kERSzu+BOCDks3wYPbLD/vxnYdOiOAMYWJo/bMRFW/MoazwFnfj7fCHWHuaBW5ber88ufMsDatV4f6GM02p08EnXrNNR/6oXXXcW7tevP19H2oNuXaHRiYfquzdE9/v1ldW7pxu8k+4sfjHefHOMzrCoAAAAASUVORK5CYII=">國泰世華</A>
+            <DT><A HREF="http://tw.yahoo.com/" ADD_DATE="1416239395" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAB6klEQVQ4jYWSv2tTURTHv99zb5s0lmiDoFiFDhV1smIQBDvoKih0cahodfDPUBdBFETppEMXFx0cdIy2UFSsxsW20iJJQRCxGGNjXpL3mnfvcXipluCPMx2459zzPef74QTn8fdQVZK/cgD2v9WaFAIkCP6rgaRCSaQyoh7tlipUNn6CWIgBAIWKgVhQ0FY9f3fwRmnfmZs71+FIWFWQjLwPvTfgFhqCQewclMCBkf7RizljuDTTiKEpQysGkfN7D2cOncp++9ienaoqcOJsbtf+9PMH1aPj24RYedssPq6lYXysNtkoavjTl3cAeD8dRA136f4egiuvm6MXBiicvVdtOddvrHcQ9UiJlJabTye/qtf8WDY/thXKJ9dWw6YLA1+aa7x5uJaGeK8kOMF5UCPvhw9mrhSHa6uxa2tud+/14+WhI31GWLhTcTGEVAUJC0A9UpTSu9ZCIRg5mQVQfLS2fah3/NYggPJca/FlPU0hCECSe1PooYXbFRcrgBdT3z+8anxaaC3N1L+Uwx4Q2jGn2zhj+Xk5XJwOwshfzZfidXWApSR6OhMS7wx47NxA64d7NlmpRy7dI+11BWDJxNmO/Ql8CTZ9WVFFGHhVJQCwi7/fkhLIgppLhnLjJsnTZs12M5jmT1R3xU9dXfoW7LZnowAAAABJRU5ErkJggg==">Yahoo!奇摩</A>
+            <DT><A HREF="https://www.youtube.com/watch?v=LbS-xQ67fos" ADD_DATE="1654494100" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABx0lEQVQ4jZ2TQWtTQRDHfzO7yUsNKSG0heJJ0YKnCvVSkHrV7+BBeu7Vk9+lH8CLN6EXk4Lo1V48lGClFBELGmmSmr73djy8fS8vll4c+LO7s7OzM///LhQmBmrg+uDtZrgIBQQAKyf/YQbiBexFt9t9niSP7ji3umrW7og0UfWL0ZaOzGYjmBxn2c/BdPpJxuNz+vDwFxxnqmaqZs4V8L5AuS6haqmqXcDpO3jCEN4YmEFmkMcxrSCSGqSh8GcGIY52Am91Ce5HJ5EYBRwbG45222HmUHVS+DX2DhASuKu3oAeolGSqCiDs7gqHh8L2thCCxOQSbxFAO9BToClzNQSJokwmsLUFgwHs78P6eklnlQho6c0axUKbTVhZgUYjHpeqCwE8kMWFxYNF9uVlGA5hbw8ODuqJzajqnPENPtfYDxU2N4OtrRVzkVDfC0V8/h2G/g98AR7ESkJF8tFRcYdzkOf15iRW6y/hlD48voCz+BbmELFrvhrG8OMjPBOAV3D7qXM791R73Var00qSJRoNTyifB5Dn+eVsNv19dTX+mmWj93n+4SWciM1LKkmqy7RoImFBqPqPfH39K7t/4A18f74nAH8Bjm35s3ZkOjEAAAAASUVORK5CYII=">東森財經</A>
+            <DT><A HREF="http://192.168.0.1/webpages/index.html?t=9cfe5630" ADD_DATE="1658123314" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACoElEQVQ4jX1SXYuVZRRde7/7PR9zOnMqwQuLQA8y6UU3cwgRlMAUNIkQvZIc8Lb6D8cu+gMKXQplF5o3In6QJ4KUCjoGgtKEMMIopfgxHzq+877P8+zVhTOjQ0P7du+19tprL8H/1N7hX5+AfhTge4Bkojrlqqfniocnf92+vQAgshbw42uT7dDgcVGdEFV4CABAyUzUMniIP1e0Twe97rSuQpKCPjU0+HWt05lgjJEpIR9pwUZaIipIRRHzdnunoTy158b9lq2A+32FiO+5/udHarXD1exM0LyWe4xToXh+iiLP1HFQa/X3y9mZYI3GjlQ9OSKrtotw3++T39hI83AqS4K8U9J2DXrdaQDY+9vtUeRxoJb3hGRK8erLE0S4xNRNoVKt17PEeHbQ605jOMy3nrlVu7Rt8zycZ9VySSGIOLqKfl9BKkj94CcaMrVlb4X6FH3q1qmmNDcVLxYI6gCX/Kf/5wv7b/39DuPzUQDQxsj982MbHi33dl+b3JA38CMyHRNVsKouyr4/bn8FeoeACyAkC1GJmlkzevwhJrtZ1zDhiQ0BDojZux6qKGbmxAGDp8+z11ptpgQVAUUBOupvrsPCvXvIjIW1Rr9MZYm0uAjGEGqvv5GHudlvL1/Ycs4IVqkowJTgImBKkSJRMjOIPxOSHgI8BGT1BuCeV0/nv5tv62foixsEV0DfJkCA00TkLQAG0gSaO7MZL6vrTF54LO9Q+f2l8S3nV54HAB9eGXZ0/duRabaTO65CsDFrNsWLxRMXxse+wHCYo9cLa8XeAGCwuzcHAIfu0hceTCZCQIC+PDU+HlfCBghEfBXBkhKWC48MRF0yFVGFAPpqfylsfFXB8gABYP6fmwUVv4B8yCo8hmAOAHDs2FrqAQD/AklAU22/BBveAAAAAElFTkSuQmCC">AX1500 </A>
+            <DT><A HREF="https://hero.idoarts.com/" ADD_DATE="1683799516">GuildWar</A>
+            <DT><A HREF="http://220.134.245.185:8888/webchart/webcatch8" ADD_DATE="1541349796">webcatch8</A>
+            <DT><A HREF="https://messages.google.com/web/conversations/new" ADD_DATE="1603643741" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACfklEQVQ4jWWST2hcVRTGf999b94kDTXTTixYaceoCF0FiiniUrQi4h90pV0oCIKLugh1KQ60VKoLS/duxIVYNSBYQd2KWAVFaV1oW1oQ1DYTStKkb+5793PxZjqBfJt7z+Ge75zvu0dggfzesl9CLA03vQDKkIURwhgQZWuKH9Zu1SdPHGl9Z1uSLID3l/2OMvr1EHIBgJsDbbm3CpBIZcnrb72oD8HSyc/8fCtnOUVcxjr9cnUQrt1Yp0qJZjoAeURW7e3uzA890I3znWzxlaf4PQeOBcO/N8v64+//zP4ZrIMEGhcHT2Yg//Wv6/Gna5vFod7Mq3D3kt79NG0MqzR15puLrKxuoOmRCI8cGMO4IZZd1szOdgZPH3jwiVBkmvrx0g1WBuuE6RZO2AnblpOxaXII1wnXFtRput2eSy3eDsq4dGVlw2SZbYMwWKNu0OSE0ygHmKyt6BweDzHyUXQrgBMIjBrT1Ggfk6BGwsiPXrdLnbgrzBWcvnlr42fyqWDXCcHooRoDZRQaP1KC20Pm79njfd1Z1/B3eO05rR3cv/+Dh3q9QFJNrCBGiLWJUZO4ci5xoLfPi/fNV8oJOH0i+g5Hd9NaNV+uVRz+7/ogIudMkGw7DxmdmRl2tos82wFVyW/lJo/d+aYn+9491+GrVsEjw01qiQwgb0MIjfK6hmF0Jfh2WOuNL47p6nhxBfLhvvd0Zv11FnQwlo4hU0hOp2Rfrq0sKES144Wzbxbnx3WTRek70Fd69pT3ThecCxkLrrgd4eHPl3SBbfDWdd1OsqPgXJazMKx4lHs5f3mVcP8u0tmLmL7SdsKtJMAzxz3/8hn/8cJpL046bsf/G91BOvFdHSIAAAAASUVORK5CYII=">Messages for web</A>
+            <DT><A HREF="https://192.168.0.103:5001/" ADD_DATE="1632196745" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACWElEQVQ4jYWTPYtdVRSGn3fvfe7H3BsSBtFBEBsbBQsbbWJhkVQW+ehEbAQFpxFtxQjCmEZtFLHQNFbqL7AwEEMghYUgFkLAUdAZB4ZxkrnnzJyz12txRwxodFWrWF+wnkf5je0LaTx9z7V/CAcyQoh/C2MLo4Ry80sctq+pXNr5TXm85qELoXs33z0EW2WSXA+3ktCah86SkoUw/s9mIUnJQ2ehtYLtJktIBoiwapiShO66ZQgoGQ1e1jUJDdUuAbT7wfFeMRbNSHSd4ciAQSKtiH5h0kQCue+CPE2UlQa9fXHOuEhDwOffH3L9Vs/5x0eceWREk8V+F2xca3np6QmffNvRh/Xy6Rkf3GyVwvD7gekHc/9K4sr5Ezx4KnHl4glKgp92K+1gmmw2zsx45ckJ609NeefsjJKgCNjcq2x81cFY/PjqKjnDrd1Kk8VRNR9e7+jD/LpfeeGJMRh+3quUBGk+Eh89O4eRIEyT4M6ReebTP/hhe+CxBwrXXjzF6jSxfRC8f6Pj3RstO4ugyaJUQ8nw8bk5J8eJJCgSr5+e0B5BX81gE4ZH78t89l1HX83lszNsSIveXP6mRYjdNnj+y9vsdcFslHh4NdMN8NwXt9k5CN662hIGIy59vWDRG+U3d6K2IUJLTMaiNDDcOX4hgqkoWQxtkKdCJA9tVZ4mlwSM5oljahxhhWF68m+K6jEm03liCZKXeYWCpKGG/3LAxpI1xD+VGCq2LAF92FJSMt6iTGQ7MJYQ9/JpCbxth8pExlvJNdYRm6SMlyr9n0wmZRCbrrH+J8qxPEWzDHtfAAAAAElFTkSuQmCC">ds215</A>
+            <DT><A HREF="https://github.com/weizen99/story" ADD_DATE="1503135299" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACpklEQVQ4jW2SwWucVRTFf/e975uZtCElk9RIwabGaZO0FMFNK9SFexHElQu7EN0oCt0ILQquxIUiWK1Y/QcERXFbUaqrCorFWDuJTBJLGqKNHYua5Jv37nGRCR2CZ3Uf3HcP53evsS0DBDDZmnk4xvLZAI8K7gWZYauOfeWePlxauHaFAdlAXU7NHH/D4HkLoYGEJAGYmWGGXBuSznfaP50FfGdAgFY5NdP4pCjKx9wdtv8NzL/7DjGQUu/TzvW5p4AcAU1NH3irVqudTil9mZVfMWw8mO13+aqga2al0JWc8lmkPbVa/fGR0fH67fXfL9mh1uzJWBSXY1HG1Ks+6LTnXgCKI0cenKiqv9YBcr3evNFu3wKqqenjbxdl+WLOva3Uy6eKEONzFkJNnjFIQATy/PzVlQE+N/t5oqHk7tEs7AnBnwlmPIIkd21s9tJ7QO43DwLeqXOidwHPfyPJzE4FYQcMM9AfK53ri/1GHyC3Q1EAy+32b4KbZmDY/QEwIQmGm83W0C7n3bKJiYmGYEQyk1EEM5aRCGbN4bHyRN+p+J8IBaD6vrGTweweSTJYCmT/lhAA+6csio8mDx+eZRvm7gjpYOvosTLG8wAWzCR9Y5Ot2YeKovjepXeC2X0hxifc8+ee/bXF+Z+vAhxsHT1WlsXLkp4MZnuBJMlzzifC8q+//CD5+0WML1VV9brn9CZi+N+tdOeufbVpcDqY7ZXYCDEWwt9dWrj2YwBCJ2+dkfvleqP+scu/k/u5teX2zka4kdKKS2sAMcahnNIXnbR1DggDoA41HpgeuRiK8LRnZ33zzmh3aakL0Gy1RkaLoa5ZyO75Yqc9dwao6F9dn3I33V5f+2zf+P6vTbq1mqtLdLsJYOPPJqNjZT0nvbq4MHdh4Nj4D+UDSXCdrYd5AAAAAElFTkSuQmCC">my github</A>
+            <DT><A HREF="https://infini-cloud.net/en/modules/mypage/usage/" ADD_DATE="1682595199" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAACKUlEQVQ4jW2STUhUcRTFz7n/9zE+R5RGDUIiiYIQDal01SYItGhTmyIKDCKM2lu4UWohtUkqoVUULWoVRB+EFAQWBQaWGFlBUQlWjpjz9ea9978tJtKsszv3nstZ3B/nB/GvVEH+38rKaGUtAooqVAGQIpU5AGdFmgoINbQA6BtQNIxglSkCqgpneSMBJbWgTvNWf1uvaWyFOPb7VDhxLX77kC5JZXYAJEBRa6FAAq/zWNA1TOMtLy886i89PiseHBIKoGRZ5cINtPCTfi3ESRY+R6+uA3BbD5i65mDHGTv7sjx5n/MDsAlSncf9jhMMGmz2Q+Fur4ZFOjb+NA3ArFmXPvhAMhvid/dyN/aIDeFv6Ql2XTL1mySod5o60z1PgDD+Oi21ntT68czHcPwyQFndxqpAmDJ+x0nVJMm+L472Jfkf4qWrui9CoFYBgoCNAUAcQIR+tdQ0AVKeuJq7OVR+cQGAu77L27zXLkR2sWRWZbz2o4Dab5NayjtazCXZaTeod1v2B91fSk+HvLZDJrMx2H3FZFo0yvvtR0xDC4BwfETLirnTWLy1z+pv5W4fXhhps+W8/q3i2PlsP7KDNKd2Mp6ZsnOvWd1It8ZZuz0cOxe9ucOgTq21+dl45nlxtC98NozK4+YHoARCwAO9NI2jcaiFIgT0XAAaRYiwhIYCBJAStVbDnCogoC9Q1SQCQAM4BppUCHJIqIKwZOUUANRacglptckf+wtMOxhagzwf3QAAAABJRU5ErkJggg==">My Page|InfiniCLOUD --- 我的頁面|InfiniCLOUD</A>
+            <DT><A HREF="https://sites.google.com/view/weizenyan/%E9%A6%96%E9%A0%81" ADD_DATE="1415876297" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAN0lEQVQ4jWO0C9jCQApgIkk1XTSwwFkH13vjUWcfuJVMGxhpHko4/QBxNFyQfD/QXgPtQ4n2GgCX1AzoTaSGhgAAAABJRU5ErkJggg==">google_script首頁</A>
+            <DT><A HREF="http://127.0.0.1:8899/" ADD_DATE="1684894451" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADPElEQVQ4jVWSXWiWdRyGr9//+Xw/tjY1dRsbZpvg0tnMVX4tAyuViPIk6CQo7DSKoJMOPfGwk7CyoyLqRKhgigRtmjSWqXMz2azZhm61uebed3ufj/d5/r8O0qD7+L644OYWgHc/P7nDL4THszw7AJSMCLm1WGvFMQZjjKoqCoCuOo77Q5xmH3z42rFr8s4XH293A/eM7wdtSRyriBCniZSDAkU/oBrXiOoprnFwHEdFBD8MJI3TO4m1h1zHd074QdCWRnFqRLw4TWRf1zZ96tEtVKJI6lnG5ZnfdKFaYWmlKklWV1FN/ULYplF0wsVqfz2KrYp4y6srsrtzq/Y90iWfDJ7Bc1ze2P88R7b3yV+VezQWivrtlWGZXpz3iBML9LsiUsrVIhg9umuf7u/qls8unGPTuo08193LhclxZpcWma8u077mYTm6a69+OnSWKE2MI6ZsENGkXufg1h2ytlSW8TvTBK5Ld2s731wdRkTY3dnNWweOoCjTi/PyWGuHpFkdjKix1lIOC2xe36Knf7lImmeoggKPt2+mt6OTW3f/5Lurw+zp7Ka3YzO1eqIAAriqKkYEEKnnFtc4NJfKRGnC0MQYtSTh9b0HqUQ1BkZHWFpdoWt9q4zOTKGqYhxjqEQRM4vzHNq2k7Njl9jQ2MTGxmbiNKUUhCxUl7m9dJfDPX18f/0KrU1raQyL5DbHFREVkKmFOX31yX5pLjUwNDlOc7HMsWcOM7f8N55xWK6tUs8zXMcBwKpFEIwCFqXohzJ2e5rBiTFe7Omja0MLP9+aZHRmCkQQAd/1eOWJPUwtzFGNIxxjMKhK6Hpcn53RlqY1GnguJwcHuHjzV0Tgpd6nuTE7Q5JlbG1p5261wrnxywSej94fcdV1nEItjeX0pR/l5Z17dKUzlvUND2FVOXX+LPU8483+F/h65DwjUxM0FoqICKqKvPfVqYGgEB6ux3Ga5JnnGUeaimVd19DIrk1bJPQ8Cl7AyB8T/HTzBqHno+i/sAhunuXvp0nS44dhmyaJqqourlRkvnKP3+fnaAgL1NKE1ST+DwYQER58gbe//Kgn9AvH8zx7FqQk9wvWWsmtxRiDI+Z/5gf5B1XYjuJWHeqAAAAAAElFTkSuQmCC">127.0.0.1:8899 chartgpt</A>
+            <DT><A HREF="http://tw.papagoinc.com/service/download_GPS.aspx" ADD_DATE="1453385689" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB0klEQVQ4jYWSv2sTYRjHP897uRZtQrGkTYlF5CJB4h9Q0UGU4mA7OIuIFvUPcChCi+DSsXTo4KBDh4q7EFRwskPdpIM4XENAo413FmyJSW3vHocm8S5JyXd5X97vD77PyyMcg3w2mw7CgxlErgtaUOUsMNyk94D1rW3vRqLT6GRPnZHAXgjCg7uAjSranZ9S0XcAsQAnMzorIcuIpo5r1sSPcDD5DPz/Ac54+onA015qhZrAJqgryCFQLJfLDQAByI2P3QFd7eH9gJGlYODkm5ahE5LLZMaQ0AXatRVqqD4sVf2XfUYhgehc1AzsGzVTbrW60c8MYEBvRh8UXexn3jgxMqFgjhpALkrahzwH+DiYzocW50VxBHEAB8FBcUDXBaZaAQFgtfsnkzv4PgESGmVO4HKk3tFhzKPICHyOzVSv3QK4tO+5qbp3DeVtrL/w4mLt52ZbL1CM8cKKkxmdLRQYuAB/Ldu+Dfxq0nsiLMT0506PTISB9UVgqOOvfgOfBEpru3xHmUeZn2x4i7HGbmXnm6jepxvDwBWFe+8TNICvfxpDS50iA7BV9V8pTKNUegRRsTQP+vgq3dtoWpfStlesW3ZeVB8ovI6G7RqYrPfeyn/4V6lJ08LZFQAAAABJRU5ErkJggg==">GPS衛星導航更新下載 | PAPAGO!</A>
+            <DT><A HREF="http://www.tw-top.com/" ADD_DATE="1415876297">TOP九年一貫數位學習</A>
+            <DT><A HREF="http://www.jordan.com.tw/" ADD_DATE="1411485340" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACiElEQVQ4jY2Rz2tUVxiGn++cc++d3HtnMplJHMwPGwUXupxMEAtZJItSShbdGFelBWnsyp34V7gJCCrqP5FNFMlCjIJooZQ2LYmQMYXEGFNh6tTee885XTijIlj6wgeH77zn+TjvJ3ykxw8PN5OUxSRVc3GiJ6MwRutDW6IOr2qGr4fJlR8/9Ev/sLw8GqdJvlQfMt+NjGid5BrzcwStOlJpIGockQYilZtBVLogcr4LoPqPxWUrtao5NzpqdLmsUDXg7gH+YBv3+iesXcO5pyAD54q8vuL9cvwO8Ner7lKtrmfGxgylkiCA5B6eWuTWG/inAH+As2vY4i4gM9YmSwBy7dpgc6RuHrWmSrpW04gIXO4iWw4OHP7zAE4H0DS9z4ZoM48OvsZ7Pa0oWKzXtK5U9PtIzkb4hQiOaOR2Bgmw73qADGcfgN9HKb+ovDA3WFUYA9KPdFzD3x7/fQn/ZQgPCnjRB4D3L97mQT5nnGMyMIJzAP79fmaDt1PPRFDrkW3/vkDZHUReHxERMiB4N/1/amHhLLOzc7nxni3guPcwPz9AvaZJU2FiwvDqT8cvv2aEoTA8rIlj4bffc+7cyQjDiN3d3WcKWO1Tx8cMx44aWlMRp6YjymXh0sVBppoh336TsrGRM//VAJVKBa017XZ7VYAm8ATgh/Nl9vYsaSqMjxk6HUccK+7df8PRScPOjqVaDdjY/IxGo4G1dloDO8AE0KwOKfZfOg6NaPZfOhB4vmdRIohAmmryvMKz7YJ2u31zfX39aj+6GFgBZoaGFCdPBGSZJwiEbteTJEKn4+l0hO0/LEVRrAFfAN0Pg42BG71d/lfd6nk/qRZwHdgEsl5t9nqtj83/Ailx5hkWJzuxAAAAAElFTkSuQmCC">喬登美語事業集團總部</A>
+            <DT><A HREF="http://www.cwb.gov.tw/" ADD_DATE="1503135298" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABaklEQVQ4jdWQPSiEcRzHP89zD6ITAwMpZTj3KFYxyKQwEc/lhLiHGAwuGY/FZFA2Hl3yUo6rky6y3WayGO5FiSsWJXJ56Y7nb3BOnWew+o2/t+/3+4F/X1J+o65/taxQsi2B6ARqsltJSXCczrzPX4am7iwfqP2GR0is/01XLMf3JrwAMoBTM8z844ICG7GATnWF3cr4jKoZUQDZqa2FraKcbYzQPLbJyYpm7QHUepexq4DU3dPuYHGyjQ/TpNHt/3KgyDw9p2l0+4kFdACubh/p8gZ/fAhcCkAockEocgHA6foQ5aVFANhLCqksLwagVd8m9ZImFtB5fs0Qvb5neCGMAgSBvu+vLfpWTuF8Z4ymQT+Zd5OH1BsAqusHlUAcSFmICcCRn3OgowGfp5WeuRDx5H3+2Izvjdty8JyasQJMWxL7RVCMxvcnNsCCvtq7WoUi+4REJ4LabPsGiSPxKs8mDj2pP4n8n/oEEJp2JomrMcgAAAAASUVORK5CYII=">中央氣象局全球資訊網</A>
+            <DT><A HREF="http://www.taiwanlottery.com.tw/" ADD_DATE="1503135298">台灣彩券</A>
+            <DT><A HREF="http://jirs.judicial.gov.tw/FJUD/" ADD_DATE="1503135299">司法院判決書查詢</A>
+            <DT><A HREF="http://www.jordan.com.tw/master/index.htm" ADD_DATE="1503135300">喬登美語教學網</A>
+            <DT><A HREF="http://maidot.blogspot.tw/2014/10/aspnet-mvc-ajax.html" ADD_DATE="1503135300" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA3klEQVQ4jWNkgIJ/aUz/GUgATLP+MTIwMDAwkqMZ2RBGcjXDAAuGSEQPA4NFAgMDhwBC7MIGBoYlKQwMXz5gugJDs0MBqmYGBgYGgwAGhow1WF2AaoBFAoK9IAGCf0BtVXFgYJAxIOAFmM1rChgYTixBiCcsQLiEgYGB4ckFuBRqIM74g9WZGCADYS8THmVEAcxYYGCAeGHPFFQxlxwGhpAJBAz48QESDiETMKMMpvkHqjiqAScWQKKRgQERcOjgBKo4qgErSiA0ekKC2XxiAUINFFCclCnPTDAOudkZAEkvQ+XgMBz1AAAAAElFTkSuQmCC">買大 (MaiDot) 的學習紀錄 使用ASP.NET MVC 實作購物網站 (二十一) - 使用Ajax將商品加入購物車</A>
+            <DT><A HREF="http://www.iamschool.net/organization/109166" ADD_DATE="1503135301">新北市北新國小</A>
+            <DT><A HREF="http://e-bus.ntpc.gov.tw/" ADD_DATE="1503135302">歡迎光臨新北市政府公車動態資訊系統網站</A>
+            <DT><A HREF="https://www.youtube.com/user/57ETFN" ADD_DATE="1503027157" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABCElEQVQ4ja2TMU4DMRBF38wiEFIqKFYIUSAtJ8kNcoood8jJopwgRyANNCg1aSJl/Sls73rdoBC+NLI982c8/raNAgIHLC2NKZRHg1BHavKvyDlWOGbAG9ACT8RuSgTgCzgA7wbHstpC8Ck4CSSQzDTMp3ZK3EVOvhN8pGAvCILzYGbnYh0SRynn1oEX4JGpME7bOmaO5Lh7daQAPADPDtwnLSKhaaI2q5Wx2RhdZ4RgTIXOBWde7WyYRWLfw3wOux2s12PhaaFQK30xbqqzCSnu1DSw3cJyCfv9GI+Wu3AEneCY1M23ENS2QWZx7h4G/8j7FrxefY25rz8/pH97ytd/puS8+Dv/AFRGv3m23DwSAAAAAElFTkSuQmCC">５７東森財經新聞台 - YouTube</A>
+            <DT><A HREF="https://www.youtube.com/user/ustv" ADD_DATE="1503027157" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABCElEQVQ4ja2TMU4DMRBF38wiEFIqKFYIUSAtJ8kNcoood8jJopwgRyANNCg1aSJl/Sls73rdoBC+NLI982c8/raNAgIHLC2NKZRHg1BHavKvyDlWOGbAG9ACT8RuSgTgCzgA7wbHstpC8Ck4CSSQzDTMp3ZK3EVOvhN8pGAvCILzYGbnYh0SRynn1oEX4JGpME7bOmaO5Lh7daQAPADPDtwnLSKhaaI2q5Wx2RhdZ4RgTIXOBWde7WyYRWLfw3wOux2s12PhaaFQK30xbqqzCSnu1DSw3cJyCfv9GI+Wu3AEneCY1M23ENS2QWZx7h4G/8j7FrxefY25rz8/pH97ytd/puS8+Dv/AFRGv3m23DwSAAAAAElFTkSuQmCC">USTV 非凡電視台 - YouTube</A>
+            <DT><A HREF="https://www.google.com.tw/?client=safari&channel=ipad_bm" ADD_DATE="1503027157" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACtUlEQVQ4jW2Tz2vcVRTFz3nvTWaSpplUE41SIiLGNjT9sRAFTST+qoL+BRWh4LabQksttYuKC3ElUleCG3ExiGtTxEgCKooLpZakQWKbUoIdJ2bSmcn3+33vHhdO0hA9m/vu43we78I9RFeSHEnrnqdh9jKkxwEA5BKcu0Jydrd3G+7WCZnNyFKm3fr37itJEzsZSGK3PiepLkkmKa7czDvzs7EzPxvjyo3c7j1VlzS1xW7B+wH8BGDEmutF+5PLvjP3Na1eByT4++9T6alJ9p86E/1AtQRpFeSTJG+57hRvAxixjTxvXjof2l9+DoGsTD6PnskXEFubTH+vQ3DBhBzkSJcBJA3J0m0z2eb8x2l1atzqJ09Yvnjt3q9XFiVtdpsoSUnSbUlDAcAx0A3DEsLez7j3jRXx6GVXGjuIPCvw4x9A4cfAhaQsL/DQoMPhURDAEIBjAUgPSD7A7lra+BN9E2XgyKOQJbQjcfGLDurrLfRVHAtz9uyYx4dv9jjABwDDASm16b0Zy+zxJf610ZFabQ3t86TbxCtHHExea3fFuQVx3x4KICSYEW2HqKsma8FV+Hv/cb115yDeu3YFeSpQ7a3g7Gt7cO71Pg7392ojk8YfJgGnJLRjlv0WWKksFbH4Pnj3UjZ6Nq1eb/il5Rm0srqOj06CAGZvXsXcL1N44sFDfPFwSAC8J74rVSpLBICiKKZ9CN9QwM93fk0XfvjILa4tI6ZIiGDINT5wFB88/b4dGun1ogPBaZLfUhJJqiiKd0IIlwBgLWvmMzfm/fW1ZYrC2OBjevWRZ9JgudoDADHGi6VS6d2tLd5e55TS6SLG5n9y0FURUzOldHonwx2BIkllWXYADicBTjlyPwCYdAvQXGb4dKBcXtjyYre2EwagVqv5RqNRbTQa1Vqt5v/PAwD/AHZJ3JlB+wXYAAAAAElFTkSuQmCC">Google</A>
+            <DT><A HREF="https://tw.yahoo.com/" ADD_DATE="1503027157" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAB6klEQVQ4jYWSv2tTURTHv99zb5s0lmiDoFiFDhV1smIQBDvoKih0cahodfDPUBdBFETppEMXFx0cdIy2UFSsxsW20iJJQRCxGGNjXpL3mnfvcXipluCPMx2459zzPef74QTn8fdQVZK/cgD2v9WaFAIkCP6rgaRCSaQyoh7tlipUNn6CWIgBAIWKgVhQ0FY9f3fwRmnfmZs71+FIWFWQjLwPvTfgFhqCQewclMCBkf7RizljuDTTiKEpQysGkfN7D2cOncp++9ienaoqcOJsbtf+9PMH1aPj24RYedssPq6lYXysNtkoavjTl3cAeD8dRA136f4egiuvm6MXBiicvVdtOddvrHcQ9UiJlJabTye/qtf8WDY/thXKJ9dWw6YLA1+aa7x5uJaGeK8kOMF5UCPvhw9mrhSHa6uxa2tud+/14+WhI31GWLhTcTGEVAUJC0A9UpTSu9ZCIRg5mQVQfLS2fah3/NYggPJca/FlPU0hCECSe1PooYXbFRcrgBdT3z+8anxaaC3N1L+Uwx4Q2jGn2zhj+Xk5XJwOwshfzZfidXWApSR6OhMS7wx47NxA64d7NlmpRy7dI+11BWDJxNmO/Ql8CTZ9WVFFGHhVJQCwi7/fkhLIgppLhnLjJsnTZs12M5jmT1R3xU9dXfoW7LZnowAAAABJRU5ErkJggg==">Yahoo</A>
+            <DT><A HREF="https://www.nanshanlife.com.tw/CES3.0/Welcome.action" ADD_DATE="1503135299" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsUlEQVQ4jY2QTWiUZxzEf8/zvuvuJmsSdePWGDWaNZpN3aSNUSMV8RMpKIKIiDeVgGkiJJcWL3oVemtrC23Fg4gIXhTblBLSFIogsYmHRrSKMSbRTczu6m6y7sfz/Hvwg9iG6hyHmWFmYBZcAkdAP6iq8g1G12/oq6go6gF3Nq36N3GrOrpQ/O5OrdyK3GTyrFpY1iFWjbrWpDxWeiODNx8pkP8E9NHoKYTzIW+R75hg+wsFdfunweI7J/nNR4Ci/uVNUY3aLiZ30STH764dG5t+K+TPuo/qB9as+/FGpKnhrUod13fTOVAD0FXbuOhWtOmbvkjjJ6+9bxr8HQ57n8wpDW0avDlMa+8Sv43ZjGdeA0IDWA9WznNm173u2o3LalLD40tGRjKzfkB7TyVi2kH8WO5yZsfXHL1cib+0jXzmK77bPTpTrmfOmNtyNUg+d4RY/Ets4gSe/KccvvgFP+wbIZU8hy9wdG7LheBMj/MmqrUnkMvlDrF6RZDa8FKy5gDCIZLxzVRtsYwNt5J6fie3PLqKmubb9F/Jvk5RfN5XQmKihcjKckKh46SmvcRGIDYKyWcwlYHUFMQnknyw+DSr6gyJxPec2/vMBYT4+EYWlA1RuXg1mewfpBMveDHlYEVjjZCdtmTTFo/Pz8P71cwPXqMs2Azq51f9T2nejVeH7385e/9fc16S7d0HEWkAJrFylYniIULpjzFak50a4OyeNJ/9EsHqIN/u+J3jv4bB6URsKahejTX1IAEwYVxqKE9tx2g/qADe4m2gBLG1uGoNKKEg5YisBz7EsslFpIDS81FOmoLx4DohDF4QL0iM1q4wSldjlaa9qx4jJYhMAJMoUYq27q1YEwe1AqWHsIRwrEU7DiafxiqFUQ/IPJ6kpHIzZO6B24zVT1H2fb77f/wDFo4WTXl21BIAAAAASUVORK5CYII=">南山保戶園地</A>
+            <DT><A HREF="http://dir.twseo.org/ip-check.php" ADD_DATE="1529085009">IP查詢工具 - 查IP位置,IP查國家,ISP來源,查網址IP,查詢自己IP位址</A>
+            <DT><A HREF="https://www.pokemongomap.info/pokestop/%E7%A2%A7%E6%BD%AD-%E7%86%B1%E6%B0%A3%E7%90%83%E9%A6%AC%E8%B3%BD%E5%85%8B%E5%A3%81%E7%95%AB/23187190" ADD_DATE="1529683244">PokemonGoMap.Info - Pokemon GO World Map</A>
+            <DT><A HREF="http://220.134.245.185:8888/webchart/webcatch" ADD_DATE="1539657705">220.134.245.185:8888/webchart/webcatch</A>
+            <DT><A HREF="https://www.developerfusion.com/tools/convert/vb-to-csharp/" ADD_DATE="1539660416">Convert VB.NET to C# - A free code conversion tool - developer Fusion</A>
+            <DT><A HREF="https://stock.wearn.com/fundthree.asp" ADD_DATE="1540367950" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAACcklEQVQ4jWWSTUiUYRSFz32/n5n55sdRR00R/C2rlYaklkEYJIG0KAKhwihp06KkVWQuahFEQrSoJAgKrSDFRamLIChCUonUxdgflKai5pDjjM7MN/O+t8Voi7zLc+89nAMPoaUXRNg6DGyVmXUQgfn/BRGIsUUGkQBz+oEAKBYETVDaWxMkCGCmTXsw62AGEZRiWwqHrmJJSIahAZBJCUHkMDiRgikgxEYkUkpnPL60z2eZHd3jpxtKK7Z5FRCcX33+9uetlqrp5bXWrjEQMxHRmV6O2nfO7qkt8fe9CV4/X+/UjX+ZI3G7/dHIucadr4Khq08+kccUnEhVBMxj1fknrvR33Rt6OTiRSMr0dSJu97z+fLfn49GOoVN1hYX5XraljlC4rLggy+sq1WLfDLp8o//hs+GSooCQcnIhNrrMmtvMyXTl+pxF2dbsYlRAydCfiNtptLU2xJKSgPGp2e4XHx4MTg0vpAiQUnWcrHaY2lIkAUGat7yRZ2YaD1TU12zPC3gmg3OCxLWLR+oaqka//M7zOTov1Dcf3DHyPdQ58JV1QWX7O1bDa8ebqu/fbAYwv7iyvm6Xl+QCCE6H/B5HQbYH4Kbb7wfG5shtaBkF9U6nMRGcjcXtmsqiTL8nK9OdLp3jt7yWGVlPtHWPP303TZbBiqm4tp0AENbC67v27j50uLI4x5PhNgGEo/aPhXDf+NLkryi5DVYMgEpq2xVDYxm3fPOGD7aEIGgCAJIKlgt+Lzk0ZqSZ0JlZsFpzelc8AYtYuEwGmBnMqYBbWpaSihWDKA21TsxxpyfsCxArxWDagCzptlIOJ1JyA95NWv8CeSwYILb5J0gAAAAASUVORK5CYII=">三大法人買賣金額 - 聚財網 wearn.com</A>
+            <DT><A HREF="http://www.sachi.somee.com/poemaccess" ADD_DATE="1542600475" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACFklEQVQ4jXWSPW4UQRCFv+np2T+vwQhhaRNwQOrMiUXERRBwFkLuAAGn4BJOLHkDomVtozG7sr0/np/uegQzu94Av1ZJLXXXq1f1CknJJs7Pz9+v12v9L5bLpfI818XFxbfdHGaz2fbTbDbTUwghqCxLjcdjTSaTLUmyWCz081fB9K7iwFd8eHdEVdXM7xbsIsYIQP7nkk6WYWbfj4+PP3uA6W3F9LaEofEUnHOYGS9eHnKwv8dqtfx4dnb2wwMYIkjcFQGANHUMBz2cSyEBiw2xEBJkWUan22M8HjsPIIFJmNTKNRarB7IsIwGqqkZgJpyZOHi+b5n3xBjZKnAOsjRpK7WQEGACgWv4EwAnIBAagihRBGOdRCQhacuyuUq0b2AGMhGKgJdENFGbEdsPqEm4vr4i8ymSyPOc4XDIal3y+s0R3nsmk8kzr1bBJpoDBqRpik9ThsM9RqPRoypEDJHT09OvHkEwo45GMMPagTZKEnq9HnUdqarF1oUNQgRviGBNcjQhe+x3sDfg1eFh27e2bm1mU5QVXoK4U1USSeIY9PuUhZGmnrKseCgKzESMRtbp0u12cWmKwyCaWNdG4hrLEufo93v4doDRImbaRgiRGEWMwhvw6WTEsop0iMzn8x27ms3sdLqkaYdowuxx6czAT6e/v9R17RKDGriE1gO4v1+c3OT5W2vnYyZMiYlmOWZ/b67+ARbw6ivXuyeBAAAAAElFTkSuQmCC">www.sachi.somee.com/poemaccess</A>
+            <DT><A HREF="https://developer.mozilla.org/zh-TW/" ADD_DATE="1546748346">MDN Web Docs</A>
+            <DT><A HREF="https://twpkinfo.com/ipoke.aspx" ADD_DATE="1556073409">Pokemon Go寶可夢 - 台灣寶可夢資訊站</A>
+            <DT><A HREF="https://gimy.tv/" ADD_DATE="1548915637" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACJ0lEQVQ4jY2Sz0uUURSGn3PvN4oTYUkRQm2i/oAIMglpcBodJyhaCAZuAnPTtk0FQZsWuY1y4T4CcZc/JqsB27SsTS1s4aZcRAvTHGe+e98WM2NqFp3V4XKec99z3gN7QmB73/4V+xbX84OXkiTpi/DTha1JnDuFby9Sjx9t8cXMztpkx88OgIHLT/FunEwbLvGwrmsCLHugJ66tTQEzAm8QthsInEEM+dIdl8mME1JU3Vw0WMW5UZNg/UfdBT1rjJgzqPxWYBDVN9gtz22QpDht5dkRgxgHSkcskxlUWv9i38I7A0ElbSl3Ag9Auy9aknQppFVTer8hDJA28QkWeWMfyhsqFPMqDN3dbkCuscho8TRJEomsWrn8yUDK50+ac/2kdSNqHkDOPUHKtEZPIAdUwFwgBAOOpoXiFe+0Ivkp80mn0tp392ruuYpDEwps2OL8A4EZRGsmUmHoAt6/xXlQ8xpCQM6JEGZMWsbsBinn7PXsSovbdQcqFEfxyRgx1qK0ZM7GzdxxiRTF91YLI1ZZWG7B+x7Sek/PsY7Ow1eduTOIMZlhxHsszE1YU1sL/qOBBkqP8P4mMX6WYrdl2rtVry258uzF5tJ2wS0bXVP+dZy7BdbP1sZ5cF9xZqb4WE2798ING4eHGzZiJxRlpLVutWWnLZs9q2p1mpfz0zSWFfbCu0ZQ72AXB5MpGSWDNWCSrY2HVqlU9wP/GsrlDqm3t+N/638B3Hn4QJxrUu4AAAAASUVORK5CYII=">Gimy TV 劇迷</A>
+            <DT><A HREF="https://www.wantgoo.com/global/stockindex?stockno=SOX" ADD_DATE="1550021308" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACFUlEQVQ4jc1TMWtTYRQ9937flzTJs0nTpnk8m9q8YEEQCi4OIjiKFnTVwUIHwUXURZ3sqiCdVBAH/4E4iQha0M1JHNzUQrXRhiYvL219fS/fdeizhA6CnTzDhTucew73ngvsEwIQkJZ/IDAAIcDuVxgA8B1ePhieKO86EEABsATIoOISoE4BfQKkM15rKNanCXSsTzgpAtZh74ROp/T3qqTDkj99VpnbQnwuFqs1UOoTfmXy2uPQcSs9tzEXVPzDqTIDwMZYzQtd/0qnODkCAOFqeK0ZdI+yleU+AAZxLMbjxMneKWj9FEoepYuiBYATbZ44JvPQZugiAIxjrVcuFC452szEVh5DZD3WPEet0UNHjOHXWeLxKElmi2vLL7pjk7PK6OcEshbyyln9fOZbzqsVS0MfIIh/RO1p14xcEBYHANCpTt2Sg9PSqfrPAKDr1pciryEtty5t1w+aqBaCqr8oE9PSrkzNDe5KCUAx9z9FJjdPhPpNZzhxWF/esvaBIazmiWds3iRG4Wpk7bvizy83BOAFgAggEoAJsIFbv58jdX0TlpQgsJstX/Kj8weI7wZiJcu0HW1tHy+3Vz7KDlmQJmvn7jZ5mUBomBjW2sVit7suSfy+B+ESK5VYey8l82BedqPcRLWQcwtvFNDdbIbnK1jb+Apky67/loGw09w+O4GV6K8xFmBI9vyHwMvLgNP/D78B1tDVEFSHdqUAAAAASUVORK5CYII=">費城半導體 (SOX)即時行情走勢 | 玩股網</A>
+            <DT><A HREF="http://220.134.245.185:8888/fishnew5/selfpoke" ADD_DATE="1556101641">寶可夢座標</A>
+            <DT><A HREF="http://www.southnews.com.tw/snews_entrace/%E5%9C%9F%E5%9C%B0%E9%9D%A2%E7%A9%8D%E6%8F%9B%E7%AE%97.htm" ADD_DATE="1556635808">土地面積換算</A>
+            <DT><A HREF="http://www.storyday.com/wp-content/uploads/2008/09/latlung_dis.html" ADD_DATE="1558068280">经纬度距离计算小工具</A>
+            <DT><A HREF="https://www.ebookservice.tw/" ADD_DATE="1565232477" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAEKADAAQAAAABAAAAEAAAAAAXnVPIAAAAHGlET1QAAAACAAAAAAAAAAgAAAAoAAAACAAAAAgAAAHQyX3yxwAAAZxJREFUOBGcj91LU3Ech/07vK0uuuq6uygYu4jeoJsCL4wwLGRCFwZFMIvARSPcjEBT2UpHZ+xii2ELjanpdqyxzRe2uWF0TJt7qbXFcOf3ezrnFHTfB76Xn+fzfLsAzbj/jdZlNju6ILK4xWT4EzOxLK/nNwkt5gmvlIiqn4mlNBaye8Q3y3zIV1ku1Nku/7JGTYD0zC7TbXskT1z1ypPXxzkz4OfskMJl5xt6XO/o8yzhGE8y9DKNM5ST90LbcrX4wwRIy6D3foDjl9zydP8LTvVPYnf4uXhH4cpwhGuPY9z0xrk9scrdVymcwQ1c0ZKsNg//AKSU3HgQ5NgFF7ZbU7xVS6hai7WvbVL7HTJlwfoBbFUgV4N8HXZqOmbPjGXQZwCOnBvBPuinWTPUlGk6gTFEeAx9bhQx/xSx5EYkn6CrD6GRt8pS6H8BwwpHTYDDx/5uhZZf4advmnZwisPIBCL2HOLPIOEF1QX1gmXwD2AanDcAAz4O6lWa7QC7jQDF72EylTkS396zsLdCVPvI7E6aL62GZSCMN34DAAD//6Xshw0AAAGoSURBVJ3Q30uTURzHcf+ObrWLrrzuTgoRNAwC8UKICGIlVOqVGBKZEDQkEAcFq6ZZMV1bMeaMzQU6lzYx0ihbj1u6R5+5x21O98Nfz3l7nhH+AX4vDt+L73mdz/dUIcvS/4Ga5qc03Bslk9UhM0QpNch2ys4/bYSfmpP5zY+ENv241c+oJTkjyxAGVWZjeeyi+qqVxvvDJPQCz1cFtqUjhhePGJs7wDtdJhAsEvYXiY7vkkseIoRAGOI/IBNUywRNHSPohX1eJHIMLqWxL+i8CacZm9riky/FpDtF0LEhgX3zXQwTMKXbEjgvE9TfdRCYV4gpGkp8i3hym4SWZU3Ps57dI5kvohbLrO+UKwlMpLLCzYdOLlx7Ji61v6Ku3UF91zuaH7hp7Z/gxkCIO7ZZOl9G6Xn7g0euFaz+hMgUDsz7wgSEzRnhXMMTUdtmExdv2bksP/NKt4uWPh/XrUEsQ2E67N/olkCf54/o9ShibjV/CnB8bOCbWeG1d5H3gWXGQ7/wzMTwfo3jj64R+K7yZVlj+neaSCxD5G8OJV0ygcoKaqU726GeAEAeVF2hyVp6AAAAAElFTkSuQmCC">台灣雲端書庫</A>
+            <DT><A HREF="https://www.eyny.com/channel/UCfHIcUN2xn" ADD_DATE="1565617382" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACEUlEQVQ4jZ2SS2tTQRiGn5kz5yQxMW0TSqX2Am3VvVZ0UxCk7qr+g4r9C67cuXMpgrj2R7Qodu/C0ujCC12IgdYUekl6csxJzpmLi9MW0oiKH8Msvpl5v+dlXnHpyaKZv6X5n1paq6EmPj7i1ePbaGNJU3DOQbb667gXBAIpQXmSo9eLKABtLHEvZXvb8GPHEXc8iqWI8yWJE5I0dTR2FFEEN25aJqcKkD093gEpBdPTCs9L2HivqVS6zM6WCPIFBDA1EbO6qgnDBMifgqk+SgeeVMSdlCRxKD8HCKyD4UqBq9d6DA35fc76BACshSiCJDEgsl47hK2tlPnr+bPXkWcbRkO77YjjBGtThHB8/eL4/q2JtXZAYIAg1RCG8PlTnr29mKitaTQk4+MROh0iyPVTDBIYx1FoqVSbLCz8ZOluj2KxQ6fjEEL83YLWELYc1jhGx6pcGK9y736Zc8USyvc5KzFgQWtotRy9nkOp7HhmzmdyehQhJOvrhstXNHMz6g8EoaUb6yyVZBnJBR7d2PH8WZvD/fD3FpTn6MaWKBLU6w6Thijl8DyHEJb1t4J6/ZBu3OQk7KcWnIOXLzpsbkaUy7vUPvg8fJAyPHKIMdBqGg4OWuSCfcbGZjkJicomS/KBYmWlxPJyQDfO4QDfD1DKRwiJ0SlaFxDiIiPVMsrL4FVh4w3v7jwd+J5/KW+3xi9fbuaHy97rYQAAAABJRU5ErkJggg==">影視 - 伊莉影片區</A>
+            <DT>
+                <A HREF="http://www.sachi.somee.com/poemaccess.aspx" ADD_DATE="1566712801" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACFklEQVQ4jXWSPW4UQRCFv+np2T+vwQhhaRNwQOrMiUXERRBwFkLuAAGn4BJOLHkDomVtozG7sr0/np/uegQzu94Av1ZJLXXXq1f1CknJJs7Pz9+v12v9L5bLpfI818XFxbfdHGaz2fbTbDbTUwghqCxLjcdjTSaTLUmyWCz081fB9K7iwFd8eHdEVdXM7xbsIsYIQP7nkk6WYWbfj4+PP3uA6W3F9LaEofEUnHOYGS9eHnKwv8dqtfx4dnb2wwMYIkjcFQGANHUMBz2cSyEBiw2xEBJkWUan22M8HjsPIIFJmNTKNRarB7IsIwGqqkZgJpyZOHi+b5n3xBjZKnAOsjRpK7WQEGACgWv4EwAnIBAagihRBGOdRCQhacuyuUq0b2AGMhGKgJdENFGbEdsPqEm4vr4i8ymSyPOc4XDIal3y+s0R3nsmk8kzr1bBJpoDBqRpik9ThsM9RqPRoypEDJHT09OvHkEwo45GMMPagTZKEnq9HnUdqarF1oUNQgRviGBNcjQhe+x3sDfg1eFh27e2bm1mU5QVXoK4U1USSeIY9PuUhZGmnrKseCgKzESMRtbp0u12cWmKwyCaWNdG4hrLEufo93v4doDRImbaRgiRGEWMwhvw6WTEsop0iMzn8x27ms3sdLqkaYdowuxx6czAT6e/v9R17RKDGriE1gO4v1+c3OT5W2vnYyZMiYlmOWZ/b67+ARbw6ivXuyeBAAAAAElFTkSuQmCC">www.sachi.somee.com/poemaccess.aspx</A>
+        </div>
+        <div class="b-example-divider"></div>
+
+    </main>
+
+    <!--<footer class="text-muted py-5">
+        <div class="container">
+            <p class="float-end mb-1">-->
+    <!--<a href="#">Back to top</a>-->
+    <!--</p>
+            <p class="mb-1">Footer example is &copy; Bootstrap, but please download and customize it for yourself!</p>
+            <p class="mb-0">拜訪我的網頁 <a href="http://220.134.245.185:8888/Mvc%20web/pricepicking.aspx">Mvc網頁</a> 或<a href="http://220.134.245.185:8888/androidapp/index.html">手機板網頁</a><p>謝謝!</p>
+        </div>
+    </footer>-->
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="sidebars.js"></script>
+</body>
+
+</html>

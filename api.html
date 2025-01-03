@@ -1,0 +1,496 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Document</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <!-- <link rel="stylesheet" type="text/css" href="tablesort/style.css" media="all" />
+    <script type="text/javascript" src="tablesort/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="tablesort/jquery.tablesorter.js"></script>  -->
+
+
+    <script>
+
+ var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+var msg;
+
+function firstaddPublication() {
+ db.transaction(function (tx) {
+tx.executeSql('CREATE TABLE IF NOT EXISTS textmsg2 (自動編號 int PRIMARY KEY, 股票名稱 varchar(50),股票代號 int, 均價黃金交叉次數 double,均量黃金交叉次數 double, 產業分類 varchar(50),交易所分類 varchar(50),股本億 double, 日期 int)');
+//tx.executeSql("INSERT INTO textmsg2 (識別碼,name1,mail1,word1,時間戳記) VALUES (1,'歡聲雷動','國小一年級(下)','歡笑的聲音象雷一樣響著。形容熱烈歡呼的動人場面。',0)");
+
+const url = `http://220.134.245.185:8888/webapi/api/avggolds`;
+        fetch(url,{ mode: 'no-cors' })
+            .then(response => response.json())
+            .then(data => {
+                let msg = "";  
+                var  my自動編號 
+                    var  my股票名稱 = ""  
+                    var  my股票代號  = ""
+                    var  my均價黃金交叉次數 = ""
+                    var  my均量黃金交叉次數 = ""
+                    var  my產業分類 = ""
+                    var  my交易所分類 = ""
+                    var  my股本億 = ""
+                    var  my日期 = ""
+                data.forEach(item => {
+                    my自動編號 =  item.自動編號;
+                    my股票名稱  = item.股票名稱;
+                    my股票代號  = item.股票代號;
+                    my均價黃金交叉次數 = item.均價黃金交叉次數;
+                    my均量黃金交叉次數 = item.均量黃金交叉次數;
+                    my產業分類 = item.產業分類;
+                    my交易所分類 = item.交易所分類; 
+                    my股本億 = item.股本億; 
+                    my日期 = item.日期;
+                    // txt += `<li>自動編號: ${item['自動編號']}, 股票名稱: ${item['股票名稱']}, 股票代號: ${item['股票代號']}, 均價黃金交叉次數: ${item['均價黃金交叉次數']}, 均量黃金交叉次數: ${item['均量黃金交叉次數']}, 產業分類: ${item['產業分類']}, 交易所分類: ${item['交易所分類']}, 股本億: ${item['股本億']}, 日期: ${item['日期']}</li>`;
+                    tx.executeSql("INSERT INTO textmsg2 (自動編號,股票名稱,股票代號,均價黃金交叉次數,均量黃金交叉次數,產業分類,交易所分類,股本億,日期) VALUES (" & my自動編號 & ",'" & my股票名稱 & "''," & my股票代號 & "," & my均價黃金交叉次數 & "," & my均量黃金交叉次數 & ",'" & my產業分類 & "'','" & my交易所分類 & "''," & my股本億 & "," &  my日期 & ")");
+               console.log(tx);
+                });
+                // document.getElementById("demo2").innerHTML = msg;
+            })
+
+
+
+
+     msg = '<p>新增資料完成!!  (如果巳經有資料就不會再新增了)。</p>';
+
+
+     //tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "菜鸟教程")');
+    document.querySelector('#status').innerHTML =  msg;
+ });
+  }
+
+
+  function delPublication() {
+    db.transaction(function (tx) {
+     tx.executeSql('DELETE FROM textmsg2 WHERE 識別碼<=10000');
+     msg = '<p>巳刪除全部記錄。</p>';
+     document.querySelector('#status').innerHTML =  msg;
+
+ });
+  }
+  function deleterow() {
+    var password = window.sessionStorage.seletequery;
+    // var aa = "'%";
+    // var bb = "%'";
+    db.transaction(function (tx) {
+      var delseache1  = 'DELETE FROM textmsg2 WHERE 識別碼 = ' + document.getElementById("killnum").value;
+      // delseache1 = aa + delseache1 + bb;
+      alert(delseache1 + ' 本筆資將刪除  從' + password + "按鍵進來")
+     tx.executeSql(delseache1);
+    //  var msg1 = '<p>巳刪除識別碼=' & document.getElementById("killnum").value & '的記錄。</p>';
+    //  document.querySelector('#status').innerHTML =  msg1;
+
+switch(password){
+case "likein" :
+likePublication();
+
+case "displayin":
+displayPublication();
+
+default :
+
+// alert(password)
+// if (password = "likein"){
+//   likePublication();
+
+// } else if(password = "displayin"){
+//   displayPublication();
+// }
+}
+
+ });
+
+
+  }
+
+  function insertPublication() {
+
+}
+
+function displayPublication() {
+    db.transaction(function (tx) {
+     tx.executeSql('SELECT * FROM textmsg2', [], function (tx, results) {
+      var len = results.rows.length, i;
+      var str = ""
+      str = "全部資料如下:<br/><table><thead><tr><td >自動編號</td><td >成語</td><td >年級</td><td > 解 釋 </td><td >日期</td></tr>";
+      //str = "全部資料如下:<br/><table><thead><tr><td >自動編號</td><td >成語</td><td >年級</td><td >解釋</td><td >日期</td></tr></thead><tr><td>識別碼</td><td>name1</td><td>mail1</td><td align='center'>word1</td><td>時間戳記</td></tr>";
+                     for (var i = 0; i < len; i++)  {
+                      str += "<tr>";
+                        // item = results.rows.item(i);
+                        //  document.querySelector('#status').innerHTML +=  item('識別碼') +   item('地名') + item('地標') + item('備註') + item('時間戳記');
+                              for (var o in results.rows.item(i)) {
+
+                                  str += "<td align='left'>" + results.rows.item(i)[o] + "</td>";
+
+                            }
+                            str +=  "</tr>";
+                       }
+
+      str += "</table>";
+
+      $("#status").html(str);
+      window.sessionStorage.seletequery = "displayin";
+    }, null);
+ });
+}
+
+
+function likePublication() {
+  // window.location.reload();
+  // document.querySelector('#status').innerHTML= "";
+  wordseaceh = document.getElementById('likeseachword').value;
+  var aa = "'%";
+  var bb = "%'";
+  // var aa = "aa"
+  // var bb = "bb"
+
+  wordseaceh = aa + wordseaceh + bb;
+    //  alert(wordseaceh);
+    db.transaction(function (tx) {
+     tx.executeSql('SELECT 識別碼,name1,mail1,word1,時間戳記 FROM textmsg2 where name1 like ' +  wordseaceh , [], function (tx, results) {
+      // alert("SELECT * FROM textmsg1 where 地名 like '%" & wordseaceh & "%'");
+       var len = results.rows.length, i;
+      var str = ""
+      str = "資料如下:<br/><table><thead><tr><td >自動編號</td><td >成語</td><td >年級</td><td > 解 釋 </td><td >日期</td></tr>";
+      //str = "資料如下:<br/><table><tr><td>識別碼</td><td>name1</td><td>mail1</td><td>word1</td><td>時間戳記</td></tr>";
+                     for (var i = 0; i < len; i++)  {
+                      str += "<tr>";
+                        // item = results.rows.item(i);
+                        //  document.querySelector('#status').innerHTML +=  item('識別碼') +   item('地名') + item('地標') + item('備註') + item('時間戳記');
+                              for (var o in results.rows.item(i)) {
+
+                                  str += "<td align='left'>" + results.rows.item(i)[o] + "</td>";
+
+                            }
+                            var inputno = results.rows.item(i)["識別碼"];
+                            // alert(inputno);
+
+                          //  str += "<td>" +  $("#inputno").click() +"</td>";
+                            str +=  "</tr>";
+
+                       }
+
+      str += "</table>";
+
+      $("#status").html(str);
+      window.sessionStorage.seletequery = "likein";
+
+    }, null);
+ });
+//  $(".myTable").tablesorter({widgets: ['zebra']});
+
+
+}
+function reloadaginePublication() {
+    db.transaction(function (tx) {
+    //   window.location.reload();
+      document.querySelector('#status').innerHTML=""
+ });
+  }
+
+//  db.transaction(function (tx) {
+//     tx.executeSql('UPDATE LOGS SET log="新修改1" WHERE id=2');
+//      msg = '<p>巳更新第二筆記錄。</p>';
+//      document.querySelector('#status').innerHTML =  msg;
+//  });
+
+// $(function () {
+
+// $("#myTable").tablesorter({widgets: ['zebra']});
+
+// });
+
+
+    </script>
+    <style type="text/css">
+                /* <link rel=stylesheet type="text/css" href="css/color.css"> */
+                h1#text1 {
+                    margin: 0px;
+                    padding: 0px;
+                    top: 15px;
+                    position: absolute;
+                    font-size: 40px;
+                    color: #FF0000;
+                    margin-left: 50px;
+                }
+
+                h1#text2 {
+                    margin: 0px;
+                    padding: 5px;
+                    position: absolute;
+                    font-size: 30px;
+                    color: #FFFFFF;
+                    top: 30px;
+                    margin-left: 50px;
+                    z-index: 1;
+                    filter: glow(color=#ff0000, strength=5);
+                    text-shadow: 5px 5px 5px #FF0000;
+                }
+
+                .consection {
+                    display: block;
+                    border: 0px #330000 solid;
+                    width: 600px;
+                    left: 5px;
+                    top: 5px;
+                    margin: auto;
+                    padding: 40px;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 16px;
+                }
+
+                .ptest {
+                    color: saddlebrown;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 20px;
+                }
+
+                .ptest1 {
+                    color: blue;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 20px;
+                }
+
+                .ptest2 {
+                    color: red;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 20px;
+                }
+
+                .ptest3 {
+                    color: green;
+                    font-family: "標楷體", Helvetica, sans-serif;
+                    font-size: 20px;
+                }
+                /* a:hover {border:3px green solid;text-decoration:none;}  */
+
+                a:link, a:visited {
+                    border-style: solid;
+                    border-width: 5px;
+                    border-color: transparent;
+                }
+
+                a:hover {
+                    border: 3px red;
+                    text-decoration: none;
+                    background-color: green;
+                }
+
+                ;
+                /* <link rel="stylesheet" href="css/color.css"> */
+                /* @import url(css/color.css); */
+                .leftaddmg {
+                    padding-left: 5px;
+                    padding-right: 20px;
+                }
+
+                .auto-style1 {
+                    font-family: 標楷體;
+                    font-size: x-large;
+                    color: #FF0000;
+                }
+
+                .auto-style2 {
+                    font-family: 標楷體;
+                    font-size: xx-large;
+                    color: #FF0000;
+                }
+
+
+
+                a {
+                    color: #007bff;
+                    text-decoration: none;
+                    background-color: transparent;
+                    -webkit-text-decoration-skip: objects;
+                }
+                /* #status {
+        width:200px; height:200px"
+        } */
+                #status {
+                    display: table;
+                }
+
+                tr {
+                    display: table-row;
+                }
+
+                td {
+                    display: table-cell;
+                    border: 2px solid #0000cc;
+                }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark ptest2">
+        <a class="navbar-brand" href="http://220.134.245.185:8888/fishnew5/selfpoke">查座標</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        各版本
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item disabled" href="tablesort/index1.html">響應式網頁版</a>
+                        <a class="dropdown-item " href="index.html">首頁版</a>
+                        <a class="dropdown-item" href="poko.html">新版</a>
+                        <a class="dropdown-item" href="pokomon.htm">舊版</a>
+                        <div class="dropdown-divider"></div>
+                        <!-- <a class="dropdown-item" href="pokepic/斗南手機版股票.apk">座標程式下載</a>
+                        <a class="dropdown-item" href="pokepic/手機版websql.apk">座標程式下載chrome</a>  -->
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        股票資訊
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="stock1.html">股票資訊(手機版)</a>
+                        <a class="dropdown-item" href="stock.html">股票資訊(電腦版)</a>
+                        <a class="dropdown-item" href="https://www.wantgoo.com/global">玩股網</a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        寶可夢資料
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="https://twpkinfo.com/ipoke.aspx">寶可夢資訊站_抓好iv</a>
+                        <a class="dropdown-item" href="https://twpkinfo.com/igym.aspx">團體戰及道館名稱查詢</a>
+                        <a class="dropdown-item" href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite">查技能等資料</a>
+                        <a class="dropdown-item" href="http://tomchun.tw/tomchun">湯姆群情報站</a>
+                        <a class="dropdown-item" href="https://forum.gamer.com.tw/B.php?bsn=29659&amp;subbsn=0">巴哈討論區</a>
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="http://www.sachi.somee.com/pokemapaccess.aspx">查座標24小時沒地圖</a>
+                        <a class="dropdown-item" href="http://www.sachi.somee.com/mapsql.aspx">查座標24小時有地圖</a>
+                        <a class="dropdown-item" href="tablesort/basicinfo.html">webSQL寫在你的瀏覽器內(股票)</a>
+                        <a class="dropdown-item " href="tablesort/index1.html">webSQL寫在你的瀏覽器內(座標)</a>
+                        <a class="dropdown-item disabled" href="websqlpoko.html">webSQL寫在你的瀏覽器內沒放表格(座標) </a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        追劇網站
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="https://gimy.tv/">Gimy追劇</a>
+                        <a class="dropdown-item" href="http://www01.eyny.com/video.php?mod=channel&cid=5">伊莉影視</a>
+                        <a class="dropdown-item" href="http://video.yaodaojiao.com/jinguang/zxtd/">妖道角布袋戲</a>
+
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="http://vigor.enjoy101.org/">vigor網路電視</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="readfilepic.html">讀圖片(沒自動縮放,要放大才看得清楚時選此)</a>
+                        <a class="dropdown-item" href="readfilerwd.html">讀圖片(自動縮放且看得清楚時選此)</a>
+
+                    </div>
+                </li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+
+    <!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>     -->
+    <!-- <input type="button" id="inputno" class="delitem" value="" >;> -->
+    <!-- <input type="button" id="inputno" class="delitem" value="刪除"> -->
+    <!-- <button id="inputno" class="delitem">刪除</button> -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col text-center  btn btn-default auto-style1">
+                <h1>成語筆記</h1>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+
+            <div class="col text-center  btn btn-default auto-style1">
+                <h2> 成語相似查詢</h2>
+            </div>
+
+
+
+        </div>
+    </div>
+    <!-- <input type="text"> -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-xs-6 text-center  btn btn-default">
+                <textarea class="auto-style1" name="" id="likeseachword" cols="20" rows="1">斗</textarea>
+            </div>
+            <div class="col-md-4 col-xs-6 text-center  btn btn-default">
+
+                <button id="reloadagine" class="auto-style1" onclick="reloadaginePublication()"><img src="pokepic/重新整理.JPG">重新整理網頁</button>
+            </div>
+            <div class="col-md-4 col-xs-6 text-center  btn btn-default">
+                <textarea class="auto-style1" name="" id="killnum" cols="5" rows="1">37</textarea>
+                <button id="delitemrow" class="auto-style1 " onclick="deleterow()"><img src="pokepic/減號.JPG">輸入識別碼刪除</button>
+            </div>
+        </div>
+    </div>
+    <div class="container ">
+        <div class="row">
+            <div class="col-md-3 col-xs-6 text-center  btn btn-default">
+                <button id="wordseach" class="auto-style1" onclick="likePublication()"><img src="pokepic/seachpic.png">相似搜尋</button>
+
+            </div>
+            <div class="col-md-3 col-md-6 text-center  btn btn-default">
+                <button id="selectshow" class="auto-style1" onclick="displayPublication()"><img src="pokepic/seachpic.png">查詢全部資料</button>
+
+            </div>
+
+            <div class="col-md-3 col-xs-6 text-center  btn btn-default">
+                <button id="delbtn" class="auto-style1" onclick="delPublication()"><img src="pokepic/垃圾埇.JPG">刪除全部資料</button>
+
+            </div>
+
+            <div class="col-md-3 col-xs-6 text-text  btn btn-default">
+                <button id="addbtn" class="auto-style1" onclick="firstaddPublication()"><img src="pokepic/加號.JPG">首次匯入資料</button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row ">
+            <div class="col text-center  btn btn-default">
+                <div id="status" aria-multiline="true" class="myTable"> </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <br />
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <!-- <meta charset="UTF-8"> -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>loop4</title>
+</head>
+<body>  
+    <h2>讀取 API JSON 格式的資料</h2>
+    <ul id="demo"> </ul>
+
+    <script language="javascript">
+
+    const url = 'http://220.134.245.185:8888/webapi/api/avggolds'; // 替??您的代理服?器 URL
+
+    function fetchData() {
+        fetch(url,{ mode: 'no-cors' })
+            .then(response => response.json())
+            .then(data => {
+                let txt = "";
+                data.forEach(item => {
+                    txt += `<li>自動編號: ${item['自動編號']}, 股票名稱: ${item['股票名稱']}, 股票代號: ${item['股票代號']}, 均價黃金交叉次數: ${item['均價黃金交叉次數']}, 均量黃金交叉次數: ${item['均量黃金交叉次數']}, 產業分類: ${item['產業分類']}, 交易所分類: ${item['交易所分類']}, 股本億: ${item['股本億']}, 日期: ${item['日期']}</li>`;
+                });
+                document.getElementById("demo").innerHTML = txt;
+            })
+            .catch(error => console.log(error));
+    }
+
+    window.addEventListener("load", fetchData);
+
+    </script>
+</body>
+</html>

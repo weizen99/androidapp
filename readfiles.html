@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script>
+
+window.onload = function () {
+
+document.getElementById('myfile').onchange = readFile;
+document.getElementById('myfilepic').onchange = readFile;
+
+};
+
+function readFile() {
+
+file = this.files[0];
+
+var fReader = new FileReader();            
+
+fReader.onload = function (event) {
+
+    document.getElementById('fileContent').value = event.target.result;
+    // document.getElementById('show_image').value = event.target.result;
+};
+
+fReader.readAsText(file);
+// fReader.readAsDataURL(file);
+// fReader.readAsArrayBuffer(file);
+// fReader.readAsBinaryString(file);
+
+
+}
+
+
+
+$(function () {
+    $("input:file").on('change',function (event){
+        $("#fileContentList").empty();
+        for(var i= 0; i < event.target.files.length; i++){
+         var file = event.target.files(i);
+         if (file){
+             var r = new FileReader();
+             r.file = file;
+             r.readAsDataURL(file);
+             r.onload = function(e){
+                 var contesns =e.target.result;
+                 var thisfile = this.file;
+                 $("fileContentList").append("檔名:" + thisfile.name + "<br>檔安類型:"
+                 + thisfile.type + "<br>檔案大小:" + thisfile.size + " bytes<br><img src = '"+contents+"'><br>");
+              
+
+             }
+         } else {
+             alert("選取檔案失敗!");
+         }
+        }
+    })
+})
+
+
+
+
+</script>
+
+</head>
+<body>
+        <p> <input id="myfile"  type="file"/></p>
+
+        <textarea  id="fileContent" cols="150" rows="20"  ></textarea>
+
+        <br>
+        <input id="myfilepic"  type="file"/>
+        <img id="fileContentpic"  class="loaded" alt="Show Image" cols="150" rows="150"/>
+
+        <br>
+        <div id="outline">
+            <h1>選取檔案</h1>
+            <input type="file" multiple="multiple" accept="image/*"/>
+            <div id="fileContentList"></div>
+        </div>
+
+</body>
+</html>
