@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+</head>
+<body>
+    <div style="width:800px; height:400px">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+    // 測試數據
+    const testData = [
+      {日期: 20230901, 成交價: 540},
+      {日期: 20230902, 成交價: 543},
+      {日期: 20230903, 成交價: 538}
+    ];
+
+    // 渲染測試圖表
+    const ctx = document.getElementById('myChart');
+    new Chart(ctx, {
+      type: 'line',
+      {
+        datasets: [{
+          label: '測試數據',
+          testData.map(d => ({
+            x: d.日期.toString(),
+            y: d.成交價
+          }))
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            type: 'time',
+            time: {
+              parser: 'yyyyMMdd'
+            }
+          }
+        }
+      }
+    });
+    </script>
+</body>
+</html>

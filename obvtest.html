@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>股票數據查詢系統</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* 搜索框样式 */
+        .search-box {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+            .search-box input {
+                padding: 10px 15px;
+                border: 2px solid #4CAF50;
+                border-radius: 6px;
+                margin-right: 10px;
+                width: 250px;
+                font-size: 16px;
+            }
+
+            .search-box button {
+                padding: 10px 25px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.3s;
+                font-size: 16px;
+            }
+
+                .search-box button:hover {
+                    background-color: #45a049;
+                    transform: translateY(-2px);
+                }
+
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+        }
+
+            .data-table th {
+                background-color: #4CAF50;
+                color: white;
+                padding: 15px;
+                text-align: right;
+                position: sticky;
+                top: 0;
+            }
+
+            .data-table td {
+                padding: 12px;
+                border-bottom: 1px solid #ddd;
+                text-align: right;
+            }
+
+            .data-table tr:hover {
+                background-color: #f1f8e9;
+            }
+
+        /* 錯誤訊息樣式 */
+        .error-message {
+            color: #d32f2f;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid #ffcdd2;
+            border-radius: 4px;
+            background: #ffebee;
+        }
+
+        .calculating {
+            color: #1976d2;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-box">
+        <input type="text" id="stockCode" placeholder="輸入股票代號 (例: 2330)" maxlength="4">
+        <button onclick="loadData()">查詢</button>
+    </div>
+
+    <h1 id="stockTitle">股票數據查詢系統</h1>
+    <div id="errorContainer"></div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>日期</th>
+                <th>成交價</th>
+                <th>最高價</th>
+                <th>最低價</th>
+                <th>成交量</th>
+                <th>OBV淨額</th>
+                <th>5日均線</th>
+                <th>10日均線</th>
+                <th>20日均線</th>
+                <th>34日均線</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- 數據將動態插入至此 -->
+        </tbody>
+    </table>
+
+    <script>
+        // API請求函數
+        async function fetchStockData(stockCode) {
+            try {
+                const apiUrl = `http://220.134.245.185:8888/webapi/api/obvdatea5/${stockCode}`;
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`伺服器回應異常 (狀態碼: ${response.status})`);
+                }
+
+                return await response.json();
+
+            } catch (error) {
+                let errorMessage = '數據獲取失敗: ';
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage += '無法連接伺服器，請檢查網路連線';
+                } else {
+                    errorMessage += error.message;
+                }
+                throw new Error(errorMessage);
+            }
+        }
+
+        // 表格渲染函數
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+
+            data.forEach(item => {
+                html += `
+                            <tr>
+                                <td>${formatDate(item.日期)}</td>
+                                <td>${formatNumber(item.成交價)}</td>
+                                <td>${formatNumber(item.最高)}</td>
+                                <td>${formatNumber(item.最低)}</td>
+                                <td>${formatNumber(item.總量)}</td>
+                                <td>${formatNumber(item.obv淨額)}</td>
+                                <td class="${item.五日平均線 === null ? 'calculating' : ''}">${formatAverage(item.五日平均線)}</td>
+                                <td class="${item.十日平均線 === null ? 'calculating' : ''}">${formatAverage(item.十日平均線)}</td>
+                                <td class="${item.二十日平均線 === null ? 'calculating' : ''}">${formatAverage(item.二十日平均線)}</td>
+                                <td>${formatNumber(item.三十四日平均線)}</td>
+                            </tr>`;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // 數值格式化函數
+        function formatNumber(num) {
+            return num?.toLocaleString('zh-TW') ?? '-';
+        }
+
+        // 均線特殊格式化
+        function formatAverage(value) {
+            if (value === null) return '計算中';
+            return value.toLocaleString('zh-TW');
+        }
+
+        // 日期格式化 (YYYYMMDD → YYYY/MM/DD)
+        function formatDate(dateNum) {
+            try {
+                const str = dateNum.toString().padStart(8, '0');
+                return `${str.substring(0, 4)}/${str.substring(4, 6)}/${str.substring(6, 8)}`;
+            } catch (e) {
+                console.error('日期格式錯誤:', dateNum);
+                return '無效日期';
+            }
+        }
+
+        // 主加載函數
+        async function loadData() {
+            const stockCode = document.getElementById('stockCode').value.trim();
+            const errorContainer = document.getElementById('errorContainer');
+
+            errorContainer.innerHTML = '';
+            document.getElementById('tableBody').innerHTML = '';
+
+            if (!/^\d{4}$/.test(stockCode)) {
+                errorContainer.innerHTML = `
+                            <div class="error-message">
+                                股票代號必須是4位數字
+                            </div>`;
+                return;
+            }
+
+            try {
+                document.getElementById('stockTitle').textContent = `資料載入中... (${stockCode})`;
+                const data = await fetchStockData(stockCode);
+
+                if (!data || data.length === 0) {
+                    throw new Error('查無此股票資料');
+                }
+
+                renderTable(data);
+                document.getElementById('stockTitle').textContent = `${data[0].名稱} (${stockCode}) 歷史數據`;
+
+            } catch (error) {
+                errorContainer.innerHTML = `
+                            <div class="error-message">
+                                <strong>錯誤發生！</strong><br>
+                                ${error.message}
+                            </div>`;
+                document.getElementById('stockTitle').textContent = '資料載入失敗';
+            }
+        }
+
+        // Enter鍵支持
+        document.getElementById('stockCode').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') loadData();
+        });
+    </script>
+</body>
+</html>

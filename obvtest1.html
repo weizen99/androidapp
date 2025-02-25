@@ -1,0 +1,389 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>股票OBV明細</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+    <style>
+        /* 基礎樣式 */
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            background-color: #f5f5f5;
+        }
+
+        /* 搜索框樣式 */
+        .search-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 30px 0;
+        }
+
+            .search-box input {
+                padding: 12px 20px;
+                border: 2px solid #4CAF50;
+                border-radius: 8px;
+                font-size: 16px;
+                width: 250px;
+                margin-right: 15px;
+                transition: all 0.3s;
+            }
+
+                .search-box input:focus {
+                    border-color: #45a049;
+                    box-shadow: 0 0 8px rgba(76,175,80,0.3);
+                    outline: none;
+                }
+
+            .search-box button {
+                padding: 12px 30px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: all 0.3s;
+            }
+
+                .search-box button:hover {
+                    background: #45a049;
+                    transform: translateY(-2px);
+                }
+
+        /* 載入動畫 */
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4CAF50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 50px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 表格樣式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+            .data-table th {
+                background: #4CAF50;
+                color: white;
+                padding: 18px 25px;
+                text-align: right;
+                position: sticky;
+                top: 0;
+                cursor: pointer;
+                transition: background 0.3s;
+            }
+
+                .data-table th:hover {
+                    background: #45a049;
+                }
+
+                .data-table th.active {
+                    background: #3d8b40;
+                }
+
+            .data-table td {
+                padding: 15px 25px;
+                border-bottom: 1px solid #eee;
+                text-align: right;
+            }
+
+            .data-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            .data-table tr:hover {
+                background-color: #f8fff8;
+            }
+
+        /* 錯誤訊息 */
+        .error-message {
+            background: #ffebee;
+            color: #d32f2f;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border: 1px solid #ffcdd2;
+        }
+
+        /* 排序指示器 */
+        .sort-indicator {
+            margin-left: 8px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-box">
+        <input type="text" id="stockCode" placeholder="輸入股票代號 (例: 2330)" maxlength="4">
+        <button onclick="loadData()">立即查詢</button>
+    </div>
+
+    <div class="loader" id="loader"></div>
+    <div id="errorContainer"></div>
+
+    <div id="dataSection" style="display: none;">
+        <h1 id="stockTitle" style="color: #2c3e50; margin-bottom: 25px;"></h1>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th data-key="日期" onclick="sortData('日期')">日期 <span class="sort-indicator"></span></th>
+                    <th data-key="成交價" onclick="sortData('成交價')">成交價 <span class="sort-indicator"></span></th>
+                    <th data-key="最高" onclick="sortData('最高')">最高價 <span class="sort-indicator"></span></th>
+                    <th data-key="最低" onclick="sortData('最低')">最低價 <span class="sort-indicator"></span></th>
+                    <th data-key="總量" onclick="sortData('總量')">成交量 <span class="sort-indicator"></span></th>
+                    <th data-key="obv淨額" onclick="sortData('obv淨額')">OBV淨額 <span class="sort-indicator"></span></th>
+                    <th data-key="五日平均線" onclick="sortData('五日平均線')">5日均線 <span class="sort-indicator"></span></th>
+                    <th data-key="十日平均線" onclick="sortData('十日平均線')">10日均線 <span class="sort-indicator"></span></th>
+                    <th data-key="二十日平均線" onclick="sortData('二十日平均線')">20日均線 <span class="sort-indicator"></span></th>
+                    <th data-key="三十四日平均線" onclick="sortData('三十四日平均線')">34日均線 <span class="sort-indicator"></span></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // 全局變量
+        let currentData = [];
+        let sortState = { key: '日期', direction: 'desc' };
+
+        // 主加載函數
+        async function loadData() {
+            const stockCode = document.getElementById('stockCode').value.trim();
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = '';
+            document.getElementById('dataSection').style.display = 'none';
+            toggleLoader(true);
+
+            try {
+                // 輸入驗證
+                if (!/^\d{4}$/.test(stockCode)) {
+                    throw new Error('股票代號必須為4位數字');
+                }
+
+                // 發送請求
+                const response = await fetch(`http://220.134.245.185:8888/webapi/api/obvdatea5/${stockCode}`);
+
+                // 處理HTTP錯誤
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(`伺服器錯誤 (${response.status}): ${error}`);
+                }
+
+                // 解析JSON
+                const data = await response.json();
+
+                // 數據驗證
+                if (!Array.isArray(data) || data.length === 0) {
+                    throw new Error('未找到有效數據');
+                }
+
+                currentData = data;
+                sortData(sortState.key); // 初始排序
+                updateUI(stockCode, data);
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                toggleLoader(false);
+            }
+        }
+
+        // 切換載入動畫
+        function toggleLoader(show) {
+            document.getElementById('loader').style.display = show ? 'block' : 'none';
+        }
+
+        // 排序功能
+        function sortData(key) {
+            // 更新排序狀態
+            if (sortState.key === key) {
+                sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortState = { key, direction: 'asc' };
+            }
+
+            // 執行排序
+            currentData.sort((a, b) => {
+                const valA = a[key] ?? -Infinity;
+                const valB = b[key] ?? -Infinity;
+
+                // 日期特殊處理
+                if (key === '日期') {
+                    return sortState.direction === 'asc'
+                        ? valA - valB
+                        : valB - valA;
+                }
+
+                return sortState.direction === 'asc'
+                    ? valA - valB
+                    : valB - valA;
+            });
+
+            updateSortUI();
+            renderTable();
+        }
+
+        // 更新排序UI
+        function updateSortUI() {
+            document.querySelectorAll('[data-key]').forEach(th => {
+                th.classList.remove('active');
+                const indicator = th.querySelector('.sort-indicator');
+
+                if (th.dataset.key === sortState.key) {
+                    th.classList.add('active');
+                    indicator.textContent = sortState.direction === 'asc' ? '↑' : '↓';
+                } else {
+                    indicator.textContent = '';
+                }
+            });
+        }
+
+        // 渲染表格
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = currentData.map(item => `
+                                                                <tr>
+                                                                    <td>${formatDate(item.日期)}</td>
+                                                                    <td>${formatCurrency(item.成交價)}</td>
+                                                                    <td>${formatCurrency(item.最高)}</td>
+                                                                    <td>${formatCurrency(item.最低)}</td>
+                                                                    <td>${formatNumber(item.總量)}</td>
+                                                                    <td>${formatNumber(item.obv淨額)}</td>
+                                                                    <td>${formatAverage(item.五日平均線)}</td>
+                                                                    <td>${formatAverage(item.十日平均線)}</td>
+                                                                    <td>${formatAverage(item.二十日平均線)}</td>
+                                                                    <td>${formatNumber(item.三十四日平均線)}</td>
+                                                                </tr>`
+            ).join('');
+        }
+
+        // 更新界面
+        function updateUI(stockCode, data) {
+            document.getElementById('dataSection').style.display = 'block';
+            document.getElementById('stockTitle').textContent =
+                `${data[0].名稱} (${stockCode}) OBV淨額及均線資訊`;
+            renderTable();
+        }
+
+        // 錯誤處理
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = `
+                                                                <div class="error-message">
+                                                                    <strong>⚠️ 發生錯誤</strong>
+                                                                    <p>${message}</p>
+                                                                    <p>建議操作：</p>
+                                                                    <ul>
+                                                                        <li>檢查股票代號是否正確</li>
+                                                                        <li>確認網路連線狀態</li>
+                                                                        <li>稍後再試</li>
+                                                                    </ul>
+                                                                </div>`;
+        }
+
+        // 格式化函數
+        function formatDate(dateNum) {
+            try {
+                const str = String(dateNum).padStart(8, '0');
+                return `${str.substr(0, 4)}/${str.substr(4, 2)}/${str.substr(6, 2)}`;
+            } catch {
+                return '無效日期';
+            }
+        }
+
+        function formatCurrency(num) {
+            return num?.toLocaleString('zh-TW', { style: 'currency', currency: 'TWD' }) ?? '-';
+        }
+
+        function formatNumber(num) {
+            return num?.toLocaleString('zh-TW') ?? '-';
+        }
+
+        function formatAverage(value) {
+            if (value === null) return '<span style="color:#666;font-style:italic">計算中</span>';
+            return formatNumber(value);
+        }
+
+        // 初始化事件
+        document.getElementById('stockCode').addEventListener('keypress', e => {
+            if (e.key === 'Enter') loadData();
+        });
+
+
+
+    </script>
+
+
+
+    <!-- 在<body>的表格下方添加 -->
+    <div style="width:800px; height:400px">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        // 測試數據
+        const testData = [
+            { 日期: 20230901, 成交價: 540 },
+            { 日期: 20230902, 成交價: 543 },
+            { 日期: 20230903, 成交價: 538 }
+        ];
+
+        // 渲染測試圖表
+        const ctx = document.getElementById('myChart');
+        new Chart(ctx, {
+            type: 'line',
+          {
+                datasets: [{
+                    label: '測試數據',
+                    testData.map(d => ({
+                        x: d.日期.toString(),
+                        y: d.成交價
+                    }))
+                }]
+            },
+            options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        parser: 'yyyyMMdd'
+                    }
+                }
+            }
+        }
+        });
+    </script>
+
+
+
+</body>
+</html>

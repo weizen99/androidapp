@@ -57,12 +57,12 @@
 
     <ul class="nav nav-tabs auto-style1">
         <li class="nav-item"><a class="nav-link auto-style2" href="basicinfotable.html">表格式顯示</a> </li>
-        <li class="nav-item"><a class="nav-link auto-style2" href="basicinfoid.html">文字檔格式</a> </li>
-        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/stockchange/3017">基本資料 單筆 api</a> </li>
-        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/stockchange">基本資料 全部 api</a> </li>
-        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/avggolds/2330">均價均量 單筆 api</a> </li>
-        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/avggolds">均價均量 全部 api</a> </li>
-        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/androidapp/basicinfotable.html">連回本機網站(https被檔)</a> </li>
+        
+        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/stockchange">基本資料(全)api</a> </li>
+        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/avggolds/">均價均量(全)api</a> </li>
+        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/webapi/api/guestinfowd1/">我的最愛(全)api</a> </li>
+        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/androidapp/obvtest1.html">OBV及均線</a> </li>
+        <li class="nav-item"><a class="nav-link auto-style2" href="http://220.134.245.185:8888/androidapp/favoritemy.html">我的最愛link</a> </li>
     </ul>
 
 
@@ -70,7 +70,7 @@
 
 
 
-    <br/><br/>
+    <br /><br />
     <h2>Web Api 表格式</h2>
     <text>股票代號:</text>
     <input type="text" id="stockCodeInput" value="2330" placeholder="2330" style="width: 100px;">
@@ -80,6 +80,7 @@
     <button onclick="fetchData4()">基本資料查詢全部</button>
     <button onclick="fetchData5()">彙總查詢單股</button>
     <button onclick="fetchData6()">彙總前1810筆</button>
+    <button onclick="fetchData7()">OBV均線</button>
     <button onclick="fetchData10()">我的最愛查詢</button>
     <!-- <button onclick="fetchData6()">TEST</button> -->
 
@@ -97,8 +98,8 @@
             str = "<br/><table><thead><tr><td >自動編號</td><td >股票名稱</td><td >股票代號</td><td > 均價黃金交叉次數 </td><td >均量黃金交叉次數</td><td > 產   業   分   類 </td><td >交易所分類</td><td > 股本億 </td><td >日期</td></tr>";
 
             fetch(url, {
-                    mode: 'no-cors'
-                })
+                mode: 'no-cors'
+            })
                 .then(response => response.text())
                 .then(data => {
                     const values = data.split(",").map(item => item.trim().split(":")[1]);
@@ -122,8 +123,8 @@
             str = "<br/><table><thead><tr><td >自動編號</td><td >股票名稱</td><td >股票代號</td><td > 均價黃金交叉次數 </td><td >均量黃金交叉次數</td><td > 產   業   分   類 </td><td >交易所分類</td><td > 股本億 </td><td >日期</td></tr>";
 
             fetch(url, {
-                    mode: 'no-cors'
-                })
+                mode: 'no-cors'
+            })
                 .then(response => response.json())
                 .then(data => {
                     let txt = "";
@@ -148,8 +149,8 @@
             const url = `http://220.134.245.185:8888/webapi/api/stockchange/${stockCode}`;
 
             fetch(url, {
-                    mode: 'no-cors'
-                })
+                mode: 'no-cors'
+            })
                 .then(response => response.text())
                 .then(data => {
                     const values = data.split(",").map(item => item.trim().split(":")[1]);
@@ -174,8 +175,8 @@
 
 
             fetch(url, {
-                    mode: 'no-cors'
-                })
+                mode: 'no-cors'
+            })
                 .then(response => response.json())
                 .then(data => {
                     let txt = "";
@@ -197,13 +198,13 @@
             const stockCode = document.getElementById("stockCodeInput").value;
             const url = `http://220.134.245.185:8888/webapi/api/winnewdates/${stockCode}`;
             var str = ""
-                // str = "全部資料如下:<br/><table><thead><tr> <td >名稱<td ><td >代號<td > <td >站 均<td ><td >均價數<td ><td >均量數<td ><td >三大法人數<td > <td >外資數<td > <td >投信數<td > <td >k9<td ><td >d9<td ><td >週k9<td ><td >週d9<td ><td >月k9<td ><td >月d9<td ><td >macd<td > <td >集中度1日<td ><td >集中度5日<td ><td >集中度10日<td ><td >集中度20日<td ><td >集中度60日<td ><td >本益比預估<td ><td >本益比近四季<td ><td >股價淨值比<td > <td >現金殖利率<td > <td >一日漲幅<td ><td >三日漲幅<td ><td >五日漲幅<td ><td >十日漲幅<td ><td >二十日漲幅<td > <td >四十日漲幅<td ><td >六十日漲幅<td ><td >正DI<td ><td >負DI<td > <td >趨向ADX<td ><td >正趨百分比<td > <td >負趨百分比<td ><td >正負DI百分比<td > <td >三大法人佔股本比%一天<td ><td >主力佔股本比%一天<td ><td >合計一天<td ><td >法人三天<td ><td >主力三天<td ><td >合計三天<td ><td >法人五天<td ><td >主力五天<td ><td >合計五天<td ><td >法人十天<td ><td >主力十天<td ><td >合計十天<td ><td >法人二十天<td > <td >主力二十天<td ><td >合計二十天<td ><td >法人預設<td ><td >主力預設<td ><td >合計預設<td ><td >一週庫存比率<td ><td >二週庫存比率<td ><td >三週庫存比率<td ><td >四週庫存比率<td ><td >五週庫存比率<td ><td >六週庫存比率<td ><td >七週庫存比率<td ><td >近二期增幅<td ><td >近三期增幅<td ><td >近四期增幅<td ><td >近五期增幅<td ><td >近六期增幅<td ><td >近七期增幅<td > <td >最新週<td ><td >資使用率<td ><td >資使用率黃金交叉次數<td ><td >券使用率<td ><td >券使用率黃金交叉次數<td ><td >券資比<td ><td >券資比黃金交叉次數<td ><td >產業分類<td ><td >交易所分類<td ><td >股本億<td > <td >日期<td ></tr>";
+            // str = "全部資料如下:<br/><table><thead><tr> <td >名稱<td ><td >代號<td > <td >站 均<td ><td >均價數<td ><td >均量數<td ><td >三大法人數<td > <td >外資數<td > <td >投信數<td > <td >k9<td ><td >d9<td ><td >週k9<td ><td >週d9<td ><td >月k9<td ><td >月d9<td ><td >macd<td > <td >集中度1日<td ><td >集中度5日<td ><td >集中度10日<td ><td >集中度20日<td ><td >集中度60日<td ><td >本益比預估<td ><td >本益比近四季<td ><td >股價淨值比<td > <td >現金殖利率<td > <td >一日漲幅<td ><td >三日漲幅<td ><td >五日漲幅<td ><td >十日漲幅<td ><td >二十日漲幅<td > <td >四十日漲幅<td ><td >六十日漲幅<td ><td >正DI<td ><td >負DI<td > <td >趨向ADX<td ><td >正趨百分比<td > <td >負趨百分比<td ><td >正負DI百分比<td > <td >三大法人佔股本比%一天<td ><td >主力佔股本比%一天<td ><td >合計一天<td ><td >法人三天<td ><td >主力三天<td ><td >合計三天<td ><td >法人五天<td ><td >主力五天<td ><td >合計五天<td ><td >法人十天<td ><td >主力十天<td ><td >合計十天<td ><td >法人二十天<td > <td >主力二十天<td ><td >合計二十天<td ><td >法人預設<td ><td >主力預設<td ><td >合計預設<td ><td >一週庫存比率<td ><td >二週庫存比率<td ><td >三週庫存比率<td ><td >四週庫存比率<td ><td >五週庫存比率<td ><td >六週庫存比率<td ><td >七週庫存比率<td ><td >近二期增幅<td ><td >近三期增幅<td ><td >近四期增幅<td ><td >近五期增幅<td ><td >近六期增幅<td ><td >近七期增幅<td > <td >最新週<td ><td >資使用率<td ><td >資使用率黃金交叉次數<td ><td >券使用率<td ><td >券使用率黃金交叉次數<td ><td >券資比<td ><td >券資比黃金交叉次數<td ><td >產業分類<td ><td >交易所分類<td ><td >股本億<td > <td >日期<td ></tr>";
             str = "<br/><table><thead><tr> <td >名稱</td ><td >代號</td > <td >站 均</td ><td >均價數</td ><td >均量數</td ><td >三大法人數</td > <td >外資數</td > <td >投信數</td > <td >k9</td ><td >d9</td ><td >週k9</td ><td >週d9</td ><td >月k9</td ><td >月d9</td ><td >macd</td > <td >集中度1日</td ><td >集中度5日</td ><td >集中度10日</td ><td >集中度20日</td ><td >集中度60日</td ><td >本益比預估</td ><td >本益比近四季</td ><td >股價淨值比</td > <td >現金殖利率</td > <td >正負DI百分比</td > <td >合計一天</td ><td >合計三天</td ><td >合計五天</td ><td >合計十天</td ><td >合計二十天</td ><td >一週庫存比率</td ><td >二週庫存比率</td ><td >三週庫存比率</td ><td >四週庫存比率</td ><td >五週庫存比率</td ><td >近二期增幅</td ><td >近三期增幅</td ><td >近四期增幅</td ><td >資使用率</td ><td >資使用率黃金交叉次數</td ><td >券使用率</td ><td >券使用率黃金交叉次數</td ><td >券資比</td ><td >券資比黃金交叉次數</td ><td >產業分類</td ><td >交易所分類</td ><td >股本億</td > <td >日期</td ></tr>";
 
 
             fetch(url, {
-                    mode: 'no-cors'
-                })
+                mode: 'no-cors'
+            })
                 .then(response => response.json())
                 .then(data => {
                     let txt = "";
@@ -219,20 +220,20 @@
                     document.getElementById("demo2").innerHTML = str;
                 })
 
-            .catch(error => console.log(error));
+                .catch(error => console.log(error));
         }
 
         function fetchData6() {
             const stockCode = document.getElementById("stockCodeInput").value;
             const url = `http://220.134.245.185:8888/webapi/api/winnewdates`;
             var str = ""
-                // str = "全部資料如下:<br/><table><thead><tr> <td >名稱<td ><td >代號<td > <td >站 均<td ><td >均價數<td ><td >均量數<td ><td >三大法人數<td > <td >外資數<td > <td >投信數<td > <td >k9<td ><td >d9<td ><td >週k9<td ><td >週d9<td ><td >月k9<td ><td >月d9<td ><td >macd<td > <td >集中度1日<td ><td >集中度5日<td ><td >集中度10日<td ><td >集中度20日<td ><td >集中度60日<td ><td >本益比預估<td ><td >本益比近四季<td ><td >股價淨值比<td > <td >現金殖利率<td > <td >一日漲幅<td ><td >三日漲幅<td ><td >五日漲幅<td ><td >十日漲幅<td ><td >二十日漲幅<td > <td >四十日漲幅<td ><td >六十日漲幅<td ><td >正DI<td ><td >負DI<td > <td >趨向ADX<td ><td >正趨百分比<td > <td >負趨百分比<td ><td >正負DI百分比<td > <td >三大法人佔股本比%一天<td ><td >主力佔股本比%一天<td ><td >合計一天<td ><td >法人三天<td ><td >主力三天<td ><td >合計三天<td ><td >法人五天<td ><td >主力五天<td ><td >合計五天<td ><td >法人十天<td ><td >主力十天<td ><td >合計十天<td ><td >法人二十天<td > <td >主力二十天<td ><td >合計二十天<td ><td >法人預設<td ><td >主力預設<td ><td >合計預設<td ><td >一週庫存比率<td ><td >二週庫存比率<td ><td >三週庫存比率<td ><td >四週庫存比率<td ><td >五週庫存比率<td ><td >六週庫存比率<td ><td >七週庫存比率<td ><td >近二期增幅<td ><td >近三期增幅<td ><td >近四期增幅<td ><td >近五期增幅<td ><td >近六期增幅<td ><td >近七期增幅<td > <td >最新週<td ><td >資使用率<td ><td >資使用率黃金交叉次數<td ><td >券使用率<td ><td >券使用率黃金交叉次數<td ><td >券資比<td ><td >券資比黃金交叉次數<td ><td >產業分類<td ><td >交易所分類<td ><td >股本億<td > <td >日期<td ></tr>";
+            // str = "全部資料如下:<br/><table><thead><tr> <td >名稱<td ><td >代號<td > <td >站 均<td ><td >均價數<td ><td >均量數<td ><td >三大法人數<td > <td >外資數<td > <td >投信數<td > <td >k9<td ><td >d9<td ><td >週k9<td ><td >週d9<td ><td >月k9<td ><td >月d9<td ><td >macd<td > <td >集中度1日<td ><td >集中度5日<td ><td >集中度10日<td ><td >集中度20日<td ><td >集中度60日<td ><td >本益比預估<td ><td >本益比近四季<td ><td >股價淨值比<td > <td >現金殖利率<td > <td >一日漲幅<td ><td >三日漲幅<td ><td >五日漲幅<td ><td >十日漲幅<td ><td >二十日漲幅<td > <td >四十日漲幅<td ><td >六十日漲幅<td ><td >正DI<td ><td >負DI<td > <td >趨向ADX<td ><td >正趨百分比<td > <td >負趨百分比<td ><td >正負DI百分比<td > <td >三大法人佔股本比%一天<td ><td >主力佔股本比%一天<td ><td >合計一天<td ><td >法人三天<td ><td >主力三天<td ><td >合計三天<td ><td >法人五天<td ><td >主力五天<td ><td >合計五天<td ><td >法人十天<td ><td >主力十天<td ><td >合計十天<td ><td >法人二十天<td > <td >主力二十天<td ><td >合計二十天<td ><td >法人預設<td ><td >主力預設<td ><td >合計預設<td ><td >一週庫存比率<td ><td >二週庫存比率<td ><td >三週庫存比率<td ><td >四週庫存比率<td ><td >五週庫存比率<td ><td >六週庫存比率<td ><td >七週庫存比率<td ><td >近二期增幅<td ><td >近三期增幅<td ><td >近四期增幅<td ><td >近五期增幅<td ><td >近六期增幅<td ><td >近七期增幅<td > <td >最新週<td ><td >資使用率<td ><td >資使用率黃金交叉次數<td ><td >券使用率<td ><td >券使用率黃金交叉次數<td ><td >券資比<td ><td >券資比黃金交叉次數<td ><td >產業分類<td ><td >交易所分類<td ><td >股本億<td > <td >日期<td ></tr>";
             str = "<br/><table><thead><tr> <td >名稱</td ><td >代號</td > <td >站 均</td ><td >均價數</td ><td >均量數</td ><td >三大法人數</td > <td >外資數</td > <td >投信數</td > <td >k9</td ><td >d9</td ><td >週k9</td ><td >週d9</td ><td >月k9</td ><td >月d9</td ><td >macd</td > <td >集中度1日</td ><td >集中度5日</td ><td >集中度10日</td ><td >集中度20日</td ><td >集中度60日</td ><td >本益比預估</td ><td >本益比近四季</td ><td >股價淨值比</td > <td >現金殖利率</td > <td >正負DI百分比</td > <td >合計一天</td ><td >合計三天</td ><td >合計五天</td ><td >合計十天</td ><td >合計二十天</td ><td >一週庫存比率</td ><td >二週庫存比率</td ><td >三週庫存比率</td ><td >四週庫存比率</td ><td >五週庫存比率</td ><td >近二期增幅</td ><td >近三期增幅</td ><td >近四期增幅</td ><td >資使用率</td ><td >資使用率黃金交叉次數</td ><td >券使用率</td ><td >券使用率黃金交叉次數</td ><td >券資比</td ><td >券資比黃金交叉次數</td ><td >產業分類</td ><td >交易所分類</td ><td >股本億</td > <td >日期</td ></tr>";
 
 
             fetch(url, {
-                    mode: 'no-cors'
-                })
+                mode: 'no-cors'
+            })
                 .then(response => response.json())
                 .then(data => {
                     let txt = "";
@@ -248,40 +249,71 @@
                     document.getElementById("demo2").innerHTML = str;
                 })
 
-            .catch(error => console.log(error));
+                .catch(error => console.log(error));
         }
 
 
 
+        function fetchData7() {
+            const stockCode = document.getElementById("stockCodeInput").value;
+            const url = `http://220.134.245.185:8888/webapi/api/obvdatea5/${stockCode}`;
+            var str = ""
+            // str = "全部資料如下:<br/><table><thead><tr> <td >名稱<td ><td >代號<td > <td >站 均<td ><td >均價數<td ><td >均量數<td ><td >三大法人數<td > <td >外資數<td > <td >投信數<td > <td >k9<td ><td >d9<td ><td >週k9<td ><td >週d9<td ><td >月k9<td ><td >月d9<td ><td >macd<td > <td >集中度1日<td ><td >集中度5日<td ><td >集中度10日<td ><td >集中度20日<td ><td >集中度60日<td ><td >本益比預估<td ><td >本益比近四季<td ><td >股價淨值比<td > <td >現金殖利率<td > <td >一日漲幅<td ><td >三日漲幅<td ><td >五日漲幅<td ><td >十日漲幅<td ><td >二十日漲幅<td > <td >四十日漲幅<td ><td >六十日漲幅<td ><td >正DI<td ><td >負DI<td > <td >趨向ADX<td ><td >正趨百分比<td > <td >負趨百分比<td ><td >正負DI百分比<td > <td >三大法人佔股本比%一天<td ><td >主力佔股本比%一天<td ><td >合計一天<td ><td >法人三天<td ><td >主力三天<td ><td >合計三天<td ><td >法人五天<td ><td >主力五天<td ><td >合計五天<td ><td >法人十天<td ><td >主力十天<td ><td >合計十天<td ><td >法人二十天<td > <td >主力二十天<td ><td >合計二十天<td ><td >法人預設<td ><td >主力預設<td ><td >合計預設<td ><td >一週庫存比率<td ><td >二週庫存比率<td ><td >三週庫存比率<td ><td >四週庫存比率<td ><td >五週庫存比率<td ><td >六週庫存比率<td ><td >七週庫存比率<td ><td >近二期增幅<td ><td >近三期增幅<td ><td >近四期增幅<td ><td >近五期增幅<td ><td >近六期增幅<td ><td >近七期增幅<td > <td >最新週<td ><td >資使用率<td ><td >資使用率黃金交叉次數<td ><td >券使用率<td ><td >券使用率黃金交叉次數<td ><td >券資比<td ><td >券資比黃金交叉次數<td ><td >產業分類<td ><td >交易所分類<td ><td >股本億<td > <td >日期<td ></tr>";
+            str = "<br/><table><thead><tr> <td >名稱</td ><td >代號</td > <td >成交價</td ><td >總量</td ><td >obv淨額</td ><td >日期</td > <td >最高</td > <td >最低</td > <td >三十四日平均線</td ><td >五日平均線</td ><td >十日平均線</td ><td >二十日平均線</td ></tr>";
+
+
+            fetch(url, {
+                mode: 'no-cors'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    let txt = "";
+                    data.forEach(item => {
+                        // txt += `<li>自動編號: ${item['自動編號']}, K線: ${item['K線']}, 代號: ${item['代號']}, 名稱: ${item['名稱']}, 買進: ${item['買進']}, 賣出: ${item['賣出']},成交價: ${item['成交價']},                                                                                                                                                漲跌: ${item['漲跌']}, 漲幅: ${item['漲幅']}, K棒: ${item['K棒']}, 單量: ${item['單量']}, 總量: ${item['總量']},                                       最高: ${item['最高']}, 最低: ${item['最低']}, 產業分類: ${item['產業分類']},                                                          交易所分類: ${item['交易所分類']}, 上市1上櫃2: ${item['上市1上櫃2']}, 上市櫃年數: ${item['上市櫃年數']}, 股本億: ${item['股本億']}, 市值億: ${item['市值億']}</li>`;
+                        // str += `<td align='left'> ${item['自動編號']} </td><td align='left'>${item['K線']} </td><td align='left'>${item['代號']}</td><td align='left'> ${item['名稱']}</td><td align='center'>${item['買進']}</td><td align='left'> ${item['賣出']} </td><td align='left'> ${item['成交價']} </td><td align='center'> ${item['漲跌']} </td><td align='center'> ${item['漲幅']} </td><td align='left'> ${item['K棒']} </td><td align='left'>${item['單量']} </td><td align='left'>${item['總量']}</td><td align='center'> ${item['最高']}</td><td align='center'>${item['最低']}</td><td align='left'> ${item['產業分類']} </td><td align='left'> ${item['交易所分類']} </td><td align='center'> ${item['上市1上櫃2']} </td><td align='center'> ${item['上市櫃年數']} </td><td align='left'> ${item['股本億']} </td><td align='left'>${item['市值億']} </td></tr>`;
+
+                        str += `</td><td align='left'>${item['名稱']}</td><td align='center'> ${item['代號']}</td><td align='center'> ${item['成交價']}</td><td align='center'> ${item['總量']} </td> <td align='center'> ${item['obv淨額']}</td><td align='center'> ${item['日期']}</td><td align='center'"> ${item['最高']}</td><td align='center'> ${item['最低']}</td><td align='center'> ${item['三十四日平均線']}</td><td align='center'>${item['五日平均線']}</td><td align='center'>${item['十日平均線']}</td><td align='center'>${item['二十日平均線']}</td></tr>`;
+
+
+                    });
+                    str += "</table>";
+                    document.getElementById("demo2").innerHTML = str;
+                })
+
+                .catch(error => console.log(error));
+        }
+
+
+
+
         function fetchData10() {
-           const stockCode = document.getElementById("stockCodeInput").value;
-    var str = ""
-   // str = "<br/><table><thead><tr><td >識別碼 </td><td >name1</td><td > mail1 </td><td >word1</td><td > 時間戳記</td></tr>";
-    const url = `http://220.134.245.185:8888/webapi/api/guestinfowd1/${stockCode}`;
+            const stockCode = document.getElementById("stockCodeInput").value;
+            const url = `http://220.134.245.185:8888/webapi/api/guestinfowd1/${stockCode}`;
+            var str = ""
+            // str = "全部資料如下:<br/><table><thead><tr> <td >名稱<td ><td >代號<td > <td >站 均<td ><td >均價數<td ><td >均量數<td ><td >三大法人數<td > <td >外資數<td > <td >投信數<td > <td >k9<td ><td >d9<td ><td >週k9<td ><td >週d9<td ><td >月k9<td ><td >月d9<td ><td >macd<td > <td >集中度1日<td ><td >集中度5日<td ><td >集中度10日<td ><td >集中度20日<td ><td >集中度60日<td ><td >本益比預估<td ><td >本益比近四季<td ><td >股價淨值比<td > <td >現金殖利率<td > <td >一日漲幅<td ><td >三日漲幅<td ><td >五日漲幅<td ><td >十日漲幅<td ><td >二十日漲幅<td > <td >四十日漲幅<td ><td >六十日漲幅<td ><td >正DI<td ><td >負DI<td > <td >趨向ADX<td ><td >正趨百分比<td > <td >負趨百分比<td ><td >正負DI百分比<td > <td >三大法人佔股本比%一天<td ><td >主力佔股本比%一天<td ><td >合計一天<td ><td >法人三天<td ><td >主力三天<td ><td >合計三天<td ><td >法人五天<td ><td >主力五天<td ><td >合計五天<td ><td >法人十天<td ><td >主力十天<td ><td >合計十天<td ><td >法人二十天<td > <td >主力二十天<td ><td >合計二十天<td ><td >法人預設<td ><td >主力預設<td ><td >合計預設<td ><td >一週庫存比率<td ><td >二週庫存比率<td ><td >三週庫存比率<td ><td >四週庫存比率<td ><td >五週庫存比率<td ><td >六週庫存比率<td ><td >七週庫存比率<td ><td >近二期增幅<td ><td >近三期增幅<td ><td >近四期增幅<td ><td >近五期增幅<td ><td >近六期增幅<td ><td >近七期增幅<td > <td >最新週<td ><td >資使用率<td ><td >資使用率黃金交叉次數<td ><td >券使用率<td ><td >券使用率黃金交叉次數<td ><td >券資比<td ><td >券資比黃金交叉次數<td ><td >產業分類<td ><td >交易所分類<td ><td >股本億<td > <td >日期<td ></tr>";
+            str = "<br/><table><thead><tr> <td >識別碼</td ><td >naml</td > <td >mail1</td ><td >word1</td ><td >時間戳記</td ></tr>";
 
-    fetch(url, {
-            mode: 'no-cors'
-        })
-        .then(response => response.text())
-        .then(data => {
-            let txt = "";
-            const values = data.split("]").map(item => item.trim().split("]")[0]);
-           // values.replace(";", ' <br> ')
-            const [stockName] = values;
 
-            // let txt = `<li>股票名稱: ${stockName}, 股票代號: ${stockCode}, 成交價: ${price},          + item.replace(";", '<br>')                                                         漲幅: ${increase}, 總量: ${amount}, 交易所分類: ${exchangeCategory}, 產業分類: ${industry}, 市值億: ${marketvalue}, 上市1上櫃2: ${listingcabinet}</li>`;
+            fetch(url, {
+                mode: 'no-cors'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    let txt = "";
+                    data.forEach(item => {
+                        // txt += `<li>自動編號: ${item['自動編號']}, K線: ${item['K線']}, 代號: ${item['代號']}, 名稱: ${item['名稱']}, 買進: ${item['買進']}, 賣出: ${item['賣出']},成交價: ${item['成交價']},                                                                                                                                                漲跌: ${item['漲跌']}, 漲幅: ${item['漲幅']}, K棒: ${item['K棒']}, 單量: ${item['單量']}, 總量: ${item['總量']},                                       最高: ${item['最高']}, 最低: ${item['最低']}, 產業分類: ${item['產業分類']},                                                          交易所分類: ${item['交易所分類']}, 上市1上櫃2: ${item['上市1上櫃2']}, 上市櫃年數: ${item['上市櫃年數']}, 股本億: ${item['股本億']}, 市值億: ${item['市值億']}</li>`;
+                        // str += `<td align='left'> ${item['自動編號']} </td><td align='left'>${item['K線']} </td><td align='left'>${item['代號']}</td><td align='left'> ${item['名稱']}</td><td align='center'>${item['買進']}</td><td align='left'> ${item['賣出']} </td><td align='left'> ${item['成交價']} </td><td align='center'> ${item['漲跌']} </td><td align='center'> ${item['漲幅']} </td><td align='left'> ${item['K棒']} </td><td align='left'>${item['單量']} </td><td align='left'>${item['總量']}</td><td align='center'> ${item['最高']}</td><td align='center'>${item['最低']}</td><td align='left'> ${item['產業分類']} </td><td align='left'> ${item['交易所分類']} </td><td align='center'> ${item['上市1上櫃2']} </td><td align='center'> ${item['上市櫃年數']} </td><td align='left'> ${item['股本億']} </td><td align='left'>${item['市值億']} </td></tr>`;
 
-           // data.forEach(item => {
-            str += `<td align='left'>${stockName}</td>`;
+                        str += `</td><td align='left'>${item['識別碼']}</td><td align='center'> ${item['nam1']}</td><td align='center'> ${item['mail1']}</td><td align='center'> ${item['word1']} </td> <td align='center'> ${item['時間戳記']}</td></tr>`;
 
-            str += ` ]`
-            // str += `<td align='left'>${stockName}</td><td align='left'> ${stockCode}</td><td align='left'> ${price} </td><td align='center'> ${increase} </td><td align='left'>${amount}</td></tr>`;
-           // });
-           // str = str.substring(1)
-            document.getElementById("demo").innerHTML = str;
-        })
-        .catch(error => console.log(error));
-}
+
+                    });
+                    str += "</table>";
+                    document.getElementById("demo2").innerHTML = str;
+                })
+
+                .catch(error => console.log(error));
+        }
     </script>
 
 
