@@ -1,0 +1,361 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>图片管理系统</title>
+    <meta charset="utf-8">
+    <style>
+        /* 新增样式 */
+        .thumbnail-card {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            background: white;
+        }
+
+            .thumbnail-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+
+        .thumbnail-header {
+            padding: 8px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+
+        .thumbnail-id {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .thumbnail-meta {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        .detail-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .detail-item {
+            margin: 8px 0;
+            padding: 6px 12px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .detail-label {
+            color: #666;
+            min-width: 80px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 500;
+            height = 30%
+        }
+
+        #imagePreview1 {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #eee;
+            display: none;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #eee;
+            display: none;
+        }
+
+
+        #multiImageContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            width = 50%;
+        }
+     
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>图片管理系统</h2>
+
+
+         <!--单张图片查询--> 
+        <div class="query-section">
+            <h3>单张图片查询</h3>
+            <div class="input-group">
+                <input type="number" id="imageId1"
+                       placeholder="输入图片ID"
+                       min="1" required>
+                <button id="myclick" onclick="loadImage1()">查询图片</button>
+            </div>
+            <img id="imagePreview1"
+                 alt="单张图片预览"
+                 onerror="handleImageError(this)">
+            <div id="singleError" class="error-msg"></div>
+        </div>
+
+
+
+
+        <!-- 縮圖图片查询 -->
+        <div class="query-section">
+            <h3>縮圖图片查询(單張輸入10-10表示id為10</h3>
+            <div class="input-group">
+                <input type="number" id="imageId"
+                       placeholder="输入图片ID"
+                       min="1" required>
+                <button onclick="loadImage()">查询图片</button>
+            </div>
+            <img id="imagePreview"
+                 alt="縮圖放大預覽"
+                 onerror="handleImageError(this)">
+            <div id="singleError" class="error-msg"></div>
+        </div>
+
+        <!-- 批量查询 -->
+        <div class="query-section">
+            <h3>批量查询</h3>
+            <div class="input-group">
+                <input type="text" id="multiIds" placeholder="示例: 101-105 或 201,203,205">
+                <button onclick="loadBatchImages()">加载</button>
+            </div>
+            <div id="multiImageContainer" class="grid-view"></div>
+            <div id="multiError" class="error-msg"></div>
+        </div>
+
+        <!-- 详细信息面板 -->
+        <div id="detailPanel" class="detail-panel" style="display: none;">
+            <h4>详细信息</h4>
+            <div class="detail-item">
+                <span class="detail-label">图片ID:</span>
+                <span class="detail-value" id="detailId">N/A</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">文件名称:</span>
+                <span class="detail-value" id="detailName">N/A</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">文件类型:</span>
+                <span class="detail-value" id="detailType">N/A</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">文件大小:</span>
+                <span class="detail-value" id="detailSize">N/A</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">最后更新:</span>
+                <span class="detail-value" id="detailUpdate">N/A</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = {
+            IMAGE: 'http://220.134.245.185:8888/webapi02/api/stockpics/GetImage',
+            META: 'http://220.134.245.185:8888/webapi02/api/stockpics/GetImageInfo'
+        };
+
+        // 核心功能函数
+        async function fetchImageData(id) {
+            try {
+                const [imgRes, metaRes] = await Promise.all([
+                    fetch(`${API.IMAGE}/${id}`),
+                    fetch(`${API.META}/${id}`)
+                ]);
+
+                if (!imgRes.ok || !metaRes.ok) throw new Error('数据获取失败');
+
+                return {
+                    blob: await imgRes.blob(),
+                    meta: await metaRes.json()
+                };
+            } catch (error) {
+                console.error(`ID ${id} 加载失败:`, error);
+                return null;
+            }
+        }
+
+
+        const API_BASE = 'http://220.134.245.185:8888/webapi02/api/stockpics';
+
+        // 单张图片加载
+        async function loadImage1() {
+            console.log('loadImage1 函数已被调用');
+            const idInput = document.getElementById('imageId1');
+            const imgElement1 = document.getElementById('imagePreview1');
+            const errorDiv = document.getElementById('singleError');
+
+            resetSingleDisplay1();
+
+            if (!validateInput(idInput.value)) {
+                showError('singleError', '请输入有效的图片ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API.IMAGE}/${idInput.value}`);
+                handleImageResponse1(response, imgElement1, errorDiv);
+            } catch (error) {
+                showError('singleError', `网络错误: ${error.message}`);
+            }
+        }
+
+        function handleImageResponse1(response, imgElement1, errorDiv) {
+            if (response.ok) {
+                response.blob().then(blob => {
+                    imgElement1.style.display = 'block';
+                    imgElement1.src = URL.createObjectURL(blob);
+                });
+            } else {
+                response.text().then(text => {
+                    const msg = response.status === 404 ? '图片不存在' : text;
+                    showError('singleError', msg);
+                });
+            }
+        }
+
+        function resetSingleDisplay1() {
+            const imgElement1 = document.getElementById('imagePreview1');
+            imgElement1.style.display = 'none';
+            hideError('singleError');
+        }
+
+        function validateInput(input) {
+            return /^\d+$/.test(input);
+        }
+
+
+       
+
+        // 共用函数
+        function handleImageResponse(response, imgElement, errorDiv) {
+            if (response.ok) {
+                response.blob().then(blob => {
+                    imgElement.style.display = 'block';
+                    imgElement.src = URL.createObjectURL(blob);
+                });
+            } else {
+                response.text().then(text => {
+                    const msg = response.status === 404 ? '图片不存在' : text;
+                    showError(errorDiv, msg);
+                });
+            }
+        }
+
+        function resetSingleDisplay() {
+            document.getElementById('imagePreview').style.display = 'none';
+            hideError('singleError');
+        }
+
+
+
+        // 批量图片加载
+        async function loadBatchImages() {
+            const input = document.getElementById('multiIds').value;
+            const ids = parseIds(input);
+            if (!ids.length) return showError('multiError', '无效的输入格式');
+
+            const container = document.getElementById('multiImageContainer');
+            container.innerHTML = '<div class="loading">加载中...</div>';
+
+            const results = await Promise.all(ids.map(fetchImageData));
+
+            container.innerHTML = '';
+            results.forEach(data => {
+                if (data) createThumbnailCard(data.meta, data.blob);
+            });
+        }
+
+        // 创建缩略图卡片
+        function createThumbnailCard(meta, blob) {
+            const card = document.createElement('div');
+            card.className = 'thumbnail-card';
+            card.onclick = () => showDetailView(meta, blob);
+
+            card.innerHTML = `
+                    <div class="thumbnail-header">
+                        <div class="thumbnail-id">ID: ${meta.Id}</div>
+                        <div class="thumbnail-meta">${meta.FileName}</div>
+                    </div>
+                    <img class="thumbnail" src="${URL.createObjectURL(blob)}"
+                         alt="${meta.FileName}"
+                         onerror="this.style.display='none'">
+                `;
+
+            document.getElementById('multiImageContainer').appendChild(card);
+        }
+
+        // 显示详细信息
+        function showDetailView(meta, blob) {
+            // 更新输入框
+            document.getElementById('imageId').value = meta.Id;
+
+            // 显示大图
+            const imgPreview = document.getElementById('imagePreview');
+            imgPreview.style.display = 'block';
+            imgPreview.src = URL.createObjectURL(blob);
+
+            // 更新详细信息面板
+            const detailPanel = document.getElementById('detailPanel');
+            detailPanel.style.display = 'block';
+            document.getElementById('detailId').textContent = meta.Id;
+            document.getElementById('detailName').textContent = meta.FileName;
+            document.getElementById('detailType').textContent = meta.MimeType;
+            document.getElementById('detailSize').textContent = formatFileSize(meta.FileSize);
+            document.getElementById('detailUpdate').textContent =
+                new Date(meta.UploadTime).toLocaleString();
+        }
+
+        // 工具函数
+        function parseIds(input) {
+            if (input.includes('-')) {
+                const [start, end] = input.split('-').map(Number);
+                return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+            }
+            return input.split(',').map(Number).filter(id => !isNaN(id));
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showError(context, message) {
+            document.getElementById(context).textContent = message;
+        }
+
+         初始化事件监听
+        document.getElementById('myclick').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') loadImage1();
+        });
+
+        //document.getElementById('myclick').addEventListener('click', loadImage1);
+
+
+    </script>
+</body>
+</html>

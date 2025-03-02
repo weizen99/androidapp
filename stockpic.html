@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>数据库图片查询系统</title>
+    <meta charset="utf-8">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .query-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="number"], input[type="text"] {
+            padding: 8px;
+            width: 200px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #0056b3;
+            }
+
+        #imagePreview {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #eee;
+            display: none;
+        }
+
+        #multiImageContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            padding: 5px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .error-msg {
+            color: #dc3545;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            color: #6c757d;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>图片查询系统</h2>
+
+        <!-- 单张图片查询 -->
+        <div class="query-section">
+            <h3>單張圖片查詢</h3>
+            <div class="input-group">
+                <input type="number" id="imageId"
+                       placeholder="输入图片ID"
+                       min="1" required>
+                <button onclick="loadImage()">查询图片</button>
+            </div>
+            <img id="imagePreview"
+                 alt="單張圖片預覽"
+                 onerror="handleImageError(this)">
+            <div id="singleError" class="error-msg"></div>
+        </div>
+
+        <!-- 多张图片查询 -->
+        <div class="query-section">
+            <h3>批量圖片查詢</h3>
+            <div class="input-group">
+                <input type="text" id="multiIds"
+                       placeholder="輸入ID範圍 (如 1-5) 或逗號分隔ID">
+                <button onclick="loadMultipleImages()">批量查询</button>
+            </div>
+            <div class="loading" id="multiLoading">加载中...</div>
+            <div id="multiError" class="error-msg"></div>
+            <div id="multiImageContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://220.134.245.185:8888/webapi02/api/stockpics';
+
+        // 单张图片加载
+        async function loadImage() {
+            const idInput = document.getElementById('imageId');
+            const imgElement = document.getElementById('imagePreview');
+            const errorDiv = document.getElementById('singleError');
+
+            resetSingleDisplay();
+
+            if (!validateInput(idInput.value)) {
+                showError(errorDiv, '请输入有效的图片ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/GetImage/${idInput.value}`);
+                handleImageResponse(response, imgElement, errorDiv);
+            } catch (error) {
+                showError(errorDiv, `网络错误: ${error.message}`);
+            }
+        }
+
+        // 多张图片加载
+        async function loadMultipleImages() {
+            const input = document.getElementById('multiIds').value;
+            const container = document.getElementById('multiImageContainer');
+            const errorDiv = document.getElementById('multiError');
+            const loadingDiv = document.getElementById('multiLoading');
+
+            resetMultiDisplay();
+            showLoading(loadingDiv);
+
+            try {
+                const ids = parseIds(input);
+                if (!ids.length) {
+                    showError(errorDiv, '输入格式无效，请使用范围(1-5)或逗号分隔ID');
+                    return;
+                }
+
+                const promises = ids.map(id =>
+                    fetch(`${API_BASE}/GetImage/${id}`)
+                        .then(res => res.blob())
+                        .catch(() => null)
+                );
+
+                const blobs = await Promise.all(promises);
+                blobs.forEach((blob, index) => {
+                    if (blob) {
+                        const img = createThumbnail(blob, ids[index]);
+                        container.appendChild(img);
+                    } else {
+                        showError(errorDiv, `ID ${ids[index]} 图片加载失败`);
+                    }
+                });
+
+            } catch (error) {
+                showError(errorDiv, `批量加载失败: ${error.message}`);
+            } finally {
+                hideLoading(loadingDiv);
+            }
+        }
+
+        // 工具函数
+        function parseIds(input) {
+            if (input.includes('-')) {
+                const [start, end] = input.split('-').map(Number);
+                return Array.from({length: end - start + 1}, (_, i) => start + i);
+            }
+            return input.split(',').map(Number).filter(id => !isNaN(id));
+        }
+
+        function createThumbnail(blob, id) {
+            const url = URL.createObjectURL(blob);
+            const img = document.createElement('img');
+            img.className = 'thumbnail';
+            img.src = url;
+            img.alt = `图片 ${id}`;
+            img.onerror = function() {
+                this.style.display = 'none';
+            };
+            return img;
+        }
+
+        // 共用函数
+        function handleImageResponse(response, imgElement, errorDiv) {
+            if (response.ok) {
+                response.blob().then(blob => {
+                    imgElement.style.display = 'block';
+                    imgElement.src = URL.createObjectURL(blob);
+                });
+            } else {
+                response.text().then(text => {
+                    const msg = response.status === 404 ? '图片不存在' : text;
+                    showError(errorDiv, msg);
+                });
+            }
+        }
+
+        function resetSingleDisplay() {
+            document.getElementById('imagePreview').style.display = 'none';
+            hideError('singleError');
+        }
+
+        function resetMultiDisplay() {
+            document.getElementById('multiImageContainer').innerHTML = '';
+            hideError('multiError');
+        }
+
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        function hideError(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        function showLoading(element) {
+            element.style.display = 'block';
+        }
+
+        function hideLoading(element) {
+            element.style.display = 'none';
+        }
+
+        function validateInput(value) {
+            return value && value > 0;
+        }
+
+        function handleImageError(img) {
+            img.style.display = 'none';
+            showError(document.getElementById(img.id === 'imagePreview' ? 'singleError' : 'multiError'),
+                     '图片加载失败');
+        }
+    </script>
+</body>
+</html>

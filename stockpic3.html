@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>圖片畫廊</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-section {
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .gallery-container {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
+
+        .thumbnail-container {
+            flex: 4;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            padding: 10px;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 每行显示 5 个缩略图 */
+            grid-gap: 10px;
+        }
+
+        .thumbnail-item {
+            text-align: center;
+        }
+
+            .thumbnail-item img {
+                width: 100%;
+                cursor: pointer;
+                border: 2px solid #ccc;
+            }
+
+                .thumbnail-item img:hover {
+                    border-color: #777;
+                }
+
+            .thumbnail-item .info-text {
+                font-size: 12px;
+            }
+
+        .image-display {
+            flex: 6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #fff;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+            .image-display img {
+                max-width: 100%;
+                max-height: 100%;
+            }
+
+        .image-info {
+            margin-top: 10px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .range-input input {
+            width: 60px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部區域：單張圖片顯示和圖片範圍輸入 -->
+    <div class="top-section">
+        <!-- 單張圖片顯示 -->
+        <div class="single-image-section">
+            <h2>顯示單張圖片</h2>
+            <input type="number" id="singleImageId" placeholder="請輸入圖片ID">
+            <button onclick="loadSingleImage()">查詢圖片</button>
+            <div id="singleImageError" class="error"></div>
+        </div>
+
+        <!-- 圖片範圍輸入 -->
+        <div class="range-input">
+            <label for="startId">起始ID：</label>
+            <input type="number" id="startId" value="175" min="1">
+            <label for="endId">結束ID：</label>
+            <input type="number" id="endId" value="200" min="1">
+            <button onclick="loadThumbnails()">顯示圖片範圍</button>
+            <div id="rangeError" class="error"></div>
+        </div>
+    </div>
+
+    <!-- 主要內容區域：左右佈局 -->
+    <div class="gallery-container">
+        <!-- 左側：縮略圖 -->
+        <div class="thumbnail-container" id="thumbnailContainer">
+            <!-- 縮略圖將動態加載到這裡 -->
+        </div>
+        <!-- 右側：大圖顯示 -->
+        <div class="image-display">
+            <img id="largeImage" src="" alt="請選擇一張圖片" style="display: none;">
+            <div id="largeImageInfo" class="image-info"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://220.134.245.185:8888/webapi02/api/stockpics';
+
+        // 顯示單張圖片
+        async function loadSingleImage() {
+            const imageId = document.getElementById('singleImageId').value;
+            const imageElement = document.getElementById('largeImage');
+            const infoElement = document.getElementById('largeImageInfo');
+            const errorElement = document.getElementById('singleImageError');
+            errorElement.textContent = '';
+
+            if (!imageId) {
+                errorElement.textContent = '請輸入有效的圖片ID';
+                return;
+            }
+
+            try {
+                // 獲取圖片
+                const imageResponse = await fetch(`${API_BASE}/GetImage/${imageId}`);
+                if (!imageResponse.ok) {
+                    throw new Error('無法獲取圖片');
+                }
+                const imageBlob = await imageResponse.blob();
+                imageElement.src = URL.createObjectURL(imageBlob);
+                imageElement.style.display = 'block';
+
+                // 獲取圖片資訊
+                const infoResponse = await fetch(`${API_BASE}/GetImageinfo/${imageId}`);
+                if (infoResponse.ok) {
+                    const infoData = await infoResponse.json();
+                    infoElement.textContent = `檔案名: ${infoData.FileName.trim()} | 大小: ${infoData.FileSize}位元組 | 上傳時間: ${infoData.UploadTime}`;
+                } else {
+                    infoElement.textContent = '';
+                }
+            } catch (error) {
+                errorElement.textContent = error.message;
+            }
+        }
+
+        // 加載縮略圖列表
+        async function loadThumbnails() {
+            const container = document.getElementById('thumbnailContainer');
+            const startId = parseInt(document.getElementById('startId').value);
+            const endId = parseInt(document.getElementById('endId').value);
+            const errorElement = document.getElementById('rangeError');
+            container.innerHTML = '';
+            errorElement.textContent = '';
+
+            if (isNaN(startId) || isNaN(endId) || startId < 1 || endId < startId) {
+                errorElement.textContent = '請輸入有效的起始和結束ID，且結束ID應大於等於起始ID';
+                return;
+            }
+
+            try {
+                for (let imageId = startId; imageId <= endId; imageId++) {
+                    // 獲取圖片資訊
+                    const infoResponse = await fetch(`${API_BASE}/GetImageinfo/${imageId}`);
+                    if (infoResponse.ok) {
+                        const infoData = await infoResponse.json();
+
+                        // 創建縮略圖項
+                        const thumbnailItem = document.createElement('div');
+                        thumbnailItem.className = 'thumbnail-item';
+
+                        // 創建資訊元素
+                        const infoElement = document.createElement('div');
+                        infoElement.className = 'info-text';
+                        infoElement.textContent = `ID: ${infoData.Id} 名稱: ${infoData.FileName.trim()}`;
+                        thumbnailItem.appendChild(infoElement);
+
+                        // 創建縮略圖
+                        const img = document.createElement('img');
+                        img.src = `${API_BASE}/GetImage/${imageId}`;
+                        img.alt = `圖片ID: ${imageId}`;
+                        img.dataset.id = imageId;
+                        img.onclick = () => displayLargeImage(imageId);
+                        thumbnailItem.appendChild(img);
+
+                        // 添加到容器
+                        container.appendChild(thumbnailItem);
+                    }
+                }
+
+                // 如果沒有加載任何圖片
+                if (container.children.length === 0) {
+                    errorElement.textContent = '在指定的範圍內沒有可顯示的圖片';
+                }
+            } catch (error) {
+                console.error(error.message);
+                errorElement.textContent = '加載圖片時發生錯誤';
+            }
+        }
+
+        // 顯示大圖和資訊
+        async function displayLargeImage(imageId) {
+            const imageElement = document.getElementById('largeImage');
+            const infoElement = document.getElementById('largeImageInfo');
+
+            try {
+                // 獲取大圖
+                const imageResponse = await fetch(`${API_BASE}/GetImage/${imageId}`);
+                if (!imageResponse.ok) {
+                    throw new Error('無法獲取圖片');
+                }
+                const imageBlob = await imageResponse.blob();
+                imageElement.src = URL.createObjectURL(imageBlob);
+                imageElement.style.display = 'block';
+
+                // 獲取圖片資訊
+                const infoResponse = await fetch(`${API_BASE}/GetImageinfo/${imageId}`);
+                if (infoResponse.ok) {
+                    const infoData = await infoResponse.json();
+                    infoElement.textContent = `檔案名: ${infoData.FileName.trim()} | 大小: ${infoData.FileSize}位元組 | 上傳時間: ${infoData.UploadTime}`;
+                } else {
+                    infoElement.textContent = '';
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+
+        // 頁面初始加載
+        window.onload = function () {
+            loadThumbnails();
+        };
+    </script>
+
+</body>
+</html>
