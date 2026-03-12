@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+   
+</head>
+<body>
+    <form id="form1" runat="server">
+
+
+
+
+        <div>
+            <div>
+                緯度: <input type="text" id="txtlat" value="25.0339" /> 經度: <input type="text" id="txtlng" value="121.5644" />
+            </div>
+            <button type="button" onclick="loadMap()">座標位置</button>
+        </div>
+        <div id="map" style="height: 500px; width: 96%; margin-top: 10px;"></div>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
+
+        <script>
+            let map, userMarker, lastManualMarker = null;
+
+            function initMap() {
+                const initialPos = { lat: 25.0339, lng: 121.5644 };
+                map = new google.maps.Map(document.getElementById('map'), { zoom: 16, center: initialPos });
+
+                // 藍色目前位置標記
+                userMarker = new google.maps.Marker({
+                    position: initialPos, map: map,
+                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 }
+                });
+
+
+                // 2. 建立「回到目前位置」按鈕 [[1](https://developers.google.com/maps/documentation/javascript/controls)]
+                const btn = document.createElement("button");
+                btn.textContent = "回到目前位置";
+                btn.style.cssText = "margin: 10px; padding: 8px; cursor: pointer; background: white; border: 2px solid #ccc;";
+                map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);
+
+                btn.onclick = () => {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition((p) => {
+                            const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+                            map.panTo(pos);
+                            userMarker.setPosition(pos);
+
+                        });
+
+
+
+
+                    }
+                };
+
+                // 監聽點擊地圖
+                map.addListener("click", (e) => {
+                    updateMarker(e.latLng);
+                    alert(`已選取座標：\n緯度: ${e.latLng.lat().toFixed(6)}\n經度: ${e.latLng.lng().toFixed(6)}\n加上名稱及備註並按下下方的"加到資料庫"即可加入資料`);
+
+                });
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.watchPosition((p) => {
+                        const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+                        userMarker.setPosition(pos);
+                    }, null, { enableHighAccuracy: true });
+                }
+            }
+
+            function loadMap() {
+                const lat = parseFloat(document.getElementById('txtlat').value);
+                const lng = parseFloat(document.getElementById('txtlng').value);
+                updateMarker(new google.maps.LatLng(lat, lng));
+            }
+
+            function updateMarker(latLng) {
+                // 1. 清除舊標記 [[2](https://developers.google.com/maps/documentation/javascript/examples/marker-animations)]
+                if (lastManualMarker) lastManualMarker.setMap(null);
+
+                // 2. 更新 TextBox
+                document.getElementById('txtlat').value = latLng.lat().toFixed(6);
+                document.getElementById('txtlng').value = latLng.lng().toFixed(6);
+
+
+
+                // 3. 建立新標記並設置「持續跳動」[[5](https://reintech.io/blog/animating-markers-movements-google-maps)]
+                lastManualMarker = new google.maps.Marker({
+                    position: latLng,
+                    map: map,
+                    animation: google.maps.Animation.BOUNCE
+                });
+                map.panTo(latLng);
+            }
+        </script>
+
+        <br />
+        <br />
+        <br />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+        <div id="map1" style="height: 500px; width: 96%;"></div>
+        <div>
+            緯度: <input type="text" id="lat" /> 經度: <input type="text" id="lng" />
+        </div>
+
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+        <script>
+            const map1 = L.map('map1').setView([25.0339, 121.5644], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map1);
+
+            let marker = L.marker([25.0339, 121.5644], { draggable: true }).addTo(map1);
+
+
+
+            // 1. 關鍵字搜尋功能 [[1](https://docs.maptiler.com/leaflet/examples/geocoding-control/)]
+            const geocoder = L.Control.geocoder({ defaultMarkGeocode: false })
+                .on('markgeocode', function (e) {
+                    const bbox = e.geocode.bbox;
+                    const center = e.geocode.center;
+                    updateMarker1(center.lat, center.lng);
+                    map1.fitBounds(bbox);
+                }).addTo(map1);
+
+
+
+
+
+
+
+
+            // 2. 點擊與拖動更新座標 [[5](https://dev.to/geoapify-maps-api/leaflet-location-picker-with-address-autocomplete-geolocation-and-draggable-pin-with-geoapify-1gfa)]
+            map1.on('click', (e) => updateMarker1(e.latlng.lat, e.latlng.lng));
+            marker.on('dragend', () => {
+                const pos = marker.getLatLng();
+
+                updateMarker1(pos.lat, pos.lng);
+            });
+
+            function updateMarker1(lat, lng) {
+                marker.setLatLng([lat, lng]);
+                document.getElementById('lat').value = lat.toFixed(6);
+                document.getElementById('lng').value = lng.toFixed(6);
+                document.getElementById('txtlat').value = lat.toFixed(6);
+                document.getElementById('txtlng').value = lng.toFixed(6);
+
+
+
+                alert(`已選取座標：\n緯度: ${lat.toFixed(6)}\n經度: ${lng.toFixed(6)}\n加上名稱及備註並按下上方的"加到資料庫"即可加入資料`);
+                ////////document.getElementById('<%= txtLat.ClientID %>').value = latLng.lat().toFixed(6);
+            }
+        </script>
+
+
+
+    </form>
+   
+</body>
+</html>
