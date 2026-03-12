@@ -1,46 +1,45 @@
 ﻿<!DOCTYPE html>
+<html lang="zh-Hant-TW">
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <!-- <meta charset="utf-8" /> -->
-    <title>Form_input</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
-
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
-
-    <style type="text/css">
-        html {
-            overflow: auto;
-        }
-
-        html,
-        body,
-        div,
-        iframe {
-            margin: 0px;
-            padding: 0px;
-            height: 100%;
-            border: none;
-        }
-
-        iframe {
-            display: block;
-            width: 100%;
-            border: none;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-    </style>
-
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>記事本</title>
 </head>
+
 <body>
-<h3>請輸入要搜尋的關鍵字(雲端硬碟)</h3>
-    <iframe id="data-table" src="https://script.google.com/macros/s/AKfycbz7KPOg1is6zmWl3IYjukKa16H7J5kQmF5dEzX1XwmLtOis4YpaArrFlAYa7TtRP2-pRA/exec" frameborder="0" marginheight="0" marginwidth="0"
-            width="100%" height="100%" scrolling="auto"></iframe>
-
-
-
+    <textarea id="edit"></textarea>
+    <button id="save">儲存</button>
+    <script>
+        window.payload = '';
+        (function bundle() {
+            function base64_decode(base64) {
+                return decodeURIComponent(atob(base64));
+            }
+            function getApp(payload) {
+                return base64_decode('JTNDIURPQ1RZUEUlMjBodG1sJTNFJTBBJTNDaHRtbCUyMGxhbmclM0QlMjJ6aC1IYW50LVRXJTIyJTNFJTBBJTNDaGVhZCUzRSUwQSUyMCUyMCUyMCUyMCUzQ21ldGElMjBjaGFyc2V0JTNEJTIyVVRGLTglMjIlM0UlMEElMjAlMjAlMjAlMjAlM0NtZXRhJTIwaHR0cC1lcXVpdiUzRCUyMlgtVUEtQ29tcGF0aWJsZSUyMiUyMGNvbnRlbnQlM0QlMjJJRSUzRGVkZ2UlMjIlM0UlMEElMjAlMjAlMjAlMjAlM0NtZXRhJTIwbmFtZSUzRCUyMnZpZXdwb3J0JTIyJTIwY29udGVudCUzRCUyMndpZHRoJTNEZGV2aWNlLXdpZHRoJTJDJTIwaW5pdGlhbC1zY2FsZSUzRDEuMCUyMiUzRSUwQSUyMCUyMCUyMCUyMCUzQ3RpdGxlJTNFJUU4JUE4JTk4JUU0JUJBJThCJUU2JTlDJUFDJTNDJTJGdGl0bGUlM0UlMEElM0MlMkZoZWFkJTNFJTBBJTNDYm9keSUzRSUwQSUyMCUyMCUyMCUyMCUzQ3RleHRhcmVhJTIwaWQlM0QlMjJlZGl0JTIyJTNFJTNDJTJGdGV4dGFyZWElM0UlMEElMjAlMjAlMjAlMjAlM0NidXR0b24lMjBpZCUzRCUyMnNhdmUlMjIlM0UlRTUlODQlQjIlRTUlQUQlOTglM0MlMkZidXR0b24lM0UlMEElMjAlMjAlMjAlMjA=') +
+                    '<script>' +
+                    'window.payload = ' + JSON.stringify(payload) + ';' +
+                    '(' + bundle.toString() + ')();' +
+                    '<\/script>' +
+                    base64_decode('JTBBJTNDJTJGYm9keSUzRSUwQSUzQyUyRmh0bWwlM0UlMEE=');
+            }
+            document.querySelector('#edit').value = window.payload;
+            document.querySelector('#save').addEventListener('click', () => {
+                let val = document.querySelector('#edit').value;
+                let html = getApp(val);
+                let aTag = document.createElement('a');
+                let url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+                aTag.download = 'notepad.html';
+                aTag.href = url;
+                aTag.click();
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                }, 100);
+            })
+        })();
+    </script>
 </body>
+
 </html>

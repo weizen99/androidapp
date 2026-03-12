@@ -232,7 +232,7 @@
                 const infoResponse = await fetch(`${API_BASE}/GetImageinfo/${imageId}`);
                 if (infoResponse.ok) {
                     const infoData = await infoResponse.json();
-                    infoElement.textContent = `檔案名: ${infoData.FileName.trim()} | 大小: ${infoData.FileSize}位元組 | 上傳時間: ${infoData.UploadTime}`;
+                    infoElement.textContent = `ID: ${infoData.Id} | 檔案名稱: ${infoData.FileName.trim()} |  上傳時間: ${infoData.UploadTime}`;
                 } else {
                     infoElement.textContent = '';
                 }

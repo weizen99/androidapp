@@ -1,0 +1,748 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    const config = {
+    title: "首頁",                 //write your website title
+    subtitle: "Cloudflare Workers Dir", //write your website subtitle
+    logo_icon: "sitemap",               //select your logo by semantic-ui icon (you can get more msg in:https://semantic-ui.com/elements/icon.html)
+    hitokoto: true,                     //use hitokoto or not
+    search:true,                        //enable search function
+    search_engine:[                     //choose search engine which you use
+    {
+    name:"谷 歌",
+    template:"https://www.google.com/search?q=$s"
+    },
+
+    {
+    name:"百 度",
+    template:"https://www.baidu.com/s?wd=$s"
+    },
+
+    {
+    name:"必 應",
+    template:"https://www.bing.com/search?q=$s"
+    },
+    {
+    name:"搜 狗",
+    template:"https://www.sogou.com/web?query=$s"
+    }
+    ],
+    selling_ads: true,                  //Selling your domain or not.(turning on may be helpful for selling this domain by showing some ads.)
+    sell_info:{
+    domain:"example.com",
+    price:500,                        //domain price
+    mon_unit:"yen sign",              //monetary unit
+    contact:[                         //how to contact you
+    {
+    type:"envelope",               //contact type ("weixin","qq","telegram plane","envelope" or "phone")
+    content:"info@example.com"
+    }
+    ]
+    },
+    lists: [                            //Url list
+    {
+    name:"我的常用網站",
+    icon:"code",
+    list:[
+    {
+    url:"https://sites.google.com/view/weizenyan/%E9%A6%96%E9%A0%81",
+    name:"My Google Web",
+    desc:"不用寫程式的網站"
+    },
+    {
+    url:"http://220.135.3.78:8888/Mvc%20web/pricepicking.aspx",
+    name:"我的MVC網站",
+    desc:"我的股票網站"
+    },
+    {
+    url:"http://220.135.3.78:8888/homesomee/camp1",
+    name:"車床天地(車泊)",
+    desc:"車泊資訊(來源:車床天地app)"
+    },
+    {
+    url:"http://220.135.3.78:8888/work/test3.aspx",
+    name:"本機成語測驗",
+    desc:"自行建置(國小至高中)"
+    },
+    {
+    url:"http://220.135.3.78:8888/androidapp/myweb/sidebars/index.html",
+    name:"My Sidebars",
+    desc:"Sidebars連結"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/mymvc/trend4stock1.aspx",
+    name:"Obv多空淨額法等",
+    desc:"單股或自選股皆可"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/homesomee/mapsql2",
+    name:"本機景點座標查詢",
+    desc:"座標存放在SQL資料庫"
+    },
+    {
+    url:"http://220.135.3.78:8888/excelimport/excelimport2",
+    name:"excel(SQL)上下傳",
+    desc:"執行查訽並下載檔案"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/stockquery/dayoff",
+    name:"當沖季線",
+    desc:"站上季線"
+    },
+    {
+    url:"http://220.135.3.78:8888/stockquery/trend1",
+    name:"投信外資法人買賣超+主力(多個期間)",
+    desc:"投本比"
+    },
+
+
+    {
+    url:"http://220.135.3.78:8888/mymvc/equitym.aspx",
+    name:"股權兩日期比較",
+    desc:"股權分散表"
+    },
+
+    {
+    url:"http://www.hacker1.somee.com/mapsql2",
+    name:"somee景點(自訂)導航",
+    desc:"預先輸入座標導航"
+    },
+
+    {
+    url:"https://hellogithub.com/",
+    name:"hellogithub",
+    desc:"github排名"
+    },
+    {
+    url:"https://excalidraw.com/",
+    name:"web白板",
+    desc:"共享白板"
+    },
+
+    {
+    url:"https://cobalt.tools/",
+    name:"youtube影片下載",
+    desc:"下載youtube影片"
+    },
+    {
+    url:"http://220.135.3.78:8888/work/webpic10.aspx",
+    name:"存書",
+    desc:"存書收藏"
+    },
+    {
+    url:"http://220.135.3.78:8888/lookpicture/leg2.aspx",
+    name:"本機beautyleg",
+    desc:"beautyleg pic"
+    },
+    {
+    url:"http://220.135.3.78:8888/fishnew5sql/poemexcelsql",
+    name:"Excel程式碼",
+    desc:"程式碼"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/fishnew5sql/poemvbsql",
+    name:"VB程式碼",
+    desc:"程式碼"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/fishnew5sql/poemwebsql",
+    name:"Web程式碼",
+    desc:"程式碼"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/fishnew5sql/poemjavasql",
+    name:"Java程式碼",
+    desc:"程式碼"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/fishnew5/result",
+    name:"Android程式碼",
+    desc:"程式碼"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/lookpicture/berich.aspx",
+    name:"Berich",
+    desc:"操作筆記"
+    },
+    {
+    url:"http://220.135.3.78:8888//lookpicture/webfile.aspx",
+    name:"讀本地資料夾(2)",
+    desc:"資料夾建檔查詢"
+    },
+
+    {
+    url:"https://weizen99.github.io/websql/index.html",
+    name:"github連結",
+    desc:"github連結"
+    },
+    {
+    url:"https://github.com/weizen99/websql",
+    name:"github倉庫",
+    desc:"github倉庫"
+    },
+    {
+    url:"https://153net.zen2965.workers.dev/",
+    name:"153net(cloudflare)",
+    desc:"153net(worder連結)"
+    },
+    {
+    url:"http://sachi.ggff.net:8888/mymvc/trend4stock.aspx",
+    name:"153net域名(sachi.ggff.net)",
+    desc:"153net域名連結"
+    },
+    {
+    url:"http://220.135.3.78:8888/mymvc/messageword01.aspx",
+    name:"favorite最愛查詢asp.net",
+    desc:"不怕要儲存的連結太多"
+    },
+
+    {
+    url:"https://ntfy.sh/testmsg",
+    name:"ntfy訊息推播",
+    desc:"整合平板手機電腦"
+    },
+
+
+
+    {
+    url:"https://chromox.alkaidvision.com/",
+    name:"chromox",
+    desc:"空白"
+    },
+    {
+    url:"https://fi23818394.icoc.vc/",
+    name:"凡科網電腦",
+    desc:"路由器"
+    },
+    {
+    url:"https://fi23818394.m.icoc.vc/",
+    name:"凡科網手機",
+    desc:"凡科網"
+    },
+    {
+    url:"http://192.168.0.1/webpages/index.html?t=9d249c89",
+    name:"tp-link ax1500",
+    desc:"路由器"
+    },
+
+
+
+    {
+    url:"",
+    name:"",
+    desc:"空白"
+    },
+
+
+
+
+
+
+
+    ]
+    },
+    {
+    name:"webapi區",
+    icon:"code",
+    list:[
+    {
+    url:"http://220.135.3.78:8888/androidapp/basicinfotable.html",
+    name:"WebApi串接彙總查詢",
+    desc:"串接SQL資料庫"
+    },
+    {
+    url:"http://220.135.3.78:8888/webapi/api/avggolds/2330",
+    name:"avggold(部份欄位)",
+    desc:"Json格式"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/webapi/api/stockchange/3017",
+    name:"basicinfo(部份欄位)",
+    desc:"Json格式"
+    },
+    {
+    url:"http://220.135.3.78:8888/webapi/api/winnewdates/2330",
+    name:"winnewdate(全部欄位,股票名稱或代號)",
+    desc:"Json格式"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/webapi02/api/stockpics/GetImage/201",
+    name:"單筆美腿圖片",
+    desc:"單筆圖片"
+    },
+    {
+    url:"http://220.135.3.78:8888/webapi02/api/View_mybook/getimage/1450",
+    name:"存書單筆圖片",
+    desc:"單筆圖片"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/webapi02/api/View_mybook/getimageinfo/1450",
+    name:"存書單筆其他訊息",
+    desc:"單筆訊息(通用)"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/webapi02/api/View_favor2stockgod21/getimage/163",
+    name:"AiGirl單筆圖片",
+    desc:"單筆圖片"
+    },
+    {
+    url:"http://220.135.3.78:8888/webapi02/api/View_favor2stockgod6/getimage/27325",
+    name:"herowars(pk)單筆",
+    desc:"單筆圖片"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/androidapp/stockpic3.html",
+    name:"美腿藝廊",
+    desc:"區間查詢"
+    },
+    {
+    url:"http://220.135.3.78:8888/androidapp/stockpic4.html",
+    name:"存書藝廊",
+    desc:"區間查詢"
+    },
+
+
+    {
+    url:"http://220.135.3.78:8888/androidapp/stockpic5.html",
+    name:"AiGirl藝廊",
+    desc:"區間查詢"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/androidapp/stockpic6.html",
+    name:"herowars(pk)藝廊",
+    desc:"由大到小區間查詢"
+    },
+
+
+    {
+    url:"http://220.135.3.78:8888/androidapp/obvtest1.html",
+    name:"OBV淨額及均線資訊",
+    desc:"單獨頁面可排序"
+    },
+
+    {
+    url:"http://220.135.3.78:8888/androidapp/favoritemy.html",
+    name:"我的最愛查詢",
+    desc:"單獨頁面可排序"
+    },
+    {
+    url:"http://220.135.3.78:8888/webapi/api/guestinfowd1/",
+    name:"我的最愛查詢全部",
+    desc:"Json格式"
+    },
+
+    ]
+    },
+
+    {
+    name:"股票區",
+    icon:"code",
+    list:[
+    {
+    url:"https://www.wantgoo.com/global",
+    name:"玩股網",
+    desc:"股票資訊查詢"
+    },
+    {
+    url:"https://stock.wespai.com/pick",
+    name:"檢股網",
+    desc:"股票資訊查詢"
+    },
+
+    {
+    url:"https://goodinfo.tw/tw/index.asp",
+    name:"台灣股市資訊網",
+    desc:"股票資訊查詢"
+    },
+    {
+    url:"https://www.fastbull.com/tw/traders/chart",
+    name:"股市資訊fastbull",
+    desc:"股票資訊查詢"
+    },
+    {
+    url:"https://www.ansforce.com/",
+    name:"知識力平台北(專家)",
+    desc:"股票資訊查詢"
+    },
+
+    {
+    url:"https://www.stockq.org/market/",
+    name:"stockQ",
+    desc:"全球股市排行"
+    },
+
+    {
+    url:"https://ic.tpex.org.tw/",
+    name:"股票產業資訊平台",
+    desc:"股票產業"
+    },
+
+    {
+    url:"https://www.macromicro.me/collections/46/tw-stock-relative/725/tw-mm-twse",
+    name:"財經M平方",
+    desc:"財經"
+    },
+
+    ]
+    },
+
+
+    {
+    name:"影視遊戲區",
+    icon:"code",
+    list:[
+    {
+    url:"https://newsnow.busiyi.world/",
+    name:"新聞newsnow",
+    desc:"即時新聞"
+    },
+
+    {
+    url:"https://www.taiwanstat.com/realtime/",
+    name:"用數據看台灣",
+    desc:"即時雨量 水庫 pm2.5"
+    },
+
+
+    {
+    url:"https://www.nbyy.cc/",
+    name:"泥巴影視",
+    desc:"影音"
+    },
+
+    {
+    url:"https://www.hero-wars.com/",
+    name:"英雄征戰",
+    desc:"herowar游戲"
+    },
+
+    {
+    url:"https://hero.idoarts.com/",
+    name:"英雄征戰idoarts",
+    desc:"herowar游戲"
+    },
+
+    {
+    url:"https://herowarsjpwebfb.com/",
+    name:"英雄作弊網站",
+    desc:"herowar游戲"
+    },
+
+    {
+    url:"https://www.threads.net/",
+    name:"threads",
+    desc:"影音"
+    },
+    {
+    url:"https://www.tiktok.com/foryou?is_copy_url=1&is_from_webapp=v1",
+    name:"tiktok",
+    desc:"影音"
+    },
+
+
+    {
+    url:"https://www.instagram.com/reels/DF1iPcTMBDU/",
+    name:"instagram",
+    desc:"影音"
+    },
+
+
+
+    ]
+    },
+
+    {
+    name:"AI專區",
+    icon:"code",
+    list:[
+    {
+    url:"https://notebooklm.google/",
+    name:"NotebookLM(針對資料分析)",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://www.napkin.ai/",
+    name:"Napkin AI(秒生成設計感爆棚的圖表",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://www.youtube.com/watch?v=TKRFfB3Ja0w",
+    name:"Napkin AI影片說明)",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://gemini.google.com/app",
+    name:"Google gemini 2.0 Flash 官方網站",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://chat.qwenlm.ai/",
+    name:"Qwen2.5-VL(中文文字可生成圖片-選max再點圖像生成",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://www.youtube.com/watch?v=x5XS0mNT_FE",
+    name:"Qwen2.5-VL影片說明)",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://copilot.microsoft.com/chats/fKN2rwtcF4ygvD6pTGNum",
+    name:"copilot(微軟,也可生成圖片)",
+    desc:"Ai"
+    },
+
+
+    {
+    url:"https://felo.ai/search",
+    name:"felo.ai(搜索代理自動生成文案與簡報",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://www.youtube.com/watch?v=b7EXVT38zQI",
+    name:"影片說明)",
+    desc:"Ai"
+    },
+
+
+    {
+    url:"https://www.youtube.com/watch?v=3mojORQIoaY",
+    name:"(Deepseek-R1的5種進階進階玩法",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://metaso.cn/?s=bdpc",
+    name:"秘塔AI搜索(滿血版)",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://kimi.moonshot.cn/",
+    name:"Kimi制作ppt",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://www.drawio.com/",
+    name:"Drawio學習流程圖",
+    desc:"Ai"
+    },
+    {
+    url:"https://soft1.wxqlzkj.cn/1900058764.html?channel=4018552&wordId=895235331939&creativeid=102979913955&bfsemuserid=9500&bd_vid=13988211217167361189",
+    name:"XMind思維導圖)",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://www.youtube.com/watch?v=slYOsnGdIxU",
+    name:"Deepseek本地部署+搭建個人AI知識庫Cherry studio",
+    desc:"Ai"
+    },
+
+    {
+    url:"https://civitai.com/",
+    name:"civitai",
+    desc:"開源生成式人工智慧"
+    },
+
+    {
+    url:"",
+    name:"",
+    desc:"空白"
+    },
+
+
+    ]
+    },
+
+
+    {
+    name:"其他區",
+    icon:"code",
+    list:[
+    {
+    url:"https://www.youbike.com.tw/region/taipei/member/",
+    name:"youbike會員專區",
+    desc:"youbike"
+    },
+
+    {
+    url:"https://www.ebookservice.tw/ntl2/account",
+    name:"台灣雲端書庫@國臺圖",
+    desc:"雲端書庫綁定@國臺圖"
+    },
+
+    {
+    url:"https://hyerm.ntl.edu.tw/",
+    name:"國立台灣圖書館",
+    desc:"虛擬借閱證"
+    },
+    ]
+    },
+
+    {
+    name:"雲端空間服務區",
+    icon:"code",
+    list:[
+    {
+    url:"https://drive.google.com/drive/u/0/my-drive",
+    name:"Google雲端服務",
+    desc:"Google"
+    },
+
+
+    {
+    url:"https://cloud.oracle.com/networking/waa/policies/ocid1.webappaccelerationpolicy.oc1.phx.amaaaaaaitzfy3aa6ssnzlluisyhmz4arq5tigixq5zjq2k5ek6476dwfwfq?lifecycle_state_filter=CREATING&region=us-phoenix-1",
+    name:"甲骨文cloud.oracle.com",
+    desc:"甲骨文"
+    },
+
+    {
+    url:"https://miya.teracloud.jp/browser/",
+    name:"儲存空間infiniCLOUD",
+    desc:"infiniCLOUD"
+    },
+
+    ]
+    },
+
+
+    {
+    name:"學習",
+    icon:"graduation cap",
+    list:[
+    {
+    url:"https://w3school.com.cn/",
+    name:"W3school在線教程",
+    desc:"程序員集散地"
+    },
+    {
+    url:"https://runoob.com/",
+    name:"菜鳥教程",
+    desc:"序員集散地"
+    },
+    {
+    url:"https://segmentfault.com/",
+    name:"思否社區",
+    desc:"序員集散地"
+    },
+    {
+    url:"https://jianshu.com/",
+    name:"簡書",
+    desc:"序員集散地"
+    },
+    ]
+    }
+    ]
+    }
+    const el = (tag, attrs, content) => `<${tag} ${attrs.join(" ")}>${content}</${tag}>`;
+
+    async function handleRequest(request) {
+    const init = {
+    headers: {
+    'content-type': 'text/html;charset=UTF-8',
+    },
+    }
+    return new Response(renderHTML(renderIndex(),config.selling_ads? renderSeller() :null), init);
+    }
+    addEventListener('fetch', event => {
+    return event.respondWith(handleRequest(event.request))
+    })
+
+    /*通过分析链接 实时获取favicon
+    * @url 需要分析的Url地址
+    */
+    function getFavicon(url){
+    if(url.match(/https{0,1}:\/\//)){
+    //return "https://ui-avatars.com/api/?bold=true&size=36&background=0D8ABC&color=fff&rounded=true&name=" + url.split('//')[1];
+    return "https://www.google.com/s2/favicons?sz=64&domain_url=" + url;
+    }else{
+    //return "https://ui-avatars.com/api/?bold=true&size=36&background=0D8ABC&color=fff&rounded=true&name=" + url;
+    return "https://www.google.com/s2/favicons?sz=64&domain_url=http://" + url;
+    }
+    }
+
+    /** Render Functions
+    *  渲染模块函数
+    */
+
+    function renderIndex(){
+    const footer = el('footer',[],el('div',['class="footer"'],'Powered by' + el('a',['class="ui label"','href="https://github.com/sleepwood/cf-worker-dir"','target="_blank"'],el('i',['class="github icon"'],"") + 'Cf-Worker-Dir') + ' &copy; Base on ' + el('a',['class="ui label"'],el('i',['class="balance scale icon"'],"") + 'MIT License')));
+    return renderHeader() + renderMain() + footer;
+    }
+
+    function renderHeader(){
+    const item = (template,name) => el('a',['class="item"',`data-url="${template}"`],name);
+
+    var nav = el('div',['class="ui large secondary inverted menu"'],el('div',['class="item"'],el('p',['id="hitokoto"'],'条条大路通罗马')))
+    var title = el('h1',['class="ui inverted header"'],el('i',[`class="${config.logo_icon} icon"`],"") + el('div',['class="content"'],config.title + el('div',['class="sub header"'],config.subtitle)));
+    var menu = el('div',['id="sengine"','class="ui bottom attached tabular inverted secondary menu"'],el('div',['class="header item"'],'&nbsp;') + config.search_engine.map((link,key) =>{
+    if(key == 0){
+    return el('a',['class="active item"',`data-url="${link.template}"`],link.name);
+    }else{
+    return item(link.template,link.name);
+    }
+    }).join(""))
+    var input = el('div',['class="ui left corner labeled right icon fluid large input"'],el('div',['class="ui left corner label"'],el('img',['id="search-fav"','class="left floated avatar ui image"','src="https://www.baidu.com/favicon.ico"'],"")) + el('input',['id="searchinput"','type="search"','placeholder="搜索你想要知道的……"','autocomplete="off"'],"") + el('i',['class="inverted circular search link icon"'],""));
+    return el('header',[],el('div',['id="head"','class="ui inverted vertical masthead center aligned segment"'],(config.hitokoto ? el('div',['id="nav"','class="ui container"'],nav) : "") + el('div',['id="title"','class="ui text container"'],title + (config.search ? input + menu :"") + `${config.selling_ads ? '<div><a id="menubtn" class="red ui icon inverted button"><i class="heart icon"></i> 喜欢此域名 </a></div>' : ''}`)))
+    }
+
+    function renderMain() {
+    var main = config.lists.map((item) => {
+    const card = (url,name,desc)=> el('a',['class="card"',`href=${url}`,'target="_blank"'],el('div',['class="content"'],el('img',['class="left floated avatar ui image"',`src=${getFavicon(url)}`],"") + el('div',['class="header"'],name) + el('div',['class="meta"'],desc)));
+    const divider = el('h4',['class="ui horizontal divider header"'],el('i',[`class="${item.icon} icon"`],"")+item.name);
+
+    var content = el('div',['class="ui four stackable cards"'],item.list.map((link) =>{
+    return card(link.url,link.name,link.desc);
+    }).join(""));
+
+    return el('div',['class="ui basic segment"'],divider + content);
+    }).join("");
+
+    return el('main',[],el('div',['class="ui container"'],main));
+    }
+
+    function renderSeller() {
+    const item = (type,content) => el('div',['class="item"'],el('i',[`class="${type} icon"`],"") + el('div',['class="content"'],content));
+    var title = el('h1',['class="ui yellow dividing header"'],el('i',['class="gem outline icon"'],"") + el('div',['class="content"'],config.sell_info.domain + ' 正在出售'));
+    var action = el('div',['class="actions"'],el('div',['class="ui basic cancel inverted button"'],el('i',['class="reply icon"'],"") + '返回'));
+
+    var contact = config.sell_info.contact.map((list) => {
+    return item(list.type,list.content);
+    }).join("");
+    var column = el('div',['class="column"'],el('h3',['class="ui center aligned icon inverted header"'],el('i',['class="circular envelope open outline grey inverted icon"'],"") + '联系我') + el('div',['class="ui relaxed celled large list"'],contact));
+    var price = el('div',['class="column"'],el('div',['class="ui large yellow statistic"'],el('div',['class="value"'],el('i',[`class="${config.sell_info.mon_unit} icon"`],"") + config.sell_info.price)));
+    var content = el('div',['class="content"'],el('div',['class="ui basic segment"'],el('div',['class="ui two column stackable center aligned grid"'],el('div',['class="ui inverted vertical divider"'],'感兴趣？') + el('div',['class="middle aligned row"'],price + column))));
+
+    return el('div',['id="seller"','class="ui basic modal"'],title + content + action);
+    }
+
+
+</body>
+</html>
