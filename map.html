@@ -32,21 +32,21 @@ function initMap() {
         zoom: 16, center: initialPos, gestureHandling: 'greedy' 
     });
 
-    // 藍色目前位置標記 [[5](https://hackmd.io/@tirc/r1iS8Kt5q)]
+    // 藍色目前位置標記 [[3](https://developers.google.com/maps/documentation/javascript/examples/map-geolocation)]
     userMarker = new google.maps.Marker({
         position: initialPos, map: map,
         icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 },
         zIndex: 1000
     });
 
-    // 建立歸位按鈕 [[6](https://medium.com/@JasonPika/javascript-google-map-%E5%AE%9A%E4%BD%8D%E5%8A%9F%E8%83%BD-f217e0216bee)]
     const btn = document.createElement('button');
     btn.textContent = '回到目前位置';
     btn.style.cssText = "margin: 10px; padding: 12px; cursor: pointer; background: white; border: 2px solid #ccc; font-weight: bold;";
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);                
 
     btn.onclick = () => {
-        // 修正：直接讀取標記目前追蹤到的位置，並平滑移至中心
+        if (!navigator.geolocation) return alert("不支援定位");
+        // 關鍵修正：歸位至追蹤到的最新位置而非 initialPos [[6](https://dev.to/pubnub/geolocation-tracking-with-the-google-maps-api-2eee)]
         const currentPos = userMarker.getPosition();
         map.panTo(currentPos);
         document.getElementById('txtlat').value = currentPos.lat().toFixed(6);
@@ -55,12 +55,12 @@ function initMap() {
 
     map.addListener('click', (e) => { updateMarker(e.latLng); });
 
-    // 持續追蹤並強制更新，解決位置不變或緩存問題 [[3](https://developer.mozilla.org/zh-TW/docs/Web/API/Geolocation_API)]
+    // 實時追蹤位置並更新藍點 [[2](https://www.codeofaninja.com/geolocation-watchposition/)][[5](https://javascript.plainenglish.io/real-examples-of-using-the-geolocation-api-for-live-tracking-89dc0ff1b3fb)]
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((p) => {
             const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-            userMarker.setPosition(pos); // 動態更新不刷頁面 [[2](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
-        }, (err) => console.error(err), { enableHighAccuracy: true, maximumAge: 0 });
+            userMarker.setPosition(pos); // 動態移動標記 [[1](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
+        }, null, { enableHighAccuracy: true, maximumAge: 0 });
     }
 }
 
@@ -153,3 +153,4 @@ function loadMap() {
 </body>
 
 </html>
+
