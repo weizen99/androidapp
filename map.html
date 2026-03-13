@@ -27,7 +27,9 @@
 let map, userMarker, lastManualMarker = null;
 
 function initMap() {
-    const initialPos = { lat: 25.0339, lng: 121.5644 };
+    const myx document.getElementById('txtlat').value
+    const myy document.getElementById('txtlng').value
+    const initialPos = { lat: myx, lng: myy };
     map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: initialPos, gestureHandling: 'greedy' 
     });
@@ -153,4 +155,5 @@ function loadMap() {
 </body>
 
 </html>
+
 
