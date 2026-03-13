@@ -23,87 +23,71 @@
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
 
         <script>
-            let map, userMarker, lastManualMarker = null;
+           let map, userMarker, lastManualMarker = null;
 
-            function initMap() {
-                const initialPos = { lat: 25.0339, lng: 121.5644 };
-                map = new google.maps.Map(document.getElementById('map'), { zoom: 16, center: initialPos });
+function initMap() {
+    const initialPos = { lat: 25.0339, lng: 121.5644 };
+    map = new google.maps.Map(document.getElementById('map'), { 
+        zoom: 16, 
+        center: initialPos,
+        gestureHandling: 'greedy' // 優化手機端手勢操作
+    });
 
-                // 藍色目前位置標記
-                userMarker = new google.maps.Marker({
-                    position: initialPos, map: map,
-                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 }
-                });
+    userMarker = new google.maps.Marker({
+        position: initialPos, map: map,
+        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 }
+    });
 
+    const btn = document.createElement('button');
+    btn.textContent = '回到目前位置';
+    btn.style.cssText = "margin: 10px; padding: 12px; cursor: pointer; background: white; border: 2px solid #ccc; font-size: 16px;"; // 放大按鈕方便手機點擊
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);
 
-                // 2. 建立「回到目前位置」按鈕 [[1](https://developers.google.com/maps/documentation/javascript/controls)]
-                const btn = document.createElement("button");
-                btn.textContent = "回到目前位置";
-                btn.style.cssText = "margin: 10px; padding: 8px; cursor: pointer; background: white; border: 2px solid #ccc;";
-                map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);                
-               btn.onclick = () => {
-    if (!navigator.geolocation) return alert("您的瀏覽器不支援定位");
-
-    const options = {
-        enableHighAccuracy: true, // 強制 GPS
-        timeout: 10000,          // 10秒逾時
-        maximumAge: 0            // 禁止緩存 [[4](https://support.google.com/chrome/thread/393508241/navigator-geolocation-getcurrentposition-timeout?hl=en)]
+    // 點擊歸位邏輯 [[1](https://developers.google.com/maps/documentation/javascript/geolocation)][[5](https://www.codemag.com/Article/2011031/Using-Geolocation-and-Google-Maps)]
+    btn.onclick = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((p) => {
+                const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+                map.panTo(pos);
+                userMarker.setPosition(pos);
+                document.getElementById('txtlat').value = pos.lat.toFixed(6);
+                document.getElementById('txtlng').value = pos.lng.toFixed(6);
+            }, null, { enableHighAccuracy: true });
+        }
     };
 
-    navigator.geolocation.getCurrentPosition((p) => {
-        const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-        map.panTo(pos);
-        userMarker.setLatLng(pos);
-        updatePos(pos.lat, pos.lng); // 同步文字方塊
-    }, (err) => {
-        // 診斷錯誤 [[6](https://issues.chromium.org/40566688)]
-        const msg = ["未知錯誤", "使用者拒絕授權", "位置無法取得", "定位逾時"][err.code];
-        alert("定位失敗：" + msg);
-    }, options);
-};
-                
+    // 修正點擊地圖：手機端建議監聽 'click' 並取消優化標記 [[6](https://dev.to/pubnub/geolocation-tracking-with-the-google-maps-api-2eee)]
+    map.addListener('click', (e) => {
+        updateMarker(e.latLng);
+alert(`已選取座標：\n緯度: ${e.latLng.lat().toFixed(6)}\n經度: ${e.latLng.lng().toFixed(6)}\n加上名稱及備註並按下下方的"加到資料庫"即可加入資料`);
+    });
 
+    // 持續監聽位置：確保移動中藍點跟隨 [[2](https://developer.mozilla.org/zh-TW/docs/Web/API/Geolocation_API)][[3](https://www.codeofaninja.com/geolocation-watchposition/)]
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition((p) => {
+            const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+            userMarker.setPosition(pos);
+        }, null, { enableHighAccuracy: true, maximumAge: 0 });
+    }
+}
 
+function updateMarker(latLng) {
+    if (lastManualMarker) lastManualMarker.setMap(null);
+    document.getElementById('txtlat').value = latLng.lat().toFixed(6);
+    document.getElementById('txtlng').value = latLng.lng().toFixed(6);
+    lastManualMarker = new google.maps.Marker({
+        position: latLng, map: map, animation: google.maps.Animation.BOUNCE,
+        optimized: false // 修正手機點擊失效
+    });
+    map.panTo(latLng);
+}
 
-                // 監聽點擊地圖
-                map.addListener("click", (e) => {
-                    updateMarker(e.latLng);
-                    alert(`已選取座標：\n緯度: ${e.latLng.lat().toFixed(6)}\n經度: ${e.latLng.lng().toFixed(6)}\n加上名稱及備註並按下下方的"加到資料庫"即可加入資料`);
-
-                });
-
-                if (navigator.geolocation) {
-                    navigator.geolocation.watchPosition((p) => {
-                        const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-                        userMarker.setPosition(pos);
-                    }, null, { enableHighAccuracy: true });
-                }
-            }
-
-            function loadMap() {
+function loadMap() {
                 const lat = parseFloat(document.getElementById('txtlat').value);
                 const lng = parseFloat(document.getElementById('txtlng').value);
                 updateMarker(new google.maps.LatLng(lat, lng));
             }
 
-            function updateMarker(latLng) {
-                // 1. 清除舊標記 [[2](https://developers.google.com/maps/documentation/javascript/examples/marker-animations)]
-                if (lastManualMarker) lastManualMarker.setMap(null);
-
-                // 2. 更新 TextBox
-                document.getElementById('txtlat').value = latLng.lat().toFixed(6);
-                document.getElementById('txtlng').value = latLng.lng().toFixed(6);
-
-
-
-                // 3. 建立新標記並設置「持續跳動」[[5](https://reintech.io/blog/animating-markers-movements-google-maps)]
-                lastManualMarker = new google.maps.Marker({
-                    position: latLng,
-                    map: map,
-                    animation: google.maps.Animation.BOUNCE
-                });
-                map.panTo(latLng);
-            }
         </script>
 
         <br />
