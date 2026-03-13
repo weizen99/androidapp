@@ -41,41 +41,26 @@
                 btn.textContent = "回到目前位置";
                 btn.style.cssText = "margin: 10px; padding: 8px; cursor: pointer; background: white; border: 2px solid #ccc;";
                 map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);                
-                btn.onclick = () => {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition((p) => {
-                            const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+               btn.onclick = () => {
+    if (!navigator.geolocation) return alert("您的瀏覽器不支援定位");
 
-                            // 地圖平滑移動並更新標記 [[3](https://stackoverflow.com/questions/77154553/customized-marker-for-leaflet-locate-control-plugin-doesnt-appear)]
-                            map.panTo(pos);
-                            userMarker.setLatLng(pos); // Leaflet 使用 setLatLng
+    const options = {
+        enableHighAccuracy: true, // 強制 GPS
+        timeout: 10000,          // 10秒逾時
+        maximumAge: 0            // 禁止緩存 [[4](https://support.google.com/chrome/thread/393508241/navigator-geolocation-getcurrentposition-timeout?hl=en)]
+    };
 
-                            // 若需要同步更新文字方塊，請呼叫 updatePos(pos.lat, pos.lng)
-                        }, (err) => {
-                            console.error("定位錯誤: " + err.message);
-                        }, {
-                            enableHighAccuracy: true, // 強制啟動 GPS 提高精準度 [[1](https://dev.to/geoapify-maps-api/leaflet-location-picker-with-address-autocomplete-geolocation-and-draggable-pin-with-geoapify-1gfa)]
-                            timeout: 5000,            // 逾時設定
-                            maximumAge: 0             // 禁用快取 [[4](https://stackblitz.com/edit/js-t6dnt8)]
-                        });
-                    }
-                };
-
-                //btn.onclick = () => {
-                //    if (navigator.geolocation) {
-                //        navigator.geolocation.getCurrentPosition((p) => {
-
-                //            const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-                //            map.panTo(pos);
-                //            userMarker.setPosition(pos);
-
-                //        });
-
-
-
-
-                //    }
-                //};
+    navigator.geolocation.getCurrentPosition((p) => {
+        const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+        map.panTo(pos);
+        userMarker.setLatLng(pos);
+        updatePos(pos.lat, pos.lng); // 同步文字方塊
+    }, (err) => {
+        // 診斷錯誤 [[6](https://issues.chromium.org/40566688)]
+        const msg = ["未知錯誤", "使用者拒絕授權", "位置無法取得", "定位逾時"][err.code];
+        alert("定位失敗：" + msg);
+    }, options);
+};
                 
 
 
