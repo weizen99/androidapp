@@ -23,51 +23,44 @@
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
 
         <script>
-           let map, userMarker, lastManualMarker = null;
+          
+let map, userMarker, lastManualMarker = null;
 
 function initMap() {
     const initialPos = { lat: 25.0339, lng: 121.5644 };
     map = new google.maps.Map(document.getElementById('map'), { 
-        zoom: 16, 
-        center: initialPos,
-        gestureHandling: 'greedy' // 優化手機端手勢操作
+        zoom: 16, center: initialPos, gestureHandling: 'greedy' 
     });
 
+    // 藍色目前位置標記 [[2](https://developers.google.com/maps/documentation/javascript/examples/map-geolocation)]
     userMarker = new google.maps.Marker({
         position: initialPos, map: map,
-        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 }
+        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 },
+        zIndex: 1000 // 確保在最上層
     });
 
     const btn = document.createElement('button');
     btn.textContent = '回到目前位置';
-    btn.style.cssText = "margin: 10px; padding: 12px; cursor: pointer; background: white; border: 2px solid #ccc; font-size: 16px;"; // 放大按鈕方便手機點擊
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);
+    btn.style.cssText = "margin: 10px; padding: 10px; cursor: pointer; background: white; border: 2px solid #ccc; font-size: 14px;";
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);                
 
-    // 點擊歸位邏輯 [[1](https://developers.google.com/maps/documentation/javascript/geolocation)][[5](https://www.codemag.com/Article/2011031/Using-Geolocation-and-Google-Maps)]
     btn.onclick = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((p) => {
-                const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-                map.panTo(pos);
-                userMarker.setPosition(pos);
-                document.getElementById('txtlat').value = pos.lat.toFixed(6);
-                document.getElementById('txtlng').value = pos.lng.toFixed(6);
-            }, null, { enableHighAccuracy: true });
-        }
+        if (!navigator.geolocation) return alert("您的瀏覽器不支援定位");
+        // 直接歸位至 userMarker 目前追蹤到的最新位置 [[4](https://github.com/risan/google-maps-geolocation-example)]
+        const currentPos = userMarker.getPosition();
+        map.panTo(currentPos);
+        document.getElementById('txtlat').value = currentPos.lat().toFixed(6);
+        document.getElementById('txtlng').value = currentPos.lng().toFixed(6);
     };
 
-    // 修正點擊地圖：手機端建議監聽 'click' 並取消優化標記 [[6](https://dev.to/pubnub/geolocation-tracking-with-the-google-maps-api-2eee)]
-    map.addListener('click', (e) => {
-        updateMarker(e.latLng);
-alert(`已選取座標：\n緯度: ${e.latLng.lat().toFixed(6)}\n經度: ${e.latLng.lng().toFixed(6)}\n加上名稱及備註並按下下方的"加到資料庫"即可加入資料`);
-    });
+    map.addListener('click', (e) => { updateMarker(e.latLng); });
 
-    // 持續監聽位置：確保移動中藍點跟隨 [[2](https://developer.mozilla.org/zh-TW/docs/Web/API/Geolocation_API)][[3](https://www.codeofaninja.com/geolocation-watchposition/)]
+    // 持續監聽高精度位置 [[1](https://developer.mozilla.org/zh-TW/docs/Web/API/Geolocation_API)][[5](https://www.codeofaninja.com/geolocation-watchposition/)]
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((p) => {
             const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
             userMarker.setPosition(pos);
-        }, null, { enableHighAccuracy: true, maximumAge: 0 });
+        }, (err) => console.error("定位錯誤:", err), { enableHighAccuracy: true, maximumAge: 0 });
     }
 }
 
@@ -76,17 +69,10 @@ function updateMarker(latLng) {
     document.getElementById('txtlat').value = latLng.lat().toFixed(6);
     document.getElementById('txtlng').value = latLng.lng().toFixed(6);
     lastManualMarker = new google.maps.Marker({
-        position: latLng, map: map, animation: google.maps.Animation.BOUNCE,
-        optimized: false // 修正手機點擊失效
+        position: latLng, map: map, animation: google.maps.Animation.BOUNCE, optimized: false
     });
     map.panTo(latLng);
 }
-
-function loadMap() {
-                const lat = parseFloat(document.getElementById('txtlat').value);
-                const lng = parseFloat(document.getElementById('txtlng').value);
-                updateMarker(new google.maps.LatLng(lat, lng));
-            }
 
         </script>
 
@@ -150,6 +136,14 @@ function loadMap() {
                 alert(`已選取座標：\n緯度: ${lat.toFixed(6)}\n經度: ${lng.toFixed(6)}\n加上名稱及備註並按下上方的"加到資料庫"即可加入資料`);
                 ////////document.getElementById('<%= txtLat.ClientID %>').value = latLng.lat().toFixed(6);
             }
+
+function loadMap() {
+                const lat = parseFloat(document.getElementById('txtlat').value);
+                const lng = parseFloat(document.getElementById('txtlng').value);
+                updateMarker(new google.maps.LatLng(lat, lng));
+            }
+
+
         </script>
 
 
