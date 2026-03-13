@@ -32,21 +32,21 @@ function initMap() {
         zoom: 16, center: initialPos, gestureHandling: 'greedy' 
     });
 
-    // 藍色目前位置標記 [[2](https://developers.google.com/maps/documentation/javascript/examples/map-geolocation)]
+    // 藍色目前位置標記 [[5](https://hackmd.io/@tirc/r1iS8Kt5q)]
     userMarker = new google.maps.Marker({
         position: initialPos, map: map,
         icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 },
-        zIndex: 1000 // 確保在最上層
+        zIndex: 1000
     });
 
+    // 建立歸位按鈕 [[6](https://medium.com/@JasonPika/javascript-google-map-%E5%AE%9A%E4%BD%8D%E5%8A%9F%E8%83%BD-f217e0216bee)]
     const btn = document.createElement('button');
     btn.textContent = '回到目前位置';
-    btn.style.cssText = "margin: 10px; padding: 10px; cursor: pointer; background: white; border: 2px solid #ccc; font-size: 14px;";
+    btn.style.cssText = "margin: 10px; padding: 12px; cursor: pointer; background: white; border: 2px solid #ccc; font-weight: bold;";
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);                
 
     btn.onclick = () => {
-        if (!navigator.geolocation) return alert("您的瀏覽器不支援定位");
-        // 直接歸位至 userMarker 目前追蹤到的最新位置 [[4](https://github.com/risan/google-maps-geolocation-example)]
+        // 修正：直接讀取標記目前追蹤到的位置，並平滑移至中心
         const currentPos = userMarker.getPosition();
         map.panTo(currentPos);
         document.getElementById('txtlat').value = currentPos.lat().toFixed(6);
@@ -55,12 +55,12 @@ function initMap() {
 
     map.addListener('click', (e) => { updateMarker(e.latLng); });
 
-    // 持續監聽高精度位置 [[1](https://developer.mozilla.org/zh-TW/docs/Web/API/Geolocation_API)][[5](https://www.codeofaninja.com/geolocation-watchposition/)]
+    // 持續追蹤並強制更新，解決位置不變或緩存問題 [[3](https://developer.mozilla.org/zh-TW/docs/Web/API/Geolocation_API)]
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((p) => {
             const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-            userMarker.setPosition(pos);
-        }, (err) => console.error("定位錯誤:", err), { enableHighAccuracy: true, maximumAge: 0 });
+            userMarker.setPosition(pos); // 動態更新不刷頁面 [[2](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
+        }, (err) => console.error(err), { enableHighAccuracy: true, maximumAge: 0 });
     }
 }
 
@@ -151,4 +151,5 @@ function loadMap() {
     </form>
    
 </body>
+
 </html>
