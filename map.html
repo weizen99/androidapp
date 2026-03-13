@@ -16,6 +16,7 @@
                 緯度: <input type="text" id="txtlat" value="25.0339" /> 經度: <input type="text" id="txtlng" value="121.5644" />
             </div>
             <button type="button" onclick="loadMap()">座標位置</button>
+            <!--<button type="button" onclick="getLocation()">顯示目前定位</button>-->
         </div>
         <div id="map" style="height: 500px; width: 96%; margin-top: 10px;"></div>
 
@@ -39,22 +40,45 @@
                 const btn = document.createElement("button");
                 btn.textContent = "回到目前位置";
                 btn.style.cssText = "margin: 10px; padding: 8px; cursor: pointer; background: white; border: 2px solid #ccc;";
-                map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);
-
+                map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);                
                 btn.onclick = () => {
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition((p) => {
                             const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+
+                            // 地圖平滑移動並更新標記 [[3](https://stackoverflow.com/questions/77154553/customized-marker-for-leaflet-locate-control-plugin-doesnt-appear)]
                             map.panTo(pos);
-                            userMarker.setPosition(pos);
+                            userMarker.setLatLng(pos); // Leaflet 使用 setLatLng
 
+                            // 若需要同步更新文字方塊，請呼叫 updatePos(pos.lat, pos.lng)
+                        }, (err) => {
+                            console.error("定位錯誤: " + err.message);
+                        }, {
+                            enableHighAccuracy: true, // 強制啟動 GPS 提高精準度 [[1](https://dev.to/geoapify-maps-api/leaflet-location-picker-with-address-autocomplete-geolocation-and-draggable-pin-with-geoapify-1gfa)]
+                            timeout: 5000,            // 逾時設定
+                            maximumAge: 0             // 禁用快取 [[4](https://stackblitz.com/edit/js-t6dnt8)]
                         });
-
-
-
-
                     }
                 };
+
+                //btn.onclick = () => {
+                //    if (navigator.geolocation) {
+                //        navigator.geolocation.getCurrentPosition((p) => {
+
+                //            const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+                //            map.panTo(pos);
+                //            userMarker.setPosition(pos);
+
+                //        });
+
+
+
+
+                //    }
+                //};
+                
+
+
 
                 // 監聽點擊地圖
                 map.addListener("click", (e) => {
