@@ -27,8 +27,10 @@
 let map, userMarker, lastManualMarker = null;
 
 function initMap() {
-    const myx document.getElementById('txtlat').value
-    const myy document.getElementById('txtlng').value
+    const myx 
+        myx =document.getElementById('txtlat').value
+    const myy 
+        myy =document.getElementById('txtlng').value
     const initialPos = { lat: myx, lng: myy };
     map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: initialPos, gestureHandling: 'greedy' 
@@ -155,5 +157,6 @@ function loadMap() {
 </body>
 
 </html>
+
 
 
