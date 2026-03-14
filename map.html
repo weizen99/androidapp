@@ -14,22 +14,22 @@
         <div>
             <div>
                 緯度: <input type="text" id="txtlat" value="25.0339" /> 經度: <input type="text" id="txtlng" value="121.5644" />
-                 監空緯度: <input type="text" id="myxx" value="" /> 監控經度: <input type="text" id="myyy" value="" />
             </div>
             <button type="button" onclick="loadMap()">座標位置</button>
-            <button type="button" onclick="mychange()">監空位置寫到座標位置</button>
-            <!--<button type="button" onclick="getLocation()">顯示目前定位</button>-->
+            
         </div>
         <div id="map" style="height: 500px; width: 60%; margin-top: 10px;"></div>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
 
         <script>
+
+		  
           
      let map, userMarker, lastManualMarker = null;
 
-function initMap() {        
-     const initialPos = { lat:25.0339, lng: 121.5644};
+function initMap() {
+    const initialPos = { lat: 25.0339, lng: 121.5644 };
     map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: initialPos, gestureHandling: 'greedy' 
     });
@@ -51,19 +51,16 @@ function initMap() {
         // 關鍵修正：歸位至追蹤到的最新位置而非 initialPos [[6](https://dev.to/pubnub/geolocation-tracking-with-the-google-maps-api-2eee)]
         const currentPos = userMarker.getPosition();
         map.panTo(currentPos);
-        document.getElementById('myxx').value = currentPos.lat().toFixed(6);
-        document.getElementById('myyy').value = currentPos.lng().toFixed(6);
+        document.getElementById('txtlat').value = currentPos.lat().toFixed(6);
+        document.getElementById('txtlng').value = currentPos.lng().toFixed(6);
     };
 
     map.addListener('click', (e) => { updateMarker(e.latLng); });
 
     // 實時追蹤位置並更新藍點 [[2](https://www.codeofaninja.com/geolocation-watchposition/)][[5](https://javascript.plainenglish.io/real-examples-of-using-the-geolocation-api-for-live-tracking-89dc0ff1b3fb)]
-   
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((p) => {
             const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-            // myxx = p.coords.latitude
-             //myyy = p.coords.longitude
             userMarker.setPosition(pos); // 動態移動標記 [[1](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
         }, null, { enableHighAccuracy: true, maximumAge: 0 });
     }
@@ -78,13 +75,14 @@ function updateMarker(latLng) {
     });
     map.panTo(latLng);
 }
-
-function mychange() {
-               document.getElementById('txtlat').value) = document.getElementById('myxx').value);
-                document.getElementById('txtlng').value) = document.getElementById('myyy').value)
-                
+       
+function loadMap() {
+                const lat = parseFloat(document.getElementById('txtlat').value);
+                const lng = parseFloat(document.getElementById('txtlng').value);
+                updateMarker(new google.maps.LatLng(lat, lng));
             }
-            
+
+          
         </script>
 
         <br />
@@ -148,11 +146,6 @@ function mychange() {
                 ////////document.getElementById('<%= txtLat.ClientID %>').value = latLng.lat().toFixed(6);
             }
 
-function loadMap1() {
-                const lat = parseFloat(document.getElementById('txtlat').value);
-                const lng = parseFloat(document.getElementById('txtlng').value);
-                updateMarker1(new google.maps.LatLng(lat, lng));
-            }
 
 
         </script>
@@ -162,5 +155,4 @@ function loadMap1() {
     </form>
    
 </body>
-
 </html>
