@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
-   
+
 </head>
 <body>
     <form id="form1" runat="server">
@@ -13,92 +13,106 @@
 
         <div>
             <div>
-                緯度: <input type="text" id="txtlat" value="25.0339" size="7" /> 經度: <input type="text" id="txtlng" value="121.5644" size="7"/>
+                緯度: <input type="text" id="txtlat" value="25.0339" size="7" /> 經度: <input type="text" id="txtlng" value="121.5644" size="7" />
             </div>
-			<button type="button" onclick="loadMap()">座標位置地圖</button>
-			 <br />
-			<div>
-                目前緯度: <input type="text" id="txtlat1" value="" size="7"/> 目前經度: <input type="text" id="txtlng1" value="" size="7"/>
+            <button type="button" onclick="loadMap()">座標位置地圖</button>
+            <br />
+            <div>
+                目前緯度: <input type="text" id="txtlat1" value="" size="7" /> 目前經度: <input type="text" id="txtlng1" value="" size="7" />
             </div>
-           
+
             <button type="button" onclick="mychange()" placeholder="要重新按座標位置地圖才會更新至目前定位座標">變更目前位置到座標位置</button>
+            <button type="button" onclick="mychange1()" placeholder="同步到map.aspx網頁">同步</button>
         </div>
         <div id="map" style="height: 500px; width: 60%; margin-top: 10px;"></div>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
 
-        <script>
+        <script>            
 
-		  
-          
-     let map, userMarker, lastManualMarker = null;
+            let map, userMarker, lastManualMarker = null;
 
-function initMap() {
-    const initialPos = { lat: 25.0339, lng: 121.5644 };
-    map = new google.maps.Map(document.getElementById('map'), { 
-        zoom: 16, center: initialPos, gestureHandling: 'greedy' 
-    });
+            function initMap() {
+                const initialPos = { lat: 25.0339, lng: 121.5644 };
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 16, center: initialPos, gestureHandling: 'greedy'
+                });
 
-    // 藍色目前位置標記 [[3](https://developers.google.com/maps/documentation/javascript/examples/map-geolocation)]
-    userMarker = new google.maps.Marker({
-        position: initialPos, map: map,
-        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 },
-        zIndex: 1000
-    });
+                // 藍色目前位置標記 [[3](https://developers.google.com/maps/documentation/javascript/examples/map-geolocation)]
+                userMarker = new google.maps.Marker({
+                    position: initialPos, map: map,
+                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 },
+                    zIndex: 1000
+                });
 
-    const btn = document.createElement('button');
-    btn.textContent = '回到目前位置';
-    btn.style.cssText = "margin: 10px; padding: 12px; cursor: pointer; background: white; border: 2px solid #ccc; font-weight: bold;";
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);                
+                const btn = document.createElement('button');
+                btn.textContent = '回到目前位置';
+                btn.style.cssText = "margin: 10px; padding: 12px; cursor: pointer; background: white; border: 2px solid #ccc; font-weight: bold;";
+                map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);
 
-    btn.onclick = () => {
-        if (!navigator.geolocation) return alert("不支援定位");
-        // 關鍵修正：歸位至追蹤到的最新位置而非 initialPos [[6](https://dev.to/pubnub/geolocation-tracking-with-the-google-maps-api-2eee)]
-        const currentPos = userMarker.getPosition();
-        map.panTo(currentPos);
-        document.getElementById('txtlat').value = currentPos.lat().toFixed(6);
-        document.getElementById('txtlng').value = currentPos.lng().toFixed(6);
-    };
+                btn.onclick = () => {
+                    if (!navigator.geolocation) return alert("不支援定位");
+                    // 關鍵修正：歸位至追蹤到的最新位置而非 initialPos [[6](https://dev.to/pubnub/geolocation-tracking-with-the-google-maps-api-2eee)]
+                    const currentPos = userMarker.getPosition();
+                    map.panTo(currentPos);
+                    document.getElementById('txtlat').value = currentPos.lat().toFixed(6);
+                    document.getElementById('txtlng').value = currentPos.lng().toFixed(6);
+                };
 
-    map.addListener('click', (e) => { updateMarker(e.latLng); });
+                map.addListener('click', (e) => { updateMarker(e.latLng); });
 
-    // 實時追蹤位置並更新藍點 [[2](https://www.codeofaninja.com/geolocation-watchposition/)][[5](https://javascript.plainenglish.io/real-examples-of-using-the-geolocation-api-for-live-tracking-89dc0ff1b3fb)]
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition((p) => {
-            const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-			document.getElementById('txtlat1').value = p.coords.latitude.toFixed(6)
-			document.getElementById('txtlng1').value = p.coords.longitude.toFixed(6)
-            userMarker.setPosition(pos); // 動態移動標記 [[1](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
-        }, null, { enableHighAccuracy: true, maximumAge: 0 });
-    }
-}
+                // 實時追蹤位置並更新藍點 [[2](https://www.codeofaninja.com/geolocation-watchposition/)][[5](https://javascript.plainenglish.io/real-examples-of-using-the-geolocation-api-for-live-tracking-89dc0ff1b3fb)]
+                if (navigator.geolocation) {
+                    navigator.geolocation.watchPosition((p) => {
+                        const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+                        document.getElementById('txtlat1').value = p.coords.latitude.toFixed(6)
+                        document.getElementById('txtlng1').value = p.coords.longitude.toFixed(6)
+                        userMarker.setPosition(pos); // 動態移動標記 [[1](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
+                    }, null, { enableHighAccuracy: true, maximumAge: 0 });
+                }
+            }
 
-function updateMarker(latLng) {
-    if (lastManualMarker) lastManualMarker.setMap(null);
-    document.getElementById('txtlat').value = latLng.lat().toFixed(6);
-    document.getElementById('txtlng').value = latLng.lng().toFixed(6);
-    lastManualMarker = new google.maps.Marker({
-        position: latLng, map: map, animation: google.maps.Animation.BOUNCE, optimized: false
-    });
-    map.panTo(latLng);
-}
-       
-function loadMap() {
+            function updateMarker(latLng) {
+                if (lastManualMarker) lastManualMarker.setMap(null);
+                document.getElementById('txtlat').value = latLng.lat().toFixed(6);
+                document.getElementById('txtlng').value = latLng.lng().toFixed(6);
+                lastManualMarker = new google.maps.Marker({
+                    position: latLng, map: map, animation: google.maps.Animation.BOUNCE, optimized: false
+                });
+                map.panTo(latLng);
+            }
+
+            function loadMap() {
                 const lat = parseFloat(document.getElementById('txtlat').value);
                 const lng = parseFloat(document.getElementById('txtlng').value);
                 updateMarker(new google.maps.LatLng(lat, lng));
             }
-function mychange() {
+            function mychange() {
                 document.getElementById('txtlat').value = document.getElementById('txtlat1').value;
                 document.getElementById('txtlng').value = document.getElementById('txtlng1').value;
-                //updateMarker(new google.maps.LatLng(lat, lng));
+                
+                //location.href = "http://www.hacker1.somee.com/map.aspx";
+                //location.href = "map.aspx";
             }
-          
+
+            function mychange1() {
+                document.getElementById('txtlat').value = document.getElementById('txtlat1').value;
+                document.getElementById('txtlng').value = document.getElementById('txtlng1').value;
+
+                sessionStorage.setItem("myx軸", document.getElementById('txtlat1').value);
+                sessionStorage.setItem("myy軸", document.getElementById('txtlng1').value);
+
+                //alert(sessionStorage.getItem("myx軸"));
+
+                location.href = "http://www.hacker1.somee.com/map.aspx";
+                //location.href = "map.aspx";
+            }
+
         </script>
 
         <br />
         <br />
-		<br />
+        <br />
         <br />
         <br />
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -166,6 +180,7 @@ function mychange() {
 
 
     </form>
-   
+
 </body>
+
 </html>
