@@ -27,11 +27,8 @@
           
      let map, userMarker, lastManualMarker = null;
 
-function initMap() {    
-     const myx = document.getElementById('myxx').value
-     const myy =document.getElementById('myyy').valu
-    alert(`已選取座標：\n緯度: myx`);
-     const initialPos = { lat: myx, lng: myy};
+function initMap() {        
+     const initialPos = { lat:25.0339, lng: 121.5644};
     map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: initialPos, gestureHandling: 'greedy' 
     });
