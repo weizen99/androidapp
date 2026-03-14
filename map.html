@@ -30,6 +30,7 @@
 function initMap() {    
      const myx = document.getElementById('myxx').value
      const myy =document.getElementById('myyy').valu
+    alert(`已選取座標：\n緯度: ${myx}\n經度: ${myy)}\n加上名稱及備註並按下上方的"加到資料庫"即可加入資料`);
      const initialPos = { lat: myx, lng: myy};
     map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: initialPos, gestureHandling: 'greedy' 
