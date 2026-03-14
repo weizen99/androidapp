@@ -78,6 +78,13 @@ function updateMarker(latLng) {
     });
     map.panTo(latLng);
 }
+
+function mychange() {
+               document.getElementById('txtlat').value) = document.getElementById('myxx').value);
+                document.getElementById('txtlng').value) = document.getElementById('myyy').value)
+                
+            }
+            
         </script>
 
         <br />
@@ -141,16 +148,12 @@ function updateMarker(latLng) {
                 ////////document.getElementById('<%= txtLat.ClientID %>').value = latLng.lat().toFixed(6);
             }
 
-function loadMap() {
+function loadMap1() {
                 const lat = parseFloat(document.getElementById('txtlat').value);
                 const lng = parseFloat(document.getElementById('txtlng').value);
-                updateMarker(new google.maps.LatLng(lat, lng));
+                updateMarker1(new google.maps.LatLng(lat, lng));
             }
-function mychange() {
-               document.getElementById('txtlat').value) = document.getElementById('myxx').value);
-                document.getElementById('txtlng').value) = document.getElementById('myyy').value)
-                
-            }
+
 
         </script>
 
