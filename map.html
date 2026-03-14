@@ -15,11 +15,13 @@
             <div>
                 緯度: <input type="text" id="txtlat" value="25.0339" /> 經度: <input type="text" id="txtlng" value="121.5644" />
             </div>
+			<button type="button" onclick="loadMap()">座標位置</button>
+			 <br />
 			<div>
-                監控緯度: <input type="text" id="txtlat1" value="" /> 監控經度: <input type="text" id="txtlng1" value="" />
+                我目前緯度: <input type="text" id="txtlat1" value="" /> 我目前經度: <input type="text" id="txtlng1" value="" />
             </div>
-            <button type="button" onclick="loadMap()">座標位置</button>
-            <button type="button" onclick="mychange()">監控座標位置</button>
+           
+            <button type="button" onclick="mychange()">變更我目前位置到座標位置</button>
         </div>
         <div id="map" style="height: 500px; width: 60%; margin-top: 10px;"></div>
 
@@ -64,8 +66,8 @@ function initMap() {
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((p) => {
             const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-			document.getElementById('txtlat1').value = p.coords.latitude
-			document.getElementById('txtlng1').value = p.coords.longitude
+			document.getElementById('txtlat1').value = p.coords.latitude.toFixed(6)
+			document.getElementById('txtlng1').value = p.coords.longitude.toFixed(6)
             userMarker.setPosition(pos); // 動態移動標記 [[1](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
         }, null, { enableHighAccuracy: true, maximumAge: 0 });
     }
@@ -95,6 +97,8 @@ function mychange() {
         </script>
 
         <br />
+        <br />
+		<br />
         <br />
         <br />
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
