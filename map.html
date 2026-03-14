@@ -64,6 +64,8 @@ function initMap() {
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((p) => {
             const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+			document.getElementById('txtlat1').value = p.coords.latitude
+			document.getElementById('txtlng1').value = p.coords.longitude
             userMarker.setPosition(pos); // 動態移動標記 [[1](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
         }, null, { enableHighAccuracy: true, maximumAge: 0 });
     }
