@@ -17,6 +17,7 @@
                  監空緯度: <input type="text" id="myxx" value="" /> 監控經度: <input type="text" id="myyy" value="" />
             </div>
             <button type="button" onclick="loadMap()">座標位置</button>
+            <button type="button" onclick="loadMap1()">監空位置寫到座標位置</button>
             <!--<button type="button" onclick="getLocation()">顯示目前定位</button>-->
         </div>
         <div id="map" style="height: 500px; width: 60%; margin-top: 10px;"></div>
@@ -145,7 +146,11 @@ function loadMap() {
                 const lng = parseFloat(document.getElementById('txtlng').value);
                 updateMarker(new google.maps.LatLng(lat, lng));
             }
-
+function loadMap1() {
+               document.getElementById('txtlat').value) = document.getElementById('myxx').value);
+                document.getElementById('txtlng').value) = document.getElementById('myyy').value)
+                
+            }
 
         </script>
 
