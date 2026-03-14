@@ -3,7 +3,17 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
-
+    <!--<script runat="server">
+        
+        /* Protected Sub btnSubmit_Click(sender As Object, e As EventArgs) Handles btnSubmit.Click*/
+        Protected Sub btnSubmit111_Click(sender As Object, e As EventArgs)
+       
+        Session("x軸") = hfX.Value
+        Session("y軸") = hfY.Value
+        Response.Write(Session("x軸"))
+        Response.Write("資料已成功存入 Session！")
+      End Sub
+    </script>-->
 </head>
 <body>
     <form id="form1" runat="server">
@@ -15,22 +25,29 @@
             <div>
                 緯度: <input type="text" id="txtlat" value="25.0339" size="7" /> 經度: <input type="text" id="txtlng" value="121.5644" size="7" />
             </div>
-             <br />
             <button type="button" onclick="loadMap()">座標位置地圖</button>
-            <br /> <br />
+            <br />
             <div>
                 目前緯度: <input type="text" id="txtlat1" value="" size="7" /> 目前經度: <input type="text" id="txtlng1" value="" size="7" />
             </div>
-            <br />
-            <button type="button" onclick="mychange()" placeholder="要重新按座標位置地圖才會更新至目前定位座標">變更目前位置到座標位置</button>&nbsp;&nbsp;
+
+            <button type="button" onclick="mychange()" placeholder="要重新按座標位置地圖才會更新至目前定位座標">變更目前位置到座標位置</button>
             <button type="button" onclick="mychange1()" placeholder="同步到map.aspx網頁">同步</button>
+
+            <!--<asp:HiddenField ID="hfX" runat="server" />
+            <asp:HiddenField ID="hfY" runat="server" />-->
+
+            <!--<asp:Button ID="btnSubmit" runat="server" Text="傳送資料" OnClick="btnSubmit_Click" />-->
+            <!--<asp:Button ID="btnSubmit111" runat="server" Text="傳送資料" OnClick="btnSubmit_Click" />-->
+            <!--<input id="Submit1" type="submit" value="submit" OnClick="btnSubmit_Click"/>-->
+
         </div>
-         <br /> <br />
+       <br />
         <div id="map" style="height: 500px; width: 60%; margin-top: 10px;"></div>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
 
-        <script>            
+        <script>
 
             let map, userMarker, lastManualMarker = null;
 
@@ -92,7 +109,7 @@
             function mychange() {
                 document.getElementById('txtlat').value = document.getElementById('txtlat1').value;
                 document.getElementById('txtlng').value = document.getElementById('txtlng1').value;
-                
+
                 //location.href = "http://www.hacker1.somee.com/map.aspx";
                 //location.href = "map.aspx";
             }
@@ -103,12 +120,23 @@
 
                 sessionStorage.setItem("myx軸", document.getElementById('txtlat1').value);
                 sessionStorage.setItem("myy軸", document.getElementById('txtlng1').value);
-
-                //alert(sessionStorage.getItem("myx軸"));
-
-                location.href = "http://www.hacker1.somee.com/map.aspx";
-                //location.href = "map.aspx";
+                // 賦值給 ASP.NET 隱藏欄位 (後端用)
+                //document.getElementById('<%= hfX.ClientID %>').value = document.getElementById('txtlat1').value;
+                //document.getElementById('<%= hfY.ClientID %>').value = document.getElementById('txtlng1').value;
+                //alert(document.getElementById('txtlat1').value);
+                //location.href = "http://www.hacker1.somee.com/map.aspx";
+                var x = sessionStorage.getItem("myx軸");
+                var y = sessionStorage.getItem("myy軸");
+                //alert(x);
+                // 跳轉並傳值：Default.aspx?x=123&y=456
+             
+                location.href = "map.aspx?x=" + x + "&y=" + y;
+                //window.location.href = "http://www.hacker1.somee.com/map.aspx?x=" + x + "&y=" + y;
             }
+
+           
+
+
 
         </script>
 
