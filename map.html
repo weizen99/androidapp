@@ -15,8 +15,11 @@
             <div>
                 緯度: <input type="text" id="txtlat" value="25.0339" /> 經度: <input type="text" id="txtlng" value="121.5644" />
             </div>
+			<div>
+                監控緯度: <input type="text" id="txtlat1" value="" /> 監控經度: <input type="text" id="txtlng1" value="" />
+            </div>
             <button type="button" onclick="loadMap()">座標位置</button>
-            
+            <button type="button" onclick="mychange()">監控座標位置</button>
         </div>
         <div id="map" style="height: 500px; width: 60%; margin-top: 10px;"></div>
 
@@ -81,7 +84,11 @@ function loadMap() {
                 const lng = parseFloat(document.getElementById('txtlng').value);
                 updateMarker(new google.maps.LatLng(lat, lng));
             }
-
+function mychange() {
+                document.getElementById('txtlat').value = document.getElementById('txtlat1').value;
+                document.getElementById('txtlng').value = document.getElementById('txtlng1').value;
+                //updateMarker(new google.maps.LatLng(lat, lng));
+            }
           
         </script>
 
