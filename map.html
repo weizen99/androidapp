@@ -25,8 +25,9 @@
             <div>
                 緯度: <input type="text" id="txtlat" value="25.0339" size="7" /> 經度: <input type="text" id="txtlng" value="121.5644" size="7" />
             </div>
+               <br />
             <button type="button" onclick="loadMap()">座標位置地圖</button>
-            <br />
+            <br />   <br />
             <div>
                 目前緯度: <input type="text" id="txtlat1" value="" size="7" /> 目前經度: <input type="text" id="txtlng1" value="" size="7" />
             </div>
@@ -42,7 +43,7 @@
             <!--<input id="Submit1" type="submit" value="submit" OnClick="btnSubmit_Click"/>-->
 
         </div>
-       <br />
+       <br />   <br />
         <div id="map" style="height: 500px; width: 60%; margin-top: 10px;"></div>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
@@ -130,8 +131,8 @@
                 //alert(x);
                 // 跳轉並傳值：Default.aspx?x=123&y=456
              
-                location.href = "map.aspx?x=" + x + "&y=" + y;
-                //window.location.href = "http://www.hacker1.somee.com/map.aspx?x=" + x + "&y=" + y;
+                //location.href = "map.aspx?x=" + x + "&y=" + y;
+                window.location.href = "http://www.hacker1.somee.com/map.aspx?x=" + x + "&y=" + y;
             }
 
            
