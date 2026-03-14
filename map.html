@@ -27,7 +27,8 @@
      let map, userMarker, lastManualMarker = null;
 
 function initMap() {
-    const initialPos = { lat: 25.0339, lng: 121.5644 };
+    const initialPos = { lat: myxx, lng: myyy };
+    //const initialPos = { lat: 25.0339, lng: 121.5644 };
     map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: initialPos, gestureHandling: 'greedy' 
     });
@@ -56,9 +57,13 @@ function initMap() {
     map.addListener('click', (e) => { updateMarker(e.latLng); });
 
     // 實時追蹤位置並更新藍點 [[2](https://www.codeofaninja.com/geolocation-watchposition/)][[5](https://javascript.plainenglish.io/real-examples-of-using-the-geolocation-api-for-live-tracking-89dc0ff1b3fb)]
+    const myxx
+    const myyy
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((p) => {
             const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+             myxx = p.coords.latitude
+             myyy = p.coords.longitude
             userMarker.setPosition(pos); // 動態移動標記 [[1](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
         }, null, { enableHighAccuracy: true, maximumAge: 0 });
     }
