@@ -129,98 +129,7 @@
             <tbody id="tableBody"></tbody>
         </table>
     </div>
-    <!--<script>
-        $(document).ready(function () {
-            // 1. 執行 SQL 查詢並顯示表格
-            $("#btnQuery").click(function () {
-                const sql = $("#sqlText").val();
-                const db = $("#useDatabase").val();
-                const pwd = $("#txtPwd").val();
-
-                $("#msg").text("讀取中...");
-                $("#tableHead, #tableBody").empty();
-
-                $.ajax({
-                    type: "POST",
-                    url: "DataService.aspx/ExecuteSQL",
-                    data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-
-                    success: function (res) {
-                        const data = JSON.parse(res.d);
-                        if (data.length > 0) {
-                            let keys = Object.keys(data[0]);
-                            keys.forEach(k => $("#tableHead").append(`<th>${k}</th>`));
-
-                            data.forEach(row => {
-                                let tr = $("<tr></tr>");
-                                keys.forEach(k => {
-                                    let val = row[k] || "";
-
-                                    if (k.toLowerCase() === 'photo' && val !== "") {
-                                        // 清理字串，防止前後空格干擾判斷
-                                        let cleanVal = String(val).trim();
-                                        let imgSrc = "";
-
-                                        // 偵錯用：檢查資料內容
-                                        console.log("欄位 " + k + " 內容前段: ", cleanVal.substring(0, 50));
-
-                                        // 1. 判斷是否為後端忘記轉碼的錯誤字串
-                                        if (cleanVal === "System.Byte[]") {
-                                            tr.append(`<td style="color:red;">錯誤:後端未轉碼</td>`);
-                                            return;
-                                        }
-
-                                        // 2. 判斷路徑類型並處理
-                                        if (cleanVal.startsWith("~/")) {
-                                            // 情況 A: ASP.NET 虛擬路徑
-                                            imgSrc = cleanVal.replace("~/", "/");
-                                        }
-                                        else if (cleanVal.startsWith("data:") || cleanVal.startsWith("http") || cleanVal.startsWith("/")) {
-                                            // 情況 B: 已經有標頭、是網址、或明確是路徑 (/Images/...)
-                                            // 註：若 Base64 以 / 開頭，此處會先進入情況 C 的修正判斷
-
-                                            // 針對 Base64 JPEG 特徵 (/9j/) 做特殊判斷，避免被誤認為路徑
-                                            if (cleanVal.startsWith("/9j/")) {
-                                                imgSrc = "data:image/jpeg;base64," + cleanVal;
-                                            } else {
-                                                imgSrc = cleanVal;
-                                            }
-                                        }
-                                        else {
-                                            // 情況 C: 純 Base64 字串，補上標頭
-                                            imgSrc = "data:image/jpeg;base64," + cleanVal;
-                                        }
-
-                                        tr.append(`<td>
-                                            <img src="${imgSrc}"
-                                                 style="max-width:120px; border:1px solid #ddd; border-radius:4px; cursor:pointer;"
-                                                 onclick="window.open(this.src)"
-                                                 onerror="console.log('載入失敗，src前段為：', this.src.substring(0,100)); this.parentElement.innerHTML='圖片格式錯誤';">
-                                        </td>`);
-                                    } else {
-                                        tr.append(`<td>
-    <img src="${imgSrc}" class="data-img" 
-         onclick="window.open(this.src)" 
-         onerror="this.parentElement.innerHTML='圖片格式錯誤';">
-</td>`);
-                                    }
-                                });
-                                $("#tableBody").append(tr);
-                            });
-                            $("#msg").text("查詢完成。");
-                        } else {
-                            $("#msg").text("查無資料。");
-                        }
-                    },
-                    error: function (e) {
-                        $("#msg").text("連線錯誤：" + e.responseText);
-                    }
-                });
-            });
-        });
-    </script>-->
+   
     <script>
         $(document).ready(function () {
             $("#btnQuery").click(function () {
@@ -234,7 +143,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "DataService.aspx/ExecuteSQL",
+                    url: "https://zen2965.duckdns.org:8888/DataService.aspx/ExecuteSQL",
                     data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
