@@ -2,144 +2,202 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>Excel SQL 系統 (HTML版)</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel SQL 數據中心 - 高級版</title>
+    <!-- 引入核心樣式: Bootstrap 5 + DataTables -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
     <style>
         body {
             font-family: '標楷體';
+            background-color: #f0f2f5;
             padding: 20px;
         }
 
-        .table-container {
-            margin-top: 20px;
-            overflow-x: auto;
-        }
-
-        .nav-link {
-            color: #0026ff;
-        }
-
-        .status-msg {
-            color: red;
-            font-weight: bold;
-        }
-
-        #GridView1 img {
-            width: 80px;
-            border-radius: 4px;
-        }
-
         .sql-box {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 10px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
+        /* 凍結表頭與 Excel 滾動效果 */
+        .table-wrapper {
+            height: 65vh; /* 固定高度，產生捲軸 */
+            overflow: auto;
+            margin-top: 20px;
+            border: 1px solid #dee2e6;
+            background: #fff;
+        }
 
-        /* 自訂圖片樣式 */
+        /* 凍結表頭 CSS */
+        #resultTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #212529 !important;
+            color: white;
+            white-space: nowrap;
+        }
+
+        /* 圖片樣式 */
         .data-img {
             max-width: 400px; /* 你可以根據需求調整成 400px 或 500px */
             height: auto;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            border-radius: 4px;
             cursor: zoom-in;
-            transition: all 0.3s ease;
+            transition: transform 0.2s;
         }
 
-            /* 滑鼠移上去時的效果 */
             .data-img:hover {
                 max-width: 600px; /* 移上去時再變大一點 */
-                box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+                transform: scale(2.5);
                 z-index: 999;
                 position: relative;
             }
 
-        /* 讓表格欄位寬度自動適應圖片 */
-        #resultTable td {
-            vertical-align: middle;
+        .template-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
         }
 
+        /* DataTables 樣式微調 */
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 10px;
+        }
 
-
+        .status-msg {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
 
-    <!-- 導航列 -->
-    <ul class="nav nav-tabs">
-        <li class="nav-item"><a class="nav-link active" href="#">Excel SQL(本頁)</a></li>
-        <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/stockquery/incomeedit1">自選股編輯</a></li>
-        <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/mymvc/trend3.aspx">顯示圖表</a></li>
-    </ul>
+    <div class="container-fluid">
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item"><a class="nav-link active" href="#">Excel SQL 數據中心</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/stockquery/incomeedit1" target="_blank">自選股編輯</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/mymvc/selfselected1.aspx" target="_blank">自選股內容</a></li>
+        </ul>
 
-    <div class="mt-3">
-        <p class="text-primary">請先選取 Excel 檔案 (*.xlsx)，然後再上傳。</p>
+        <div class="sql-box">
+            <!-- 範本載入區 -->
+            <div class="template-section">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">🔍 搜尋範本：</label>
+                        <input type="text" id="templateSearch" class="form-control" placeholder="輸入關鍵字...">
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-label fw-bold">📑 選擇 50+ 組 SQL 範本：</label>
+                        <select id="sqlTemplates" class="form-select">
+                            <option value="">-- 請選擇範本 --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-        <div class="form-inline">
-            <!--<input type="file" id="fileUpload" class="form-control-file mr-2">
-            <label>工作表：</label>
-            <select id="selectWorksheet" class="form-control mr-2">
-                <option value="0">第 1 張</option>
-                <option value="1">第 2 張</option>
-            </select>
-            <button id="btnUpload" class="btn btn-dark">顯示上傳的 Excel</button>-->
+            <div class="row g-3">
+                <div class="col-md-2">
+                    <label class="fw-bold text-danger">密碼：</label>
+                    <input type="password" id="txtPwd" class="form-control" value="2157">
+                </div>
+                <div class="col-md-3">
+                    <label class="fw-bold">資料庫：</label>
+                    <select id="useDatabase" class="form-select"> 
+                        <option value="stockchangedate">stockchangedate</option>
+                        <option value="favor2">favor2 (含圖片)</option>
+                        <option value="stockchange">stockchange</option>
+                        <option value="stockprice">stockprice</option>
+                        <option value="stockinfo">stockinfo</option>
+                        <option value="work">work</option>
+                        <option value="stockchangefour">stockchangefour</option>
+                        <option value="fromaccessdatabase">fromaccessdatabase</option>
+                        <option value="pokopoko">pokopoko</option>
+                        <option value="wordvoice">wordvoice</option>
+                        <option value="favor1">favor1</option>
+                        <option value="favor3">favor3</option>
+
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="fw-bold">日期參數：</label>
+                    <input type="text" id="txtDate" class="form-control" placeholder="YYYYMMDD">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button id="btnQuery" class="btn btn-primary w-100 fw-bold">🚀 執行 Excel 格式查詢</button>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <label class="fw-bold">SQL 指令 (SELECT 已自動補上)：</label>
+                    <textarea id="sqlText" class="form-control font-monospace" rows="4">top 50 * FROM chips5 order by 日期 desc,漲幅 desc</textarea>
+                </div>
+            </div>
+
+            <div id="msg" class="status-msg mt-3 text-primary"></div>
         </div>
 
-        <div class="mt-3 form-inline">
-            <label class="text-danger">密碼：</label>
-            <input type="password" id="txtPwd" class="form-control mx-2" style="width:200px;" value="2157">
-            <button id="btnQuery" class="btn btn-danger mr-2">顯示結果在下方表格</button>
-            <!--<button id="btnDownload" class="btn btn-danger">SQL 查詢並下載 Excel</button>-->
-        </div>
-
-        <div class="mt-3 sql-box">
-            <label>選擇資料庫：</label>
-            <select id="useDatabase" class="form-control d-inline-block" style="width:180px" ;">
-                <option value="stockchangedate">stockchangedate</option>
-                <option value="favor2">favor2 (含圖片)</option>
-                <option value="stockchange">stockchange</option>
-                <option value="stockprice">stockprice</option>
-                <option value="stockinfo">stockinfo</option>
-                <option value="work">work</option>
-                <option value="stockchangefour">stockchangefour</option>
-                <option value="fromaccessdatabase">fromaccessdatabase</option>
-                <option value="pokopoko">pokopoko</option>
-                <option value="wordvoice">wordvoice</option>
-                <option value="favor1">favor1</option>
-                <option value="favor3">favor3</option>
-            </select>
-            <label class="ml-2">最新日期：</label>
-            <input type="text" id="txtDate" class="form-control d-inline-block" style="width:120px;">
-        </div>
-
-        <div class="mt-3">
-            <label>SQL 指令："SELEC "自動加不用寫</label>
-            <textarea id="sqlText" class="form-control" rows="8">top 30 * FROM chips5 order by 日期 desc,漲幅 desc</textarea>
+        <!-- 表格顯示區 -->
+        <div class="table-wrapper">
+            <table id="resultTable" class="table table-bordered table-hover table-sm w-100">
+                <!-- DataTables 會動態產生內容 -->
+            </table>
         </div>
     </div>
 
-    <div id="msg" class="status-msg mt-2"></div>
-
-    <!-- 結果表格 -->
-    <div class="table-container">
-        <table id="resultTable" class="table table-bordered table-sm">
-            <thead class="thead-dark"><tr id="tableHead"></tr></thead>
-            <tbody id="tableBody"></tbody>
-        </table>
-    </div>
-   
     <script>
+        // --- 範本資料庫 ---
+        const sqlTemplateLibrary = [
+            { cat: "籌碼分析", title: "籌碼主力集中度排行", sql: "top 100 * FROM chips5 WHERE 集中度 > 15 ORDER BY 日期 DESC, 漲幅 DESC" },
+            { cat: "籌碼分析", title: "外資/投信雙買股", sql: "top 50 * FROM chips5 WHERE 外資買超 > 0 AND 投信買超 > 0 ORDER BY 日期 DESC" },
+            { cat: "技術面", title: "MA5 金叉 MA20", sql: "top 50 * FROM stockprice WHERE 價格 > 五日均線 AND 昨價格 <= 昨五日均線" },
+            { cat: "圖片庫", title: "展示 favor2 圖片資料", sql: "top 50 * FROM favor2 WHERE photo <> '' ORDER BY 識別碼 DESC" },
+            { cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: "top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC" }
+        ];
+
+        let dataTableInstance = null; // 用於存放 DataTables 實例
+
         $(document).ready(function () {
+            // --- 初始化範本選單 ---
+            function loadTemplates(filter = "") {
+                const $select = $("#sqlTemplates").empty().append('<option value="">-- 請選擇範本 --</option>');
+                const filtered = sqlTemplateLibrary.filter(t => t.title.includes(filter) || t.cat.includes(filter));
+                let lastCat = "";
+                let $group = null;
+                filtered.forEach(t => {
+                    if (t.cat !== lastCat) {
+                        lastCat = t.cat;
+                        $group = $(`<optgroup label="【${lastCat}】"></optgroup>`).appendTo($select);
+                    }
+                    $group.append(`<option value="${t.sql}">${t.title}</option>`);
+                });
+            }
+            loadTemplates();
+            $("#templateSearch").on("input", function () { loadTemplates($(this).val()); });
+            $("#sqlTemplates").on("change", function () { if ($(this).val()) $("#sqlText").val($(this).val()); });
+
+            // --- 核心查詢功能 ---
             $("#btnQuery").click(function () {
                 const sql = $("#sqlText").val();
                 const db = $("#useDatabase").val();
                 const pwd = $("#txtPwd").val();
 
-                // 初始化狀態
-                $("#msg").removeClass("error").addClass("loading").text("資料讀取中，請稍候...");
-                $("#tableHead, #tableBody").empty();
+                $("#msg").text("⏳ 正在像 Excel 一樣處理數據中...");
+
+                // 如果之前已經有表格，先銷毀它，否則重新繪製會報錯
+                if (dataTableInstance) {
+                    dataTableInstance.destroy();
+                    $("#resultTable").empty();
+                }
 
                 $.ajax({
                     type: "POST",
@@ -147,79 +205,62 @@
                     data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-
                     success: function (res) {
                         try {
                             const data = JSON.parse(res.d);
-
-                            if (data && data.length > 0) {
-                                // 1. 產生動態表頭
-                                let keys = Object.keys(data[0]);
-                                keys.forEach(k => $("#tableHead").append(`<th>${k}</th>`));
-
-                                // 2. 逐行產生內容
-                                data.forEach(row => {
-                                    let tr = $("<tr></tr>");
-                                    keys.forEach(k => {
-                                        let val = row[k] === null ? "" : row[k];
-
-                                        // 判斷是否為圖片欄位 (photo)
-                                        if (k.toLowerCase() === 'photo' && val !== "") {
-                                            let cleanVal = String(val).trim();
-                                            let imgSrc = "";
-
-                                            // 檢查後端是否忘記轉碼
-                                            if (cleanVal === "System.Byte[]") {
-                                                tr.append(`<td class="text-danger">後端未轉碼</td>`);
-                                                return;
-                                            }
-
-                                            // 圖片路徑判斷
-                                            if (cleanVal.startsWith("~/")) {
-                                                imgSrc = cleanVal.replace("~/", "/");
-                                            }
-                                            else if (cleanVal.startsWith("data:") || cleanVal.startsWith("http")) {
-                                                imgSrc = cleanVal;
-                                            }
-                                            else if (cleanVal.startsWith("/9j/")) {
-                                                // 針對 JPEG 特徵碼補上標頭
-                                                imgSrc = "data:image/jpeg;base64," + cleanVal;
-                                            }
-                                            else {
-                                                // 其他情況統一視為 Base64
-                                                imgSrc = "data:image/jpeg;base64," + cleanVal;
-                                            }
-
-                                            // 插入圖片，套用 .data-img 樣式
-                                            tr.append(`<td>
-                                                <img src="${imgSrc}" class="data-img"
-                                                     title="點擊查看大圖"
-                                                     onclick="window.open(this.src)"
-                                                     onerror="this.parentElement.innerHTML='<span class=\'text-muted\'>格式不支援</span>';">
-                                            </td>`);
-                                        } else {
-                                            // 一般文字欄位
-                                            tr.append(`<td>${val}</td>`);
-                                        }
-                                    });
-                                    $("#tableBody").append(tr);
-                                });
-                                $("#msg").removeClass("loading").text("查詢完成，共 " + data.length + " 筆資料。");
-                            } else {
-                                $("#msg").removeClass("loading").text("查無資料。");
+                            if (!data || data.length === 0) {
+                                $("#msg").text("⚠ 查無資料。");
+                                return;
                             }
+
+                            // 1. 動態建立表頭 (thead) 與內容 (tbody) 的 HTML 結構
+                            let keys = Object.keys(data[0]);
+                            let theadHtml = "<thead><tr>";
+                            keys.forEach(k => { theadHtml += `<th>${k}</th>`; });
+                            theadHtml += "</tr></thead><tbody></tbody>";
+                            $("#resultTable").append(theadHtml);
+
+                            // 2. 準備每一行的數據
+                            data.forEach(row => {
+                                let trHtml = "<tr>";
+                                keys.forEach(k => {
+                                    let val = row[k] === null ? "" : row[k];
+                                    if (k.toLowerCase() === 'photo' && val !== "") {
+                                        let cleanVal = String(val).trim();
+                                        let imgSrc = cleanVal.startsWith("data:") ? cleanVal : "data:image/jpeg;base64," + cleanVal;
+                                        trHtml += `<td><img src="${imgSrc}" class="data-img" onclick="window.open(this.src)"></td>`;
+                                    } else {
+                                        trHtml += `<td>${val}</td>`;
+                                    }
+                                });
+                                trHtml += "</tr>";
+                                $("#resultTable tbody").append(trHtml);
+                            });
+
+                            // 3. 啟動 DataTables (Excel 功能核心)
+                            dataTableInstance = $('#resultTable').DataTable({
+                                "language": { "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" },
+                                "pageLength": 50, // 預設一頁 50 筆
+                                "order": [],      // 預設不排序，由 SQL 控制
+                                "searching": true, // 開啟關鍵字搜尋
+                                "ordering": true,  // 開啟點擊表頭排序
+                                "info": true,
+                                "lengthMenu": [20, 50, 100, 500],
+                                "scrollCollapse": true
+                            });
+
+                            $("#msg").text("✅ 查詢完成，共 " + data.length + " 筆。您可以點擊表頭進行排序。");
                         } catch (err) {
-                            $("#msg").removeClass("loading").addClass("error").text("解析錯誤：" + err.message);
-                            console.error("解析失敗內容：", res.d);
+                            $("#msg").text("❌ 解析失敗: " + err.message);
                         }
                     },
                     error: function (e) {
-                        $("#msg").removeClass("loading").addClass("error").text("連線失敗：" + e.statusText);
-                        console.error("Error Detail:", e.responseText);
+                        $("#msg").text("❌ 連線失敗，請確認家裡電腦 DataService 是否運作。");
                     }
                 });
             });
         });
     </script>
+
 </body>
 </html>
