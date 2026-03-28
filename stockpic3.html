@@ -159,60 +159,65 @@
             }
         }
 
-        // 加載縮略圖列表
-        async function loadThumbnails() {
-            const container = document.getElementById('thumbnailContainer');
-            const startId = parseInt(document.getElementById('startId').value);
-            const endId = parseInt(document.getElementById('endId').value);
-            const errorElement = document.getElementById('rangeError');
-            container.innerHTML = '';
-            errorElement.textContent = '';
+       // 修改後的 loadThumbnails 函數
+async function loadThumbnails() {
+    const container = document.getElementById('thumbnailContainer');
+    const startId = parseInt(document.getElementById('startId').value);
+    const endId = parseInt(document.getElementById('endId').value);
+    const errorElement = document.getElementById('rangeError');
+    container.innerHTML = '讀取中...';
+    errorElement.textContent = '';
 
-            if (isNaN(startId) || isNaN(endId) || startId < 1 || endId < startId) {
-                errorElement.textContent = '請輸入有效的起始和結束ID，且結束ID應大於等於起始ID';
-                return;
-            }
+    if (isNaN(startId) || isNaN(endId) || startId < 1 || endId < startId) {
+        errorElement.textContent = '請輸入有效的起始和結束ID';
+        container.innerHTML = '';
+        return;
+    }
 
+    try {
+        let hasImage = false;
+        container.innerHTML = ''; // 清除讀取中文字
+
+        // 使用迴圈請求
+        for (let imageId = startId; imageId <= endId; imageId++) {
             try {
-                for (let imageId = startId; imageId <= endId; imageId++) {
-                    // 獲取圖片資訊
-                    const infoResponse = await fetch(`${API_BASE}/GetImageinfo/${imageId}`);
-                    if (infoResponse.ok) {
-                        const infoData = await infoResponse.json();
-
-                        // 創建縮略圖項
-                        const thumbnailItem = document.createElement('div');
-                        thumbnailItem.className = 'thumbnail-item';
-
-                        // 創建資訊元素
-                        const infoElement = document.createElement('div');
-                        infoElement.className = 'info-text';
-                        infoElement.textContent = `ID: ${infoData.Id} 名稱: ${infoData.FileName.trim()}`;
-                        thumbnailItem.appendChild(infoElement);
-
-                        // 創建縮略圖
-                        const img = document.createElement('img');
-                        img.src = `${API_BASE}/GetImage/${imageId}`;
-                        img.alt = `圖片ID: ${imageId}`;
-                        img.dataset.id = imageId;
-                        img.onclick = () => displayLargeImage(imageId);
-                        thumbnailItem.appendChild(img);
-
-                        // 添加到容器
-                        container.appendChild(thumbnailItem);
-                    }
+                const infoResponse = await fetch(`${API_BASE}/GetImageinfo/${imageId}`);
+                
+                if (!infoResponse.ok) {
+                    console.warn(`ID ${imageId} 資訊獲取失敗: ${infoResponse.status}`);
+                    continue; 
                 }
 
-                // 如果沒有加載任何圖片
-                if (container.children.length === 0) {
-                    errorElement.textContent = '在指定的範圍內沒有可顯示的圖片';
-                }
-            } catch (error) {
-                console.error(error.message);
-                errorElement.textContent = '加載圖片時發生錯誤';
+                const infoData = await infoResponse.json();
+                hasImage = true;
+
+                const thumbnailItem = document.createElement('div');
+                thumbnailItem.className = 'thumbnail-item';
+
+                // 修正內容讀取，增加防錯
+                const fileName = infoData.FileName ? infoData.FileName.trim() : '無檔名';
+                
+                thumbnailItem.innerHTML = `
+                    <div class="info-text">ID: ${infoData.Id}<br>${fileName}</div>
+                    <img src="${API_BASE}/GetImage/${imageId}" 
+                         alt="ID: ${imageId}" 
+                         onclick="displayLargeImage(${imageId})"
+                         onerror="this.src='https://via.placeholder.com/150?text=Load+Error'">
+                `;
+                container.appendChild(thumbnailItem);
+            } catch (innerError) {
+                console.error(`處理 ID ${imageId} 時發生錯誤:`, innerError);
             }
         }
 
+        if (!hasImage) {
+            errorElement.textContent = '在指定的範圍內沒有找到任何圖片數據';
+        }
+    } catch (error) {
+        console.error("主要錯誤:", error);
+        errorElement.textContent = '連線伺服器失敗，請檢查網路或 CORS 設定。詳細資訊請見控制台(F12)';
+    }
+}
         // 顯示大圖和資訊
         async function displayLargeImage(imageId) {
             const imageElement = document.getElementById('largeImage');
