@@ -160,13 +160,323 @@
 
     <script>
         // --- 範本資料庫 ---
-        const sqlTemplateLibrary = [
-            { cat: "籌碼分析", title: "籌碼主力集中度排行", sql: "top 100 * FROM chips5 WHERE 集中度 > 15 ORDER BY 日期 DESC, 漲幅 DESC" },
-            { cat: "籌碼分析", title: "外資/投信雙買股", sql: "top 50 * FROM chips5 WHERE 外資買超 > 0 AND 投信買超 > 0 ORDER BY 日期 DESC" },
-            { cat: "技術面", title: "MA5 金叉 MA20", sql: "top 50 * FROM stockprice WHERE 價格 > 五日均線 AND 昨價格 <= 昨五日均線" },
-            { cat: "圖片庫", title: "展示 favor2 圖片資料", sql: "top 50 * FROM favor2 WHERE photo <> '' ORDER BY 識別碼 DESC" },
-            { cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: "top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC" }
+               const sqlTemplateLibrary = [
+            {cat: "漲幅選股", title: "近10期價量漲幅", sql: `priceincrease1.名稱, priceincrease1.代號, 
+                   View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量, 
+                   priceincrease1.成交價漲幅百分比 AS 近2期價漲幅, 
+                   priceincrease2.成交價漲幅百分比 AS 近3期價漲幅, 
+                   priceincrease3.成交價漲幅百分比 AS 近4期價漲幅, 
+                   priceincrease4.成交價漲幅百分比 AS 近5期價漲幅, 
+                   priceincrease5.成交價漲幅百分比 AS 近6期價漲幅, 
+                   priceincrease6.成交價漲幅百分比 AS 近7期價漲幅, 
+                   priceincrease7.成交價漲幅百分比 AS 近8期價漲幅, 
+                   priceincrease8.成交價漲幅百分比 AS 近9期價漲幅, 
+                   priceincrease9.成交價漲幅百分比 AS 近10期價漲幅, 
+                   priceincrease10.成交價漲幅百分比 AS 近11期價漲幅, 
+                   View_stockchange.產業分類, View_stockchange.交易所分類, 
+                   View_stockchange.股本億, 
+                   STRING_AGG(View_notioninfo.name1, ', ') AS 概念股
+            FROM priceincrease1
+            INNER JOIN priceincrease4 ON priceincrease1.代號 = priceincrease4.代號
+            LEFT OUTER JOIN priceincrease5 ON priceincrease1.代號 = priceincrease5.代號
+            LEFT OUTER JOIN priceincrease6 ON priceincrease1.代號 = priceincrease6.代號
+            LEFT OUTER JOIN priceincrease7 ON priceincrease1.代號 = priceincrease7.代號
+            LEFT OUTER JOIN priceincrease8 ON priceincrease1.代號 = priceincrease8.代號
+            LEFT OUTER JOIN priceincrease9 ON priceincrease1.代號 = priceincrease9.代號
+            LEFT OUTER JOIN priceincrease10 ON priceincrease1.代號 = priceincrease10.代號
+            LEFT OUTER JOIN View_stockchange ON priceincrease1.代號 = View_stockchange.代號
+            LEFT OUTER JOIN View_notioninfo ON priceincrease1.名稱 = View_notioninfo.mail1
+            LEFT OUTER JOIN priceincrease3 ON priceincrease1.代號 = priceincrease3.代號
+            LEFT OUTER JOIN priceincrease2 ON priceincrease1.代號 = priceincrease2.代號
+            GROUP BY priceincrease1.名稱, priceincrease1.代號, 
+                     View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量, 
+                     priceincrease1.成交價漲幅百分比, priceincrease2.成交價漲幅百分比, priceincrease3.成交價漲幅百分比, 
+                     priceincrease4.成交價漲幅百分比, priceincrease5.成交價漲幅百分比, priceincrease6.成交價漲幅百分比, 
+                     priceincrease7.成交價漲幅百分比, priceincrease8.成交價漲幅百分比, priceincrease9.成交價漲幅百分比, 
+                     priceincrease10.成交價漲幅百分比, View_stockchange.產業分類, 
+                     View_stockchange.交易所分類, View_stockchange.股本億
+            ORDER BY 近4期價漲幅 DESC` },
+            {cat: "漲幅選股", title: "自選股近10期價量漲幅", sql: `priceincrease1.名稱, priceincrease1.代號,
+                            ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅, 
+                            ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2) AS 近3期量增幅, 
+                            View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量, 
+                            priceincrease1.成交價漲幅百分比 AS 近2期價漲幅, priceincrease2.成交價漲幅百分比 AS 近3期價漲幅, 
+                            priceincrease3.成交價漲幅百分比 AS 近4期價漲幅, priceincrease4.成交價漲幅百分比 AS 近5期價漲幅, 
+                            priceincrease5.成交價漲幅百分比 AS 近6期價漲幅, priceincrease6.成交價漲幅百分比 AS 近7期價漲幅, 
+                            priceincrease7.成交價漲幅百分比 AS 近8期價漲幅, priceincrease8.成交價漲幅百分比 AS 近9期價漲幅, 
+                            priceincrease9.成交價漲幅百分比 AS 近10期價漲幅, priceincrease10.成交價漲幅百分比 AS 近11期價漲幅, 
+                            priceincrease1.成交量漲幅百分比 AS 近2期量漲幅, priceincrease2.成交量漲幅百分比 AS 近3期量漲幅, 
+                            priceincrease3.成交量漲幅百分比 AS 近4期量漲幅, priceincrease4.成交量漲幅百分比 AS 近5期量漲幅,  
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.股本億, priceincrease1.本日 AS 今日, 
+                            priceincrease10.前一日 AS 前日,STRING_AGG(View_notioninfo.name1, ', ') AS 概念股
+FROM              priceincrease1 INNER JOIN
+                            priceincrease4 ON priceincrease1.代號 = priceincrease4.代號 LEFT OUTER JOIN
+                            priceincrease5 ON priceincrease1.代號 = priceincrease5.代號 LEFT OUTER JOIN
+                            priceincrease6 ON priceincrease1.代號 = priceincrease6.代號 LEFT OUTER JOIN
+                            priceincrease7 ON priceincrease1.代號 = priceincrease7.代號 LEFT OUTER JOIN
+                            priceincrease8 ON priceincrease1.代號 = priceincrease8.代號 LEFT OUTER JOIN
+                            priceincrease9 ON priceincrease1.代號 = priceincrease9.代號 LEFT OUTER JOIN
+                            priceincrease10 ON priceincrease1.代號 = priceincrease10.代號 LEFT OUTER JOIN
+                            View_stockchange ON priceincrease1.代號 = View_stockchange.代號 LEFT OUTER JOIN
+                            View_notioninfo ON priceincrease1.名稱 = View_notioninfo.mail1 LEFT OUTER JOIN
+                            priceincrease3 ON priceincrease1.代號 = priceincrease3.代號 LEFT OUTER JOIN
+                            priceincrease2 ON priceincrease1.代號 = priceincrease2.代號
+WHERE  priceincrease1.代號 IN (SELECT          代號
+                                  FROM               incomechar)
+GROUP BY priceincrease1.名稱, priceincrease1.代號,
+                            ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2), 
+                            ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2), 
+                            View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量, 
+                            priceincrease1.成交價漲幅百分比, priceincrease2.成交價漲幅百分比, 
+                            priceincrease3.成交價漲幅百分比, priceincrease4.成交價漲幅百分比, 
+                            priceincrease5.成交價漲幅百分比, priceincrease6.成交價漲幅百分比, 
+                            priceincrease7.成交價漲幅百分比, priceincrease8.成交價漲幅百分比, 
+                            priceincrease9.成交價漲幅百分比, priceincrease10.成交價漲幅百分比, 
+                            priceincrease1.成交量漲幅百分比, priceincrease2.成交量漲幅百分比, 
+                            priceincrease3.成交量漲幅百分比, priceincrease4.成交量漲幅百分比,
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.股本億, priceincrease1.本日,
+                            priceincrease10.前一日
+ORDER BY   近4期價漲幅 DESC` },
+            {cat: "漲幅選股", title: "剛起漲-自選股", sql: `priceincrease1.名稱, priceincrease1.代號,
+                            ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅, 
+                            ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2) AS 近3期量增幅, 
+                            View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量, 
+                            priceincrease1.成交價漲幅百分比 AS 近2期價漲幅, priceincrease2.成交價漲幅百分比 AS 近3期價漲幅, 
+                            priceincrease3.成交價漲幅百分比 AS 近4期價漲幅, priceincrease4.成交價漲幅百分比 AS 近5期價漲幅, 
+                            priceincrease5.成交價漲幅百分比 AS 近6期價漲幅, priceincrease6.成交價漲幅百分比 AS 近7期價漲幅, 
+                            priceincrease7.成交價漲幅百分比 AS 近8期價漲幅, priceincrease8.成交價漲幅百分比 AS 近9期價漲幅, 
+                            priceincrease9.成交價漲幅百分比 AS 近10期價漲幅, priceincrease10.成交價漲幅百分比 AS 近11期價漲幅, 
+                            priceincrease1.成交量漲幅百分比 AS 近2期量漲幅, priceincrease2.成交量漲幅百分比 AS 近3期量漲幅, 
+                            priceincrease3.成交量漲幅百分比 AS 近4期量漲幅, priceincrease4.成交量漲幅百分比 AS 近5期量漲幅,  
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.股本億, priceincrease1.本日 AS 今日, 
+                            priceincrease10.前一日 AS 前日,STRING_AGG(View_notioninfo.name1, ', ') AS 概念股
+FROM              priceincrease1 INNER JOIN
+                            priceincrease4 ON priceincrease1.代號 = priceincrease4.代號 LEFT OUTER JOIN
+                            priceincrease5 ON priceincrease1.代號 = priceincrease5.代號 LEFT OUTER JOIN
+                            priceincrease6 ON priceincrease1.代號 = priceincrease6.代號 LEFT OUTER JOIN
+                            priceincrease7 ON priceincrease1.代號 = priceincrease7.代號 LEFT OUTER JOIN
+                            priceincrease8 ON priceincrease1.代號 = priceincrease8.代號 LEFT OUTER JOIN
+                            priceincrease9 ON priceincrease1.代號 = priceincrease9.代號 LEFT OUTER JOIN
+                            priceincrease10 ON priceincrease1.代號 = priceincrease10.代號 LEFT OUTER JOIN
+                            View_stockchange ON priceincrease1.代號 = View_stockchange.代號 LEFT OUTER JOIN
+                            View_notioninfo ON priceincrease1.名稱 = View_notioninfo.mail1 LEFT OUTER JOIN
+                            priceincrease3 ON priceincrease1.代號 = priceincrease3.代號 LEFT OUTER JOIN
+                            priceincrease2 ON priceincrease1.代號 = priceincrease2.代號
+WHERE  priceincrease1.代號 IN (SELECT          代號
+                                  FROM               incomechar)
+GROUP BY priceincrease1.名稱, priceincrease1.代號,
+                            ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2), 
+                            ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2), 
+                            View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量, 
+                            priceincrease1.成交價漲幅百分比, priceincrease2.成交價漲幅百分比, 
+                            priceincrease3.成交價漲幅百分比, priceincrease4.成交價漲幅百分比, 
+                            priceincrease5.成交價漲幅百分比, priceincrease6.成交價漲幅百分比, 
+                            priceincrease7.成交價漲幅百分比, priceincrease8.成交價漲幅百分比, 
+                            priceincrease9.成交價漲幅百分比, priceincrease10.成交價漲幅百分比, 
+                            priceincrease1.成交量漲幅百分比, priceincrease2.成交量漲幅百分比, 
+                            priceincrease3.成交量漲幅百分比, priceincrease4.成交量漲幅百分比,
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.股本億, priceincrease1.本日,
+                            priceincrease10.前一日
+ORDER BY   近4期價漲幅 DESC` },
+            {cat: "漲幅選股", title: "盤中剛起漲-自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, 
+                            ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅, 
+                            ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2) AS 近3期量增幅, 
+                            priceincrease3.成交價漲幅百分比 AS 近4期價漲幅, View_stockchange.成交價, View_stockchange.漲幅, 
+                            obv盤中選股.盤中成交價, obv盤中選股.最高, obv盤中選股.最低, obv盤中選股.總量, 
+                            obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, obv盤中選股.盤中的單日obv均量, 
+                            obv盤中選股.盤中的累積obv均量, obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線 AS 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 AS 站上五日平均線張數,STRING_AGG(View_notioninfo.name1, ', ') AS 概念股
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號 LEFT OUTER JOIN
+                            View_notioninfo ON obv盤中選股.名稱 = View_notioninfo.mail1 INNER JOIN
+                            priceincrease1 ON obv盤中選股.代號 = priceincrease1.代號 INNER JOIN
+                            priceincrease4 ON obv盤中選股.代號 = priceincrease4.代號 INNER JOIN
+                            priceincrease5 ON obv盤中選股.代號 = priceincrease5.代號 INNER JOIN
+                            priceincrease6 ON obv盤中選股.代號 = priceincrease6.代號 INNER JOIN
+                            priceincrease7 ON obv盤中選股.代號 = priceincrease7.代號 INNER JOIN
+                            priceincrease8 ON obv盤中選股.代號 = priceincrease8.代號 INNER JOIN
+                            priceincrease9 ON obv盤中選股.代號 = priceincrease9.代號 INNER JOIN
+                            priceincrease10 ON obv盤中選股.代號 = priceincrease10.代號 INNER JOIN
+                            priceincrease3 ON obv盤中選股.代號 = priceincrease3.代號 INNER JOIN
+                            priceincrease2 ON obv盤中選股.代號 = priceincrease2.代號
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.代號 IN
+                                (SELECT          代號
+                                  FROM               incomechar)) AND (obv計算黃金交叉次數.日期 =
+                                (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) AND (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
+GROUP BY obv盤中選股.名稱, obv盤中選股.代號, 
+                            ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2), 
+                            ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2), 
+                            priceincrease3.成交價漲幅百分比, View_stockchange.成交價, View_stockchange.漲幅, 
+                            obv盤中選股.盤中成交價, obv盤中選股.最高, obv盤中選股.最低, obv盤中選股.總量, 
+                            obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, obv盤中選股.盤中的單日obv均量, 
+                            obv盤中選股.盤中的累積obv均量, obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2), 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2), 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線
+ORDER BY   站上五日平均線張數 DESC` },
+            {cat: "漲幅選股", title: "盤中+OBV+自選股+概念股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, 
+                            obv盤中選股.盤中成交價, obv盤中選股.最高, obv盤中選股.最低, obv盤中選股.總量, 
+                            obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, obv盤中選股.盤中的單日obv均量, 
+                            obv盤中選股.盤中的累積obv均量, obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線 AS 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 AS 站上五日平均線張數,STRING_AGG(View_notioninfo.name1, ', ') AS 概念股
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號 LEFT OUTER JOIN
+                            View_notioninfo ON obv盤中選股.名稱 = View_notioninfo.mail1
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.代號 IN
+                                (SELECT          代號
+                                  FROM               incomechar)) AND (obv計算黃金交叉次數.日期 =
+                                (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) AND (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
+GROUP BY obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, 
+                            obv盤中選股.盤中成交價, obv盤中選股.最高, obv盤中選股.最低, obv盤中選股.總量, 
+                            obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, obv盤中選股.盤中的單日obv均量, 
+                            obv盤中選股.盤中的累積obv均量, obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2), 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2), 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線
+ORDER BY   站上五日平均線張數 DESC` },
+            { cat: "漲幅選股", title: "盤中漲幅TOP100", sql: `/*資料庫:stockchange*/top 100 名稱,代號,買進,賣出,成交價,漲跌,漲幅,K棒,單量,總量,最高,最低,產業分類,交易所分類,上市1上櫃2,	上市櫃年數,股本億,市值億,開盤價 from basicinfo order by 漲幅 desc` },
+            { cat: "漲幅選股", title: "預存程式前N日至最新日", sql: `https://zen2965.duckdns.org:8888/excelimport/excelimport2 中第29項可查詢` },
+            { cat: "黃金交叉次數", title: "黃金交叉次數選股", sql: `TOP (100) PERCENT dbo.winnewdate.股票名稱, dbo.winnewdate.股票代號, dbo.winnewdate.站均, dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.均量黃金交叉次數, dbo.winnewdate.三大法人黃金交叉次數, dbo.winnewdate.外資黃金交叉次數, dbo.winnewdate.投信黃金交叉次數, dbo.winnewdate.k9, dbo.winnewdate.d9, dbo.winnewdate.週k9, dbo.winnewdate.週d9, dbo.winnewdate.月k9, dbo.winnewdate.月d9, dbo.winnewdate.macd, dbo.winnewdate.資使用率, dbo.winnewdate.資使用率黃金交叉次數, dbo.winnewdate.券使用率, dbo.winnewdate.券使用率黃金交叉次數, dbo.winnewdate.券資比, dbo.winnewdate.券資比黃金交叉次數, dbo.winnewdate.產業分類, dbo.winnewdate.交易所分類, dbo.winnewdate.股本億, dbo.winnewdate.日期 FROM dbo.winnewdate INNER JOIN dbo.View_basicinfo ON dbo.winnewdate.股票代號 = dbo.View_basicinfo.代號 WHERE (dbo.View_basicinfo.總量 > 5000) AND (dbo.winnewdate.日期 = 20260327) AND (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.winnewdate.均量黃金交叉次數 >= 0) AND (dbo.winnewdate.k9 - dbo.winnewdate.d9 >= 0) AND (dbo.winnewdate.macd > 0) ORDER BY dbo.winnewdate.均價黃金交叉次數 DESC, dbo.winnewdate.均量黃金交叉次數 DESC, dbo.winnewdate.三大法人黃金交叉次數 DESC` },
+            { cat: "黃金交叉次數", title: "均價黃金交叉+加權後分數", sql: `TOP (100) PERCENT dbo.winnewdate.股票名稱, dbo.winnewdate.股票代號, dbo.winnewdate.站均, dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.均量黃金交叉次數, dbo.winnewdate.三大法人黃金交叉次數, dbo.winnewdate.外資黃金交叉次數, dbo.winnewdate.投信黃金交叉次數, dbo.winnewdate.k9, dbo.winnewdate.d9, dbo.winnewdate.週k9, dbo.winnewdate.週d9, dbo.winnewdate.月k9, dbo.winnewdate.月d9, dbo.winnewdate.macd, dbo.winnewdate.資使用率, dbo.winnewdate.資使用率黃金交叉次數, dbo.winnewdate.券使用率, dbo.winnewdate.券使用率黃金交叉次數, dbo.winnewdate.券資比, dbo.winnewdate.券資比黃金交叉次數, dbo.winnewdate.產業分類, dbo.winnewdate.交易所分類, dbo.winnewdate.股本億, dbo.winnewdate.日期 FROM dbo.winnewdate INNER JOIN dbo.View_basicinfo ON dbo.winnewdate.股票代號 = dbo.View_basicinfo.代號 WHERE (dbo.View_basicinfo.總量 > 5000) AND (dbo.winnewdate.日期 = 20260327) AND (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.winnewdate.均量黃金交叉次數 >= 0) AND (dbo.winnewdate.k9 - dbo.winnewdate.d9 >= 0) AND (dbo.winnewdate.macd > 0) ORDER BY dbo.winnewdate.均價黃金交叉次數 DESC, dbo.winnewdate.均量黃金交叉次數 DESC, dbo.winnewdate.三大法人黃金交叉次數 DESC, 
+                            dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.集中度1日, dbo.winnewdate.正負DI百分比, 
+                            dbo.winnewdate.三週庫存比率 / 100 AS [三週庫存比率/100], dbo.winnewdate.日期, 
+                            dbo.winnewdate.k9 - dbo.winnewdate.d9 AS 日kd差, dbo.winnewdate.週k9 - dbo.winnewdate.週d9 AS 週kd差, 
+                            dbo.winnewdate.月k9 - dbo.winnewdate.月d9 AS 月kd差, 
+                            ROUND((((((((dbo.winnewdate.均價黃金交叉次數 + dbo.winnewdate.k9 / 5) - dbo.winnewdate.d9 / 5) 
+                            + dbo.winnewdate.週k9 / 5) - dbo.winnewdate.週d9 / 5) + dbo.winnewdate.月k9 / 5) - dbo.winnewdate.月d9 / 5) 
+                            + dbo.winnewdate.合計十天 / 10) + dbo.winnewdate.三週庫存比率 / 100, 2) AS 總分
+FROM              dbo.winnewdate INNER JOIN
+                            dbo.basicinfo ON dbo.winnewdate.股票代號 = dbo.basicinfo.代號 AND 
+                            dbo.winnewdate.日期 = dbo.basicinfo.日期
+WHERE          (dbo.winnewdate.k9 - dbo.winnewdate.d9 > 0) AND (dbo.winnewdate.日期 =
+                                (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               dbo.basicinfo AS basicinfo_1)) AND (dbo.winnewdate.週k9 - dbo.winnewdate.週d9 > 0) AND 
+                            (dbo.winnewdate.月k9 - dbo.winnewdate.月d9 > 0) AND (dbo.winnewdate.正負DI百分比 > 100) AND 
+                            (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.basicinfo.總量 >  5000) 
+ORDER BY   ROUND((((((((dbo.winnewdate.均價黃金交叉次數 + dbo.winnewdate.k9 / 5) - dbo.winnewdate.d9 / 5) 
+                            + dbo.winnewdate.週k9 / 5) - dbo.winnewdate.週d9 / 5) + dbo.winnewdate.月k9 / 5) - dbo.winnewdate.月d9 / 5) 
+                            + dbo.winnewdate.合計十天 / 10) + dbo.winnewdate.三週庫存比率 / 100, 2) DESC`
+            },
+            { cat: "黃金交叉次數", title: "OBV多空淨額(量)+均線交叉情況", sql: `代號, 名稱, 成交價, 總量, 最高, 最低, obv淨額, 五日平均線, 十日平均線, 二十日平均線, 三十四日平均線, 
+                            ROUND((obv淨額 - 五日平均線) / ABS(五日平均線), 2) AS 五日乖離, ROUND((obv淨額 - 十日平均線) 
+                            / ABS(十日平均線), 2) AS 十日乖離, ROUND((obv淨額 - 二十日平均線) / ABS(二十日平均線), 2) AS 二十日乖離, 
+                            ROUND((obv淨額 - 三十四日平均線) / ABS(三十四日平均線), 2) AS 三十四日乖離, ROUND((五日平均線 - 十日平均線) 
+                            / ABS(十日平均線), 2) AS 五日與十日黃金交叉, round((十日平均線 - 二十日平均線) / ABS(二十日平均線),2) 
+                            AS 十日與二十日黃金交叉, ROUND((二十日平均線 - 三十四日平均線) / ABS(三十四日平均線), 2) 
+                            AS 二十日與三十四日黃金交叉, 日期
+FROM              obvdatea5
+WHERE          (代號 = N'2330') AND (日期 >= 20250101)
+order by 日期 desc`
+            },
+            {
+                cat: "股權分散表", title: "週變動排序", sql: `/*資料庫:stockprice*/TOP (100) PERCENT View_day1mastersum.名稱, View_day1mastersum.證券代號, 
+                            View_day1mastersum.主力庫存比率day1加總, View_day2mastersum.主力庫存比率day2加總, 
+                            View_day3mastersum.主力庫存比率day3加總, View_day4mastersum.主力庫存比率day4加總, 
+                            View_day5mastersum.主力庫存比率day5加總, View_day6mastersum.主力庫存比率day6加總, 
+                            View_day7mastersum.主力庫存比率day7加總, 
+                            ROUND((View_day1mastersum.主力庫存比率day1加總 - View_day2mastersum.主力庫存比率day2加總) 
+                            / View_day2mastersum.主力庫存比率day2加總 * 100, 2) AS [最近一期增幅%], 
+                            ROUND((View_day1mastersum.主力庫存比率day1加總 - View_day3mastersum.主力庫存比率day3加總) 
+                            / View_day3mastersum.主力庫存比率day3加總 * 100, 2) AS [最近二期增幅%], 
+                            ROUND((View_day1mastersum.主力庫存比率day1加總 - View_day4mastersum.主力庫存比率day4加總) 
+                            / View_day4mastersum.主力庫存比率day4加總 * 100, 2) AS [最近三期增幅%], 
+                            ROUND((View_day1mastersum.主力庫存比率day1加總 - View_day5mastersum.主力庫存比率day5加總) 
+                            / View_day5mastersum.主力庫存比率day5加總 * 100, 2) AS [最近四期增幅%], 
+                            ROUND((View_day1mastersum.主力庫存比率day1加總 - View_day6mastersum.主力庫存比率day6加總) 
+                            / View_day6mastersum.主力庫存比率day6加總 * 100, 2) AS [最近五期增幅%], 
+                            ROUND((View_day1mastersum.主力庫存比率day1加總 - View_day7mastersum.主力庫存比率day7加總) 
+                            / View_day7mastersum.主力庫存比率day7加總 * 100, 2) AS [最近六期增幅%], 
+                            View_day1mastersum.資料日期 AS 最新日期, View_day7mastersum.資料日期 AS 最舊日期
+FROM              View_day1mastersum INNER JOIN
+                            View_day2mastersum ON View_day1mastersum.名稱 = View_day2mastersum.名稱 INNER JOIN
+                            View_day3mastersum ON View_day1mastersum.名稱 = View_day3mastersum.名稱 INNER JOIN
+                            View_day4mastersum ON View_day1mastersum.名稱 = View_day4mastersum.名稱 INNER JOIN
+                            View_day5mastersum ON View_day1mastersum.名稱 = View_day5mastersum.名稱 INNER JOIN
+                            View_day6mastersum ON View_day1mastersum.名稱 = View_day6mastersum.名稱 INNER JOIN
+                            View_day7mastersum ON View_day1mastersum.名稱 = View_day7mastersum.名稱
+WHERE          (View_day2mastersum.主力庫存比率day2加總 > 0) AND (View_day3mastersum.主力庫存比率day3加總 > 0) AND 
+                            (View_day4mastersum.主力庫存比率day4加總 > 0) AND (View_day5mastersum.主力庫存比率day5加總 > 0) AND 
+                            (View_day6mastersum.主力庫存比率day6加總 > 0) AND (View_day7mastersum.主力庫存比率day7加總 > 0)
+ ORDER BY  ROUND((View_day1mastersum.主力庫存比率day1加總 - View_day2mastersum.主力庫存比率day2加總) 
+                            / View_day2mastersum.主力庫存比率day2加總 * 100, 2) desc` },
+            {
+                cat: "股權分散表", title: "400張以上", sql: `/*資料庫:stockprice*/TOP (100) PERCENT dbo.View_selectdatemaster.名稱, 
+                            dbo.View_selectdatemaster.證券代號, ROUND(SUM(dbo.View_selectdatemaster.占集保庫存數比例), 2) 
+                            AS 占集保庫存數總比例, dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類, 
+                            dbo.View_stockchangedate.交易所分類, dbo.View_stockchangedate.股本億, dbo.View_stockchangedate.市值億, 
+                            dbo.View_selectdatemaster.資料日期
+FROM              dbo.View_selectdatemaster INNER JOIN
+                            dbo.View_stockchangedate ON dbo.View_selectdatemaster.證券代號 = dbo.View_stockchangedate.代號 AND 
+                            dbo.View_selectdatemaster.資料日期 = dbo.View_stockchangedate.日期
+GROUP BY   dbo.View_selectdatemaster.名稱, dbo.View_selectdatemaster.證券代號, dbo.View_selectdatemaster.資料日期, 
+                            dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類, dbo.View_stockchangedate.交易所分類, 
+                            dbo.View_stockchangedate.股本億, dbo.View_stockchangedate.市值億
+HAVING           (dbo.View_selectdatemaster.名稱 = N'台積電') or (dbo.View_selectdatemaster.證券代號 = '2330') ORDER BY dbo.View_selectdatemaster.資料日期 desc` },
+            {
+                cat: "股權分散表", title: "1,000張以上", sql: `/*資料庫:stockprice*/TOP (100) PERCENT dbo.View_selectdatemaster1.名稱, 
+                            dbo.View_selectdatemaster1.證券代號, ROUND(SUM(dbo.View_selectdatemaster1.占集保庫存數比例), 2) 
+                            AS 占集保庫存數總比例, dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類, 
+                            dbo.View_stockchangedate.交易所分類, dbo.View_stockchangedate.股本億, dbo.View_stockchangedate.市值億, 
+                            dbo.View_selectdatemaster1.資料日期
+FROM              dbo.View_selectdatemaster1 INNER JOIN
+                            dbo.View_stockchangedate ON dbo.View_selectdatemaster1.證券代號 = dbo.View_stockchangedate.代號 AND 
+                            dbo.View_selectdatemaster1.資料日期 = dbo.View_stockchangedate.日期
+GROUP BY   dbo.View_selectdatemaster1.名稱, dbo.View_selectdatemaster1.證券代號, dbo.View_selectdatemaster1.資料日期, 
+                            dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類, dbo.View_stockchangedate.交易所分類, 
+                            dbo.View_stockchangedate.股本億, dbo.View_stockchangedate.市值億
+HAVING           (dbo.View_selectdatemaster1.名稱 = N'台積電') or (dbo.View_selectdatemaster1.證券代號 = '2330') ORDER BY dbo.View_selectdatemaster1.資料日期 desc` },
+            {
+                cat: "股權分散表", title: "20張以下", sql: `/*資料庫:stockprice*/TOP (100) PERCENT dbo.View_equity20.名稱, dbo.View_equity20.證券代號, 
+                            ROUND(SUM(dbo.View_equity20.占集保庫存數比例), 2) AS 占集保庫存數總比例, dbo.View_stockchangedate.成交價, 
+                            dbo.View_stockchangedate.產業分類, dbo.View_stockchangedate.交易所分類, dbo.View_stockchangedate.股本億, 
+                            dbo.View_equity20.資料日期
+FROM              dbo.View_equity20 INNER JOIN
+                            dbo.View_stockchangedate ON dbo.View_equity20.證券代號 = dbo.View_stockchangedate.代號 AND 
+                            dbo.View_equity20.資料日期 = dbo.View_stockchangedate.日期
+GROUP BY   dbo.View_equity20.名稱, dbo.View_equity20.證券代號, dbo.View_equity20.資料日期, 
+                            dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類, dbo.View_stockchangedate.交易所分類, 
+                            dbo.View_stockchangedate.股本億
+HAVING           (dbo.View_equity20.名稱 = N'台積電') or (dbo.View_equity20.證券代號 = '2330') ORDER BY dbo.View_equity20.資料日期 desc` },
+            /*{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },*/
+            { cat: "資料庫", title: "找出資料庫中所有資料表", sql: `TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME` },
+            { cat: "資料庫", title: "找出該資料表(winnewdate)中的所有欄位", sql: `COLUMN_NAME,ORDINAL_POSITION,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'winnewdate'` },
+            { cat: "資料庫", title: "找出該資料表(chips5)中的主鍵欄位", sql: `COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = 'chips5'` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+
         ];
+         /*資料庫:stockchange*/
 
         let dataTableInstance = null; // 用於存放 DataTables 實例
 
