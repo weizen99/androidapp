@@ -70,8 +70,8 @@
     <!-- 導航列 -->
     <ul class="nav nav-tabs">
         <li class="nav-item"><a class="nav-link active" href="#">Excel SQL(本頁)</a></li>
-        <li class="nav-item"><a class="nav-link" href="http://220.135.3.78:8888/stockquery/incomeedit1">自選股編輯</a></li>
-        <li class="nav-item"><a class="nav-link" href="http://220.135.3.78:8888/mymvc/trend3.aspx">顯示圖表</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/stockquery/incomeedit1">自選股編輯</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/mymvc/trend3.aspx">顯示圖表</a></li>
     </ul>
 
     <div class="mt-3">
@@ -143,7 +143,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "https://zen2965.duckdns.org:8888/DataService.aspx/ExecuteSQL",
+                    url: "https://zen2965.duckdns.org:8888/excelimport/DataService.aspx/ExecuteSQL",
                     data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
