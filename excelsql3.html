@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel SQL 數據中心 - 高級版</title>
+    <!-- 引入核心樣式: Bootstrap 5 + DataTables -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <style>
+        body {
+            font-family: '標楷體';
+            background-color: #f0f2f5;
+            padding: 2px;
+        }
+
+        .sql-box {
+            background: #fff;
+            padding: 2px;
+            border-radius: 8px;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+
+        /* 凍結表頭與 Excel 滾動效果 */
+        .table-wrapper {
+            height: 65vh; /* 固定高度，產生捲軸 */
+            overflow: auto;
+            margin-top: 20px;
+            border: 1px solid #dee2e6;
+            background: #fff;
+        }
+
+        /* 凍結表頭 CSS */
+        #resultTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #212529 !important;
+            color: white;
+            white-space: nowrap;
+        }
+
+        /* 圖片樣式 */
+        .data-img {
+            max-width: 400px; /* 你可以根據需求調整成 400px 或 500px */
+            height: auto;
+            border-radius: 4px;
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+
+            .data-img:hover {
+                max-width: 600px; /* 移上去時再變大一點 */
+                transform: scale(2.5);
+                z-index: 999;
+                position: relative;
+            }
+
+        .template-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+
+        /* DataTables 樣式微調 */
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 10px;
+        }
+
+        .status-msg {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <ul class="nav nav-tabs xs-3">
+            <li class="nav-item"><a class="nav-link active" href="#">Excel SQL 數據中心</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/excelimport2" target="_blank">指令彙總</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://weizen99.github.io/androidapp/basicinfotable.html" target="_blank">WebApi彙總</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://weizen99.github.io/androidapp/map.html" target="_blank">地圖定位建檔</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/fishnew5/favorites2" target="_blank">網站簡介</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/stockquery/incomeedit1" target="_blank">自選股編輯</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/mymvc/selfselected1.aspx" target="_blank">自選股內容</a></li>
+        </ul>
+
+        <div class="sql-box">
+            <!-- 範本載入區 -->
+            <div class="template-section">
+                <div class="row g-2">
+                    <div class="col-sm-3">
+                        
+                        <label class="form-label fw-bold">🔍 搜尋範本：</label>
+                        <input type="text" id="templateSearch" class="form-control" placeholder="輸入關鍵字...">
+                    </div>
+                    <div class="col-sm-9">
+                        <label class="form-label fw-bold">📑 選擇 50+ 組 SQL 範本：</label>
+                        <select id="sqlTemplates" class="form-select">
+                            <option value="">-- 請選擇範本 --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-sm-2">
+                    <label class="fw-bold text-danger">密碼：</label>
+                    <input type="password" id="txtPwd" class="form-control" value="2157">
+                </div>
+                <div class="col-sm-3">
+                    <label class="fw-bold">資料庫：</label>
+                    <select id="useDatabase" class="form-select">
+                        <option value="fromaccessdatabase">fromaccessdatabase</option>
+                        <option value="stockchangedate">stockchangedate</option>
+                        <option value="favor2">favor2 (含圖片)</option>
+                        <option value="stockchange">stockchange</option>
+                        <option value="stockprice">stockprice</option>
+                        <option value="stockinfo">stockinfo</option>
+                        <option value="work">work</option>
+                        <option value="stockchangefour">stockchangefour</option>
+                        <option value="pokopoko">pokopoko</option>
+                        <option value="wordvoice">wordvoice</option>
+                        <option value="favor1">favor1</option>
+                        <option value="favor3">favor3</option>
+
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="fw-bold">日期參數：</label>
+                    <input type="text" id="txtDate" class="form-control" placeholder="YYYYMMDD">
+                </div>
+                <div class="col-sm-4 d-flex align-items-end">
+                    <button id="btnQuery" class="btn btn-primary w-100 fw-bold">🚀 執行 Excel 格式查詢</button>
+                </div>
+
+                <div class="col-12 sm-3">
+                    <label class="fw-bold">SQL 指令 (SELECT 已自動補上)：</label>
+                    <textarea id="sqlText" class="form-control font-monospace" rows="4"> * FROM [dbo].[guestinfo4]</textarea>
+                </div>
+            </div>
+
+            <div id="msg" class="status-msg sm-3 text-primary"></div>
+        </div>
+
+        <!-- 表格顯示區 -->
+        <div class="table-wrapper">
+            <table id="resultTable" class="table table-bordered table-hover table-sm w-100">
+                <!-- DataTables 會動態產生內容 -->
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // --- 範本資料庫 ---
+        const sqlTemplateLibrary = [
+
+            { cat: "圖片類", title: "面積 考卷", sql: `/*資料庫:fvor2*/top 20 * from stockgod` },
+            { cat: "圖片類", title: "Ai girl", sql: `/*資料庫:fvor2*/ * from stockgod21 where 識別碼>300 and 識別碼<320` },
+            { cat: "圖片類", title: "gif檔", sql: `/*資料庫:fvor2*/top 30 * from stockgod28` },
+            { cat: "圖片類", title: "圖片藝廊", sql: `/*詳見上排藝廊 https://weizen99.github.io/androidapp/basicinfotable.html */` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+
+        ];
+        /*資料庫:stockchange*/
+        let dataTableInstance = null; // 用於存放 DataTables 實例
+
+        $(document).ready(function () {
+            // --- 初始化範本選單 ---
+            function loadTemplates(filter = "") {
+                const $select = $("#sqlTemplates").empty().append('<option value="">-- 請選擇範本 --</option>');
+                const filtered = sqlTemplateLibrary.filter(t => t.title.includes(filter) || t.cat.includes(filter));
+                let lastCat = "";
+                let $group = null;
+                filtered.forEach(t => {
+                    if (t.cat !== lastCat) {
+                        lastCat = t.cat;
+                        $group = $(`<optgroup label="【${lastCat}】"></optgroup>`).appendTo($select);
+                    }
+                    $group.append(`<option value="${t.sql}">${t.title}</option>`);
+                });
+            }
+            loadTemplates();
+            $("#templateSearch").on("input", function () { loadTemplates($(this).val()); });
+            $("#sqlTemplates").on("change", function () { if ($(this).val()) $("#sqlText").val($(this).val()); });
+
+            // --- 核心查詢功能 ---
+            $("#btnQuery").click(function () {
+                const sql = $("#sqlText").val();
+                const db = $("#useDatabase").val();
+                const pwd = $("#txtPwd").val();
+
+                $("#msg").text("⏳ 正在像 Excel 一樣處理數據中...");
+
+                // 如果之前已經有表格，先銷毀它，否則重新繪製會報錯
+                if (dataTableInstance) {
+                    dataTableInstance.destroy();
+                    $("#resultTable").empty();
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "https://zen2965.duckdns.org:8888/excelimport/DataService3.aspx/ExecuteSQL3",
+                    data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (res) {
+                        try {
+                            const data = JSON.parse(res.d);
+                            if (!data || data.length === 0) {
+                                $("#msg").text("⚠ 查無資料。");
+                                return;
+                            }
+
+                            // 1. 動態建立表頭 (thead) 與內容 (tbody) 的 HTML 結構
+                            let keys = Object.keys(data[0]);
+                            let theadHtml = "<thead><tr>";
+                            keys.forEach(k => { theadHtml += `<th>${k}</th>`; });
+                            theadHtml += "</tr></thead><tbody></tbody>";
+                            $("#resultTable").append(theadHtml);
+
+                            // 2. 準備每一行的數據
+                            data.forEach(row => {
+                                let trHtml = "<tr>";
+                                keys.forEach(k => {
+                                    let val = row[k] === null ? "" : row[k];
+                                    if (k.toLowerCase() === 'photo' && val !== "") {
+                                        let cleanVal = String(val).trim();
+                                        let imgSrc = cleanVal.startsWith("data:") ? cleanVal : "data:image/jpeg;base64," + cleanVal;
+                                        trHtml += `<td><img src="${imgSrc}" class="data-img" onclick="window.open(this.src)"></td>`;
+                                    } else {
+                                        trHtml += `<td>${val}</td>`;
+                                    }
+                                });
+                                trHtml += "</tr>";
+                                $("#resultTable tbody").append(trHtml);
+                            });
+
+                            // 3. 啟動 DataTables (Excel 功能核心)
+                            dataTableInstance = $('#resultTable').DataTable({
+                                "language": { "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" },
+                                "pageLength": 50, // 預設一頁 50 筆
+                                "order": [],      // 預設不排序，由 SQL 控制
+                                "searching": true, // 開啟關鍵字搜尋
+                                "ordering": true,  // 開啟點擊表頭排序
+                                "info": true,
+                                "lengthMenu": [20, 50, 100, 500],
+                                "scrollCollapse": true
+                            });
+
+                            $("#msg").text("✅ 查詢完成，共 " + data.length + " 筆。您可以點擊表頭進行排序。");
+                        } catch (err) {
+                            $("#msg").text("❌ 解析失敗: " + err.message);
+                        }
+                    },
+                    error: function (e) {
+                        $("#msg").text("❌ 連線失敗，請確認家裡電腦 DataService 是否運作。");
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
