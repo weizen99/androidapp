@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>股票資訊查詢系統</title>
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --accent-color: #f8f9fa;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Noto Sans TC', sans-serif;
+            color: #333;
+        }
+
+        /* 導航欄美化 */
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+
+        /* 卡片區域 */
+        .search-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 2rem;
+        }
+
+        .card-title {
+            color: #1e3c72;
+            font-weight: 700;
+            border-left: 5px solid #0d6efd;
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* 按鈕組優化 */
+        .btn-group-custom {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-custom {
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-custom:hover {
+            transform: scale(1.05);
+        }
+
+        /* 表格美化 */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .table thead {
+            background-color: #1e3c72;
+            color: white;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        /* 輸入框美化 */
+        .form-control-custom {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 10px 15px;
+        }
+
+        .form-control-custom:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            border-color: #0d6efd;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* 針對 API 連結的特定樣式 */
+        .api-links {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 頂部導航 -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Web API 彙總</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto api-links">
+                    <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/webapi/api/stockchange" target="_blank">基本資料API</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/webapi/api/avggolds/" target="_blank">均價均量API</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/obvtest1.html">OBV均線</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/favoritemy.html">我的最愛</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">藝廊系列</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/androidapp/stockpic3.html">美腿藝廊</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/androidapp/stockpic4.html">存書藝廊</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/androidapp/stockpic5.html">AiGirl藝廊</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/androidapp/stockpic6.html">herowars(pk)藝廊</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/androidapp/stockpic7.html">18+DM藝廊</a></li>
+
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 查詢控制區 -->
+        <div class="search-card">
+            <h4 class="card-title">數據查詢面板</h4>
+            
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">股票代號 / 關鍵字</label>
+                    <div class="input-group">
+                        <input type="text" id="stockCodeInput" class="form-control form-control-custom" value="2330" placeholder="例如: 2330 或 deepseek">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">我的最愛關鍵字</label>
+                    <div class="input-group">
+                        <input type="text" id="stockCodeInput1" class="form-control form-control-custom" value="deepseek" placeholder="輸入關鍵字">
+                        <button class="btn btn-dark" onclick="fetchData10()">最愛查詢</button>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="btn-group-custom">
+                <button class="btn btn-primary btn-custom" onclick="fetchData()">均價均量(單股)</button>
+                <button class="btn btn-outline-primary btn-custom" onclick="fetchData2()">均價均量(全部)</button>
+                <button class="btn btn-success btn-custom" onclick="fetchData3()">基本資料(單股)</button>
+                <button class="btn btn-outline-success btn-custom" onclick="fetchData4()">基本資料(全部)</button>
+                <button class="btn btn-info text-white btn-custom" onclick="fetchData5()">彙總(單股)</button>
+                <button class="btn btn-outline-info btn-custom" onclick="fetchData6()">彙總(前1810筆)</button>
+                <button class="btn btn-warning text-white btn-custom" onclick="fetchData7()">OBV均線</button>
+            </div>
+        </div>
+
+        <!-- 讀取提示 -->
+        <div id="loading">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">正在抓取即時數據，請稍候...</p>
+        </div>
+
+        <!-- 結果顯示區 -->
+        <div class="table-responsive table-container" id="resultArea">
+            <table class="table table-hover table-striped mb-0" id="mainTable">
+                <tbody id="demo"></tbody>
+                <tbody id="demo2"></tbody>
+            </table>
+        </div>
+        
+        <br><br>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        // 輔助函式：顯示讀取中
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            if(show) {
+                document.getElementById("demo").innerHTML = "";
+                document.getElementById("demo2").innerHTML = "";
+            }
+        }
+
+        function fetchData() {
+            showLoading(true);
+            const stockCode = document.getElementById("stockCodeInput").value;
+            const url = `https://zen2965.duckdns.org:8888/webapi/api/avggolds/${stockCode}`;
+            
+            fetch(url, { mode: 'no-cors' })
+                .then(response => response.text())
+                .then(data => {
+                    showLoading(false);
+                    const values = data.split(",").map(item => item.trim().split(":")[1]);
+                    const [autoNumber, stockName, code, avgCross, volCross, exchange, industry, capital, date] = values;
+
+                    let str = `<thead><tr><th>自動編號</th><th>名稱</th><th>代號</th><th>均價交叉</th><th>均量交叉</th><th>產業</th><th>交易所</th><th>股本(億)</th><th>日期</th></tr></thead>`;
+                    str += `<tr><td>${autoNumber}</td><td>${stockName}</td><td>${code}</td><td>${avgCross}</td><td>${volCross}</td><td>${industry}</td><td>${exchange}</td><td>${capital}</td><td>${date}</td></tr>`;
+                    document.getElementById("demo").innerHTML = str;
+                })
+                .catch(error => { showLoading(false); console.log(error); });
+        }
+
+        function fetchData2() {
+            showLoading(true);
+            const url = `https://zen2965.duckdns.org:8888/webapi/api/avggolds`;
+            fetch(url, { mode: 'no-cors' })
+                .then(response => response.json())
+                .then(data => {
+                    showLoading(false);
+                    let str = `<thead><tr><th>自動編號</th><th>名稱</th><th>代號</th><th>均價交叉</th><th>均量交叉</th><th>產業</th><th>交易所</th><th>股本(億)</th><th>日期</th></tr></thead>`;
+                    data.forEach(item => {
+                        str += `<tr><td>${item['自動編號']}</td><td>${item['股票名稱']}</td><td>${item['股票代號']}</td><td>${item['均價黃金交叉次數']}</td><td>${item['均量黃金交叉次數']}</td><td>${item['產業分類']}</td><td>${item['交易所分類']}</td><td>${item['股本億']}</td><td>${item['日期']}</td></tr>`;
+                    });
+                    document.getElementById("demo2").innerHTML = str;
+                })
+                .catch(error => { showLoading(false); console.log(error); });
+        }
+
+        function fetchData3() {
+            showLoading(true);
+            const stockCode = document.getElementById("stockCodeInput").value;
+            const url = `https://zen2965.duckdns.org:8888/webapi/api/stockchange/${stockCode}`;
+
+            fetch(url, { mode: 'no-cors' })
+                .then(response => response.text())
+                .then(data => {
+                    showLoading(false);
+                    const values = data.split(",").map(item => item.trim().split(":")[1]);
+                    const [name, code, price, increase, amount, exchange, industry, mValue, listing] = values;
+
+                    let str = `<thead><tr><th>名稱</th><th>代號</th><th>成交價</th><th>漲幅</th><th>總量</th><th>交易所</th><th>產業</th><th>市值(億)</th><th>上市/櫃</th></tr></thead>`;
+                    str += `<tr><td>${name}</td><td>${code}</td><td>${price}</td><td>${increase}</td><td>${amount}</td><td>${exchange}</td><td>${industry}</td><td>${mValue}</td><td>${listing}</td></tr>`;
+                    document.getElementById("demo").innerHTML = str;
+                })
+                .catch(error => { showLoading(false); console.log(error); });
+        }
+
+        function fetchData4() {
+            showLoading(true);
+            const url = `https://zen2965.duckdns.org:8888/webapi/api/stockchange`;
+            fetch(url, { mode: 'no-cors' })
+                .then(response => response.json())
+                .then(data => {
+                    showLoading(false);
+                    let str = `<thead><tr><th>編號</th><th>K線</th><th>代號</th><th>名稱</th><th>成交價</th><th>漲跌</th><th>漲幅</th><th>總量</th><th>產業</th><th>股本</th></tr></thead>`;
+                    data.forEach(item => {
+                        str += `<tr><td>${item['自動編號']}</td><td>${item['K線']}</td><td>${item['代號']}</td><td>${item['名稱']}</td><td>${item['成交價']}</td><td>${item['漲跌']}</td><td>${item['漲幅']}</td><td>${item['總量']}</td><td>${item['產業分類']}</td><td>${item['股本億']}</td></tr>`;
+                    });
+                    document.getElementById("demo2").innerHTML = str;
+                })
+                .catch(error => { showLoading(false); console.log(error); });
+        }
+
+        function fetchData5() {
+            showLoading(true);
+            const stockCode = document.getElementById("stockCodeInput").value;
+            const url = `https://zen2965.duckdns.org:8888/webapi/api/winnewdates/${stockCode}`;
+            fetch(url, { mode: 'no-cors' })
+                .then(response => response.json())
+                .then(data => {
+                    showLoading(false);
+                    let str = `<thead><tr><th>名稱</th><th>代號</th><th>站均</th><th>均價數</th><th>外資數</th><th>k9</th><th>d9</th><th>MACD</th><th>本益比</th><th>日期</th></tr></thead>`;
+                    data.forEach(item => {
+                        str += `<tr><td>${item['股票名稱']}</td><td>${item['股票代號']}</td><td>${item['站均']}</td><td>${item['均價黃金交叉次數']}</td><td>${item['外資黃金交叉次數']}</td><td>${item['k9']}</td><td>${item['d9']}</td><td>${item['macd']}</td><td>${item['本益比預估']}</td><td>${item['日期']}</td></tr>`;
+                    });
+                    document.getElementById("demo2").innerHTML = str;
+                })
+                .catch(error => { showLoading(false); console.log(error); });
+        }
+
+        function fetchData6() {
+            // 與 fetchData5 邏輯類似，僅 URL 不同
+            showLoading(true);
+            const url = `https://zen2965.duckdns.org:8888/webapi/api/winnewdates`;
+            fetch(url, { mode: 'no-cors' })
+                .then(response => response.json())
+                .then(data => {
+                    showLoading(false);
+                    let str = `<thead><tr><th>名稱</th><th>代號</th><th>站均</th><th>均價數</th><th>外資數</th><th>k9</th><th>d9</th><th>本益比</th><th>日期</th></tr></thead>`;
+                    data.forEach(item => {
+                        str += `<tr><td>${item['股票名稱']}</td><td>${item['股票代號']}</td><td>${item['站均']}</td><td>${item['均價黃金交叉次數']}</td><td>${item['外資黃金交叉次數']}</td><td>${item['k9']}</td><td>${item['d9']}</td><td>${item['本益比預估']}</td><td>${item['日期']}</td></tr>`;
+                    });
+                    document.getElementById("demo2").innerHTML = str;
+                })
+                .catch(error => { showLoading(false); console.log(error); });
+        }
+
+        function fetchData7() {
+            showLoading(true);
+            const stockCode = document.getElementById("stockCodeInput").value;
+            const url = `https://zen2965.duckdns.org:8888/webapi/api/obvdatea5/${stockCode}`;
+            fetch(url, { mode: 'no-cors' })
+                .then(response => response.json())
+                .then(data => {
+                    showLoading(false);
+                    let str = `<thead><tr><th>名稱</th><th>代號</th><th>成交價</th><th>總量</th><th>OBV淨額</th><th>5日均</th><th>20日均</th><th>日期</th></tr></thead>`;
+                    data.forEach(item => {
+                        str += `<tr><td>${item['名稱']}</td><td>${item['代號']}</td><td>${item['成交價']}</td><td>${item['總量']}</td><td>${item['obv淨額']}</td><td>${item['五日平均線']}</td><td>${item['二十日平均線']}</td><td>${item['日期']}</td></tr>`;
+                    });
+                    document.getElementById("demo2").innerHTML = str;
+                })
+                .catch(error => { showLoading(false); console.log(error); });
+        }
+
+        function fetchData10() {
+            showLoading(true);
+            const stockCode = document.getElementById("stockCodeInput1").value;
+            const url = `https://zen2965.duckdns.org:8888/webapi/api/guestinfowd1/${stockCode}`;
+            fetch(url, { mode: 'no-cors' })
+                .then(response => response.json())
+                .then(data => {
+                    showLoading(false);
+                    let str = `<thead><tr><th>識別碼</th><th>名稱(nam1)</th><th>Mail</th><th>Word</th><th>時間戳記</th></tr></thead>`;
+                    data.forEach(item => {
+                        str += `<tr><td>${item['識別碼']}</td><td>${item['nam1']}</td><td>${item['mail1']}</td><td>${item['word1']}</td><td>${item['時間戳記']}</td></tr>`;
+                    });
+                    document.getElementById("demo2").innerHTML = str;
+                })
+                .catch(error => { showLoading(false); console.log(error); });
+        }
+    </script>
+</body>
+</html>
