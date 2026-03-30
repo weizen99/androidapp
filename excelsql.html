@@ -161,7 +161,7 @@
 
     <script>
         // --- 範本資料庫 ---
-        const sqlTemplateLibrary = [
+              const sqlTemplateLibrary = [
             {
                 cat: "漲幅選股", title: "近10期價量漲幅", sql: `priceincrease1.名稱, priceincrease1.代號,
                        View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量,
@@ -240,6 +240,39 @@ GROUP BY priceincrease1.名稱, priceincrease1.代號,
                                 View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.股本億, priceincrease1.本日,
                                 priceincrease10.前一日
 ORDER BY   近4期價漲幅 DESC` },
+            {
+                cat: "漲幅選股", title: "剛起漲", sql: `priceincrease1.名稱, priceincrease1.代號,ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅, 
+                            ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2) AS 近3期量增幅, 
+                            View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量, 
+                            priceincrease1.成交價漲幅百分比 AS 近2期價漲幅, priceincrease2.成交價漲幅百分比 AS 近3期價漲幅, 
+                            priceincrease3.成交價漲幅百分比 AS 近4期價漲幅, priceincrease4.成交價漲幅百分比 AS 近5期價漲幅, 
+                            priceincrease5.成交價漲幅百分比 AS 近6期價漲幅, priceincrease6.成交價漲幅百分比 AS 近7期價漲幅, 
+                            priceincrease7.成交價漲幅百分比 AS 近8期價漲幅, priceincrease8.成交價漲幅百分比 AS 近9期價漲幅, 
+                            priceincrease9.成交價漲幅百分比 AS 近10期價漲幅, priceincrease10.成交價漲幅百分比 AS 近11期價漲幅, 
+                            priceincrease1.成交量漲幅百分比 AS 近2期量漲幅, priceincrease2.成交量漲幅百分比 AS 近3期量漲幅, 
+                            priceincrease3.成交量漲幅百分比 AS 近4期量漲幅, priceincrease4.成交量漲幅百分比 AS 近5期量漲幅, 
+                            priceincrease5.成交量漲幅百分比 AS 近6期量漲幅, priceincrease6.成交量漲幅百分比 AS 近7期量漲幅, 
+                            priceincrease7.成交量漲幅百分比 AS 近8期量漲幅, priceincrease8.成交量漲幅百分比 AS 近9期量漲幅, 
+                            priceincrease9.成交量漲幅百分比 AS 近10期量漲幅, priceincrease10.成交量漲幅百分比 AS 近11期量漲幅, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.股本億, priceincrease1.本日 AS 今日, 
+                            priceincrease10.前一日 AS 前日
+FROM              priceincrease1 INNER JOIN
+                            priceincrease4 ON priceincrease1.代號 = priceincrease4.代號 LEFT OUTER JOIN
+                            priceincrease5 ON priceincrease1.代號 = priceincrease5.代號 LEFT OUTER JOIN
+                            priceincrease6 ON priceincrease1.代號 = priceincrease6.代號 LEFT OUTER JOIN
+                            priceincrease7 ON priceincrease1.代號 = priceincrease7.代號 LEFT OUTER JOIN
+                            priceincrease8 ON priceincrease1.代號 = priceincrease8.代號 LEFT OUTER JOIN
+                            priceincrease9 ON priceincrease1.代號 = priceincrease9.代號 LEFT OUTER JOIN
+                            priceincrease10 ON priceincrease1.代號 = priceincrease10.代號 LEFT OUTER JOIN
+                            View_stockchange ON priceincrease1.代號 = View_stockchange.代號 LEFT OUTER JOIN                            
+                            priceincrease3 ON priceincrease1.代號 = priceincrease3.代號 LEFT OUTER JOIN
+                            priceincrease2 ON priceincrease1.代號 = priceincrease2.代號
+WHERE  priceincrease1.代號 IN ((SELECT          代號
+                                  FROM               incomechar8)) and (priceincrease3.成交價漲幅百分比 < 15) AND (priceincrease3.成交價漲幅百分比 > -3) and 
+                            (priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比 < 3)  and (priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比 > -5 ) AND 
+                            (priceincrease3.成交量漲幅百分比 > 50) and View_stockchange.總量>500
+ORDER BY   近4期價漲幅 DESC` },
+
             {
                 cat: "漲幅選股", title: "剛起漲-自選股", sql: `priceincrease1.名稱, priceincrease1.代號,
                                 ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅,
@@ -407,6 +440,28 @@ order by 日期 desc`
             { cat: "黃金交叉次數", title: "成交價黃金交叉增加最多(列出最近四天)", sql: `TOP 50 股票名稱, 股票代號, 成交價, 漲幅, 總量, 近4期均價合計, 近4期均量合計, 產業分類, 交易所分類, 股本億, 日期, 近1期均價, 近2期均價, 近3期均價, 近4期均價, 近1期均量, 近2期均量, 近3期均量, 近4期均量, ROW_NUMBER() OVER (ORDER BY 近4期均價合計 desc) AS 流水號 FROM winnewdatechange WHERE (總量 >= 1000)  and 日期 = 20260327 ORDER BY 近4期均價合計 DESC,近4期均量合計 DESC` },
             { cat: "黃金交叉次數", title: "成交量黃金交叉增加最多(列出最近四天)", sql: `TOP 50 股票名稱, 股票代號, 成交價, 漲幅, 總量, 近4期均價合計, 近4期均量合計, 產業分類, 交易所分類, 股本億, 日期, 近1期均價, 近2期均價, 近3期均價, 近4期均價, 近1期均量, 近2期均量, 近3期均量, 近4期均量, ROW_NUMBER() OVER (ORDER BY 近4期均量合計 desc) AS 流水號 FROM winnewdatechange WHERE (總量 >= 5000) ORDER BY 近4期均量合計 DESC,近4期均價合計 DESC` },
             { cat: "黃金交叉次數", title: "三大法人黃金交叉增加最多(列出最近四天) ", sql: `TOP 50 dbo.View_day1winnew.股票名稱, dbo.View_day1winnew.股票代號, dbo.View_stockchange.成交價, dbo.View_stockchange.漲幅, dbo.View_stockchange.總量, (((dbo.View_day1winnew.三大法人1黃金交叉次數 - dbo.View_day2winnew.三大法人2黃金交叉次數) + (dbo.View_day2winnew.三大法人2黃金交叉次數 - dbo.View_day3winnew.三大法人3黃金交叉次數)) + (dbo.View_day3winnew.三大法人3黃金交叉次數 - dbo.View_day4winnew.三大法人4黃金交叉次數)) + (dbo.View_day4winnew.三大法人4黃金交叉次數 - dbo.View_day5winnew.三大法人5黃金交叉次數) AS 近4期三大法人合計, (((dbo.View_day1winnew.外資1黃金交叉次數 - dbo.View_day2winnew.外資2黃金交叉次數) + (dbo.View_day2winnew.外資2黃金交叉次數 - dbo.View_day3winnew.外資3黃金交叉次數)) + (dbo.View_day3winnew.外資3黃金交叉次數 - dbo.View_day4winnew.外資4黃金交叉次數)) + (dbo.View_day4winnew.外資4黃金交叉次數 - dbo.View_day5winnew.外資5黃金交叉次數) AS 近4期外資合計, (((dbo.View_day1winnew.投信1黃金交叉次數 - dbo.View_day2winnew.投信2黃金交叉次數) + (dbo.View_day2winnew.投信2黃金交叉次數 - dbo.View_day3winnew.投信3黃金交叉次數)) + (dbo.View_day3winnew.投信3黃金交叉次數 - dbo.View_day4winnew.投信4黃金交叉次數)) + (dbo.View_day4winnew.投信4黃金交叉次數 - dbo.View_day5winnew.投信5黃金交叉次數) AS 近4期投信合計, dbo.View_day1winnew.產業分類, dbo.View_day1winnew.交易所分類, dbo.View_day1winnew.股本億, dbo.View_day1winnew.日期, dbo.View_day1winnew.三大法人1黃金交叉次數 - dbo.View_day2winnew.三大法人2黃金交叉次數 AS 近1期三大法人, dbo.View_day2winnew.三大法人2黃金交叉次數 - dbo.View_day3winnew.三大法人3黃金交叉次數 AS 近2期三大法人, dbo.View_day3winnew.三大法人3黃金交叉次數 - dbo.View_day4winnew.三大法人4黃金交叉次數 AS 近3期三大法人, dbo.View_day4winnew.三大法人4黃金交叉次數 - dbo.View_day5winnew.三大法人5黃金交叉次數 AS 近4期三大法人, dbo.View_day1winnew.外資1黃金交叉次數 - dbo.View_day2winnew.外資2黃金交叉次數 AS 近1期外資, dbo.View_day2winnew.外資2黃金交叉次數 - dbo.View_day3winnew.外資3黃金交叉次數 AS 近2期外資, dbo.View_day3winnew.外資3黃金交叉次數 - dbo.View_day4winnew.外資4黃金交叉次數 AS 近3期外資, dbo.View_day4winnew.外資4黃金交叉次數 - dbo.View_day5winnew.外資5黃金交叉次數 AS 近4期外資, dbo.View_day1winnew.投信1黃金交叉次數 - dbo.View_day2winnew.投信2黃金交叉次數 AS 近1期投信, dbo.View_day2winnew.投信2黃金交叉次數 - dbo.View_day3winnew.投信3黃金交叉次數 AS 近2期投信, dbo.View_day3winnew.投信3黃金交叉次數 - dbo.View_day4winnew.投信4黃金交叉次數 AS 近3期投信, dbo.View_day4winnew.投信4黃金交叉次數 - dbo.View_day5winnew.投信5黃金交叉次數 AS 近4期投信 FROM dbo.View_day1winnew INNER JOIN dbo.View_day2winnew ON dbo.View_day1winnew.股票代號 = dbo.View_day2winnew.股票代號 INNER JOIN dbo.View_day3winnew ON dbo.View_day2winnew.股票代號 = dbo.View_day3winnew.股票代號 INNER JOIN dbo.View_day4winnew ON dbo.View_day3winnew.股票代號 = dbo.View_day4winnew.股票代號 INNER JOIN dbo.View_day5winnew ON dbo.View_day4winnew.股票代號 = dbo.View_day5winnew.股票代號 INNER JOIN dbo.View_stockchange ON dbo.View_day1winnew.股票代號 = dbo.View_stockchange.代號 ORDER BY 近4期三大法人合計 DESC, 近4期外資合計 DESC, 近4期投信合計 DESC` },
+            {
+                cat: "黃金交叉次數", title: "自選股+成交價金叉加權分數等", sql: `DISTINCT 
+                            TOP (100) PERCENT View_winnewdate1.股票名稱, View_winnewdate1.股票代號, View_winnewdate1.站均, 
+                            View_winnewdate1.均價黃金交叉次數, View_winnewdate1.集中度1日, View_winnewdate1.集中度5日, 
+                            View_winnewdate1.集中度10日, View_winnewdate1.集中度20日, View_winnewdate1.集中度60日, 
+                            View_winnewdate1.正負DI百分比, View_winnewdate1.三週庫存比率 / 100 AS [三週庫存比率/100], 
+                            View_winnewdate1.日期, ROUND(View_winnewdate1.k9 - View_winnewdate1.d9, 2) AS 日kd差, 
+                            ROUND(View_winnewdate1.週k9 - View_winnewdate1.週d9, 2) AS 週kd差, 
+                            ROUND(View_winnewdate1.月k9 - View_winnewdate1.月d9, 2) AS 月kd差, 
+                            ROUND((((((((View_winnewdate1.均價黃金交叉次數 + View_winnewdate1.k9 / 5) - View_winnewdate1.d9 / 5) 
+                            + View_winnewdate1.週k9 / 5) - View_winnewdate1.週d9 / 5) + View_winnewdate1.月k9 / 5) 
+                            - View_winnewdate1.月d9 / 5) + View_winnewdate1.合計十天 / 10) + View_winnewdate1.三週庫存比率 / 100, 2) 
+                            AS 總分, View_obvday1.obv淨額, View_obvday1.三十四日平均線, 
+                            ROUND((View_obvday1.obv淨額 - View_obvday1.三十四日平均線) / ABS(View_obvday1.三十四日平均線) * 100, 2) 
+                            AS obv均線乖離率
+FROM              View_winnewdate1 INNER JOIN
+                            View_obvday1 ON View_winnewdate1.股票代號 = View_obvday1.代號
+WHERE          (View_winnewdate1.股票代號 IN
+                                (SELECT          代號
+                                  FROM               incomechar))
+ORDER BY   總分 DESC` },
+
             {
                 cat: "股權分散表", title: "週變動排序", sql: `/*資料庫:stockprice*/TOP (100) PERCENT View_day1mastersum.名稱, View_day1mastersum.證券代號,
                                 View_day1mastersum.主力庫存比率day1加總, View_day2mastersum.主力庫存比率day2加總,
@@ -585,16 +640,67 @@ GROUP BY dbo.basicinfo.名稱, dbo.basicinfo.代號, dbo.basicinfo.漲幅,
                                 2), ROUND((dbo.linedaytotoldate.今日成交價 - dbo.linedaytotoldate.六十日均線)
                                 / dbo.linedaytotoldate.六十日均線 * 100, 2)
 ORDER BY   五日乖離 desc` },
+
+            {
+                cat: "技術類", title: "總量+maxd紅綠棒值+J值", sql: `DISTINCT 
+                            TOP (100) PERCENT View_basicinfo.名稱 AS 股票名稱, View_basicinfo.代號 AS 股票代號, View_basicinfo.成交價,
+                             View_basicinfo.漲跌, View_basicinfo.漲幅, View_basicinfo.總量, linedaysort.站均, avggold.均價黃金交叉次數, 
+                            avggold.均量黃金交叉次數, avggold三大法人.三大法人黃金交叉次數, 
+                            avggold三大法人.外資黃金交叉次數, avggold三大法人.投信黃金交叉次數, 
+                            macdchartable.macd AS macd紅綠棒值, rsvjasc.當日J值一 AS 今日J值, rsvjasc.當日J值二 AS 前一日J值, 
+                            rsvjasc.當日J值三 AS 前二日J值, rsvjasc.當日J值四 AS 前三日J值, rsvjasc.J值過高 AS J值過三日高差值, 
+                            day1kd.k9, day1kd.d9, day1kd.週k9, day1kd.週d9, day1kd.月k9, day1kd.月d9, day1macd.macd, 
+                            View_chips5table.集中度1日, View_chips5table.集中度5日, View_chips5table.集中度10日, 
+                            View_chips5table.集中度20日, View_chips5table.集中度60日, View_value.本益比預估, 
+                            View_value.本益比近四季, View_value.股價淨值比, View_value.現金殖利率, trend.一日漲幅, trend.三日漲幅, 
+                            trend.五日漲幅, trend.十日漲幅, trend.二十日漲幅, trend.四十日漲幅, trend.六十日漲幅, todaydi.正DI, 
+                            todaydi.負DI, todaydi.趨向ADX, todaydi.正趨百分比, todaydi.負趨百分比, todaydi.正負DI百分比, 
+                            主力加法人佔股本比彙總.[三大法人佔股本比%一天], 主力加法人佔股本比彙總.[主力佔股本比%一天], 
+                            主力加法人佔股本比彙總.合計一天, 主力加法人佔股本比彙總.法人三天, 
+                            主力加法人佔股本比彙總.主力三天, 主力加法人佔股本比彙總.合計三天, 
+                            主力加法人佔股本比彙總.法人五天, 主力加法人佔股本比彙總.主力五天, 
+                            主力加法人佔股本比彙總.合計五天, 主力加法人佔股本比彙總.法人十天, 
+                            主力加法人佔股本比彙總.主力十天, 主力加法人佔股本比彙總.合計十天, 
+                            主力加法人佔股本比彙總.法人二十天, 主力加法人佔股本比彙總.主力二十天, 
+                            主力加法人佔股本比彙總.合計二十天, 主力加法人佔股本比彙總.法人預設, 
+                            主力加法人佔股本比彙總.主力預設, 主力加法人佔股本比彙總.合計預設, View_weekequity.一週庫存比率, 
+                            View_weekequity.二週庫存比率, View_weekequity.三週庫存比率, View_weekequity.四週庫存比率, 
+                            View_weekequity.五週庫存比率, View_weekequity.六週庫存比率, View_weekequity.七週庫存比率, 
+                            View_weekequity.近二期增幅, View_weekequity.近三期增幅, View_weekequity.近四期增幅, 
+                            View_weekequity.近五期增幅, View_weekequity.近六期增幅, View_weekequity.近七期增幅, 
+                            View_weekequity.最新週, avggold融資券.資使用率, avggold融資券.資使用率黃金交叉次數, 
+                            avggold融資券.券使用率, avggold融資券.券使用率黃金交叉次數, avggold融資券.券資比, 
+                            avggold融資券.券資比黃金交叉次數, avggold.產業分類, avggold.交易所分類, avggold.股本億, 
+                            avggold.日期
+FROM              avggold INNER JOIN
+                            View_value ON avggold.股票代號 = View_value.代號 LEFT OUTER JOIN
+                            macdchartable ON avggold.日期 = macdchartable.日期 AND 
+                            avggold.股票代號 = macdchartable.股票代號 LEFT OUTER JOIN
+                            rsvjasc ON avggold.股票代號 = rsvjasc.代號 LEFT OUTER JOIN
+                            View_chips5table ON avggold.股票代號 = View_chips5table.代號 RIGHT OUTER JOIN
+                            View_basicinfo ON avggold.股票代號 = View_basicinfo.代號 LEFT OUTER JOIN
+                            avggold融資券 ON avggold.股票代號 = avggold融資券.代號 LEFT OUTER JOIN
+                            View_weekequity ON avggold.股票代號 = View_weekequity.代號 LEFT OUTER JOIN
+                            linedaysort ON avggold.股票代號 = linedaysort.代號 LEFT OUTER JOIN
+                            day1macd ON avggold.股票代號 = day1macd.股票代號 LEFT OUTER JOIN
+                            day1kd ON avggold.股票代號 = day1kd.股票代號 LEFT OUTER JOIN
+                            avggold三大法人 ON avggold.股票代號 = avggold三大法人.股票代號 LEFT OUTER JOIN
+                            主力加法人佔股本比彙總 ON avggold.股票代號 = 主力加法人佔股本比彙總.代號 LEFT OUTER JOIN
+                            todaydi ON avggold.股票代號 = todaydi.股票代號 LEFT OUTER JOIN
+                            trend ON avggold.股票代號 = trend.代號
+WHERE         (View_basicinfo.總量 >= 500) and ((macdchartable.macd >= -0.03) AND (macdchartable.macd <= 50)) and ((rsvjasc.當日J值一 >= 0) AND (rsvjasc.當日J值一 <=  100))` },
+
             {
                 cat: "obv多空淨額", title: "自選股+盤後+綜合+OBV均線", sql: `a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5)
                                 + a.週k9 / 5) - a.週d9 / 5) + a.月k9 / 5) - a.月d9 / 5)
                                 + a.合計十天 / 10) + a.三週庫存比率 / 100, 2) AS 加權總分,a.[均量黃金交叉次數],a.[三大法人黃金交叉次數],a.[外資黃金交叉次數] ,a.[投信黃金交叉次數],c.obv淨額,c.三十四日平均線,d.五日平均線,c.obv淨額-d.五日平均線 as 站上五日均線,c.obv淨額-c.三十四日平均線 as 站上三十四日均線,macdpic.DIF減MACD,a.[k9],a.[d9] ,a.[週k9],a.[週d9],a.[月k9] ,a.[月d9],a.[macd],a.[集中度1日] ,a.[集中度5日] ,a.[集中度10日],a.[集中度20日] ,a.[集中度60日],a.[本益比預估] ,a.[本益比近四季],a.[股價淨值比] ,a.[現金殖利率] ,a.[正DI] ,a.[負DI] ,a.[趨向ADX] ,a.[正趨百分比] ,a.[負趨百分比] ,a.[正負DI百分比] ,a.[三大法人佔股本比%一天] ,a.[主力佔股本比%一天],a.[合計一天] ,a.[法人三天],a.[主力三天],a.[合計三天],a.[法人五天],a.[主力五天],a.[合計五天] ,a.[法人十天] ,a.[主力十天],a.[合計十天] ,a.[法人二十天] ,a.[主力二十天],a.[合計二十天] ,a.[法人預設] ,a.[主力預設] ,a.[合計預設] ,a.[一週庫存比率] ,a.[二週庫存比率] ,a.[三週庫存比率],a.[四週庫存比率],a.[五週庫存比率] ,a.[六週庫存比率] ,a.[七週庫存比率] ,a.[近二期增幅] ,a.[近三期增幅] ,a.[近四期增幅] ,a.[近五期增幅] ,a.[近六期增幅],a.[近七期增幅] ,a.[最新週],a.[資使用率] ,a.[資使用率黃金交叉次數] ,a.[券使用率] ,a.[券使用率黃金交叉次數] ,a.[券資比] ,a.[券資比黃金交叉次數] ,a.[產業分類] ,a.[交易所分類] ,a.[股本億] ,a.[日期], b.成交價 as 盤中成交價, b.漲跌, b.漲幅, b.總量 as 盤中總量 from winnewdate as a inner join view_basicinfo as b on a.股票代號 = b.代號 inner join obvdatea3 as c on a.股票代號 = c.代號 and a.日期 = c.日期 inner join obvdatea5 as d on c.代號 =  d.代號 and c.日期 = d.日期 INNER JOIN macdpic on  a.股票代號 = macdpic.股票代號 and a.日期 = macdpic.日期
 where (b.代號 IN (SELECT 代號 FROM  incomechar20)) AND (a.日期 = (SELECT TOP (1) MAX(日期) AS Expr1  FROM basicinfo AS basicinfo_1))` },
             {
-                cat: "obv多空淨額", title: "單股+多天", sql: `top 20 a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5)
+                cat: "obv多空淨額", title: "單股+obv+winewdate多天", sql: `top 20 a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5)
                                 + a.週k9 / 5) - a.週d9 / 5) + a.月k9 / 5) - a.月d9 / 5)
                                 + a.合計十天 / 10) + a.三週庫存比率 / 100, 2) AS 加權總分 ,a.[均量黃金交叉次數],a.[三大法人黃金交叉次數],a.[外資黃金交叉次數] ,a.[投信黃金交叉次數],c.obv淨額,c.三十四日平均線,d.五日平均線,c.obv淨額-d.五日平均線 As 站上五日均線,c.obv淨額-c.三十四日平均線 As 站上三十四日均線,macdpic.DIF減MACD,a.[k9],a.[d9] ,a.[週k9],a.[週d9],a.[月k9] ,a.[月d9],a.[macd],a.[集中度1日] ,a.[集中度5日] ,a.[集中度10日],a.[集中度20日] ,a.[集中度60日],a.[本益比預估] ,a.[本益比近四季],a.[股價淨值比] ,a.[現金殖利率] ,a.[正DI] ,a.[負DI] ,a.[趨向ADX] ,a.[正趨百分比] ,a.[負趨百分比] ,a.[正負DI百分比] ,a.[三大法人佔股本比%一天] ,a.[主力佔股本比%一天],a.[合計一天] ,a.[法人三天],a.[主力三天],a.[合計三天],a.[法人五天],a.[主力五天],a.[合計五天] ,a.[法人十天] ,a.[主力十天],a.[合計十天] ,a.[法人二十天] ,a.[主力二十天],a.[合計二十天] ,a.[法人預設] ,a.[主力預設] ,a.[合計預設] ,a.[一週庫存比率] ,a.[二週庫存比率] ,a.[三週庫存比率],a.[四週庫存比率],a.[五週庫存比率] ,a.[六週庫存比率] ,a.[七週庫存比率] ,a.[近二期增幅] ,a.[近三期增幅] ,a.[近四期增幅] ,a.[近五期增幅] ,a.[近六期增幅],a.[近七期增幅] ,a.[最新週],a.[資使用率] ,a.[資使用率黃金交叉次數] ,a.[券使用率] ,a.[券使用率黃金交叉次數] ,a.[券資比] ,a.[券資比黃金交叉次數] ,a.[產業分類] ,a.[交易所分類] ,a.[股本億] ,a.[日期], b.成交價 As 盤中成交價, b.漲跌, b.漲幅, b.總量 As 盤中總量  from winnewdate As a inner join view_basicinfo As b On a.股票代號 = b.代號 inner join obvdatea3 As c On a.股票代號 = c.代號 And a.日期 = c.日期 inner join obvdatea5 As d On c.代號 =  d.代號 And c.日期 = d.日期 INNER JOIN macdpic On  a.股票代號 = macdpic.股票代號 And a.日期 = macdpic.日期 where
 (b.代號 = /*輸入股票代號=>*/N'3017') order by 日期 desc` },
+
             {
                 cat: "基本面", title: "近五年營業額", sql: `TOP (100) PERCENT View_income近一年.名稱 AS 股票名稱, View_income近一年.代號 AS 股票代號,
                                 View_income最新年.最新年營收 AS 營收最新年, View_income近一年.近一年營收 AS 營收近一年,
@@ -624,7 +730,7 @@ FROM              View_income近二年 INNER JOIN
                                 View_income最新年 ON View_income近二年.代號 = View_income最新年.代號 AND RIGHT(View_income近二年.日期,
                                 2) = RIGHT(View_income最新年.日期, 2)
                                 WHERE (View_income近一年.代號 = N'2330')
-                                ORDER BY  View_income近一年.日期` },
+                                ORDER BY  View_income近一年.日期` },           
             {
                 cat: "基本面", title: "近五年EPS", sql: `TOP (100) PERCENT dbo.View_finance最新年.名稱, dbo.View_finance最新年.代號,
                                 dbo.View_finance最新年.最新年EPS累計, dbo.View_finance近一年.近一年EPS累計,
@@ -649,29 +755,253 @@ FROM              dbo.View_finance近二年 INNER JOIN
                                 RIGHT(dbo.View_finance近一年.日期, 2) = RIGHT(dbo.View_finance最新年.日期, 2)
                                 WHERE (dbo.View_finance最新年.代號 = N'2330')
                                 ORDER BY   dbo.View_finance最新年.代號, dbo.View_finance最新年.日期` },
+            
+            { cat: "圖片類", title: "Ai girl", sql: `/*資料庫:fvor2*/ * from stockgod21 where 識別碼>1000 and 識別碼<1050` },
+            { cat: "圖片類", title: "gif檔", sql: `/*資料庫:fvor2*/top 30 * from stockgod28` },          
             { cat: "圖片類", title: "面積 考卷", sql: `/*資料庫:fvor2*/top 20 * from stockgod` },
-            { cat: "圖片類", title: "Ai girl", sql: `/*資料庫:fvor2*/ * from stockgod21 where 識別碼>300 and 識別碼<320` },
-            { cat: "圖片類", title: "gif檔", sql: `/*資料庫:fvor2*/top 30 * from stockgod28` },
             { cat: "圖片類", title: "圖片藝廊", sql: `/*詳見上排藝廊 https://weizen99.github.io/androidapp/basicinfotable.html */` },
+            { cat: "文字類", title: "成語", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfo4]` },
+            { cat: "文字類", title: "我的最愛", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfowd1]` },
+            { cat: "文字類", title: "自建概念股", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfowd5]` },
+            { cat: "文字類", title: "美股", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfowd6]` },
+            { cat: "文字類", title: "excel程式碼", sql: `/*資料庫:pokopoko*/top 100 * from poemexcel` },
+            { cat: "文字類", title: "java程式碼", sql: ` /*資料庫:pokopoko*/top 100 * from poemjava` },
+            { cat: "文字類", title: "visualbasic程式碼", sql: `/*資料庫:pokopoko*/top 100 * from poemvisualbasic` },
+            { cat: "文字類", title: "web程式碼", sql: `/*資料庫:pokopoko*/top 100 * from poemweb` },
+            { cat: "文字類", title: "youbike座標", sql: `/*資料庫:pokopoko*/ * from textmsgyb` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            {
+                cat: "盤中選股", title: "盤中obv+自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高, 
+                            obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, 
+                            obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量, 
+                            obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率, (obv盤中選股.盤中的累積obv均量-obv盤中選股.盤中計算出來的最新三十四日平均線) as 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線)                / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率 , 
+(obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) AS 站上五日平均線張數            
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.代號 IN
+                                (SELECT          代號
+                                  FROM               incomechar20)) AND (obv計算黃金交叉次數.日期 =
+                                (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
+ORDER BY   站上五日平均線張數 DESC` },
+            {
+                cat: "盤中選股", title: "盤中站上obv五日均線", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高, 
+                            obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, 
+                            obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量, 
+                            obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線 AS 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 AS 站上五日平均線張數
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號 INNER JOIN
+                            View_day2obvdate3_1 ON obv盤中選股.代號 = View_day2obvdate3_1.代號
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.代號 IN
+                                (SELECT          代號
+                                  FROM               incomechar20)) AND (obv計算黃金交叉次數.日期 =
+                                (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) AND (obv盤中選股.盤中計算出來的最新五日平均線 <> 0) AND 
+                            (View_day2obvdate3_1.obv淨額 - obv盤中選股.盤中計算出來的最新五日平均線 < 0) and (obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 >0)
+ORDER BY   站上五日平均線張數 DESC` },
+            {
+                cat: "盤中選股", title: "盤中站上obv五日均線+winnewdate+自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高, 
+                            obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, 
+                            obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量, 
+                            obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線 AS 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 AS 站上五日平均線張數,macdpic.DIF減MACD,a.[站均],a.[均價黃金交叉次數],a.[均量黃金交叉次數],a.[三大法人黃金交叉次數],a.[外資黃金交叉次數] ,a.[投信黃金交叉次數],a.[k9],a.[d9] ,a.[週k9],a.[週d9],a.[月k9] ,a.[月d9],a.[macd],a.[集中度1日] ,a.[集中度5日] ,a.[集中度10日],a.[集中度20日] ,a.[集中度60日],a.[本益比預估] ,a.[本益比近四季],a.[股價淨值比] ,a.[現金殖利率] ,a.[正DI] ,a.[負DI] ,a.[趨向ADX] ,a.[正趨百分比] ,a.[負趨百分比] ,a.[正負DI百分比] ,a.[三大法人佔股本比%一天] ,a.[主力佔股本比%一天],a.[合計一天] ,a.[法人三天],a.[主力三天],a.[合計三天],a.[法人五天],a.[主力五天],a.[合計五天] ,a.[法人十天] ,a.[主力十天],a.[合計十天] ,a.[法人二十天] ,a.[主力二十天],a.[合計二十天] ,a.[法人預設] ,a.[主力預設] ,a.[合計預設] ,a.[一週庫存比率] ,a.[二週庫存比率] ,a.[三週庫存比率],a.[四週庫存比率],a.[五週庫存比率] ,a.[六週庫存比率] ,a.[七週庫存比率] ,a.[近二期增幅] ,a.[近三期增幅] ,a.[近四期增幅] ,a.[近五期增幅] ,a.[近六期增幅],a.[近七期增幅] ,a.[最新週],a.[資使用率] ,a.[資使用率黃金交叉次數] ,a.[券使用率] ,a.[券使用率黃金交叉次數] ,a.[券資比] ,a.[券資比黃金交叉次數] ,a.[產業分類] ,a.[交易所分類] ,a.[股本億] ,a.[日期]
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號 INNER JOIN
+                            View_day2obvdate3_1 ON obv盤中選股.代號 = View_day2obvdate3_1.代號  INNER JOIN winnewdate as a on obv計算黃金交叉次數.代號 = a.股票代號 and obv計算黃金交叉次數.日期 = a.日期
+ INNER JOIN macdpic on  a.股票代號 = macdpic.股票代號 and a.日期 = macdpic.日期
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.代號 IN
+                                (SELECT          代號
+                                  FROM               incomechar20)) AND (obv計算黃金交叉次數.日期 =
+                                (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) AND (obv盤中選股.盤中計算出來的最新五日平均線 <> 0) AND 
+                            (View_day2obvdate3_1.obv淨額 - obv盤中選股.盤中計算出來的最新五日平均線 < 0) and (obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 >0)
+ORDER BY   站上五日平均線張數 DESC` },
+            {
+                cat: "盤中選股", title: "盤中站上obv五日均線全部+條件", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高, 
+                            obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, 
+                            obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量, 
+                            obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率,(obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) as 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率, 
+(obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) AS 站上五日平均線張數
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.總量 >= 5000) 
+AND (obv計算黃金交叉次數.日期 = (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) and (ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) >= -10) and (ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) <= 1000) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
+ORDER BY   站上五日平均線張數 DESC` },
+            {
+                cat: "盤中選股", title: "盤中站上obv五日均線全部+條件+winnewdate", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高, 
+                            obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, 
+                            obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量, 
+                            obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率,(obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) as 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率, 
+(obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) AS 站上五日平均線張數,a.[站均],a.[均價黃金交叉次數],a.[均量黃金交叉次數],a.[三大法人黃金交叉次數],a.[外資黃金交叉次數] ,a.[投信黃金交叉次數],a.[k9],a.[d9] ,a.[週k9],a.[週d9],a.[月k9] ,a.[月d9],a.[macd],a.[集中度1日] ,a.[集中度5日] ,a.[集中度10日],a.[集中度20日] ,a.[集中度60日],a.[本益比預估] ,a.[本益比近四季],a.[股價淨值比] ,a.[現金殖利率] ,a.[正DI] ,a.[負DI] ,a.[趨向ADX] ,a.[正趨百分比] ,a.[負趨百分比] ,a.[正負DI百分比] ,a.[三大法人佔股本比%一天] ,a.[主力佔股本比%一天],a.[合計一天] ,a.[法人三天],a.[主力三天],a.[合計三天],a.[法人五天],a.[主力五天],a.[合計五天] ,a.[法人十天] ,a.[主力十天],a.[合計十天] ,a.[法人二十天] ,a.[主力二十天],a.[合計二十天] ,a.[法人預設] ,a.[主力預設] ,a.[合計預設] ,a.[一週庫存比率] ,a.[二週庫存比率] ,a.[三週庫存比率],a.[四週庫存比率],a.[五週庫存比率] ,a.[六週庫存比率] ,a.[七週庫存比率] ,a.[近二期增幅] ,a.[近三期增幅] ,a.[近四期增幅] ,a.[近五期增幅] ,a.[近六期增幅],a.[近七期增幅] ,a.[最新週],a.[資使用率] ,a.[資使用率黃金交叉次數] ,a.[券使用率] ,a.[券使用率黃金交叉次數] ,a.[券資比] ,a.[券資比黃金交叉次數] ,a.[產業分類] ,a.[交易所分類] ,a.[股本億] ,a.[日期]
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號  INNER JOIN winnewdate as a on obv計算黃金交叉次數.代號 = a.股票代號 and obv計算黃金交叉次數.日期 = a.日期
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.總量 >= 5000) 
+AND (obv計算黃金交叉次數.日期 = (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) and (ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) >= -10) and (ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) <= 1000) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
+ORDER BY   站上五日平均線張數 DESC` },
+            {
+                cat: "盤中選股", title: "盤中站上obv五日均線全部+條件+winnewdate+macd紅綠棒", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高, 
+                            obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, 
+                            obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量, 
+                            obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線 AS 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率, 
+                            obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 AS 站上五日平均線張數,macdpic.DIF減MACD,a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5) 
+                            + a.週k9 / 5) - a.週d9 / 5) + a.月k9 / 5) - a.月d9 / 5) 
+                            + a.合計十天 / 10) + a.三週庫存比率 / 100, 2) AS 加權總分,a.[均量黃金交叉次數],a.[三大法人黃金交叉次數],a.[外資黃金交叉次數] ,a.[投信黃金交叉次數],a.[k9],a.[d9] ,a.[週k9],a.[週d9],a.[月k9] ,a.[月d9],a.[macd],a.[集中度1日] ,a.[集中度5日] ,a.[集中度10日],a.[集中度20日] ,a.[集中度60日],a.[本益比預估] ,a.[本益比近四季],a.[股價淨值比] ,a.[現金殖利率] ,a.[正DI] ,a.[負DI] ,a.[趨向ADX] ,a.[正趨百分比] ,a.[負趨百分比] ,a.[正負DI百分比] ,a.[三大法人佔股本比%一天] ,a.[主力佔股本比%一天],a.[合計一天] ,a.[法人三天],a.[主力三天],a.[合計三天],a.[法人五天],a.[主力五天],a.[合計五天] ,a.[法人十天] ,a.[主力十天],a.[合計十天] ,a.[法人二十天] ,a.[主力二十天],a.[合計二十天] ,a.[法人預設] ,a.[主力預設] ,a.[合計預設] ,a.[一週庫存比率] ,a.[二週庫存比率] ,a.[三週庫存比率],a.[四週庫存比率],a.[五週庫存比率] ,a.[六週庫存比率] ,a.[七週庫存比率] ,a.[近二期增幅] ,a.[近三期增幅] ,a.[近四期增幅] ,a.[近五期增幅] ,a.[近六期增幅],a.[近七期增幅] ,a.[最新週],a.[資使用率] ,a.[資使用率黃金交叉次數] ,a.[券使用率] ,a.[券使用率黃金交叉次數] ,a.[券資比] ,a.[券資比黃金交叉次數] ,a.[產業分類] ,a.[交易所分類] ,a.[股本億] ,a.[日期]
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號 INNER JOIN
+                            View_day2obvdate3_1 ON obv盤中選股.代號 = View_day2obvdate3_1.代號  INNER JOIN winnewdate as a on obv計算黃金交叉次數.代號 = a.股票代號 and obv計算黃金交叉次數.日期 = a.日期 INNER JOIN macdpic on  a.股票代號 = macdpic.股票代號 and a.日期 = macdpic.日期
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.代號 IN
+                                (SELECT          代號
+                                  FROM               incomechar20)) AND (obv計算黃金交叉次數.日期 =
+                                (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) AND (obv盤中選股.盤中計算出來的最新五日平均線 <> 0) AND 
+                            (View_day2obvdate3_1.obv淨額 - obv盤中選股.盤中計算出來的最新五日平均線 < 0) and (obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 >0)
+and (macdpic.DIF減MACD >0) and (macdpic.DIF減MACD <10)
+ORDER BY   站上五日平均線張數 DESC` },
+            {
+                cat: "盤中選股", title: "盤中站上obv三十四日圴線+自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高, 
+                            obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, 
+                            obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量, 
+                            obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率, (obv盤中選股.盤中的累積obv均量-obv盤中選股.盤中計算出來的最新三十四日平均線) as 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線)                / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率 , 
+(obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) AS 站上五日平均線張數            
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.代號 IN
+                                (SELECT          代號
+                                  FROM               incomechar20)) AND (obv計算黃金交叉次數.日期 =
+                                (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
+ORDER BY   站上34日均線張數 DESC` },
+            {
+                cat: "盤中選股", title: "盤中站上obv三十四日圴線全部+條件", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高, 
+                            obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, 
+                            obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量, 
+                            obv盤中選股.盤中計算出來的最新三十四日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新三十四日平均線) * 100, 2) AS 盤中離34日均線乖離率,(obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新三十四日平均線) as 站上34日均線張數, 
+                            View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.上市1上櫃2, 
+                            View_stockchange.股本億, obv盤中選股.盤中計算出來的最新五日平均線, 
+                            ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) AS 盤中離5日均線乖離率, 
+(obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) AS 站上五日平均線張數
+FROM              obv盤中選股 INNER JOIN
+                            View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 INNER JOIN
+                            obv計算黃金交叉次數 ON obv盤中選股.代號 = obv計算黃金交叉次數.代號
+WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線 <> 0) AND (View_stockchange.總量 >= 5000) 
+AND (obv計算黃金交叉次數.日期 = (SELECT          TOP (1) MAX(日期) AS Expr1
+                                  FROM               basicinfo AS basicinfo_1)) and (ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) >= -10) and (ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線) 
+                            / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) <= 1000) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
+ORDER BY   站上34日均線張數 DESC` },
+            {
+                cat: "盤中選股", title: "自選股+盤中+綜合+OBV均線", sql: `a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5) 
+                            + a.週k9 / 5) - a.週d9 / 5) + a.月k9 / 5) - a.月d9 / 5) 
+                            + a.合計十天 / 10) + a.三週庫存比率 / 100, 2) AS 加權總分,a.[均量黃金交叉次數],a.[三大法人黃金交叉次數],a.[外資黃金交叉次數] ,a.[投信黃金交叉次數],c.盤中的累積obv均量,c.盤中計算出來的最新三十四日平均線,c.盤中計算出來的最新五日平均線,c.盤中的累積obv均量-c.盤中計算出來的最新五日平均線 as 新站上五日均線,c.盤中的累積obv均量-c.盤中計算出來的最新三十四日平均線 as 新站上三十四日均線,macdpic.DIF減MACD,a.[k9],a.[d9] ,a.[週k9],a.[週d9],a.[月k9] ,a.[月d9],a.[macd],a.[集中度1日] ,a.[集中度5日] ,a.[集中度10日],a.[集中度20日] ,a.[集中度60日],a.[本益比預估] ,a.[本益比近四季],a.[股價淨值比] ,a.[現金殖利率] ,a.[正DI] ,a.[負DI] ,a.[趨向ADX] ,a.[正趨百分比] ,a.[負趨百分比] ,a.[正負DI百分比] ,a.[三大法人佔股本比%一天] ,a.[主力佔股本比%一天],a.[合計一天] ,a.[法人三天],a.[主力三天],a.[合計三天],a.[法人五天],a.[主力五天],a.[合計五天] ,a.[法人十天] ,a.[主力十天],a.[合計十天] ,a.[法人二十天] ,a.[主力二十天],a.[合計二十天] ,a.[法人預設] ,a.[主力預設] ,a.[合計預設] ,a.[一週庫存比率] ,a.[二週庫存比率] ,a.[三週庫存比率],a.[四週庫存比率],a.[五週庫存比率] ,a.[六週庫存比率] ,a.[七週庫存比率] ,a.[近二期增幅] ,a.[近三期增幅] ,a.[近四期增幅] ,a.[近五期增幅] ,a.[近六期增幅],a.[近七期增幅] ,a.[最新週],a.[資使用率] ,a.[資使用率黃金交叉次數] ,a.[券使用率] ,a.[券使用率黃金交叉次數] ,a.[券資比] ,a.[券資比黃金交叉次數] ,a.[產業分類] ,a.[交易所分類] ,a.[股本億] ,a.[日期], b.成交價 as 盤中成交價, b.漲跌, b.漲幅, b.總量 as 盤中總量 from winnewdate as a inner join view_basicinfo as b on a.股票代號 = b.代號 inner join obvdatea5 as d on d.代號 = a.[股票代號] and d.日期 = a.日期 inner join obv盤中選股 as c on d.代號 = c.代號 INNER JOIN macdpic on  a.股票代號 = macdpic.股票代號 and a.日期 = macdpic.日期 
+where (b.代號 IN (SELECT 代號 FROM  incomechar20)) AND (a.日期 = (SELECT TOP (1) MAX(日期) AS Expr1  FROM basicinfo AS basicinfo_1))
+order by c.盤中的累積obv均量-c.盤中計算出來的最新五日平均線 desc` },
+           
+            {
+                cat: "其他", title: "結果轉成JSON格式", sql: `priceincrease1.名稱, priceincrease1.代號,         
+       ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅, 
+       ROUND(priceincrease3.成交量漲幅百分比, 2) AS 近3期量增幅, 
+       View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量, 
+       priceincrease1.成交價漲幅百分比 AS 近2期價漲幅, priceincrease2.成交價漲幅百分比 AS 近3期價漲幅, 
+       priceincrease3.成交價漲幅百分比 AS 近4期價漲幅, priceincrease4.成交價漲幅百分比 AS 近5期價漲幅, 
+       priceincrease5.成交價漲幅百分比 AS 近6期價漲幅, priceincrease6.成交價漲幅百分比 AS 近7期價漲幅, 
+       priceincrease7.成交價漲幅百分比 AS 近8期價漲幅, priceincrease8.成交價漲幅百分比 AS 近9期價漲幅, 
+       priceincrease9.成交價漲幅百分比 AS 近10期價漲幅, priceincrease10.成交價漲幅百分比 AS 近11期價漲幅, 
+       View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.股本億, 
+       priceincrease1.本日 AS 今日, priceincrease10.前一日 AS 前日,STRING_AGG(View_notioninfo.name1, ', ') AS 概念股
+FROM priceincrease1 
+INNER JOIN priceincrease4 ON priceincrease1.代號 = priceincrease4.代號 
+LEFT OUTER JOIN priceincrease5 ON priceincrease1.代號 = priceincrease5.代號 
+LEFT OUTER JOIN priceincrease6 ON priceincrease1.代號 = priceincrease6.代號 
+LEFT OUTER JOIN priceincrease7 ON priceincrease1.代號 = priceincrease7.代號 
+LEFT OUTER JOIN priceincrease8 ON priceincrease1.代號 = priceincrease8.代號 
+LEFT OUTER JOIN priceincrease9 ON priceincrease1.代號 = priceincrease9.代號 
+LEFT OUTER JOIN priceincrease10 ON priceincrease1.代號 = priceincrease10.代號 
+LEFT OUTER JOIN View_stockchange ON priceincrease1.代號 = View_stockchange.代號 
+LEFT OUTER JOIN View_notioninfo ON priceincrease1.名稱 = View_notioninfo.mail1 
+LEFT OUTER JOIN priceincrease3 ON priceincrease1.代號 = priceincrease3.代號 
+LEFT OUTER JOIN priceincrease2 ON priceincrease1.代號 = priceincrease2.代號 
+WHERE (priceincrease3.成交價漲幅百分比 < 15) 
+  AND (priceincrease3.成交價漲幅百分比 > -3) 
+  AND (priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比 < 3) 
+  AND (priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比 > -5) 
+  AND (priceincrease3.成交量漲幅百分比 > 50) 
+  AND (View_stockchange.總量 > 500)
+GROUP BY priceincrease1.名稱, priceincrease1.代號, 
+         ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2), 
+         ROUND(priceincrease3.成交量漲幅百分比, 2), 
+         View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量, 
+         priceincrease1.成交價漲幅百分比, priceincrease2.成交價漲幅百分比, priceincrease3.成交價漲幅百分比, 
+         priceincrease4.成交價漲幅百分比, priceincrease5.成交價漲幅百分比, priceincrease6.成交價漲幅百分比, 
+         priceincrease7.成交價漲幅百分比, priceincrease8.成交價漲幅百分比, priceincrease9.成交價漲幅百分比, 
+         priceincrease10.成交價漲幅百分比, View_stockchange.產業分類, View_stockchange.交易所分類, 
+         View_stockchange.股本億, priceincrease1.本日, priceincrease10.前一日
+ORDER BY 近4期價漲幅 DESC
+FOR JSON PATH` },
+            //{ cat: "OBV多空淨額", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "OBV多空淨額", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
