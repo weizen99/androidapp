@@ -220,7 +220,7 @@
             const stockCode = document.getElementById("stockCodeInput").value;
             const url = `https://zen2965.duckdns.org:8888/webapi/api/avggolds/${stockCode}`;
             
-            fetch(url, { mode: 'no-cors' })
+            fetch(url)
                 .then(response => response.text())
                 .then(data => {
                     showLoading(false);
@@ -237,7 +237,7 @@
         function fetchData2() {
             showLoading(true);
             const url = `https://zen2965.duckdns.org:8888/webapi/api/avggolds`;
-            fetch(url, { mode: 'no-cors' })
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     showLoading(false);
@@ -255,7 +255,7 @@
             const stockCode = document.getElementById("stockCodeInput").value;
             const url = `https://zen2965.duckdns.org:8888/webapi/api/stockchange/${stockCode}`;
 
-            fetch(url, { mode: 'no-cors' })
+            fetch(url)
                 .then(response => response.text())
                 .then(data => {
                     showLoading(false);
@@ -272,7 +272,7 @@
         function fetchData4() {
             showLoading(true);
             const url = `https://zen2965.duckdns.org:8888/webapi/api/stockchange`;
-            fetch(url, { mode: 'no-cors' })
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     showLoading(false);
@@ -289,7 +289,7 @@
             showLoading(true);
             const stockCode = document.getElementById("stockCodeInput").value;
             const url = `https://zen2965.duckdns.org:8888/webapi/api/winnewdates/${stockCode}`;
-            fetch(url, { mode: 'no-cors' })
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     showLoading(false);
@@ -306,7 +306,7 @@
             // 與 fetchData5 邏輯類似，僅 URL 不同
             showLoading(true);
             const url = `https://zen2965.duckdns.org:8888/webapi/api/winnewdates`;
-            fetch(url, { mode: 'no-cors' })
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     showLoading(false);
@@ -323,7 +323,7 @@
             showLoading(true);
             const stockCode = document.getElementById("stockCodeInput").value;
             const url = `https://zen2965.duckdns.org:8888/webapi/api/obvdatea5/${stockCode}`;
-            fetch(url, { mode: 'no-cors' })
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     showLoading(false);
@@ -340,7 +340,7 @@
             showLoading(true);
             const stockCode = document.getElementById("stockCodeInput1").value;
             const url = `https://zen2965.duckdns.org:8888/webapi/api/guestinfowd1/${stockCode}`;
-            fetch(url, { mode: 'no-cors' })
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     showLoading(false);
