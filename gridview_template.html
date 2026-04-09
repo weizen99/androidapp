@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>純 HTML DataTables 範本 (凍結/排序/分頁)</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- DataTables CSS for Bootstrap 5 -->
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <!-- Optional: FixedHeader CSS (for more robust sticky header styling) -->
+    <link href="https://cdn.datatables.net/fixedheader/3.2.2/css/fixedHeader.bootstrap5.min.css" rel="stylesheet" />
+    <!-- Google Fonts for better Chinese display -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8f9fa;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        /* DataTables 特定樣式 */
+        table.dataTable thead th {
+            background-color: #212529 !important; /* 深色表頭 */
+            color: white !important;
+            white-space: nowrap; /* 防止表頭文字換行 */
+            text-align: center;
+            padding: 10px 15px;
+            border-bottom: none;
+        }
+
+        table.dataTable tbody td {
+            vertical-align: middle;
+            padding: 8px 15px;
+        }
+
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>純 HTML 數據範本</h3>
+        <p class="text-muted">此範本展示具備凍結表頭、分頁、排序與即時搜尋功能的靜態 HTML 表格。</p>
+
+        <div class="card shadow-sm p-3 mb-5 bg-white rounded">
+            <table id="myDataTable" class="table table-bordered table-hover custom-grid w-100">
+                <thead>
+                    <tr>
+                        <th>客戶 ID</th>
+                        <th>公司名稱</th>
+                        <th>聯絡人</th>
+                        <th>城市</th>
+                        <th>國家</th>
+                        <th>電話</th>
+                        <th>傳真</th>
+                        <th>地區</th>
+                        <th>郵遞區號</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 範例數據，你可以從 JSON 或其他來源動態載入 -->
+                    <tr><td>ALFKI</td><td>Alfreds Futterkiste</td><td>Maria Anders</td><td>Berlin</td><td>Germany</td><td>030-0074321</td><td>030-0076545</td><td>Western Europe</td><td>12209</td></tr>
+                    <tr><td>ANATR</td><td>Ana Trujillo Emparedados y helados</td><td>Ana Trujillo</td><td>México D.F.</td><td>Mexico</td><td>(5) 555-4729</td><td>(5) 555-3745</td><td>Central America</td><td>05021</td></tr>
+                    <tr><td>ANTON</td><td>Antonio Moreno Taquería</td><td>Antonio Moreno</td><td>México D.F.</td><td>Mexico</td><td>(5) 555-3932</td><td></td><td>Central America</td><td>05023</td></tr>
+                    <tr><td>AROUT</td><td>Around the Horn</td><td>Thomas Hardy</td><td>London</td><td>UK</td><td>(171) 555-7788</td><td>(171) 555-6750</td><td>British Isles</td><td>SW1 3SD</td></tr>
+                    <tr><td>BERGS</td><td>Berglunds snabbköp</td><td>Christina Berglund</td><td>Luleå</td><td>Sweden</td><td>0921-12 34 65</td><td>0921-12 34 67</td><td>Northern Europe</td><td>S-958 22</td></tr>
+                    <tr><td>BLAUS</td><td>Blauer See Delikatessen</td><td>Hanna Moos</td><td>Mannheim</td><td>Germany</td><td>0621-08460</td><td>0621-08924</td><td>Western Europe</td><td>68087</td></tr>
+                    <tr><td>BLONP</td><td>Blondel père et fils</td><td>Frédérique Citeaux</td><td>Strasbourg</td><td>France</td><td>88.60.15.31</td><td>88.60.15.32</td><td>Western Europe</td><td>67000</td></tr>
+                    <tr><td>BOLID</td><td>Bólido Comidas preparadas</td><td>Martín Sommer</td><td>Madrid</td><td>Spain</td><td>(91) 555 22 82</td><td>(91) 555 91 99</td><td>Southern Europe</td><td>28023</td></tr>
+                    <tr><td>BONAP</td><td>Bon app'</td><td>Laurence Lebihan</td><td>Marseille</td><td>France</td><td>91.24.45.40</td><td>91.24.45.41</td><td>Western Europe</td><td>13008</td></tr>
+                    <tr><td>BOTTM</td><td>Bottom-Dollar Markets</td><td>Elizabeth Lincoln</td><td>Tsawassen</td><td>Canada</td><td>(604) 555-4729</td><td>(604) 555-3745</td><td>North America</td><td>V2F 8E4</td></tr>
+                    <tr><td>BSBEV</td><td>B's Beverages</td><td>Victoria Ashworth</td><td>London</td><td>UK</td><td>(171) 555-1212</td><td></td><td>British Isles</td><td>EC2 5NT</td></tr>
+                    <tr><td>CACTU</td><td>Cactus Comidas para llevar</td><td>Patricio Simpson</td><td>Buenos Aires</td><td>Argentina</td><td>(1) 135-5555</td><td>(1) 135-4892</td><td>South America</td><td>1010</td></tr>
+                    <tr><td>CENTC</td><td>Centro comercial Moctezuma</td><td>Francisco Chang</td><td>México D.F.</td><td>Mexico</td><td>(5) 555-3392</td><td>(5) 555-7293</td><td>Central America</td><td>05022</td></tr>
+                    <tr><td>CHOPS</td><td>Chop-suey Chinese</td><td>Yang Wang</td><td>Bern</td><td>Switzerland</td><td>0452-076545</td><td></td><td>Western Europe</td><td>3012</td></tr>
+                    <tr><td>COMMI</td><td>Comércio Mineiro</td><td>Pedro Afonso</td><td>São Paulo</td><td>Brazil</td><td>(11) 555-7647</td><td></td><td>South America</td><td>05432-043</td></tr>
+                    <tr><td>CONSH</td><td>Consolidated Holdings</td><td>Elizabeth Brown</td><td>London</td><td>UK</td><td>(171) 555-2282</td><td>(171) 555-9199</td><td>British Isles</td><td>EC1 4SD</td></tr>
+                    <tr><td>DRACD</td><td>Drachenblut Delikatessen</td><td>Sven Ottlieb</td><td>Aachen</td><td>Germany</td><td>0241-039123</td><td>0241-0076545</td><td>Western Europe</td><td>52066</td></tr>
+                    <tr><td>DUMON</td><td>Du monde entier</td><td>Janine Labrune</td><td>Nantes</td><td>France</td><td>40.67.88.88</td><td>40.67.89.89</td><td>Western Europe</td><td>44000</td></tr>
+                    <tr><td>EASTC</td><td>Eastern Connection</td><td>Ann Devon</td><td>London</td><td>UK</td><td>(171) 555-0297</td><td>(171) 555-3373</td><td>British Isles</td><td>WX1 6LT</td></tr>
+                    <tr><td>ERNSH</td><td>Ernst Handel</td><td>Roland Mendel</td><td>Graz</td><td>Austria</td><td>7675-3425</td><td>7675-3426</td><td>Eastern Europe</td><td>8010</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- JavaScript 資源 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Optional: FixedHeader JS -->
+    <script src="https://cdn.datatables.net/fixedheader/3.2.2/js/dataTables.fixedHeader.min.js"></script>
+
+    <script>$(document).ready(function () {
+            $('#myDataTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/zh-HANT.json" // 中文語系
+                },
+                "scrollY": "55vh",        // 凍結表頭：設定垂直滾動高度為螢幕高度的 55%
+                "scrollX": true,          // 開啟水平滾動 (當欄位多時有用)
+                "scrollCollapse": true,   // 當內容不足以填滿 scrollY 時，允許縮小高度
+                "paging": true,           // 開啟分頁功能
+                "pageLength": 25,         // 預設每頁顯示 25 筆
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "全部"]], // 每頁筆數選項
+                "order": [],              // 預設不排序，保持數據庫原始順序 (點擊表頭可排序)
+                "searching": true,        // 啟用即時搜尋框
+                "info": true,             // 顯示資訊 (如 "顯示 1 到 10 項，共 57 項")
+                "fixedHeader": true       // 啟用固定表頭功能 (需要 fixedHeader.bootstrap5.min.css/js)
+            });
+            // 由於 HTML 靜態表格結構清晰，不需要額外的 setTimeout 或 thead 修正邏輯
+        });</script>
+</body>
+</html>
