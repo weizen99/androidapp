@@ -27,3 +27,6 @@ googlesheet.html
 map.html:
 可以將目前定位資料或任一點座標建檔到資料庫中,按同步將座標送到Somee資料庫建檔
 
+message5.html
+播放系統:電腦檔案 nas檔案 youtube
+
