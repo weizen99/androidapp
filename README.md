@@ -28,5 +28,5 @@ map.html:
 可以將目前定位資料或任一點座標建檔到資料庫中,按同步將座標送到Somee資料庫建檔
 
 message5.html
-播放系統:電腦檔案 nas檔案 youtube
+播放系統:我的電腦檔案mp4檔 nas檔案mp4檔 youtube連結,有撥放清單按序撥放,可新新youtube連結
 
