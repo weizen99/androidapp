@@ -29,4 +29,4 @@ map.html:
 
 message5.html
 播放系統:我的電腦檔案mp4檔 nas檔案mp4檔 youtube連結,有撥放清單按序撥放,可新增youtube連結
-
+message6.html 同上電腦版
