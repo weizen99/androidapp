@@ -1,0 +1,343 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>影音系統 2.0 旗艦版</title>
+    <!-- 引入高階庫 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- 模糊搜尋核心庫 -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+
+    <style>
+        :root {
+            --primary-red: #ff4d4d;
+            --glass-bg: rgba(25, 25, 25, 0.85);
+            --accent-gold: #ffbc00;
+        }
+
+        body {
+            background: #0f0f0f; /* 極深色背景 */
+            color: #e0e0e0;
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 旗艦級毛玻璃播放器 */
+        .player-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 0;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.8);
+            background: #000;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        /* 搜尋框與按鈕美化 */
+        .search-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 25px;
+            padding: 8px 20px;
+            transition: 0.3s;
+        }
+
+            .search-box:focus {
+                background: rgba(255,255,255,0.1);
+                box-shadow: 0 0 15px var(--primary-red);
+                border-color: var(--primary-red);
+                color: white;
+            }
+
+        /* 待播清單 (旗艦版動畫) */
+        #queueUI {
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 0 0 20px 20px;
+            max-height: 0;
+            overflow-y: auto;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 卡片式列表 */
+        .data-card {
+            background: #1a1a1a;
+            border: none;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+            .data-card:hover {
+                transform: translateY(-3px);
+                background: #252525;
+            }
+
+        .btn-play-hero {
+            background: linear-gradient(45deg, var(--primary-red), #ff7575);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: white;
+            font-size: 20px;
+        }
+
+        .badge-source {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="player-header">
+        <div class="container text-center">
+            <div class="video-container mb-3">
+                <video id="mainPlayer" controls poster="https://via.placeholder.com/800x450/000000/FFFFFF?text=Ready+to+Play"></video>
+            </div>
+            <div id="nowPlayingTitle" class="mb-3 text-truncate fw-bold" style="color: var(--accent-gold);">請選擇影片開始播放</div>
+
+            <div class="d-flex gap-2 justify-content-center px-3">
+                <input type="text" id="fuzzySearch" class="form-control search-box w-50" placeholder="輸入名稱或關鍵字 (支援模糊比對)...">
+                <button class="btn btn-danger rounded-pill px-4" onclick="playNext()">下一首 <i class="bi bi-skip-end-fill"></i></button>
+                <button class="btn btn-outline-light rounded-pill px-4" onclick="toggleQueue()">待播清單 <span id="qCount" class="badge bg-danger">0</span></button>
+            </div>
+        </div>
+
+        <div id="queueUI" class="container mt-2">
+            <div id="queueList" class="py-3"></div>
+        </div>
+    </div>
+
+    <div class="container mt-5 pb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h2 class="fw-bold mb-0">影音庫 <span class="text-muted fs-6">Library</span></h2>
+            </div>
+            <div class="d-flex gap-2">
+                <select id="slotSelect" class="form-select form-select-sm bg-dark text-white border-secondary rounded-pill"></select>
+                <button class="btn btn-sm btn-success rounded-pill" onclick="savePlaylist()">儲存清單</button>
+            </div>
+        </div>
+
+        <!-- 影音清單載入區 -->
+        <div id="mainGrid" class="row"></div>
+
+        <!-- 分頁器 -->
+        <nav class="mt-5"><ul id="pager" class="pagination justify-content-center"></ul></nav>
+    </div>
+
+    <script>
+    const API_URL = "https://zen2965.duckdns.org:8888/excelimport/message5.aspx";
+    let allData = []; // 存儲完整資料供模糊搜尋使用
+    let playQueue = [];
+    let fuse; // 模糊搜尋實例
+
+    $(document).ready(function() {
+        loadData();
+        initPlayer();
+        loadSlots();
+    });
+
+    // 1. 載入資料並初始化模糊搜尋
+    function loadData() {
+        $.ajax({
+            type: "POST", url: API_URL + "/GetData",
+            data: JSON.stringify({ searchKey: "", sortBy: "識別碼", sortDir: "DESC", pageIndex: 1, pageSize: 10000 }),
+            contentType: "application/json; charset=utf-8",
+            success: function(res) {
+                allData = res.d.data;
+                initFuse();
+                renderGrid(allData);
+            }
+        });
+    }
+
+    // 2. 初始化 Fuse.js (模糊搜尋引擎)
+    function initFuse() {
+        const options = { keys: ['姓名', '郵件', '內容'], threshold: 0.4 };
+        fuse = new Fuse(allData, options);
+    }
+
+    // 3. 渲染旗艦版卡片
+    function renderGrid(list) {
+        let h = list.map(item => `
+            <div class="col-md-6 col-lg-4">
+                <div class="card data-card p-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <button class="btn-play-hero" onclick="smartPlay('${item.內容}', '${item.姓名}', '${item.郵件}', this)">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+                            <div>
+                                <div class="fw-bold text-white">${item.姓名}</div>
+                                <span class="badge-source ${getSourceClass(item.郵件)}">${getSourceText(item.郵件)}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-link text-warning p-0" onclick="addToQueue(${item.識別碼},'${item.內容}','${item.姓名}','${item.郵件}')">
+                            <i class="bi bi-plus-circle fs-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        $("#mainGrid").html(h);
+    }
+
+    // 4. 監聽搜尋框 (即時模糊搜尋)
+    $("#fuzzySearch").on("input", function() {
+        let key = $(this).val();
+        if(!key) { renderGrid(allData); return; }
+        const result = fuse.search(key).map(r => r.item);
+        renderGrid(result);
+    });
+
+    // 5. 播放邏輯 (強化版)
+    function smartPlay(url, title, type, btn) {
+        $(".data-card").css("border", "none");
+        if(btn) $(btn).closest(".data-card").css("border", "1px solid var(--primary-red)");
+
+        const v = document.getElementById('mainPlayer');
+        let finalSrc = formatUrl(url, type);
+
+        if(type == "4") { window.open(finalSrc, '_blank'); return; }
+
+        v.src = finalSrc;
+        v.play();
+        $("#nowPlayingTitle").html(`<span class="spinner-grow spinner-grow-sm text-danger"></span> 正在播放: ${title}`);
+    }
+
+    function formatUrl(path, type) {
+        if (type == "4" || path.startsWith('http')) return path;
+        let file = decodeURIComponent(path).split(/[\\/]/).pop();
+        return (type == "2" ? "vedio/" : "vedio1/") + encodeURI(file);
+    }
+
+    // 6. 隊列與 UI 切換
+    function toggleQueue() {
+        let q = $("#queueUI");
+        q.css("max-height", q.css("max-height") === "0px" ? "400px" : "0px");
+    }
+
+    function addToQueue(id, src, title, type) {
+        playQueue.push({id, src, title, type});
+        updateQueueUI();
+        Swal.fire({ title: '已加入待播', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false, icon: 'success' });
+    }
+
+    function updateQueueUI() {
+        $("#qCount").text(playQueue.length);
+        $("#queueList").html(playQueue.map((i, idx) => `
+            <div class="d-flex justify-content-between align-items-center mb-2 bg-dark p-2 rounded">
+                <span class="small">${idx+1}. ${i.title}</span>
+                <i class="bi bi-x text-danger" style="cursor:pointer" onclick="playQueue.splice(${idx},1);updateQueueUI()"></i>
+            </div>
+        `).join(''));
+    }
+
+    function playNext() {
+        if(playQueue.length > 0) {
+            let n = playQueue.shift();
+            updateQueueUI();
+            smartPlay(n.src, n.title, n.type);
+        }
+    }
+
+    // 輔助圖示功能
+    function getSourceText(t) {
+        return ["電腦", "NAS實體", "NAS虛擬", "YouTube"][t-1] || "其他";
+    }
+    function getSourceClass(t) {
+        return ["bg-info", "bg-success", "bg-primary", "bg-danger"][t-1] || "bg-secondary";
+    }
+
+    function initPlayer() {
+        document.getElementById('mainPlayer').onended = playNext;
+    }
+        // 載入下拉選單
+        function loadSlots() {
+            $.ajax({
+                type: "POST", url: API_URL + "/GetSlotNames", data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    let h = '<option value="">-- 選擇載入存檔位 --</option>';
+                    res.d.forEach(s => {
+                        h += `<option value="${s.id}">${s.id}. ${s.name || '(未命名)'}</option>`;
+                    });
+                    $("#slotSelect").html(h);
+                }
+            });
+        }
+
+        // 當下拉選單變動時 -> 載入清單
+        $("#slotSelect").on("change", function () {
+            let sid = $(this).val();
+            if (!sid) return;
+            $.ajax({
+                type: "POST", url: API_URL + "/LoadPlaylistItems",
+                data: JSON.stringify({ slotId: parseInt(sid) }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    if (res.d.data) {
+                        // 更新待播隊列
+                        playQueue = res.d.data.map(i => ({
+                            id: i.識別碼, src: i.內容, title: i.姓名, type: i.郵件
+                        }));
+                        updateQueueUI();
+                        Swal.fire("成功", "已載入清單至待播隊列", "success");
+                    }
+                }
+            });
+        });
+
+        // 儲存目前隊列
+        function savePlaylist() {
+            let sid = $("#slotSelect").val();
+            if (!sid) { Swal.fire("請先選擇一個存檔位", "", "warning"); return; }
+
+            Swal.fire({
+                title: '重命名此清單',
+                input: 'text',
+                inputValue: $("#slotSelect option:selected").text().split('. ')[1] || "",
+                showCancelButton: true
+            }).then(res => {
+                if (res.isConfirmed) {
+                    let idList = playQueue.map(q => q.id).join(',');
+                    $.ajax({
+                        type: "POST", url: API_URL + "/SavePlaylist",
+                        data: JSON.stringify({ slotId: parseInt(sid), slotName: res.value, ids: idList }),
+                        contentType: "application/json; charset=utf-8",
+                        success: function () {
+                            Swal.fire("成功存檔", "", "success");
+                            loadSlots(); // 刷新選單名稱
+                        }
+                    });
+                }
+            });
+        }
+    // ...其餘存檔與分頁邏輯比照辦理，但採用更精簡的撰寫方式...
+    </script>
+</body>
+</html>
