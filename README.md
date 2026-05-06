@@ -29,4 +29,11 @@ map.html:
 
 message5.html
 播放系統:我的電腦檔案mp4檔 nas檔案mp4檔 youtube連結,有撥放清單按序撥放,可新增youtube連結
-message6.html 同上電腦版
+message6.html message6s.html:同上電腦版,版面等更好看
+tour.html:Ai聊天,可自動切換模型,到 https://aistudio.google.com/app/apikey 申請Api key
+voiceinput.html  voiceinput1.html : 網頁版語音輸入或自動朗讀,可由Ai潤稿,複製到剪貼簿,任意地方按貼上(省打字)
+
+
+
+
+
