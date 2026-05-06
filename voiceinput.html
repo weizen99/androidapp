@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>AI 語音導覽助手 - 終極全功能版</title>
+    <style>
+        :root { --primary: #00e5ff; --bg: #0a0e14; --card: #1c2128; --text: #adbac7; }
+        body { font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 900px; background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid #444c56; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        h2 { color: var(--primary); text-align: center; margin-bottom: 20px; letter-spacing: 1px; }
+        
+        #status-box { background: #0d1117; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--primary); min-height: 45px; display: flex; align-items: center; }
+        #status-text { font-size: 14px; color: var(--primary); line-height: 1.5; font-weight: bold; }
+
+        textarea { width: 100%; height: 380px; background: #0d1117; color: #adbac7; border: 1px solid #444c56; border-radius: 12px; padding: 20px; font-size: 19px; line-height: 1.8; box-sizing: border-box; resize: none; outline: none; margin-bottom: 20px; transition: border 0.3s; }
+        textarea:focus { border-color: var(--primary); }
+
+        .api-settings { background: #22272e; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 13px; display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; border: 1px solid #444c56; }
+        input[type="password"] { background: #0d1117; color: #fff; border: 1px solid #444c56; padding: 6px 12px; border-radius: 6px; width: 200px; outline: none; }
+        
+        .controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+        
+        .btn-record { background: #f85149; color: white; }
+        .btn-record.active { background: #238636; box-shadow: 0 0 15px rgba(35,134,54,0.5); }
+        .btn-ai { background: var(--primary); color: #0a0e14; }
+        .btn-ai:disabled { background: #444c56; color: #768390; cursor: wait; }
+        .btn-tool { background: #373e47; color: #adbac7; border: 1px solid #444c56; }
+        .btn-tool:hover { background: #444c56; color: #fff; }
+
+        label { cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .loading-dot { animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🎙️ 智慧語音交互工作站 Pro</h2>
+    
+    <div class="api-settings">
+        <span>🔑 API Key: <input type="password" id="apiKey"></span>
+        <label><input type="checkbox" id="autoSpeak" checked> 自動朗讀</label>
+        <label><input type="checkbox" id="autoCopy" checked> 自動複製</label>
+    </div>
+
+    <div id="status-box">
+        <div id="status-text">系統就緒。請錄音後點擊「AI 智慧潤稿」或說出指令「換行」、「句號」。</div>
+    </div>
+
+    <textarea id="output" placeholder="點擊錄音說話..."></textarea>
+    
+    <div class="controls">
+        <button id="recordBtn" class="btn-record">🎤 開始錄音</button>
+        <button id="aiBtn" class="btn-ai">✨ AI 智慧潤稿</button>
+        <button id="speakBtn" class="btn-tool">🔊 朗讀文字</button>
+        <button id="copyBtn" class="btn-tool">📋 複製</button>
+        <button id="saveBtn" class="btn-tool">💾 存為 .txt</button>
+        <button onclick="clearAll()" class="btn-tool" style="color:#f85149; border-color:#f85149;">🗑️ 清除</button>
+    </div>
+</div>
+
+<script>
+    const output = document.getElementById('output');
+    const recordBtn = document.getElementById('recordBtn');
+    const aiBtn = document.getElementById('aiBtn');
+    const speakBtn = document.getElementById('speakBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const statusText = document.getElementById('status-text');
+    const apiKeyInput = document.getElementById('apiKey');
+
+    apiKeyInput.value = localStorage.getItem('gemini_2026_key') || '';
+
+    // --- 1. 語音辨識 (Speech to Text) ---
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'zh-TW';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    let isRecording = false;
+    recognition.onresult = (e) => {
+        let text = '';
+        for (let i = 0; i < e.results.length; i++) {
+            let t = e.results[i][0].transcript;
+            t = t.replace(/換行/g, "\n").replace(/句號/g, "。").replace(/逗號/g, "，");
+            text += t;
+        }
+        output.value = text;
+        output.scrollTop = output.scrollHeight;
+    };
+
+    recordBtn.onclick = () => {
+        if (!isRecording) {
+            recognition.start();
+            recordBtn.innerHTML = "🛑 停止錄音";
+            recordBtn.classList.add('active');
+            updateStatus("正在聆聽中... (指令可用：換行、句號、逗號)");
+        } else {
+            recognition.stop();
+            recordBtn.innerHTML = "🎤 開始錄音";
+            recordBtn.classList.remove('active');
+            updateStatus("錄音停止。");
+        }
+        isRecording = !isRecording;
+    };
+
+    // --- 2. 語音合成 (Text to Speech) ---
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'zh-TW';
+        msg.rate = 1.0;
+        window.speechSynthesis.speak(msg);
+    }
+    speakBtn.onclick = () => speak(output.value);
+
+    // --- 3. 複製與儲存功能 ---
+    async function copyToClipboard(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch (err) {
+            output.select();
+            return document.execCommand('copy');
+        }
+    }
+    copyBtn.onclick = async () => {
+        const ok = await copyToClipboard(output.value);
+        if (ok) updateStatus("📋 已複製到剪貼簿！");
+    };
+
+    saveBtn.onclick = () => {
+        const text = output.value;
+        if (!text) { alert("沒有內容可以儲存喔！"); return; }
+        const blob = new Blob([text], { type: 'text/plain' });
+        const a = document.createElement('a');
+        const timestamp = new Date().toLocaleString().replace(/[\/:]/g, '-').replace(/ /g, '_');
+        a.href = URL.createObjectURL(blob);
+        a.download = `語音筆記_${timestamp}.txt`;
+        a.click();
+        updateStatus("💾 檔案已下載儲存。");
+    };
+
+    // --- 4. 抗壓 AI 智慧潤稿 ---
+    async function runAI() {
+        const key = apiKeyInput.value.trim();
+        const text = output.value.trim();
+        if (!key || !text) { alert("請檢查 Key 與內容"); return; }
+        
+        localStorage.setItem('gemini_2026_key', key);
+        aiBtn.disabled = true;
+
+        const models = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-pro"];
+        const waitTimes = [2000, 4000, 8000]; 
+        let resultText = "";
+
+        for (let i = 0; i < models.length; i++) {
+            updateStatus(`⏳ AI 處理中 (嘗試模型: ${models[i]})...`);
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${models[i]}:generateContent?key=${key}`;
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "請潤稿這段語音轉文字草稿，修正標點與贅字，使語句通順，回傳純文字結果：\n\n" + text }] }]
+                    })
+                });
+
+                const data = await resp.json();
+                if (resp.ok) {
+                    resultText = data.candidates[0].content.parts[0].text.trim();
+                    break; 
+                }
+
+                if (resp.status === 429) {
+                    updateStatus(`⚠️ 流量過載，正在自動重試 (${waitTimes[i]/1000}秒)...`);
+                    await new Promise(r => setTimeout(r, waitTimes[i]));
+                } else {
+                    throw new Error(data.error.message);
+                }
+            } catch (err) {
+                if (i === models.length - 1) {
+                    updateStatus("❌ 連線失敗：" + err.message);
+                    aiBtn.disabled = false;
+                    return;
+                }
+            }
+        }
+
+        if (resultText) {
+            output.value = resultText;
+            let statusMsg = "✅ 潤稿完成！";
+
+            if (document.getElementById('autoSpeak').checked) {
+                speak(resultText);
+                statusMsg += " 正在朗讀...";
+            }
+            if (document.getElementById('autoCopy').checked) {
+                await copyToClipboard(resultText);
+                statusMsg += " (已自動複製)";
+            }
+            updateStatus(statusMsg);
+        }
+        aiBtn.disabled = false;
+    }
+
+    aiBtn.onclick = runAI;
+
+    function updateStatus(msg) {
+        statusText.innerHTML = `<span>狀態：${msg}</span>`;
+    }
+
+    function clearAll() {
+        if (output.value === "" || confirm("確定清除所有內容？")) {
+            output.value = "";
+            window.speechSynthesis.cancel();
+            updateStatus("內容已清空。");
+        }
+    }
+</script>
+
+</body>
+</html>

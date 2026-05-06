@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 語音對話空間 3.0 - 極速交互版</title>
+    <style>
+        :root {
+            --bg: #0d1117; --card: #161b22; --primary: #58a6ff;
+            --user-bubble: #238636; --ai-bubble: #30363d; --text: #c9d1d9;
+        }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        #chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
+        .bubble { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 16px; line-height: 1.5; word-wrap: break-word; position: relative; }
+        .user { align-self: flex-end; background: var(--user-bubble); color: white; border-bottom-right-radius: 2px; }
+        .ai { align-self: flex-start; background: var(--ai-bubble); color: var(--text); border-bottom-left-radius: 2px; border: 1px solid #444c56; }
+
+        .controls { background: var(--card); border-top: 1px solid #30363d; padding: 15px; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); }
+        .config-row { display: flex; gap: 15px; align-items: center; font-size: 13px; margin-bottom: 10px; flex-wrap: wrap; justify-content: center; }
+        input[type="password"] { background: #000; border: 1px solid #444; color: #fff; padding: 5px 10px; border-radius: 5px; width: 150px; }
+        
+        .main-btns { display: flex; gap: 10px; justify-content: center; align-items: center; }
+        button { padding: 12px 20px; border-radius: 25px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 14px; }
+        
+        #micBtn { background: #f85149; color: white; min-width: 140px; }
+        #micBtn.active { background: #238636; animation: pulse 1.5s infinite; }
+        #sendBtn { background: var(--primary); color: white; }
+        #stopSpeakBtn { background: #444; color: #ff6b6b; border: 1px solid #ff6b6b; }
+        
+        #interim-box { text-align: center; margin-top: 8px; color: #8b949e; font-size: 15px; min-height: 22px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 5px; }
+        
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(35, 134, 54, 0); } 100% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0); } }
+    </style>
+</head>
+<body>
+
+<div style="padding: 12px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;">
+    <div style="font-weight: bold; color: var(--primary);">Gemini Voice Chat 3.0</div>
+    <div id="model-status" style="font-size: 12px; color: #8b949e;">系統準備就緒</div>
+</div>
+
+<div id="chat-window">
+    <div class="bubble ai">你好！3.0 版已優化：<br>1. 錄音時 AI 會自動閉嘴。<br>2. 新增「停止朗讀」按鈕。<br>3. 朗讀速度加快。</div>
+</div>
+
+<div class="controls">
+    <div class="config-row">
+        🔑 Key: <input type="password" id="apiKey">
+        <label><input type="checkbox" id="autoMode" checked> AI 完畢後自動錄音</label>
+        <label><input type="checkbox" id="autoSend" checked> 靜音 3 秒自動發送</label>
+        語速: <input type="range" id="voiceRate" min="0.8" max="2" step="0.1" value="1.2" style="width:60px;">
+    </div>
+
+    <div class="main-btns">
+        <button id="micBtn">🎤 點擊說話</button>
+        <button id="sendBtn">📤 手動發送</button>
+        <button id="stopSpeakBtn">🔇 停止朗讀</button>
+        <button onclick="clearChat()" style="background:transparent; color:#8b949e; font-size:11px;">清空</button>
+    </div>
+    
+    <div id="interim-box"></div>
+</div>
+
+<script>
+    const chatWindow = document.getElementById('chat-window');
+    const micBtn = document.getElementById('micBtn');
+    const sendBtn = document.getElementById('sendBtn');
+    const stopSpeakBtn = document.getElementById('stopSpeakBtn');
+    const apiKeyInput = document.getElementById('apiKey');
+    const interimBox = document.getElementById('interim-box');
+    const modelStatus = document.getElementById('model-status');
+
+    apiKeyInput.value = localStorage.getItem('gemini_chat_key_v3') || '';
+    let conversationHistory = [];
+    let accumulatedText = ""; 
+
+    // --- 1. 強化的自動滾動 (加上即時預覽滾動) ---
+    const scrollToBottom = () => {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    };
+    const observer = new MutationObserver(scrollToBottom);
+    observer.observe(chatWindow, { childList: true });
+
+    // --- 2. 語音辨識 STT ---
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'zh-TW';
+    recognition.continuous = true; 
+    recognition.interimResults = true;
+
+    let isListening = false;
+    let silenceTimer;
+
+    function startListening() {
+        // [關鍵修復] 說話前先讓 AI 閉嘴
+        window.speechSynthesis.cancel();
+        
+        try {
+            recognition.start();
+            isListening = true;
+            micBtn.classList.add('active');
+            micBtn.innerHTML = "🎧 錄音中...";
+            interimBox.innerText = "請開始說話...";
+        } catch (e) { console.warn("辨識啟動中..."); }
+    }
+
+    function stopListening() {
+        recognition.stop();
+        isListening = false;
+        micBtn.classList.remove('active');
+        micBtn.innerHTML = "🎤 點擊說話";
+        clearTimeout(silenceTimer);
+    }
+
+    micBtn.onclick = () => {
+        if (!isListening) startListening();
+        else stopListening();
+    };
+
+    recognition.onresult = (event) => {
+        let interimText = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                accumulatedText += event.results[i][0].transcript;
+            } else {
+                interimText += event.results[i][0].transcript;
+            }
+        }
+        const currentTotal = accumulatedText + interimText;
+        interimBox.innerText = currentTotal;
+        scrollToBottom(); // 即時辨識也滾動
+
+        // 智慧自動發送
+        if (document.getElementById('autoSend').checked) {
+            clearTimeout(silenceTimer);
+            silenceTimer = setTimeout(() => {
+                if (currentTotal.trim() && !interimText) {
+                    commitSpeech(currentTotal);
+                }
+            }, 3000);
+        }
+    };
+
+    // [關鍵修復] 手動發送按鈕
+    sendBtn.onclick = () => {
+        const textToContent = interimBox.innerText.trim();
+        if (textToContent && textToContent !== "請開始說話...") {
+            commitSpeech(textToContent);
+        }
+    };
+
+    function commitSpeech(text) {
+        addBubble(text, 'user');
+        sendToAI(text);
+        accumulatedText = "";
+        interimBox.innerText = "";
+        stopListening();
+    }
+
+    // --- 3. AI 核心 ---
+    async function sendToAI(text) {
+        const key = apiKeyInput.value.trim();
+        if (!key) return alert("請輸入 Key");
+        localStorage.setItem('gemini_chat_key_v3', key);
+
+        const models = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-pro"];
+        let aiResponse = "";
+
+        for (let modelName of models) {
+            modelStatus.innerText = `連線中: ${modelName}...`;
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
+                const resp = await fetch(url, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ contents: [...conversationHistory, { role: "user", parts: [{ text: text }] }] }),
+                    headers: {'Content-Type': 'application/json'} 
+                });
+                const data = await resp.json();
+                if (resp.ok) {
+                    aiResponse = data.candidates[0].content.parts[0].text;
+                    conversationHistory.push({ role: "user", parts: [{ text: text }] });
+                    conversationHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+                    if (conversationHistory.length > 20) conversationHistory.splice(0, 2);
+                    break;
+                }
+            } catch (e) { console.warn(e); }
+        }
+
+        if (aiResponse) {
+            addBubble(aiResponse, 'ai');
+            modelStatus.innerText = "狀態：連線穩定";
+            speak(aiResponse);
+        }
+    }
+
+    // --- 4. 改良版語音合成 TTS ---
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'zh-TW';
+        // 使用使用者設定的語速
+        msg.rate = parseFloat(document.getElementById('voiceRate').value);
+        
+        msg.onend = () => {
+            if (document.getElementById('autoMode').checked) {
+                setTimeout(() => { if(!isListening) startListening(); }, 800);
+            }
+        };
+        window.speechSynthesis.speak(msg);
+    }
+
+    // [關鍵新增] 停止朗讀按鈕
+    stopSpeakBtn.onclick = () => {
+        window.speechSynthesis.cancel();
+        modelStatus.innerText = "已中斷朗讀";
+    };
+
+    function addBubble(text, role) {
+        const div = document.createElement('div');
+        div.className = `bubble ${role}`;
+        div.innerText = text;
+        chatWindow.appendChild(div);
+    }
+
+    function clearChat() {
+        chatWindow.innerHTML = '<div class="bubble ai">已重置對話。</div>';
+        conversationHistory = [];
+        accumulatedText = "";
+        window.speechSynthesis.cancel();
+    }
+</script>
+
+</body>
+</html>

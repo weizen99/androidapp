@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 語音導覽工作站 Pro</title>
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --bg: #0b0e14;
+            --card: #1c2128;
+            --text: #adbac7;
+            --danger: #f85149;
+            --success: #2ea043;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1000px;
+            background: var(--card);
+            border-radius: 24px;
+            border: 1px solid #444c56;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        /* 儀表板狀態區 */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #22272e;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #444c56;
+            text-align: center;
+        }
+
+        .stat-label { font-size: 0.8rem; color: #768390; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-value { font-size: 1rem; font-weight: bold; color: var(--primary); }
+
+        /* API & 設定區 */
+        .config-bar {
+            background: #22272e;
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            border: 1px solid #444c56;
+        }
+
+        input[type="password"] {
+            background: #0d1117;
+            border: 1px solid #444c56;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            width: 220px;
+            outline: none;
+        }
+
+        .toggle-group { display: flex; gap: 15px; }
+        label { cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+
+        /* 編輯區 */
+        .editor-wrapper { position: relative; }
+        textarea {
+            width: 100%;
+            height: 400px;
+            background: #0d1117;
+            color: #e6edf3;
+            border: 1px solid #444c56;
+            border-radius: 16px;
+            padding: 25px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            box-sizing: border-box;
+            resize: none;
+            outline: none;
+            transition: all 0.3s;
+        }
+        textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.1); }
+
+        /* 控制按鈕 */
+        .main-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-record { background: var(--danger); color: white; }
+        .btn-record.active { background: var(--success); animation: pulse 2s infinite; }
+        .btn-ai { background: var(--primary); color: #0b0e14; }
+        .btn-ai:disabled { background: #444c56; color: #768390; cursor: not-allowed; }
+        .btn-secondary { background: #373e47; color: white; }
+        .btn-secondary:hover { background: #444c56; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 160, 67, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(46, 160, 67, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 160, 67, 0); }
+        }
+
+        #log-status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>AI 語音導覽工作站</h1>
+    </div>
+
+    <div class="dashboard">
+        <div class="stat-card">
+            <div class="stat-label">目前連線模型</div>
+            <div id="activeModel" class="stat-value">等待啟動...</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">導覽狀態</div>
+            <div id="aiStatus" class="stat-value">閒置中</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">字數統計</div>
+            <div id="charCount" class="stat-value">0</div>
+        </div>
+    </div>
+
+    <div class="config-bar">
+        <span>🔑 API Key: <input type="password" id="apiKey"></span>
+        <div class="toggle-group">
+            <label><input type="checkbox" id="autoSpeak" checked> 自動朗讀</label>
+            <label><input type="checkbox" id="autoCopy" checked> 自動複製</label>
+        </div>
+    </div>
+
+    <div class="editor-wrapper">
+        <textarea id="output" placeholder="錄音前請先輸入指令「換行」、「句號」測試..."></textarea>
+    </div>
+
+    <div id="log-status">準備就緒，請開啟麥克風。</div>
+
+    <div class="main-controls">
+        <button id="recordBtn" class="btn-record">🎤 開始錄音</button>
+        <button id="aiBtn" class="btn-ai">✨ AI 智慧交互</button>
+        <button id="speakBtn" class="btn-secondary">🔊 導覽朗讀</button>
+        <button id="copyBtn" class="btn-secondary">📋 快速複製</button>
+        <button id="saveBtn" class="btn-secondary">💾 匯出存檔</button>
+        <button onclick="clearContent()" class="btn-secondary" style="color:var(--danger)">🗑️ 清除內容</button>
+    </div>
+</div>
+
+<script>
+    const output = document.getElementById('output');
+    const recordBtn = document.getElementById('recordBtn');
+    const aiBtn = document.getElementById('aiBtn');
+    const speakBtn = document.getElementById('speakBtn');
+    const logStatus = document.getElementById('log-status');
+    const activeModelStat = document.getElementById('activeModel');
+    const charCountStat = document.getElementById('charCount');
+    const apiKeyInput = document.getElementById('apiKey');
+
+    apiKeyInput.value = localStorage.getItem('gemini_2026_key') || '';
+
+    // --- 1. 語音辨識 STT (Speech to Text) ---
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'zh-TW';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    let isRecording = false;
+    recognition.onresult = (e) => {
+        let text = '';
+        for (let i = 0; i < e.results.length; i++) {
+            let t = e.results[i][0].transcript;
+            // 即時語音指令處理
+            t = t.replace(/換行/g, "\n").replace(/句號/g, "。").replace(/逗號/g, "，");
+            if (t.includes("清除內容")) { output.value = ""; return; }
+            text += t;
+        }
+        output.value = text;
+        charCountStat.innerText = text.length;
+        output.scrollTop = output.scrollHeight;
+    };
+
+    recordBtn.onclick = () => {
+        if (!isRecording) {
+            recognition.start();
+            recordBtn.innerHTML = "🛑 停止錄音";
+            recordBtn.classList.add('active');
+            updateLog("🎧 系統正在聆聽並記錄...");
+        } else {
+            recognition.stop();
+            recordBtn.innerHTML = "🎤 開始錄音";
+            recordBtn.classList.remove('active');
+            updateLog("✅ 錄音已安全存檔");
+        }
+        isRecording = !isRecording;
+    };
+
+    // --- 2. 專業導覽員語音合成 TTS (Text to Speech) ---
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'zh-TW';
+        msg.rate = 1.05;  // 稍快一點聽起來比較專業
+        msg.pitch = 1.0;
+        
+        // 嘗試選取更自然的台灣中文聲音 (如果系統支援)
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(v => v.lang.includes('zh-TW') || v.name.includes('Yating'));
+        if (preferredVoice) msg.voice = preferredVoice;
+
+        window.speechSynthesis.speak(msg);
+        updateLog("🔊 導覽員正在為您服務...");
+    }
+    speakBtn.onclick = () => speak(output.value);
+
+    // --- 3. 穩定多模型智慧切換 AI 核心 ---
+    async function runAI() {
+        const key = apiKeyInput.value.trim();
+        const text = output.value.trim();
+        if (!key || !text) { alert("請檢查 Key 與內容內容"); return; }
+        
+        localStorage.setItem('gemini_2026_key', key);
+        aiBtn.disabled = true;
+        document.getElementById('aiStatus').innerText = "AI 分析中";
+
+        // 智慧模型清單
+        const models = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-pro"];
+        const waitTimes = [2000, 5000, 10000]; 
+        let finalResult = "";
+
+        for (let i = 0; i < models.length; i++) {
+            const modelName = models[i];
+            activeModelStat.innerText = modelName;
+            updateLog(`⏳ 正在連線模型通道: ${modelName}...`);
+
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "你是一位資深的導覽與速記專家。請潤稿這段內容，修正錯字、自動分段、並補上精確的標點。請維持口語自然的語氣以便朗讀，直接回傳潤稿後的結果：\n\n" + text }] }]
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    finalResult = data.candidates[0].content.parts[0].text.trim();
+                    break; // 成功即跳出
+                }
+
+                // 處理 429 請求過快
+                if (response.status === 429) {
+                    updateLog(`⚠️ 流量限制，系統將在 ${waitTimes[i]/1000} 秒後切換模型...`);
+                    await new Promise(r => setTimeout(r, waitTimes[i]));
+                } else {
+                    throw new Error(data.error.message);
+                }
+            } catch (err) {
+                if (i === models.length - 1) {
+                    updateLog("❌ 通訊模組崩潰：" + err.message);
+                    aiBtn.disabled = false;
+                    return;
+                }
+            }
+        }
+
+        if (finalResult) {
+            output.value = finalResult;
+            charCountStat.innerText = finalResult.length;
+            updateLog("✅ 智慧交互完成，資料已同步");
+            document.getElementById('aiStatus').innerText = "導覽就緒";
+
+            // 自動化連動
+            if (document.getElementById('autoSpeak').checked) speak(finalResult);
+            if (document.getElementById('autoCopy').checked) {
+                navigator.clipboard.writeText(finalResult);
+            }
+        }
+        aiBtn.disabled = false;
+    }
+
+    aiBtn.onclick = runAI;
+
+    // --- 4. 輔助功能 (複製、存檔、清除) ---
+    document.getElementById('copyBtn').onclick = () => {
+        navigator.clipboard.writeText(output.value);
+        updateLog("📋 內容已複製到剪貼簿");
+    };
+
+    document.getElementById('saveBtn').onclick = () => {
+        const blob = new Blob([output.value], { type: 'text/plain' });
+        const a = document.createElement('a');
+        const now = new Date();
+        a.href = URL.createObjectURL(blob);
+        a.download = `AI_Guide_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.txt`;
+        a.click();
+        updateLog("💾 檔案匯出完成");
+    };
+
+    function clearContent() {
+        if (confirm("確定要重設目前的所有內容嗎？")) {
+            output.value = "";
+            charCountStat.innerText = "0";
+            window.speechSynthesis.cancel();
+            updateLog("🗑️ 工作區已清空");
+        }
+    }
+
+    function updateLog(msg) {
+        logStatus.innerText = msg;
+    }
+
+    // 初始化語音清單 (防止某些瀏覽器讀不到)
+    window.speechSynthesis.onvoiceschanged = () => {};
+</script>
+
+</body>
+</html>
