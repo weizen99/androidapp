@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>影音管理系統 - 完整功能版</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root { --accent: #ff4d4d; --bg-main: #f8f9fa; }
+        body { background-color: var(--bg-main); font-family: "Microsoft JhengHei", sans-serif; margin: 0; }
+
+        /* 置頂播放區域 */
+        .player-sticky-zone {
+            position: sticky; top: 0; z-index: 1000;
+            background: #000; border-bottom: 3px solid var(--accent);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        video { width: 100%; max-width: 640px; aspect-ratio: 16/9; display: block; margin: 0 auto; background: #000; }
+        
+        .control-panel { background: #1a1a1a; padding: 10px; color: #fff; }
+        #nowPlayingTitle { color: #ffbc00; font-size: 14px; text-align: center; margin-bottom: 10px; font-weight: bold; min-height: 20px; }
+
+        /* 多欄卡片樣式 */
+        .video-card {
+            background: #fff; border-radius: 12px; border: 2px solid transparent;
+            transition: 0.2s; height: 100%; position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .video-card.active { border-color: var(--accent); background: #fff5f5; box-shadow: 0 0 15px rgba(255, 77, 77, 0.2); }
+        .video-title { 
+            font-size: 15px; font-weight: 600; color: #333; height: 45px; 
+            overflow: hidden; margin-bottom: 10px; display: -webkit-box; 
+            -webkit-line-clamp: 2; -webkit-box-orient: vertical; 
+        }
+
+        .btn-circle { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; }
+        .play-btn { background: var(--accent); color: white; }
+        .queue-btn { background: #ffbc00; color: #000; }
+
+        /* 待播清單 */
+        .queue-drawer { background: #222; overflow-y: auto; max-height: 0; transition: max-height 0.3s ease; }
+        .queue-drawer.open { max-height: 350px; border-top: 1px solid #444; }
+
+        /* 管理工具 (滑鼠移入才顯示) */
+        .admin-tools { 
+            position: absolute; top: 8px; right: 8px; 
+            opacity: 0; transition: 0.3s; z-index: 10; 
+            display: flex; gap: 4px;
+        }
+        .video-card:hover .admin-tools { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="player-sticky-zone">
+        <video id="mainPlayer" controls playsinline onended="playNext()" onerror="handleVideoError()"></video>
+        <div class="control-panel">
+            <div id="nowPlayingTitle">💡 準備就緒</div>
+            <div class="container-fluid">
+                <div class="row g-2 justify-content-center align-items-center">
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm">
+                            <input type="text" id="inputSearch" class="form-control" placeholder="搜尋影片..." onkeyup="if(event.keyCode==13) doSearch()">
+                            <button class="btn btn-primary" onclick="doSearch()"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm btn-danger px-3 fw-bold" onclick="playNext()">下一首 <i class="bi bi-skip-end-fill"></i></button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="input-group input-group-sm">
+                            <select id="slotSelector" class="form-select" style="width:140px;" onchange="loadPlaylistFromSlot()"></select>
+                            <button class="btn btn-warning" onclick="saveToSlot()">存入</button>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm btn-outline-info position-relative" onclick="toggleQueue()">
+                            待播 <span id="queueCount" class="badge rounded-pill bg-danger">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="queueUI" class="queue-drawer"><div id="queueList" class="p-3 text-white small"></div></div>
+    </div>
+
+    <div class="container-fluid py-4 px-lg-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold m-0"><i class="bi bi-collection-play-fill text-danger me-2"></i>影音媒體庫</h4>
+            <button class="btn btn-success btn-sm" onclick="openAddModal()"><i class="bi bi-plus-lg"></i> 新增影音</button>
+        </div>
+
+        <!-- 網格容器 -->
+        <div id="videoGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4"></div>
+
+        <div class="mt-5 d-flex justify-content-between align-items-center border-top pt-4">
+            <select id="pageSizeSelect" class="form-select form-select-sm" style="width: 120px;" onchange="changePageSize()">
+                <option value="12">每頁 12 筆</option>
+                <option value="48">每頁 48 筆</option>
+                <option value="10000000" selected>全部顯示</option>
+            </select>
+            <nav><ul id="pagerList" class="pagination pagination-sm m-0"></ul></nav>
+        </div>
+    </div>
+
+    <!-- 彈窗 (Modal) -->
+    <div class="modal fade" id="dataModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow">
+                <div class="modal-header bg-dark text-white">
+                    <h5 id="modalTitle">資料維護</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="editId">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">來源類型</label>
+                        <select id="fieldMail" class="form-select">
+                            <option value="1">1. 電腦類 (Vedio1)</option>
+                            <option value="2">2. NAS 實體 (Vedio)</option>
+                            <option value="3">3. NAS 虛擬 (Vedio1)</option>
+                            <option value="4">4. YouTube (網址)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3"><label class="form-label fw-bold small">名稱</label><input type="text" id="fieldName" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label fw-bold small">路徑/網址</label><textarea id="fieldContent" class="form-control" rows="3"></textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-primary w-100" id="btnSubmit">儲存送出</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SERVER_URL = "https://zen2965.duckdns.org:8888/excelimport/message5.aspx";
+        var config = { searchKey: "", sortBy: "識別碼", sortDir: "DESC", pageIndex: 1, pageSize: 10000000 };
+        var playQueue = JSON.parse(localStorage.getItem('dbPlayQueue')) || [];
+        var dataModal;
+
+        $(document).ready(function () {
+            dataModal = new bootstrap.Modal(document.getElementById('dataModal'));
+            loadSlots();
+            loadGrid();
+            renderQueue();
+        });
+
+        // --- 播放核心 ---
+        function handleSmartPlay(rawPath, title, type, id) {
+            $(".video-card").removeClass("active");
+            if(id) $(`#card-${id}`).addClass("active");
+
+            const player = document.getElementById('mainPlayer');
+            let finalURL = getFinalSrc(rawPath, type);
+
+            if (String(type) === "4") {
+                window.open(finalURL, '_blank');
+                $("#nowPlayingTitle").html(`外部播放: ${title}`);
+                return;
+            }
+
+            player.src = finalURL;
+            player.load();
+            setTimeout(() => {
+                player.play().then(() => {
+                    $("#nowPlayingTitle").html(`<i class="bi bi-play-fill text-success"></i> 正在播放: ${title}`);
+                }).catch(e => {
+                    $("#nowPlayingTitle").html(`<i class="bi bi-pause-fill text-warning"></i> 請點播放: ${title}`);
+                });
+            }, 100);
+        }
+
+        function playNext() {
+            if (playQueue.length > 0) {
+                const next = playQueue.shift();
+                saveAndRenderQueue();
+                handleSmartPlay(next.src, next.title, next.type, next.id);
+                return;
+            }
+            let current = $(".video-card.active").closest(".col");
+            let nextCol = current.next(".col");
+            if (!nextCol.length) nextCol = $("#videoGrid .col:first");
+            if (nextCol.length) {
+                nextCol.find(".play-btn").click();
+                nextCol[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function handleVideoError() {
+            $("#nowPlayingTitle").html(`<span class="text-danger">⚠️ 讀取失敗，5秒後自動跳過</span>`);
+            setTimeout(playNext, 5000);
+        }
+
+        function getFinalSrc(rawPath, type) {
+            if (!rawPath) return "";
+            if (String(type) === "4" || rawPath.toLowerCase().startsWith('http')) return rawPath.trim();
+            try {
+                let fileName = decodeURIComponent(rawPath).replace(/\\/g, '/').split('/').pop();
+                let folder = (String(type) === "2") ? "vedio/" : "vedio1/";
+                return folder + encodeURI(fileName);
+            } catch (e) { return (String(type) === "2" ? "vedio/" : "vedio1/") + rawPath; }
+        }
+
+        // --- 存檔位系統 ---
+        function loadSlots() {
+            $.ajax({
+                type: "POST", url: SERVER_URL + "/GetSlotNames", data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    let h = '<option value="">-- 選取存檔位 --</option>';
+                    res.d.forEach(s => { h += `<option value="${s.id}">${s.id}. ${s.name || '未命名'}</option>`; });
+                    $("#slotSelector").html(h);
+                }
+            });
+        }
+
+        function loadPlaylistFromSlot() {
+            let sid = $("#slotSelector").val();
+            if (!sid) return;
+            $.ajax({
+                type: "POST", url: SERVER_URL + "/LoadPlaylistItems",
+                data: JSON.stringify({ slotId: sid }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    if (res.d.data) {
+                        playQueue = res.d.data.map(i => ({ id: i.識別碼, src: i.內容, title: i.姓名, type: i.郵件 }));
+                        saveAndRenderQueue();
+                        Swal.fire({ icon: 'success', title: '載入成功', timer: 1000, showConfirmButton: false });
+                    }
+                }
+            });
+        }
+
+        function saveToSlot() {
+            let sid = $("#slotSelector").val();
+            if (!sid) { Swal.fire("請先選取存檔位", "", "warning"); return; }
+            Swal.fire({ title: '請輸入清單名稱', input: 'text', showCancelButton: true }).then(res => {
+                if (res.isConfirmed && res.value) {
+                    let ids = playQueue.map(q => q.id).join(',');
+                    $.ajax({
+                        type: "POST", url: SERVER_URL + "/SavePlaylist",
+                        data: JSON.stringify({ slotId: sid, slotName: res.value, ids: ids }),
+                        contentType: "application/json; charset=utf-8",
+                        success: function () { Swal.fire("存檔成功", "", "success"); loadSlots(); }
+                    });
+                }
+            });
+        }
+
+        // --- 資料載入渲染 ---
+        function loadGrid() {
+            $.ajax({
+                type: "POST", url: SERVER_URL + "/GetData",
+                data: JSON.stringify(config),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    let h = "";
+                    res.d.data.forEach(item => {
+                        let typeColor = item.郵件 == "4" ? "danger" : (item.郵件 == "2" ? "success" : "primary");
+                        h += `
+                        <div class="col">
+                            <div class="video-card p-3 shadow-sm" id="card-${item.識別碼}">
+                                <!-- 管理工具：含修改與刪除 -->
+                                <div class="admin-tools">
+                                    <button class="btn btn-dark btn-sm p-1" title="修改" onclick="openEdit('${item.識別碼}','${item.姓名}','${item.郵件}','${item.內容}')"><i class="bi bi-pencil-fill"></i></button>
+                                    <button class="btn btn-danger btn-sm p-1" title="刪除" onclick="askDelete(${item.識別碼})"><i class="bi bi-trash-fill"></i></button>
+                                </div>
+                                <span class="badge bg-${typeColor} mb-2">類型 ${item.郵件}</span>
+                                <div class="video-title">${item.姓名}</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">ID:${item.識別碼}</small>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn-circle queue-btn shadow-sm" onclick="addToQueue(${item.識別碼},'${item.內容}','${item.姓名}','${item.郵件}')"><i class="bi bi-plus-lg"></i></button>
+                                        <button class="btn-circle play-btn shadow-sm" onclick="handleSmartPlay('${item.內容}','${item.姓名}','${item.郵件}', ${item.識別碼})"><i class="bi bi-play-fill"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                    $("#videoGrid").html(h || '<div class="w-100 text-center p-5">查無影音資料</div>');
+                    renderPager(res.d.totalCount);
+                }
+            });
+        }
+
+        // --- 待播清單邏輯 ---
+        function addToQueue(id, src, title, type) {
+            playQueue.push({ id, src, title, type });
+            saveAndRenderQueue();
+        }
+        function saveAndRenderQueue() {
+            localStorage.setItem('dbPlayQueue', JSON.stringify(playQueue));
+            $("#queueCount").text(playQueue.length);
+            let h = playQueue.map((item, idx) => `
+                <div class="d-flex justify-content-between mb-2 border-bottom border-secondary pb-1 small">
+                    <span class="text-truncate" style="flex:1">${idx+1}. ${item.title}</span>
+                    <i class="bi bi-x-circle text-danger ms-2" style="cursor:pointer" onclick="removeFromQueue(${idx})"></i>
+                </div>
+            `).join('');
+            $("#queueList").html(h || "清單空空如也");
+        }
+        function removeFromQueue(idx) { playQueue.splice(idx, 1); saveAndRenderQueue(); }
+        function toggleQueue() { $("#queueUI").toggleClass("open"); }
+
+        // --- 搜尋與分頁 ---
+        function doSearch() { config.searchKey = $("#inputSearch").val(); config.pageIndex = 1; loadGrid(); }
+        function changePageSize() { config.pageSize = parseInt($("#pageSizeSelect").val()); config.pageIndex = 1; loadGrid(); }
+        function renderPager(total) {
+            let tp = Math.ceil(total / config.pageSize);
+            if (tp <= 1) { $("#pagerList").empty(); return; }
+            let h = "", cur = config.pageIndex;
+            for (let i = 1; i <= tp; i++) {
+                if (i == 1 || i == tp || (i >= cur - 1 && i <= cur + 1))
+                    h += `<li class="page-item ${i == cur ? 'active' : ''}"><a class="page-link" onclick="config.pageIndex=${i};loadGrid()">${i}</a></li>`;
+            }
+            $("#pagerList").html(h);
+        }
+
+        // --- CRUD 操作 ---
+        function openAddModal() {
+            $("#modalTitle").text("新增影音資料");
+            $("#editId").val(""); $("#fieldName").val(""); $("#fieldContent").val(""); $("#fieldMail").val("3");
+            dataModal.show(); $("#btnSubmit").attr("onclick", "submitData('InsertData')");
+        }
+        function openEdit(id, n, m, c) {
+            $("#modalTitle").text("編輯影音 #" + id);
+            $("#editId").val(id); $("#fieldName").val(n); $("#fieldMail").val(m); $("#fieldContent").val(c);
+            dataModal.show(); $("#btnSubmit").attr("onclick", "submitData('UpdateData')");
+        }
+        function submitData(method) {
+            let d = { id: $("#editId").val() || 0, name: $("#fieldName").val(), mail: $("#fieldMail").val(), content: $("#fieldContent").val() };
+            $.ajax({
+                type: "POST", url: SERVER_URL + "/" + method, data: JSON.stringify(d),
+                contentType: "application/json; charset=utf-8",
+                success: function () { dataModal.hide(); loadGrid(); Swal.fire("處理成功", "", "success"); }
+            });
+        }
+        function askDelete(id) {
+            Swal.fire({
+                title: '確認刪除？',
+                text: '此操作不可復原，請輸入管理密碼',
+                input: 'password',
+                showCancelButton: true
+            }).then(res => {
+                if (res.isConfirmed) {
+                    $.ajax({
+                        type: "POST", url: SERVER_URL + "/DeleteData",
+                        data: JSON.stringify({ id: id, pwd: res.value }),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (r) {
+                            if (r.d.success) { loadGrid(); Swal.fire("已刪除", "", "success"); }
+                            else { Swal.fire("刪除失敗", r.d.msg, "error"); }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>
