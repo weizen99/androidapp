@@ -30,7 +30,7 @@ map.html:
 message5.html
 播放系統:我的電腦檔案mp4檔 nas檔案mp4檔 youtube連結,有撥放清單按序撥放,可新增youtube連結
 
-message6.html message6s.html:同上電腦版,版面等更好看
+message6.html message6s.html:同上電腦版,版面等更好看,目前都會用到本機電腦,關機時便無法使用後置程式碼
 
 tour.html:Ai聊天,可自動切換模型,到 https://aistudio.google.com/app/apikey 申請Api key
 
