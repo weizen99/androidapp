@@ -36,6 +36,8 @@ tour.html:Ai聊天,可自動切換模型,到 https://aistudio.google.com/app/api
 
 voiceinput.html  voiceinput1.html : 網頁版語音輸入或自動朗讀,可由Ai潤稿,複製到剪貼簿,任意地方按貼上(省打字)
 
+image_api2.html: 照片輸播,直接抓取ds215圖片
+
 
 
 
