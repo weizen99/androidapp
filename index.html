@@ -1,295 +1,218 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
-    <meta charset="utf-8"> 
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>我的寶可夢網頁</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-      <style type = "text/css"> 
-      
-      aside{
-          width:600px;
-          float:left;
-          height:1000px;
-          /* background-color:#FFFFCC;background-image:url(pokepic/p1.jpg);background-repeat:no-repeat;     
-          background-size:"10% 10%"; */
-          background-color:#FFFFCC;
-      }
+    <title>我的 GitHub 作品集</title>
+    <!-- 引入字體與圖示 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* 這裡可以更換背景漸層顏色 */
+            --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            --glass: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --accent-color: #ffd700;
+        }
 
-     
-     /* <link rel=stylesheet type="text/css" href="css/color.css"> */
-      h1#text1{
-        margin:0px;padding:0px;
-        top:15px;
-        position:absolute;
-        font-size: 40px;
-        color: #FF0000;
-        margin-left: 50px;
-      }
-      h1#text2{
-        margin:0px;padding:5px;
-        
-        position:absolute;
-        font-size: 30px;
-        color: #FFFFFF;
-        top:30px;
-        margin-left: 50px;
-        z-index:1;
-        filter:glow(color=#ff0000, strength=5);
-        text-shadow: 5px 5px 5px #FF0000;
-      }
-       .consection{
-           display: block;
-           border:0px #330000 solid;
-           width: 600px;
-           left:30px;top:60px;
-           margin: auto;padding:30px;
-           font-family: "標楷體", Helvetica, sans-serif;font-size: 16px;
-       }
-      .ptest{color: saddlebrown;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px; }
-      .ptest1{color:blue;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
-      .ptest2{color: red;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
-      .ptest3{color:green;font-family: "標楷體", Helvetica, sans-serif;font-size: 20px;}
-      a:hover {border:3px green solid;text-decoration:none;} 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
 
-      /* <link rel="stylesheet" href="css/color.css"> */
+        body {
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            color: #fff;
+        }
 
-      /* @import url(css/color.css); */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-      /* a:link, a:visited {
-            border-style: solid;
-            border-width: 5px;
-            border-color: transparent;
-            }
-            a:hover {border:3px red;text-decoration:none;background-color: green;};
-        */
-       
-       
+        .main-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
 
+        /* 頭像部分 */
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid var(--glass-border);
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
 
+        h1 { font-size: 1.6rem; margin-bottom: 10px; }
+        .bio { font-size: 0.95rem; opacity: 0.85; margin-bottom: 30px; line-height: 1.6; }
 
-      </style>
+        /* 標題與分類 */
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            margin-top: 25px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .section-title::before, .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
 
-     
+        /* 連結樣式 */
+        .link-group { display: flex; flex-direction: column; gap: 12px; }
+
+        .link-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            padding: 14px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .link-item i { margin-right: 15px; font-size: 1.2rem; width: 25px; }
+        .link-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+            border-color: var(--accent-color);
+        }
+
+        /* 底部社群圖示 */
+        .social-group {
+            margin-top: 35px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .social-icon {
+            font-size: 1.5rem;
+            color: #fff;
+            opacity: 0.7;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            opacity: 1;
+            color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        /* 響應式微調 */
+        @media (max-width: 400px) {
+            .main-card { padding: 25px; }
+        }
+    </style>
 </head>
-<body>   
+<body>
 
-
-    <link rel="stylesheet" href="css/color.css">
-
-<header>
-        <h1  id="text1">寶可夢抓寶</h1>
-        <h1  id="text2">更省時的移動</h1>
-        <br/>
-        <br/>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ptest2" > 
-                <a class="navbar-brand" href="https://zen2965.duckdns.org:8888/androidapp/index.html">回首頁</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-              
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                切換至
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item " href="tablesort/index1.html">響應式網頁版</a>
-                                <a class="dropdown-item disabled" href="index.html">首頁版</a>
-                                <a class="dropdown-item" href="http://www.sachi.somee.com/index.html">somee_index首頁</a>
-                                <a class="dropdown-item" href="http://www.hacker1.somee.com/fourword.aspx">到成語查詢hacker1_somee(第二區)</a>
-                                <a class="dropdown-item" href="https://fi23818394.m.icoc.vc">凡科手機版</a>
-                                <div class="dropdown-divider"></div>
-                               <a class="dropdown-item" href="fourword.html">webSQL寫在你的瀏覽器內(成語)</a>
-                               <a class="dropdown-item" href="tablesort/basicinfo.html">webSQL寫在你的瀏覽器內(股票)</a>
-                               <a class="dropdown-item" href="websqlpoko.html">webSQL寫在你的瀏覽器內(座標)</a>
-                               <a class="dropdown-item" href="tablesort/travel.html">寫在你的瀏覽器內(全國景點)</a>
-                              <a class="dropdown-item" href="tablesort/youbike.html">寫在你的瀏覽器內(YouBike大台北座標)</a>
-                                <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="pokepic/address_rwd.zip">斗南座標程式app下載</a>
-                        <a class="dropdown-item" href="pokepic/_成語測驗之國小及國中_12219547.zip">成語測驗之國小及國中之單頁app下載</a>
-                        <a class="dropdown-item" href="pokepic/_SQL樞紐分析選股_12219119.zip">SQL樞紐分析選股之單頁app下載</a>
-                        <a class="dropdown-item" href="pokepic/_somee景點_12235429.zip">景點座標用app下載</a>
-
-</div>
-                              </li>  
-                    
-                <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  股票資訊
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="stock1.html">股票資訊(手機版)</a>
-                        <a class="dropdown-item" href="stock.html">股票資訊(電腦版)</a>
-                        <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fishnew5/trend">綜合查詢(圖形)</a> 
-                        <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fishnew5/stockgodpc3">四季紅及dmi之股神圖形查詢</a>
-                        <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fishnew5/income10">Dmi+Kd+Macd查詢</a> 
-                        <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fishnew5/poem1_stockchips">投信外資之樞紐分析表查詢</a>
-                        <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fishnew5sql/chips5date">單筆或整批自選股之多項籌碼查詢</a>
-                         <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fishnew5/line">均線乖離選股</a>
-                         <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fishnew5/favorites2">網站簡略使用說明</a>
-                        <a class="dropdown-item" href="https://www.wantgoo.com/global">玩股網</a> 
-                </div>
-              </li>
+    <div class="main-card">
+        <!-- 你的頭像 -->
+        <img src="https://github.com/你的用戶名.png" alt="Avatar" class="avatar">
         
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            寶可夢資料
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="https://twpkinfo.com/ipoke.aspx">寶可夢資訊站_抓好iv</a>
-            <a class="dropdown-item" href="https://twpkinfo.com/igym.aspx">團體戰及道館名稱查詢</a>
-            <a class="dropdown-item" href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite">查技能等資料</a>
-            <a class="dropdown-item" href="http://tomchun.tw/tomchun">湯姆群情報站</a>
-            <a class="dropdown-item" href="https://forum.gamer.com.tw/B.php?bsn=29659&amp;subbsn=0">巴哈討論區</a>                        
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item " href="pokepic/社群日時間.html">社群日時間</a>
-            <a class="dropdown-item " href="pokepic/天氣加成.html">天氣加成</a>
-            <a class="dropdown-item " href="pokepic/伊布進化.html">伊布進化</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="http://www.sachi.somee.com/pokemapaccess.aspx">查座標24小時沒地圖</a>
-            <a class="dropdown-item" href="http://www.sachi.somee.com/mapsql.aspx">查座標24小時有地圖</a>
-            <a class="dropdown-item" href="tablesort/basicinfo.html">webSQL寫在你的瀏覽器內(股票)</a>
-            <a class="dropdown-item " href="tablesort/index1.html">webSQL寫在你的瀏覽器內(座標)</a>
-            <a class="dropdown-item " href="fourword.html">webSQL寫在你的瀏覽器內(成語)</a>
-            <a class="dropdown-item " href="websqlpoko.html">webSQL寫在你的瀏覽器內沒放表格(座標) </a>
-            <a class="dropdown-item " href="https://zen2965.duckdns.org:8888/androidapp/basicinfotable.html">串接webapi資料 </a>
-            <a class="dropdown-item " href="https://weizen99.github.io/websql/index.html">websql(寫在你的瀏覽器內)可以在此https中顯示 </a>
-          </div>
-        </li>
-        
-        <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  追劇網站
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="https://gimy.tv/">Gimy追劇</a>
-                  <a class="dropdown-item" href="http://www01.eyny.com/video.php?mod=channel&cid=5">伊莉影視</a>                             
-                  <a class="dropdown-item" href="http://video.yaodaojiao.com/jinguang/zxtd/">妖道角布袋戲</a>
-                                     
-        
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="http://vigor.enjoy101.org/">vigor網路電視</a>  
-                  <div class="dropdown-divider"></div>  
-                  <a class="dropdown-item" href="readfilepic.html">讀圖片(沒自動縮放,要放大才看得清楚時選此)</a> 
-                  <a class="dropdown-item" href="readfilerwd.html">讀圖片(自動縮放且看得清楚時選此)</a> 
-                  <a class="dropdown-item" href="http://www.sachi.somee.com/poemaccess">外部somee網站24小時(本機關機時可查座標)</a> 
-                  <a class="dropdown-item" href="http://big5.quanben5.com/n/xueyinglingzhu/xiaoshuo.html">雪鷹領主小說</a>
-                  <a class="dropdown-item" href="https://www.twfanti.com/DouLuoDaLu/read_1.html">斗羅大陸小說</a>
-                </div>
-              </li>
-        
-        </ul>
+        <h1>歡迎來到我的網頁</h1>
+        <p class="bio">列舉網頁連姞</p>
+
+        <!-- 第一類別：精選 GitHub 專案 (兩筆資料) -->
+        <div class="section-title">精選專案</div>
+        <div class="link-group">
+            <a href="https://weizen99.github.io/androidapp/excelsql.html" class="link-item" target="_blank">
+                <i class="fab fa-github-alt"></i> 1.可自己輸入ms sqlserver select類的查詢,有提供範本(頁面上有範本查詢)讓你編輯 2.自己建置的股票資料,提供給大家參考測試使用 3.html+aspx.vb,前端是html,後端是asp.net的後置程式碼(整合得很棒!) 4.上面的導航頁 webapi彙總所提供的藝廊查詢,使用html+webapi,前端是html串接webapi 5.資料庫如果有圖片也可以自動顯示出來(欄位:photo) 6.含有一些關鍵字會報錯,資料庫只有查詢權限 7.要變更資料庫會提醒,請按提醒操作,提醒備註可不用刪除 8.顯示結果可進行:分頁(可選分頁筆數) 凍結表頭 搜尋 9.圖片有再放大功能 10.預存程式功能再另一版 11.不要顯示欄位可進行程式碼刪除,除了有些特別分群等的不行,尤其是手機畫面比較小更須使用
+            </a>
+            <a href="https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html" class="link-item" target="_blank">
+                <i class="fas fa-terminal"></i> WebApi串接SQL資料庫
+            </a>
+		<a href="https://weizen99.github.io/androidapp/excelsql2.html" class="link-item" target="_blank">
+                <i class="fab fa-github-alt"></i> ExcelSql:同上,但可使用預存程序查詢
+            </a>
+            <a href="https://zen2965.duckdns.org:8888/excelimport/message4.html" class="link-item" target="_blank">
+                <i class="fas fa-terminal"></i> 1.專業的留言系統 2.除了可留言,重要提醒或留備註等也都可以 3.新增 編輯 刪除 分頁(可選分頁筆數) 凍結表頭 搜尋 都有支援
+            </a>
+
+            <a href="https://weizen99.github.io/androidapp/googlesheet.html" class="link-item" target="_blank">
+                <i class="fab fa-github-alt"></i> 讀取Google試算表的內容固定的一些欄位 photo欄放圖片的連結(要按表頭結構,文字或圖片)
+            </a>
+            <a href="https://zen2965.duckdns.org:8888/androidapp/map.html" class="link-item" target="_blank">
+                <i class="fas fa-terminal"></i> 可以將目前定位資料或任一點座標建檔到資料庫中,按同步將座標送到Somee資料庫建檔
+            </a>
+	    <a href="https://zen2965.duckdns.org:8888/androidapp/message6s.html" class="link-item" target="_blank">
+                <i class="fab fa-github-alt"></i> 影音播放系統:我的電腦檔案mp4檔 nas檔案mp4檔 youtube連結,有撥放清單按序撥放,可新增youtube連結,有放置虛擬目錄改由本地播放檔案
+            </a>
+            
+            <a href="https://weizen99.github.io/androidapp/image_api2.html" class="link-item" target="_blank">
+                <i class="fas fa-terminal"></i> 照片輸播:SQL資料庫建檔案連結,可切換子資料夾來降低筆數,SQL連結中有子資料夾時可自動建立清單
+            </a>
+
+            <a href="https://weizen99.github.io/androidapp/voiceinput1.html " class="link-item" target="_blank">
+                <i class="fab fa-github-alt"></i> 網頁版語音輸入或自動朗讀,可由Ai潤稿,複製到剪貼簿,任意地方按貼上(省打字)
+            </a>
+             <a href="https://weizen99.github.io/androidapp/tour.html " class="link-item" target="_blank">
+                <i class="fab fa-github-alt"></i> Ai聊天,可自動切換模型,到 https://aistudio.google.com/app/apikey 申請Api key
+            </a>          
+
+
+        </div>
+
+        <!-- 第二類別：其他連結/部落格 (兩筆資料) -->
+        <div class="section-title">其他連結</div>
+        <div class="link-group">
+            <a href="#" class="link-item" target="_blank">
+                <i class="fas fa-pen-nib"></i> 個人技術部落格 (Medium/HackMD)
+            </a>
+            <a href="#" class="link-item" target="_blank">
+                <i class="fas fa-file-pdf"></i> 下載最新版個人履歷 (Resume)
+            </a>
+        </div>
+
+        <!-- 第三類別：社群媒體圖示 (兩筆資料) -->
+        <div class="social-group">
+            <a href="https://github.com/你的用戶名" class="social-icon" title="GitHub" target="_blank">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="你的Linkedin連結" class="social-icon" title="LinkedIn" target="_blank">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <!-- 你可以依此類推增加更多，例如 Email -->
+            <a href="mailto:your-email@example.com" class="social-icon" title="Email">
+                <i class="fas fa-envelope"></i>
+            </a>
+        </div>
     </div>
-</nav>
-    
-</header>
-<div class="container-fluid">
-<ASIde>
-    <NAV>
-        <UL>
 
-            <LI> <a class="ptest2" href="https://zen2965.duckdns.org:8888/fishnew5/selfpoke">查斗南附近座標(同時移至同一座標)</a></LI>
-            <LI> <a class="ptest1" href="https://twpkinfo.com/ipoke.aspx">寶可夢資訊站_抓好iv</a></LI>
-            <LI> <a  class="ptest" href="https://twpkinfo.com/igym.aspx">團體戰及道館名稱查詢</a></LI>
-            <LI> <a class="ptest1" href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite">查尋寶可夢最佳技能等資料</a></LI>
-            <LI> <a class="ptest" href="http://tomchun.tw/tomchun">湯姆群情報站</a></LI>           
-            <LI> <a class="ptest1" href="https://forum.gamer.com.tw/B.php?bsn=29659&amp;subbsn=0">巴哈討論區</a></LI>
-            <LI> <a class="ptest" href="pokepic/社群日時間.html">社群日時間</a></LI>
-            <LI> <a class="ptest1" href="pokepic/天氣加成.html">天氣加成</a></LI>
-            <LI> <a class="ptest" href="pokepic/伊布進化.html">伊布進化</a></LI>
-            <LI> <a class="ptest1" href="https://gimy.tv/">Gimy追劇</a></LI>
-            <LI> <a class="ptest" href="http://www01.eyny.com/video.php?mod=channel&cid=5">伊莉影視</a></LI>
-            <LI> <a class="ptest1" href="http://video.yaodaojiao.com/jinguang/zxtd/">妖道角布袋戲</a></LI>            
-            <LI> <a class="ptest" href="stock1.html">股票資訊(手機版)</a></LI>
-            <LI> <a class="ptest1" href="stock.html">股票資訊(電腦版)</a></LI>
-            <LI> <a class="ptest" href="http://www.sachi.somee.com/pokemapaccess">查座標24小時沒地圖</a></LI>
-            <LI> <a class="ptest1" href="http://www.sachi.somee.com/mapsql">查座標24小時有地圖</a></LI>
-            <LI> <a class="ptest" href="http://vigor.enjoy101.org/">vigor網路電視</a></LI>
-            <LI> <a class="ptest1" href="https://www.wantgoo.com/global">玩股網</a></LI>
-            <LI> <a class="ptest1" href="http://fi23818394.icoc.vc/">凡科電腦版</a></LI>   
-            <LI> <a class="ptest1" href="https://fi23818394.m.icoc.vc">凡科手機版</a></LI>
-        </UL>
-    </NAV>
-</ASIde>
-
-   
-<article>
-        <NAV>
-            <UL>               
-		 
-                <LI> <a class="ptest1" href="https://zen2965.duckdns.org:8888/work/test3.aspx">本機成語(國中及國小)</a></LI>  
-                <LI> <a class="ptest1" href="https://zen2965.duckdns.org:8888/mymvc/trend4stock.aspx">本機Obv+K線(量)+SQL指令等</a></LI>
-                <LI> <a class="ptest1" href="https://sachi.zen2965.workers.dev/">外部導航頁</a></LI>
-		<LI> <a class="ptest1" href="https://tight-boat-a23a.zen2965.workers.dev/">內部導航頁</a></LI>
-                <LI> <a class="ptest1" href="https://zen2965.duckdns.org:8888/homesomee/camp1">本機露營天地及導航</a></LI>
-                <LI> <a class="ptest1" href="https://zen2965.duckdns.org:8888/homesomee/mapsql2">本機景點及導航</a></LI>
-                <LI> <a class="ptest1" href="https://zen2965.duckdns.org:8888/homesomee/youbiketp1">本機YouBike大台北座標及導航</a></LI>
-                <LI> <a class="ptest1" href="https://zen2965home.synology.me/androidapp/index.html">DS215_index首頁(加密版)</a></LI>
-                <LI> <a class="ptest1" href="https://zen2965.duckdns.org:8888/androidapp/basicinfotable.html">串接webapi資料</a></LI>
-                <LI> <a class="ptest1" href="https://zen2965home.synology.me/androidapp/map.html">DS215_index首頁(map定位)</a></LI>
-
-
-                </UL>
-            </NAV>   
-    <section class="consection">
-        <fieldset>
-            <legend>最新消息!</legend>
-            1.巳增加全國景點座標  2.增加外部(somee)網站的連結 <br>
-            <ul>
-               
-                <LI> <a class="ptest1" href="http://www.sachi.somee.com/index.html">somee_index首頁(第一區)</a></LI>
-                <LI> <a class="ptest1" href="http://www.hacker1.somee.com/youbiketp1">somee_YouBikeTP(hacker)</a></LI>
-                <LI> <a class="ptest1" href="http://www.hacker1.somee.com/mapsql2">somee景點座標(hacker)</a></LI>
-                <LI> <a class="ptest1" href="http://www.hacker1.somee.com/mapsql3">somee景點座標手機版(hacker)</a></LI>
-		<LI> <a class="ptest1" href="https://weizen99.github.io/androidapp/map.html">github map定位(hacker)</a></LI>
-                <LI> <a class="ptest1" href="http://www.hacker1.somee.com/maptest">完整地圖(hacker)</a></LI>
-                <LI> <a class="ptest1" href="http://www.hacker1.somee.com/guestmsg1">過渡暫存區(hacker)</a></LI>
-                <LI> <a class="ptest1" href="http://www.hacker1.somee.com/fourword.aspx">到成語查詢hacker1_somee(第二區)</a></LI>
-		<LI> <a class="ptest1" href="http://www.hacker1.somee.com/guestinfowd1.aspx">somee_favorite最愛查詢</a></LI>                                           
-                <LI> <a class="ptest1" href="https://www.taiwanstat.com/realtime/rain/">台灣即時雨量資訊</a></LI>
-               
-               
-            </ul>
-
-        </fieldset>
-       
-
-    </section>
-<div class="consection">
-    <!-- <img src="img/puppy1.jpg" width="120"> -->
-    <!-- <img class="img-responsive figure-img img-fluid rounded" width="180px" src="img/puppy2.jpg" >
-    <img class="img-responsive figure-img img-fluid rounded" width="180px" src="img/puppy3.jpg" > -->
-</div>
-
-</article>
-
-
-<footer> 歡迎光臨我的網站!! 
-
-       
-
-</footer>
-
-</div>
-      
-<br>
-<br>
-<br>
-   
-    
-    <p>　</p>
-    
-
-
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-    
 </body>
-
 </html>
