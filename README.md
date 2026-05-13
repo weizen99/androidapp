@@ -32,6 +32,8 @@ message5.html
 
 message6.html message6s.html:同上電腦版,版面等更好看,目前都會用到本機電腦,關機時便無法使用後置程式碼
 
+message6_1.html : youtube連結播放專用
+
 tour.html:Ai聊天,可自動切換模型,到 https://aistudio.google.com/app/apikey 申請Api key
 
 voiceinput.html  voiceinput1.html : 網頁版語音輸入或自動朗讀,可由Ai潤稿,複製到剪貼簿,任意地方按貼上(省打字)
