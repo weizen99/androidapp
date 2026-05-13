@@ -1,0 +1,399 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube 專用播放器 - 自動連播版</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- 載入 YouTube API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <style>
+        :root {
+            --yt-red: #ff0000;
+            --bg-main: #f9f9f9;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            font-family: "Microsoft JhengHei", sans-serif;
+            margin: 0;
+        }
+
+        /* 置頂 YouTube 播放器區域 */
+        .player-sticky-zone {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #000;
+            border-bottom: 3px solid var(--yt-red);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        /* 保持 16:9 比例 */
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            aspect-ratio: 16 / 9;
+            background: #000;
+        }
+
+        #ytPlayer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .control-panel {
+            background: #1a1a1a;
+            padding: 12px;
+            color: #fff;
+        }
+
+        #nowPlayingTitle {
+            color: #ffbc00;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* 卡片佈局 */
+        .video-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: 0.2s;
+            height: 100%;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+        }
+
+            .video-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            }
+
+            .video-card.active {
+                border-color: var(--yt-red);
+                background: #fff5f5;
+            }
+
+        .video-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            height: 45px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .btn-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+        }
+
+        .play-btn {
+            background: var(--yt-red);
+            color: white;
+        }
+
+        .queue-drawer {
+            background: #222;
+            overflow-y: auto;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+
+            .queue-drawer.open {
+                max-height: 350px;
+            }
+
+        .admin-tools {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 10;
+            display: flex;
+            gap: 4px;
+        }
+
+        .video-card:hover .admin-tools {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 置頂播放區域 -->
+    <div class="player-sticky-zone">
+        <div class="video-container">
+            <div id="ytPlayer"></div> <!-- YouTube API 會在此插入播放器 -->
+        </div>
+        <div class="control-panel">
+            <div id="nowPlayingTitle">🎬 YouTube 播放器已就緒</div>
+            <div class="container-fluid">
+                <div class="row g-2 justify-content-center align-items-center">
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm">
+                            <input type="text" id="inputSearch" class="form-control" placeholder="搜尋影片..." onkeyup="if(event.keyCode==13) doSearch()">
+                            <button class="btn btn-danger" onclick="doSearch()"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm btn-light px-3 fw-bold" onclick="playNext()">下一首 <i class="bi bi-skip-end-fill"></i></button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="input-group input-group-sm">
+                            <select id="slotSelector" class="form-select" style="width:140px;" onchange="loadPlaylistFromSlot()"></select>
+                            <button class="btn btn-outline-warning" onclick="saveToSlot()">存入</button>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm btn-outline-info position-relative" onclick="toggleQueue()">
+                            待播 <span id="queueCount" class="badge rounded-pill bg-danger">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="queueUI" class="queue-drawer"><div id="queueList" class="p-3 text-white small"></div></div>
+    </div>
+
+    <!-- 2. 多欄顯示區 (僅顯示 YouTube) -->
+    <div class="container-fluid py-4 px-lg-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold m-0"><i class="bi bi-youtube text-danger me-2"></i>YouTube 影音庫</h4>
+            <button class="btn btn-dark btn-sm" onclick="openAddModal()">新增連結</button>
+        </div>
+
+        <div id="videoGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4"></div>
+
+        <div class="mt-5 d-flex justify-content-between align-items-center border-top pt-4">
+            <select id="pageSizeSelect" class="form-select form-select-sm" style="width: 120px;" onchange="changePageSize()">
+                <option value="12">12 筆</option>
+                <option value="48">48 筆</option>
+                <option value="10000000" selected>全部顯示</option>
+            </select>
+            <nav><ul id="pagerList" class="pagination pagination-sm m-0"></ul></nav>
+        </div>
+    </div>
+
+    <!-- 3. Modal -->
+    <div class="modal fade" id="dataModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white"><h5>YouTube 資料維護</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="editId">
+                    <input type="hidden" id="fieldMail" value="4"> <!-- 固定為類型 4 -->
+                    <div class="mb-3"><label class="form-label fw-bold">影片名稱</label><input type="text" id="fieldName" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label fw-bold">YouTube 網址</label><textarea id="fieldContent" class="form-control" rows="3" placeholder="https://www.youtube.com/watch?v=..."></textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-danger w-100" id="btnSubmit">儲存影片</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SERVER_URL = "https://zen2965.duckdns.org:8888/excelimport/message5.aspx";
+        var config = { searchKey: "", sortBy: "識別碼", sortDir: "DESC", pageIndex: 1, pageSize: 10000000 };
+        var playQueue = JSON.parse(localStorage.getItem('ytPlayQueue')) || [];
+        var player; // YouTube Player 實體
+        var dataModal;
+
+        // --- YouTube API 初始化 ---
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('ytPlayer', {
+                height: '100%',
+                width: '100%',
+                videoId: '', // 預設空白
+                playerVars: { 'autoplay': 1, 'playsinline': 1, 'rel': 0 },
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
+        }
+
+        // 當播放狀態改變時 (結束時自動播下一首)
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                console.log("YouTube 結束，切換下一首...");
+                playNext();
+            }
+        }
+
+        function onPlayerError(e) {
+            console.log("YouTube 播放出錯，5秒後跳過", e);
+            setTimeout(playNext, 5000);
+        }
+
+        $(document).ready(function () {
+            dataModal = new bootstrap.Modal(document.getElementById('dataModal'));
+            loadSlots();
+            loadGrid();
+            renderQueue();
+        });
+
+        // 提取 YouTube ID 的核心函數
+        function getYouTubeID(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // --- 播放核心 ---
+        function handleYTPlay(url, title, id) {
+            $(".video-card").removeClass("active");
+            if(id) $(`#card-${id}`).addClass("active");
+
+            const vid = getYouTubeID(url);
+            if (vid) {
+                player.loadVideoById(vid);
+                $("#nowPlayingTitle").html(`<i class="bi bi-youtube text-danger"></i> 正在播放: ${title}`);
+            } else {
+                Swal.fire("網址解析失敗", "請檢查 YouTube 連結是否正確", "error");
+            }
+        }
+
+        function playNext() {
+            if (playQueue.length > 0) {
+                const next = playQueue.shift();
+                saveAndRenderQueue();
+                handleYTPlay(next.src, next.title, next.id);
+                return;
+            }
+            let current = $(".video-card.active").closest(".col");
+            let nextCol = current.next(".col");
+            if (!nextCol.length) nextCol = $("#videoGrid .col:first");
+            if (nextCol.length) {
+                nextCol.find(".card-click").click();
+                nextCol[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // --- 資料載入 (僅過濾類型 4) ---
+        function loadGrid() {
+            $.ajax({
+                type: "POST", url: SERVER_URL + "/GetData",
+                data: JSON.stringify(config),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    let h = "";
+                    // 只顯示郵件(類型)為 4 的資料
+                    let ytList = res.d.data.filter(item => String(item.郵件) === "4");
+
+                    ytList.forEach(item => {
+                        const vid = getYouTubeID(item.內容);
+                        const thumb = vid ? `https://img.youtube.com/vi/${vid}/mqdefault.jpg` : '';
+
+                        h += `
+                        <div class="col">
+                            <div class="video-card shadow-sm" id="card-${item.識別碼}">
+                                <div class="admin-tools">
+                                    <button class="btn btn-dark btn-sm p-1" onclick="openEdit('${item.識別碼}','${item.姓名}','${item.內容}')"><i class="bi bi-pencil-fill"></i></button>
+                                    <button class="btn btn-danger btn-sm p-1" onclick="askDelete(${item.識別碼})"><i class="bi bi-trash-fill"></i></button>
+                                </div>
+                                <div class="card-click" onclick="handleYTPlay('${item.內容}','${item.姓名}', ${item.識別碼})">
+                                    <img src="${thumb}" class="card-img-top rounded-top" style="aspect-ratio:16/9; object-fit:cover;">
+                                    <div class="p-3">
+                                        <div class="video-title">${item.姓名}</div>
+                                        <div class="d-flex justify-content-between align-items-center mt-2">
+                                            <small class="text-muted">ID:${item.識別碼}</small>
+                                            <button class="btn-circle play-btn shadow-sm"><i class="bi bi-play-fill"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="px-3 pb-3">
+                                    <button class="btn btn-sm btn-outline-secondary w-100" onclick="addToQueue(${item.識別碼},'${item.內容}','${item.姓名}')"><i class="bi bi-plus-lg"></i> 加入待播</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                    $("#videoGrid").html(h || '<div class="w-100 text-center p-5">目前沒有 YouTube 影音資料</div>');
+                }
+            });
+        }
+
+        // --- 待播清單 ---
+        function addToQueue(id, src, title) {
+            playQueue.push({ id, src, title, type: 4 });
+            saveAndRenderQueue();
+            Swal.fire({ title: '已加入待播', toast: true, position: 'top-end', timer: 1000, showConfirmButton: false, icon: 'success' });
+        }
+        function saveAndRenderQueue() {
+            localStorage.setItem('ytPlayQueue', JSON.stringify(playQueue));
+            $("#queueCount").text(playQueue.length);
+            let h = playQueue.map((item, idx) => `
+                <div class="d-flex justify-content-between mb-2 border-bottom border-secondary pb-1">
+                    <span class="text-truncate" style="flex:1">${idx+1}. ${item.title}</span>
+                    <i class="bi bi-x-circle text-danger ms-2" style="cursor:pointer" onclick="removeFromQueue(${idx})"></i>
+                </div>
+            `).join('');
+            $("#queueList").html(h || "待播清單空空如也");
+        }
+        function removeFromQueue(idx) { playQueue.splice(idx, 1); saveAndRenderQueue(); }
+        function toggleQueue() { $("#queueUI").toggleClass("open"); }
+
+        // --- 存檔位系統 ---
+        function loadSlots() {
+            $.ajax({ type: "POST", url: SERVER_URL + "/GetSlotNames", data: "{}", contentType: "application/json; charset=utf-8", success: function (res) {
+                let h = '<option value="">-- 選取存檔位 --</option>';
+                res.d.forEach(s => { h += `<option value="${s.id}">${s.id}. ${s.name || '未命名'}</option>`; });
+                $("#slotSelector").html(h);
+            }});
+        }
+        function loadPlaylistFromSlot() {
+            let sid = $("#slotSelector").val();
+            if (!sid) return;
+            $.ajax({ type: "POST", url: SERVER_URL + "/LoadPlaylistItems", data: JSON.stringify({ slotId: sid }), contentType: "application/json; charset=utf-8", success: function (res) {
+                if (res.d.data) {
+                    playQueue = res.d.data.map(i => ({ id: i.識別碼, src: i.內容, title: i.姓名, type: i.郵件 }));
+                    saveAndRenderQueue();
+                }
+            }});
+        }
+        function saveToSlot() {
+            let sid = $("#slotSelector").val();
+            if (!sid) { Swal.fire("請先選取位子", "", "warning"); return; }
+            Swal.fire({ title: '清單名稱', input: 'text', showCancelButton: true }).then(res => {
+                if (res.isConfirmed && res.value) {
+                    let ids = playQueue.map(q => q.id).join(',');
+                    $.ajax({ type: "POST", url: SERVER_URL + "/SavePlaylist", data: JSON.stringify({ slotId: sid, slotName: res.value, ids: ids }), contentType: "application/json; charset=utf-8", success: function () { Swal.fire("存檔成功", "", "success"); loadSlots(); }});
+                }
+            });
+        }
+
+        // --- 基本功能 ---
+        function doSearch() { config.searchKey = $("#inputSearch").val(); config.pageIndex = 1; loadGrid(); }
+        function changePageSize() { config.pageSize = parseInt($("#pageSizeSelect").val()); config.pageIndex = 1; loadGrid(); }
+        function openAddModal() { $("#modalTitle").text("新增 YouTube 影片"); $("#editId").val(""); $("#fieldName").val(""); $("#fieldContent").val(""); dataModal.show(); $("#btnSubmit").attr("onclick", "submitData('InsertData')"); }
+        function openEdit(id, n, c) { $("#modalTitle").text("修改影片 #" + id); $("#editId").val(id); $("#fieldName").val(n); $("#fieldContent").val(c); dataModal.show(); $("#btnSubmit").attr("onclick", "submitData('UpdateData')"); }
+        function submitData(method) {
+            let d = { id: $("#editId").val() || 0, name: $("#fieldName").val(), mail: 4, content: $("#fieldContent").val() };
+            $.ajax({ type: "POST", url: SERVER_URL + "/" + method, data: JSON.stringify(d), contentType: "application/json; charset=utf-8", success: function () { dataModal.hide(); loadGrid(); Swal.fire("完成", "", "success"); }});
+        }
+        function askDelete(id) {
+            Swal.fire({ title: '確認刪除？', input: 'password', showCancelButton: true }).then(res => {
+                if (res.isConfirmed) $.ajax({ type: "POST", url: SERVER_URL + "/DeleteData", data: JSON.stringify({ id: id, pwd: res.value }), contentType: "application/json; charset=utf-8", success: function (r) { if (r.d.success) loadGrid(); else Swal.fire("失敗", r.d.msg, "error"); }});
+            });
+        }
+    </script>
+</body>
+</html>
