@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+   
+</head>
+<body>
+    <form id="form1" runat="server">
+
+
+
+
+        <div>
+            <div>
+                緯度: <input type="text" id="txtlat" value="25.0339" size="7" /> 經度: <input type="text" id="txtlng" value="121.5644" size="7"/>
+            </div>
+			<button type="button" onclick="loadMap()">座標位置地圖</button>
+			 <br />
+			<div>
+                目前緯度: <input type="text" id="txtlat1" value="" size="7"/> 目前經度: <input type="text" id="txtlng1" value="" size="7"/>
+            </div>
+           
+            <button type="button" onclick="mychange()" placeholder="要重新按座標位置地圖才會更新至目前定位座標">變更目前位置到座標位置</button>
+           <button type="button" onclick="teleportToPhone()" style="background-color: #ff4757; color: white; font-weight: bold; padding: 5px 15px;">🚀 手機導航</button>
+
+<!-- 1. 密碼輸入框 -->
+密碼: <input type="password" id="web_key" value="1234" placeholder="請輸入密碼1234"><!-- 在原本的按鈕上方加入這些控制項 -->
+<!-- 控制面板升級 -->
+
+<div style="margin-top: 15px; background: #f9f9f9; padding: 15px; border: 1px solid #ddd; border-radius: 8px; width: 60%;">
+    <strong style="color: #333;">🕹️ 移動設定</strong><br><br>
+    
+    模式：
+    <select id="move_mode" style="padding: 5px;" onchange="toggleParamInput()">
+        <option value="teleport">瞬移 (直接到目的地)</option>
+        <option value="walk">走路過去 (走直線)</option>
+        <option value="circle_s">小圈繞行 (15m - 適合定點)</option>
+        <option value="circle_m">中圈繞行 (40m - 適合孵蛋)</option>
+        <option value="circle_l">大圈繞行 (100m - 大範圍抓寶)</option>
+    </select>
+    
+    <span id="speed_box" style="margin-left: 10px;">
+        速度：<input type="number" id="move_param" value="12" style="width: 45px;"> km/h
+    </span>
+    
+    <br><br>
+    <button type="button" onclick="teleportToPhone()" style="background-color: #ff4757; color: white; font-weight: bold; padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">🚀 執行導航連動</button>
+    <span id="status_msg" style="margin-left: 10px; color: #28a745; font-weight: bold;"></span>
+</div><br>
+
+
+
+
+
+
+        </div>
+        <div id="map" style="height: 500px; width: 60%; margin-top: 10px;"></div>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
+
+  <script>
+
+		  
+          
+     let map, userMarker, lastManualMarker = null;
+
+function initMap() {
+    const initialPos = { lat: 25.0339, lng: 121.5644 };
+    map = new google.maps.Map(document.getElementById('map'), { 
+        zoom: 16, center: initialPos, gestureHandling: 'greedy' 
+    });
+
+    // 藍色目前位置標記 [[3](https://developers.google.com/maps/documentation/javascript/examples/map-geolocation)]
+    userMarker = new google.maps.Marker({
+        position: initialPos, map: map,
+        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 },
+        zIndex: 1000
+    });
+
+    const btn = document.createElement('button');
+    btn.textContent = '回到目前位置';
+    btn.style.cssText = "margin: 10px; padding: 12px; cursor: pointer; background: white; border: 2px solid #ccc; font-weight: bold;";
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);                
+
+    btn.onclick = () => {
+        if (!navigator.geolocation) return alert("不支援定位");
+        // 關鍵修正：歸位至追蹤到的最新位置而非 initialPos [[6](https://dev.to/pubnub/geolocation-tracking-with-the-google-maps-api-2eee)]
+        const currentPos = userMarker.getPosition();
+        map.panTo(currentPos);
+        document.getElementById('txtlat').value = currentPos.lat().toFixed(6);
+        document.getElementById('txtlng').value = currentPos.lng().toFixed(6);
+    };
+
+    map.addListener('click', (e) => { updateMarker(e.latLng); });
+
+    // 實時追蹤位置並更新藍點 [[2](https://www.codeofaninja.com/geolocation-watchposition/)][[5](https://javascript.plainenglish.io/real-examples-of-using-the-geolocation-api-for-live-tracking-89dc0ff1b3fb)]
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition((p) => {
+            const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+			document.getElementById('txtlat1').value = p.coords.latitude.toFixed(6)
+			document.getElementById('txtlng1').value = p.coords.longitude.toFixed(6)
+            userMarker.setPosition(pos); // 動態移動標記 [[1](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
+        }, null, { enableHighAccuracy: true, maximumAge: 0 });
+    }
+}
+
+function updateMarker(latLng) {
+    if (lastManualMarker) lastManualMarker.setMap(null);
+    document.getElementById('txtlat').value = latLng.lat().toFixed(6);
+    document.getElementById('txtlng').value = latLng.lng().toFixed(6);
+    lastManualMarker = new google.maps.Marker({
+        position: latLng, map: map, animation: google.maps.Animation.BOUNCE, optimized: false
+    });
+    map.panTo(latLng);
+}
+       
+function loadMap() {
+                const lat = parseFloat(document.getElementById('txtlat').value);
+                const lng = parseFloat(document.getElementById('txtlng').value);
+                updateMarker(new google.maps.LatLng(lat, lng));
+            }
+function mychange() {
+                document.getElementById('txtlat').value = document.getElementById('txtlat1').value;
+                document.getElementById('txtlng').value = document.getElementById('txtlng1').value;
+                //updateMarker(new google.maps.LatLng(lat, lng));
+            }
+          
+        </script>
+
+        <br />
+        <br />
+		<br />
+        <br />
+        <br />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+        <div id="map1" style="height: 500px; width: 60%;"></div>
+        <div>
+            緯度: <input type="text" id="lat" /> 經度: <input type="text" id="lng" />
+        </div>
+         
+
+
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+        <script>
+            const map1 = L.map('map1').setView([25.0339, 121.5644], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map1);
+
+            let marker = L.marker([25.0339, 121.5644], { draggable: true }).addTo(map1);
+
+
+
+            // 1. 關鍵字搜尋功能 [[1](https://docs.maptiler.com/leaflet/examples/geocoding-control/)]
+            const geocoder = L.Control.geocoder({ defaultMarkGeocode: false })
+                .on('markgeocode', function (e) {
+                    const bbox = e.geocode.bbox;
+                    const center = e.geocode.center;
+                    updateMarker1(center.lat, center.lng);
+                    map1.fitBounds(bbox);
+                }).addTo(map1);
+
+
+
+
+
+
+
+
+            // 2. 點擊與拖動更新座標 [[5](https://dev.to/geoapify-maps-api/leaflet-location-picker-with-address-autocomplete-geolocation-and-draggable-pin-with-geoapify-1gfa)]
+            map1.on('click', (e) => updateMarker1(e.latlng.lat, e.latlng.lng));
+            marker.on('dragend', () => {
+                const pos = marker.getLatLng();
+
+                updateMarker1(pos.lat, pos.lng);
+            });
+
+            function updateMarker1(lat, lng) {
+                marker.setLatLng([lat, lng]);
+                document.getElementById('lat').value = lat.toFixed(6);
+                document.getElementById('lng').value = lng.toFixed(6);
+                document.getElementById('txtlat').value = lat.toFixed(6);
+                document.getElementById('txtlng').value = lng.toFixed(6);
+
+
+
+                alert(`已選取座標：\n緯度: ${lat.toFixed(6)}\n經度: ${lng.toFixed(6)}\n加上名稱及備註並按下上方的"加到資料庫"即可加入資料`);
+                ////////document.getElementById('<%= txtLat.ClientID %>').value = latLng.lat().toFixed(6);
+            }
+
+
+
+// 修改原本的 teleportToPhone 函數
+// 控制速度輸入框的顯示/隱藏
+function toggleParamInput() {
+    const mode = document.getElementById('move_mode').value;
+    const speedBox = document.getElementById('speed_box');
+    // 只有走路模式需要手動設定速度
+    speedBox.style.visibility = (mode === 'walk') ? 'visible' : 'hidden';
+}
+
+function teleportToPhone() {
+    const lat = document.getElementById('txtlat').value;
+    const lng = document.getElementById('txtlng').value;
+    const mode = document.getElementById('move_mode').value;
+    const param = document.getElementById('move_param').value;
+    
+    // 🚀 2. 取得輸入框裡的密碼
+    const inputKey = document.getElementById('web_key').value;
+
+    fetch('teleport', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        // 🚀 3. 確保 body 裡有加上 &key=...
+        body: `lat=${lat}&lng=${lng}&mode=${mode}&param=${param}&key=${encodeURIComponent(inputKey)}`
+    })
+    .then(response => {
+        if (response.status === 401) {
+            alert("❌ 密碼錯誤！手機拒絕移動。");
+            throw new Error("Unauthorized");
+        }
+        return response.text();
+    })
+    .then(data => {
+        document.getElementById('status_msg').innerText = "✅ 密碼正確，已啟動";
+    });
+}
+// 初始化隱藏
+window.onload = toggleParamInput;
+
+function statusUpdate(msg) {
+    // 簡單噴一個 console log 或在頁面上顯示
+    console.log(msg);
+}
+
+
+// 🚀 每秒追蹤也要改
+setInterval(() => {
+    fetch('get_status') // 🚀 移除斜線
+    .then(res => res.json())
+    .then(data => {
+        if (data.lat) {
+            document.getElementById('txtlat1').value = data.lat.toFixed(6);
+            document.getElementById('txtlng1').value = data.lng.toFixed(6);
+            if (userMarker) userMarker.setPosition({lat: data.lat, lng: data.lng});
+        }
+    }).catch(e => {});
+}, 1000);
+
+
+// 改成從輸入框抓
+const mySecretKey = document.getElementById('web_key').value;
+
+        </script>
+
+
+
+    </form>
+   
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
