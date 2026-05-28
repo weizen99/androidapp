@@ -38,7 +38,9 @@ tour.html:Ai聊天,可自動切換模型,到 https://aistudio.google.com/app/api
 
 voiceinput.html  voiceinput1.html : 網頁版語音輸入或自動朗讀,可由Ai潤稿,複製到剪貼簿,任意地方按貼上(省打字)
 
-image_api2.html: 照片輸播,直接抓取ds215圖片
+image_api2.html: 照片輸播,直接抓取ds215圖片,增加每100張為一組,方便跳轉檔案
+
+gps_iis.py+map_iis.html: 在asp.net架構下電腦發送定位座給手機並完成跳轉至定位,手機跟電腦同步會看到藍色定位點移動的軌跡,也有瞬移 走路 繞圈的設定,可以使用adb有線連接或adb無線連接,不需模擬位置跟Root,但開啓寶可夢只能移動無法抓寶,網路執行https://zen2965.duckdns.org:8888/gps_by_adb/map.html網頁便能控制手機的定位,但手機要執行gps_iis.py
 
 
 
