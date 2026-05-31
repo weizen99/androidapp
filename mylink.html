@@ -1,0 +1,503 @@
+﻿
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zen Portal Hub v3.7</title>
+
+    <!-- 1. CSS 載入 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- 2. JS 載入 (順序：JQuery -> Bootstrap Bundle) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* 全域鎖死寬度，防止畫面變大 */
+        html, body {
+            background-color: #050a15;
+            color: #ffffff;
+            max-width: 100vw;
+            overflow-x: hidden;
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+            width: 100%;
+        }
+
+        /* 頂部導覽選單：改用 flex-wrap 防止下拉選單被切斷 */
+        .system-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1050;
+        }
+
+            .system-nav .dropdown-toggle {
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                color: #60a5fa;
+                border-radius: 10px;
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+
+        /* 下拉選單樣式修正 */
+        .dropdown-menu-dark {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            z-index: 2000 !important;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .dropdown-item {
+            padding: 12px 18px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+            .dropdown-item i {
+                color: #3b82f6;
+                width: 22px;
+                display: inline-block;
+            }
+
+        /* 排序與搜尋 */
+        .top-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .sort-select {
+            background: transparent;
+            border: none;
+            color: inherit;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-group {
+            flex-grow: 1;
+            position: relative;
+        }
+
+            .search-group i {
+                position: absolute;
+                left: 15px;
+                top: 13px;
+                color: #475569;
+            }
+
+        .search-input {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 10px 15px 10px 42px;
+            color: white;
+        }
+
+        .btn-add-hero {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            width: 48px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* 分類 Pills */
+        .category-bar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            scrollbar-width: none;
+        }
+
+            .category-bar::-webkit-scrollbar {
+                display: none;
+            }
+
+        .pill {
+            background: rgba(255,255,255,0.05);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+            .pill.active {
+                background: #3b82f6;
+                border-color: #3b82f6;
+                font-weight: 600;
+            }
+
+        /* 連結卡片 */
+        .link-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+            .link-card.highlight {
+                background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+                border: none;
+            }
+
+        .icon-box {
+            width: 44px;
+            height: 44px;
+            background: rgba(30, 58, 138, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #60a5fa;
+        }
+
+        .highlight .icon-box {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .link-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .link-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .link-url {
+            font-size: 11px;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .highlight .link-url {
+            color: #bfdbfe;
+        }
+
+        .stat-badge {
+            position: absolute;
+            right: 55px;
+            top: 10px;
+            font-size: 9px;
+            background: rgba(0,0,0,0.2);
+            padding: 2px 6px;
+            border-radius: 6px;
+            color: #475569;
+        }
+
+        .highlight .stat-badge {
+            color: #93c5fd;
+        }
+
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-mini-tool {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.2);
+            font-size: 14px;
+            padding: 5px;
+        }
+
+        /* Modal */
+        .modal-content {
+            background-color: #111827;
+            color: white;
+            border: 1px solid #374151;
+            border-radius: 25px;
+        }
+
+        .form-control, .form-select {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            color: white;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- 1. 頂部導覽列 -->
+        <div class="system-nav">
+            <!-- 另開新頁 -->
+            <div class="dropdown">
+                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-box-arrow-up-right me-1"></i>另開新頁
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark shadow">
+                    <li><a class="dropdown-item" href="https://weizen99.github.io/androidapp/map.html" target="_blank"><i class="bi bi-command me-2"></i>定位建檔資料庫</a></li>
+                    <li><a class="dropdown-item" href="http://www.hacker1.somee.com/fourword.aspx" target="_blank"><i class="bi bi-command me-2"></i>成語查詢somee</a></li>
+                    <li><a class="dropdown-item" href="http://www.hacker1.somee.com/mapsql2.aspx" target="_blank"><i class="bi bi-command me-2"></i>景點座標somee</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/androidapp/message6s.html" target="_blank"><i class="bi bi-command me-2"></i>影音管理系統</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/message6_1.html" target="_blank"><i class="bi bi-command me-2"></i>影音youtube專用</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/showimage/image_api2.html" target="_blank"><i class="bi bi-command me-2"></i>圖片藝廊中心</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/voiceinput1.html" target="_blank"><i class="bi bi-command me-2"></i>Ai語音輸入</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/tour.html" target="_blank"><i class="bi bi-command me-2"></i>Ai語音聊天</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/messageword01.aspx" target="_blank"><i class="bi bi-command me-2"></i>我的最愛查詢</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/message4.html" target="_blank"><i class="bi bi-command me-2"></i>專業留言系統本地</a></li>
+                    <li><a class="dropdown-item" href="http://www.hacker1.somee.com/guestmessage1.html" target="_blank"><i class="bi bi-command me-2"></i>專業留言系統somee</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html" target="_blank"><i class="bi bi-command me-2"></i>WebApi彙總</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/excelsql2.html" target="_blank"><i class="bi bi-command me-2"></i>Excel SQL 查詢</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/trend4stock2.aspx" target="_blank"><i class="bi bi-command me-2"></i>Obv多空淨額選股票</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/googlesheet.html" target="_blank"><i class="bi bi-command me-2"></i>讀取Google試算表</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/messageword05.aspx" target="_blank"><i class="bi bi-command me-2"></i>自製股票自選股</a></li>
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fish/index2.htm" target="_blank"><i class="bi bi-command me-2"></i>上慶外網</a></li>
+                </ul>
+            </div>
+
+            <!-- 內部免費 -->
+            <div class="dropdown">
+                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-shield-lock me-1"></i>內部免費
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark shadow">
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/androidapp/message6s.html" target="_blank"><i class="bi bi-command me-2"></i>內部影音系統</a></li>
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/excelimport/message4.html" target="_blank"><i class="bi bi-command me-2"></i>內部留言系統</a></li>
+                </ul>
+            </div>
+
+            <!-- 看股票 -->
+            <div class="dropdown">
+                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-graph-up-arrow me-1"></i>看股票
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark shadow">
+                    <li><a class="dropdown-item" href="https://www.wantgoo.com/global" target="_blank"><i class="bi bi-command me-2"></i>玩股網</a></li>
+                    <li><a class="dropdown-item" href="https://stock.wespai.com/pick" target="_blank"><i class="bi bi-command me-2"></i>檢股網</a></li>
+                    <li><a class="dropdown-item" href="https://statementdog.com/" target="_blank"><i class="bi bi-command me-2"></i>財務狗</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 2. 功能操作區 -->
+        <div class="top-meta">
+            <select id="selSort" class="sort-select" onchange="loadGrid()">
+                <option value="最新加入">排序：最新加入</option>
+                <option value="點擊次數">排序：點擊次數</option>
+                <option value="自訂順序">排序：自訂順序</option>
+            </select>
+            <span>v3.7 Stable</span>
+        </div>
+
+        <div class="action-row">
+            <div class="search-group">
+                <i class="fas fa-search"></i>
+                <input type="text" id="inputSearch" class="search-input" placeholder="搜尋標題或網址..." onkeyup="loadGrid()">
+            </div>
+            <button class="btn-add-hero" onclick="openAddModal()"><i class="fas fa-plus"></i></button>
+        </div>
+
+        <div class="category-bar">
+            <div class="pill active" onclick="setCategory('全部', this)">全部</div>
+            <div class="pill" onclick="setCategory('常用', this)">常用</div>
+            <div class="pill" onclick="setCategory('開發', this)">開發</div>
+            <div class="pill" onclick="setCategory('個人', this)">個人</div>
+        </div>
+
+        <!-- 3. 資料清單 -->
+        <div id="linkContainer">
+            <div class="text-center py-5 opacity-25"><i class="fas fa-circle-notch fa-spin fa-2x"></i></div>
+        </div>
+    </div>
+
+    <!-- 4. Modal (新增/編輯) -->
+    <div class="modal fade" id="dataModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold m-0" id="modalTitle">編輯連結</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="dataId">
+                    <div class="mb-3"><label class="small opacity-50">標題</label><input type="text" id="dataTitle" class="form-control"></div>
+                    <div class="mb-3"><label class="small opacity-50">網址</label><input type="text" id="dataUrl" class="form-control"></div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="small opacity-50">分類</label>
+                            <select id="dataCategory" class="form-select">
+                                <option value="常用">常用</option>
+                                <option value="開發">開發</option>
+                                <option value="個人">個人</option>
+                            </select>
+                        </div>
+                        <div class="col-6 mb-3"><label class="small opacity-50">排序權重</label><input type="number" id="dataSort" class="form-control" value="100"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small opacity-50">圖示</label>
+                        <select id="dataIcon" class="form-select">
+                            <option value="fa-link">一般連結</option>
+                            <option value="fa-code">程式碼</option>
+                            <option value="fa-folder">資料夾</option>
+                            <option value="fa-eye">眼睛</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary px-4" onclick="submitData()">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var API_URL = "https://zen2965.duckdns.org:8888/excelimport/androidlink.aspx";
+        var currentCategory = "全部";
+        var myModal;
+
+        $(document).ready(function () {
+            // 正確初始化 Modal
+            var modalEl = document.getElementById('dataModal');
+            if (modalEl) {
+                myModal = new bootstrap.Modal(modalEl);
+            }
+            loadGrid();
+        });
+
+        function callAPI(method, data, successCallback) {
+            $.ajax({
+                type: "POST",
+                url: API_URL + "/" + method,
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) { successCallback(res.d); },
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                    $("#linkContainer").html("<div class='text-center py-5 text-danger'>API 連線失敗</div>");
+                }
+            });
+        }
+
+        function setCategory(cat, el) {
+            currentCategory = cat;
+            $(".pill").removeClass("active");
+            $(el).addClass("active");
+            loadGrid();
+        }
+
+        function loadGrid() {
+            var params = {
+                searchKey: $("#inputSearch").val() || "",
+                category: currentCategory,
+                sortBy: $("#selSort").val() || "最新加入"
+            };
+            callAPI("GetData", params, function (r) {
+                if (r.success) renderLinks(r.data);
+                else $("#linkContainer").html("<div class='text-center py-5'>" + r.msg + "</div>");
+            });
+        }
+
+        function renderLinks(list) {
+            var html = "";
+            if (!list || list.length === 0) {
+                html = "<div class='text-center py-5 text-secondary opacity-50'>— 無資料 —</div>";
+            } else {
+                list.forEach(function (item, index) {
+                    var isHighlight = (index === 0 && $("#inputSearch").val() === "" && currentCategory === "全部") ? "highlight" : "";
+                    html += `
+                            <div class="link-card ${isHighlight}">
+                                <div class="stat-badge"><i class="fas fa-chart-line me-1"></i>${item.clicks}</div>
+                                <div class="flex-grow-1 d-flex align-items-center" style="cursor:pointer" onclick="openLink(${item.id}, '${item.url}')">
+                                    <div class="icon-box"><i class="fas ${item.icon}"></i></div>
+                                    <div class="link-info">
+                                        <div class="link-title">${item.title}</div>
+                                        <div class="link-url">${item.url.replace('https://', '')}</div>
+                                    </div>
+                                </div>
+                                <div class="ps-3 border-start border-white border-opacity-10">
+                                    <button class="btn-mini-tool" onclick="openEditModal(${item.id},'${item.title}','${item.url}','${item.icon}','${item.category}',${item.sort_index})"><i class="fas fa-pencil-alt"></i></button>
+                                    <button class="btn-mini-tool" onclick="doDelete(${item.id})"><i class="fas fa-trash-alt text-danger"></i></button>
+                                </div>
+                            </div>`;
+                });
+            }
+            $("#linkContainer").html(html);
+        }
+
+        function openLink(id, url) {
+            callAPI("LogClick", { id: id }, function () { });
+            window.open(url, '_blank');
+        }
+
+        function openAddModal() {
+            $("#dataId").val(""); $("#dataTitle").val(""); $("#dataUrl").val("https://"); $("#dataSort").val("100");
+            $("#modalTitle").text("新增連結");
+            myModal.show();
+        }
+
+        function openEditModal(id, t, u, i, c, s) {
+            $("#dataId").val(id); $("#dataTitle").val(t); $("#dataUrl").val(u); $("#dataIcon").val(i); $("#dataCategory").val(c); $("#dataSort").val(s);
+            $("#modalTitle").text("編輯連結");
+            myModal.show();
+        }
+
+        function submitData() {
+            var id = $("#dataId").val();
+            var d = { title: $("#dataTitle").val(), url: $("#dataUrl").val(), icon: $("#dataIcon").val(), category: $("#dataCategory").val(), sortIndex: parseInt($("#dataSort").val()) || 100 };
+            var method = id ? "UpdateData" : "InsertData";
+            var params = id ? { id: parseInt(id), ...d } : d;
+            callAPI(method, params, function (r) { if (r.success) { myModal.hide(); loadGrid(); } else { Swal.fire("錯誤", r.msg, "error"); } });
+        }
+
+        function doDelete(id) {
+            Swal.fire({ title: '確認刪除？', input: 'password', showCancelButton: true }).then(res => {
+                if (res.isConfirmed) callAPI("DeleteData", { id: id, pwd: res.value }, function (r) { if (r.success) loadGrid(); else Swal.fire("錯誤", r.msg, "error"); });
+            });
+        }
+    </script>
+</body>
+</html>
