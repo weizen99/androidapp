@@ -423,6 +423,278 @@ exec myequity1 20260327,20260410, N'2330'` },
             {
                 cat: "預存程序", title: "兩日間之股權變動2", sql: `/*資料庫選:stockprice,日期以週五為原則,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
 exec myequity2 20260327,20260410, N'2330'` },
+
+            {
+                cat: "專家選股", title: "盤中追高部份", sql: `TOP (100) PERCENT 
+    obv盤中選股.名稱, 
+    obv盤中選股.代號, 
+    View_stockchange.產業分類, 
+    obv盤中選股.盤中成交價 AS 盤中現價, 
+    View_stockchange.漲幅 AS 盤中漲幅, 
+    obv盤中選股.總量 AS 盤中總量, 
+    
+    -- [乖離與量倍數]
+    ROUND((obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) * 100, 2) AS 五日乖離, 
+    ROUND(CAST(obv盤中選股.總量 AS FLOAT) / NULLIF (v.二十日均量, 0), 2) AS 量倍數, 
+    
+    -- [細項得分]
+    ROUND(ISNULL(obvnewdate.obv黃金交叉次數, 0) * 2.0, 1) AS OBV分, 
+    ROUND(ISNULL(a.均價黃金交叉次數, 0) * 1.0, 1) AS 價均分, 
+    ROUND((((ISNULL(a.k9, 0) - ISNULL(a.d9, 0)) + (ISNULL(a.週k9, 0) - ISNULL(a.週d9, 0))) 
+          + (ISNULL(a.月k9, 0) - ISNULL(a.月d9, 0))) / 5.0 + ISNULL(macdpic.DIF減MACD, 0) / NULLIF (obv盤中選股.盤中成交價, 0) * 200.0, 1) AS 技術分, 
+    ROUND((ISNULL(a.三大法人黃金交叉次數, 0) * 1.5 + (ISNULL(a.三週庫存比率, 0) - ISNULL(a.六週庫存比率, 0)+ISNULL(a.四週庫存比率, 0) - ISNULL(a.七週庫存比率, 0)) * 1.5/2) 
+          + ((ISNULL(a.集中度1日, 0) * 0.4 + ISNULL(a.集中度5日, 0) * 0.4) + ISNULL(a.集中度20日, 0) * 0.2) / 5.0, 1) AS 籌碼分, 
+    ROUND(ISNULL(v.五日交叉, 0) / NULLIF (v.五日均量, 0) * 5.0 + ISNULL(v.站均量, 0) * 1.0, 1) AS 量能分, 
+    
+    -- [專家實戰總分]
+    ROUND(
+        (ISNULL(obvnewdate.obv黃金交叉次數, 0) * 2.0 + ISNULL(a.均價黃金交叉次數, 0) * 1.0) + 
+        (((ISNULL(a.k9, 0) - ISNULL(a.d9, 0)) + (ISNULL(a.週k9, 0) - ISNULL(a.週d9, 0)) + (ISNULL(a.月k9, 0) - ISNULL(a.月d9, 0))) / 5.0) + 
+        (ISNULL(macdpic.DIF減MACD, 0) / NULLIF (obv盤中選股.盤中成交價, 0) * 200.0) + 
+        (ISNULL(a.三大法人黃金交叉次數, 0) * 1.5) + (((ISNULL(a.四週庫存比率, 0) - ISNULL(a.七週庫存比率, 0)) * 1.5) +
+        ((ISNULL(a.三週庫存比率, 0) - ISNULL(a.六週庫存比率, 0)) * 1.5))/2 + 
+        (((ISNULL(a.集中度1日, 0) * 0.4 + ISNULL(a.集中度5日, 0) * 0.4) + ISNULL(a.集中度20日, 0) * 0.2) / 5.0) + 
+        (ISNULL(v.五日交叉, 0) / NULLIF (v.五日均量, 0) * 5.0) + 
+        (ISNULL(v.站均量, 0) * 1.0)
+    , 2) AS 專家實戰總分, 
+
+    -- [實戰標籤：改為複選串接邏輯]
+    ISNULL(
+        NULLIF(
+            -- 條件1: 追高警示 (二選一)
+            (CASE 
+                WHEN (obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) > 0.18 THEN N'★追高>18% '
+                WHEN (obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) > 0.08 and (obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) <= 0.18THEN N'★追高8~18% '
+                ELSE N'' 
+            END) +
+            -- 條件2: 量價齊揚
+            (CASE 
+                WHEN v.站均量 >= 7 AND View_stockchange.漲幅 > 3 THEN N'🔥量價齊揚 ' 
+                ELSE N'' 
+            END) +
+            -- 條件3: 大戶鎖碼
+            (CASE 
+                WHEN ((ISNULL(a.三週庫存比率, 0) - ISNULL(a.六週庫存比率, 0))+(ISNULL(a.四週庫存比率, 0) - ISNULL(a.七週庫存比率, 0)))/2 > 2 THEN N'💎大戶鎖碼 ' 
+                ELSE N'' 
+            END)
+        , N''), 
+        N'穩定觀察'
+    ) AS 實戰標籤
+
+FROM obv盤中選股 
+INNER JOIN View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 
+INNER JOIN obvnewdate ON obv盤中選股.代號 = obvnewdate.代號 
+INNER JOIN winnewdate AS a ON obvnewdate.代號 = a.股票代號 AND obvnewdate.日期 = a.日期 
+INNER JOIN macdpic ON a.股票代號 = macdpic.股票代號 AND a.日期 = macdpic.日期 
+INNER JOIN View_avgamountcount AS v ON obv盤中選股.代號 = v.股票代號 AND a.日期 = v.日期 
+INNER JOIN View_avgpricecount AS p ON obv盤中選股.代號 = p.股票代號 AND a.日期 = p.日期
+
+WHERE (obvnewdate.日期 = (SELECT MAX(日期) FROM basicinfo)) 
+  AND (a.k9 > a.d9) 
+  AND (macdpic.DIF減MACD > 0) 
+  AND (obv盤中選股.盤中的累積obv均量 > obv盤中選股.盤中計算出來的最新五日平均線) 
+  AND (obv盤中選股.總量 > 1000)
+
+ORDER BY 專家實戰總分 DESC;
+
+--(五日乖離:盤中成交價-前一日的價五日均線)/前一日的價五日均線(今天還沒出來)
+--量倍數:盤中總量 / 前一日的二十日均量(今天還沒出來)
+--OBV分:obv黃金交叉次數*2
+--價均分: 均價黃金交叉次數*1
+--技術分:(k9-d9 + 週k9- 週d9  + 月k9-月d9) / 5.0 + macd紅綠棒值 /盤中成交價 * 200 (5%*200就是10分)
+--籌碼分: 三大法人黃金交叉次數 * 1.5 + [(三週庫存比率-六週庫存比率)+(四週庫存比率-七週庫存比率)]/2 * 1.5 + [(集中度1日 * 0.4 + 集中度5日 * 0.4 + 集中度20日 * 0.2)] / 5
+--量能分:(成交量五日交叉的增量 /五日均量) * 5.0 + 站均量 * 1
+--專家實戰總分: OBV分+價均分+技術分 + 籌碼分+量能分
+   
+--★追高(五日乖離):(盤中成交價 - 五日均線)/五日均線 8%~18%
+--🔥量價齊揚:站上成交量均線個數>= 7 AND 盤中漲幅 > 3%
+--💎大戶鎖碼:較長期時間太短可能只是當沖等比較不準 ((集保庫存3週比率-集保庫存6週比率)+ (集保庫存4週比率-集保庫存7週比率))/2 > 2% 用兩個區段來平均比較不會錯過` },
+
+            {
+                cat: "專家選股", title: "盤中追高全部", sql: `TOP (100) PERCENT 
+    obv盤中選股.名稱, 
+    obv盤中選股.代號, 
+    View_stockchange.產業分類, 
+    obv盤中選股.盤中成交價 AS 盤中現價, 
+    View_stockchange.漲幅 AS 盤中漲幅, 
+    obv盤中選股.總量 AS 盤中總量, 
+    
+    -- [乖離與量倍數]
+    ROUND((obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) * 100, 2) AS 五日乖離, 
+    ROUND(CAST(obv盤中選股.總量 AS FLOAT) / NULLIF (v.二十日均量, 0), 2) AS 量倍數, 
+    
+    -- [細項得分]
+    ROUND(ISNULL(obvnewdate.obv黃金交叉次數, 0) * 2.0, 1) AS OBV分, 
+    ROUND(ISNULL(a.均價黃金交叉次數, 0) * 1.0, 1) AS 價均分, 
+    ROUND((((ISNULL(a.k9, 0) - ISNULL(a.d9, 0)) + (ISNULL(a.週k9, 0) - ISNULL(a.週d9, 0))) 
+          + (ISNULL(a.月k9, 0) - ISNULL(a.月d9, 0))) / 5.0 + ISNULL(macdpic.DIF減MACD, 0) / NULLIF (obv盤中選股.盤中成交價, 0) * 200.0, 1) AS 技術分, 
+    ROUND((ISNULL(a.三大法人黃金交叉次數, 0) * 1.5 + (ISNULL(a.三週庫存比率, 0) - ISNULL(a.六週庫存比率, 0)+ISNULL(a.四週庫存比率, 0) - ISNULL(a.七週庫存比率, 0)) * 1.5/2) 
+          + ((ISNULL(a.集中度1日, 0) * 0.4 + ISNULL(a.集中度5日, 0) * 0.4) + ISNULL(a.集中度20日, 0) * 0.2) / 5.0, 1) AS 籌碼分, 
+    ROUND(ISNULL(v.五日交叉, 0) / NULLIF (v.五日均量, 0) * 5.0 + ISNULL(v.站均量, 0) * 1.0, 1) AS 量能分, 
+    
+    -- [專家實戰總分]
+    ROUND(
+        (ISNULL(obvnewdate.obv黃金交叉次數, 0) * 2.0 + ISNULL(a.均價黃金交叉次數, 0) * 1.0) + 
+        (((ISNULL(a.k9, 0) - ISNULL(a.d9, 0)) + (ISNULL(a.週k9, 0) - ISNULL(a.週d9, 0)) + (ISNULL(a.月k9, 0) - ISNULL(a.月d9, 0))) / 5.0) + 
+        (ISNULL(macdpic.DIF減MACD, 0) / NULLIF (obv盤中選股.盤中成交價, 0) * 200.0) + 
+        (ISNULL(a.三大法人黃金交叉次數, 0) * 1.5) + (((ISNULL(a.四週庫存比率, 0) - ISNULL(a.七週庫存比率, 0)) * 1.5) +
+        ((ISNULL(a.三週庫存比率, 0) - ISNULL(a.六週庫存比率, 0)) * 1.5))/2 + 
+        (((ISNULL(a.集中度1日, 0) * 0.4 + ISNULL(a.集中度5日, 0) * 0.4) + ISNULL(a.集中度20日, 0) * 0.2) / 5.0) + 
+        (ISNULL(v.五日交叉, 0) / NULLIF (v.五日均量, 0) * 5.0) + 
+        (ISNULL(v.站均量, 0) * 1.0)
+    , 2) AS 專家實戰總分, 
+
+    -- [實戰標籤：改為複選串接邏輯]
+    ISNULL(
+        NULLIF(
+            -- 條件1: 追高警示 (二選一)
+            (CASE 
+                WHEN (obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) > 0.18 THEN N'★追高>18% '
+                WHEN (obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) > 0.08 and (obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) <= 0.18THEN N'★追高8~18% '
+                ELSE N'' 
+            END) +
+            -- 條件2: 量價齊揚
+            (CASE 
+                WHEN v.站均量 >= 7 AND View_stockchange.漲幅 > 3 THEN N'🔥量價齊揚 ' 
+                ELSE N'' 
+            END) +
+            -- 條件3: 大戶鎖碼
+            (CASE 
+                WHEN ((ISNULL(a.三週庫存比率, 0) - ISNULL(a.六週庫存比率, 0))+(ISNULL(a.四週庫存比率, 0) - ISNULL(a.七週庫存比率, 0)))/2 > 2 THEN N'💎大戶鎖碼 ' 
+                ELSE N'' 
+            END)
+        , N''), 
+        N'穩定觀察'
+    ) AS 實戰標籤
+
+FROM obv盤中選股 
+INNER JOIN View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 
+INNER JOIN obvnewdate ON obv盤中選股.代號 = obvnewdate.代號 
+INNER JOIN winnewdate AS a ON obvnewdate.代號 = a.股票代號 AND obvnewdate.日期 = a.日期 
+INNER JOIN macdpic ON a.股票代號 = macdpic.股票代號 AND a.日期 = macdpic.日期 
+INNER JOIN View_avgamountcount AS v ON obv盤中選股.代號 = v.股票代號 AND a.日期 = v.日期 
+INNER JOIN View_avgpricecount AS p ON obv盤中選股.代號 = p.股票代號 AND a.日期 = p.日期
+ORDER BY 專家實戰總分 DESC;
+
+--(五日乖離:盤中成交價-前一日的價五日均線)/前一日的價五日均線(今天還沒出來)
+--量倍數:盤中總量 / 前一日的二十日均量(今天還沒出來)
+--OBV分:obv黃金交叉次數*2
+--價均分: 均價黃金交叉次數*1
+--技術分:(k9-d9 + 週k9- 週d9  + 月k9-月d9) / 5.0 + macd紅綠棒值 /盤中成交價 * 200 (5%*200就是10分)
+--籌碼分: 三大法人黃金交叉次數 * 1.5 + [(三週庫存比率-六週庫存比率)+(四週庫存比率-七週庫存比率)]/2 * 1.5 + [(集中度1日 * 0.4 + 集中度5日 * 0.4 + 集中度20日 * 0.2)] / 5
+--量能分:(成交量五日交叉的增量 /五日均量) * 5.0 + 站均量 * 1
+--專家實戰總分: OBV分+價均分+技術分 + 籌碼分+量能分
+   
+--★追高(五日乖離):(盤中成交價 - 五日均線)/五日均線 8%~18%
+--🔥量價齊揚:站上成交量均線個數>= 7 AND 盤中漲幅 > 3%
+--💎大戶鎖碼:較長期時間太短可能只是當沖等比較不準 ((集保庫存3週比率-集保庫存6週比率)+ (集保庫存4週比率-集保庫存7週比率))/2 > 2% 用兩個區段來平均比較不會錯過` },
+
+{
+                cat: "專家選股", title: "盤中全部多欄位", sql: `TOP (100) PERCENT 
+    obv盤中選股.名稱, 
+    obv盤中選股.代號, 
+    View_stockchange.產業分類, 
+    obv盤中選股.盤中成交價 AS 盤中現價, 
+    View_stockchange.漲幅 AS 盤中漲幅, 
+    obv盤中選股.總量 AS 盤中總量, 
+    
+    -- [乖離與量倍數]
+    ROUND((obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) * 100, 2) AS 五日乖離, 
+    ROUND(CAST(obv盤中選股.總量 AS FLOAT) / NULLIF (v.二十日均量, 0), 2) AS 量倍數, 
+    
+    -- [細項得分]
+    ROUND(ISNULL(obvnewdate.obv黃金交叉次數, 0) * 2.0, 1) AS OBV分, 
+    ROUND(ISNULL(a.均價黃金交叉次數, 0) * 1.0, 1) AS 價均分, 
+    ROUND((((ISNULL(a.k9, 0) - ISNULL(a.d9, 0)) + (ISNULL(a.週k9, 0) - ISNULL(a.週d9, 0))) 
+          + (ISNULL(a.月k9, 0) - ISNULL(a.月d9, 0))) / 5.0 + ISNULL(macdpic.DIF減MACD, 0) / NULLIF (obv盤中選股.盤中成交價, 0) * 200.0, 1) AS 技術分, 
+    ROUND((ISNULL(a.三大法人黃金交叉次數, 0) * 1.5 + (ISNULL(a.三週庫存比率, 0) - ISNULL(a.六週庫存比率, 0)+ISNULL(a.四週庫存比率, 0) - ISNULL(a.七週庫存比率, 0)) * 1.5/2) 
+          + ((ISNULL(a.集中度1日, 0) * 0.4 + ISNULL(a.集中度5日, 0) * 0.4) + ISNULL(a.集中度20日, 0) * 0.2) / 5.0, 1) AS 籌碼分, 
+    ROUND(ISNULL(v.五日交叉, 0) / NULLIF (v.五日均量, 0) * 5.0 + ISNULL(v.站均量, 0) * 1.0, 1) AS 量能分, 
+    
+    -- [專家實戰總分]
+    ROUND(
+        (ISNULL(obvnewdate.obv黃金交叉次數, 0) * 2.0 + ISNULL(a.均價黃金交叉次數, 0) * 1.0) + 
+        (((ISNULL(a.k9, 0) - ISNULL(a.d9, 0)) + (ISNULL(a.週k9, 0) - ISNULL(a.週d9, 0)) + (ISNULL(a.月k9, 0) - ISNULL(a.月d9, 0))) / 5.0) + 
+        (ISNULL(macdpic.DIF減MACD, 0) / NULLIF (obv盤中選股.盤中成交價, 0) * 200.0) + 
+        (ISNULL(a.三大法人黃金交叉次數, 0) * 1.5) + (((ISNULL(a.四週庫存比率, 0) - ISNULL(a.七週庫存比率, 0)) * 1.5) +
+        ((ISNULL(a.三週庫存比率, 0) - ISNULL(a.六週庫存比率, 0)) * 1.5))/2 + 
+        (((ISNULL(a.集中度1日, 0) * 0.4 + ISNULL(a.集中度5日, 0) * 0.4) + ISNULL(a.集中度20日, 0) * 0.2) / 5.0) + 
+        (ISNULL(v.五日交叉, 0) / NULLIF (v.五日均量, 0) * 5.0) + 
+        (ISNULL(v.站均量, 0) * 1.0)
+    , 2) AS 專家實戰總分, 
+
+    -- [實戰標籤：改為複選串接邏輯]
+    ISNULL(
+        NULLIF(
+            -- 條件1: 追高警示 (二選一)
+            (CASE 
+                WHEN (obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) > 0.18 THEN N'★追高>18% '
+                WHEN (obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) > 0.08 and (obv盤中選股.盤中成交價 - p.五日均線) / NULLIF (p.五日均線, 0) <= 0.18THEN N'★追高8~18% '
+                ELSE N'' 
+            END) +
+            -- 條件2: 量價齊揚
+            (CASE 
+                WHEN v.站均量 >= 7 AND View_stockchange.漲幅 > 3 THEN N'🔥量價齊揚 ' 
+                ELSE N'' 
+            END) +
+            -- 條件3: 大戶鎖碼
+            (CASE 
+                WHEN ((ISNULL(a.三週庫存比率, 0) - ISNULL(a.六週庫存比率, 0))+(ISNULL(a.四週庫存比率, 0) - ISNULL(a.七週庫存比率, 0)))/2 > 2 THEN N'💎大戶鎖碼 ' 
+                ELSE N'' 
+            END)
+        , N''), 
+        N'穩定觀察'
+    ) AS 實戰標籤, a.資使用率, a.資使用率黃金交叉次數, a.券使用率, 
+                            a.券使用率黃金交叉次數, a.券資比, a.券資比黃金交叉次數, a.站均, a.均價黃金交叉次數, a.均量黃金交叉次數, 
+                            a.三大法人黃金交叉次數, a.外資黃金交叉次數, a.投信黃金交叉次數, a.k9, a.d9, a.週k9, a.週d9, a.月k9, a.月d9, 
+                            a.macd, macdpic.DIF減MACD AS 紅綠棒值, a.集中度1日, a.集中度5日, a.集中度10日, a.集中度20日, 
+                            a.集中度60日
+FROM obv盤中選股 
+INNER JOIN View_stockchange ON obv盤中選股.代號 = View_stockchange.代號 
+INNER JOIN obvnewdate ON obv盤中選股.代號 = obvnewdate.代號 
+INNER JOIN winnewdate AS a ON obvnewdate.代號 = a.股票代號 AND obvnewdate.日期 = a.日期 
+INNER JOIN macdpic ON a.股票代號 = macdpic.股票代號 AND a.日期 = macdpic.日期 
+INNER JOIN View_avgamountcount AS v ON obv盤中選股.代號 = v.股票代號 AND a.日期 = v.日期 
+INNER JOIN View_avgpricecount AS p ON obv盤中選股.代號 = p.股票代號 AND a.日期 = p.日期
+ORDER BY   專家實戰總分 DESC
+
+--(五日乖離:盤中成交價-前一日的價五日均線)/前一日的價五日均線(今天還沒出來)
+--量倍數:盤中總量 / 前一日的二十日均量(今天還沒出來)
+--OBV分:obv黃金交叉次數*2
+--價均分: 均價黃金交叉次數*1
+--技術分:(k9-d9 + 週k9- 週d9  + 月k9-月d9) / 5.0 + macd紅綠棒值 /盤中成交價 * 200 (5%*200就是10分)
+--籌碼分: 三大法人黃金交叉次數 * 1.5 + [(三週庫存比率-六週庫存比率)+(四週庫存比率-七週庫存比率)]/2 * 1.5 + [(集中度1日 * 0.4 + 集中度5日 * 0.4 + 集中度20日 * 0.2)] / 5
+--量能分:(成交量五日交叉的增量 /五日均量) * 5.0 + 站均量 * 1
+--專家實戰總分: OBV分+價均分+技術分 + 籌碼分+量能分
+   
+--★追高(五日乖離):(盤中成交價 - 五日均線)/五日均線 8%~18%
+--🔥量價齊揚:站上成交量均線個數>= 7 AND 盤中漲幅 > 3%
+--💎大戶鎖碼:較長期時間太短可能只是當沖等比較不準 ((集保庫存3週比率-集保庫存6週比率)+ (集保庫存4週比率-集保庫存7週比率))/2 > 2% 用兩個區段來平均比較不會錯過` },
+
+
+            
+
+
+            {
+                cat: "專家選股", title: "實戰總分連三高", sql: `A.名稱, A.代號, A.專家實戰總分 AS 今日分數, B.專家實戰總分 AS 昨日分數, C.專家實戰總分 AS 前日分數,
+                             C.產業分類, C.股本億, C.盤中現價, C.盤中漲幅, C.盤中總量, C.價五日乖離, C.量倍數, C.OBV分, C.價均分, C.技術分, 
+                            C.籌碼分, C.量能分, C.專家實戰總分, C.實戰標籤, C.日期, C.均價黃金交叉次數, C.均量黃金交叉次數, 
+                            C.三大法人黃金交叉次數, C.外資黃金交叉次數, C.投信黃金交叉次數, C.站均
+FROM              StockScore AS A INNER JOIN
+                            StockScore AS B ON A.代號 = B.代號 AND B.日期 = 20260601 AND A.專家實戰總分 > B.專家實戰總分 INNER JOIN
+                            StockScore AS C ON A.代號 = C.代號 AND C.日期 = 20260602 AND B.專家實戰總分 > C.專家實戰總分
+WHERE          (A.專家實戰總分 > 35) AND (A.日期 = 20260529)
+ORDER BY   今日分數 DESC
+--分數連三升` },
+            {
+                cat: "專家選股", title: "單股多天實戰總分", sql: `名稱, 代號, 產業分類, 股本億, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分, 技術分, 
+                            籌碼分, 量能分, 專家實戰總分, 實戰標籤, 日期
+FROM              StockScore
+WHERE          (代號 = 2330)
+ORDER BY   日期 DESC` },
+       
+
+
             { cat: "黃金交叉次數", title: "黃金交叉次數選股", sql: `TOP (100) PERCENT dbo.winnewdate.股票名稱, dbo.winnewdate.股票代號, dbo.winnewdate.站均, dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.均量黃金交叉次數, dbo.winnewdate.三大法人黃金交叉次數, dbo.winnewdate.外資黃金交叉次數, dbo.winnewdate.投信黃金交叉次數, dbo.winnewdate.k9, dbo.winnewdate.d9, dbo.winnewdate.週k9, dbo.winnewdate.週d9, dbo.winnewdate.月k9, dbo.winnewdate.月d9, dbo.winnewdate.macd, dbo.winnewdate.資使用率, dbo.winnewdate.資使用率黃金交叉次數, dbo.winnewdate.券使用率, dbo.winnewdate.券使用率黃金交叉次數, dbo.winnewdate.券資比, dbo.winnewdate.券資比黃金交叉次數, dbo.winnewdate.產業分類, dbo.winnewdate.交易所分類, dbo.winnewdate.股本億, dbo.winnewdate.日期 FROM dbo.winnewdate INNER JOIN dbo.View_basicinfo ON dbo.winnewdate.股票代號 = dbo.View_basicinfo.代號 WHERE (dbo.View_basicinfo.總量 > 5000) AND (dbo.winnewdate.日期 = 20260327) AND (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.winnewdate.均量黃金交叉次數 >= 0) AND (dbo.winnewdate.k9 - dbo.winnewdate.d9 >= 0) AND (dbo.winnewdate.macd > 0) ORDER BY dbo.winnewdate.均價黃金交叉次數 DESC, dbo.winnewdate.均量黃金交叉次數 DESC, dbo.winnewdate.三大法人黃金交叉次數 DESC` },
             {
                 cat: "黃金交叉次數", title: "均價黃金交叉+加權後分數", sql: `TOP (100) PERCENT dbo.winnewdate.股票名稱, dbo.winnewdate.股票代號, dbo.winnewdate.站均, dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.均量黃金交叉次數, dbo.winnewdate.三大法人黃金交叉次數, dbo.winnewdate.外資黃金交叉次數, dbo.winnewdate.投信黃金交叉次數, dbo.winnewdate.k9, dbo.winnewdate.d9, dbo.winnewdate.週k9, dbo.winnewdate.週d9, dbo.winnewdate.月k9, dbo.winnewdate.月d9, dbo.winnewdate.macd, dbo.winnewdate.資使用率, dbo.winnewdate.資使用率黃金交叉次數, dbo.winnewdate.券使用率, dbo.winnewdate.券使用率黃金交叉次數, dbo.winnewdate.券資比, dbo.winnewdate.券資比黃金交叉次數, dbo.winnewdate.產業分類, dbo.winnewdate.交易所分類, dbo.winnewdate.股本億, dbo.winnewdate.日期 FROM dbo.winnewdate INNER JOIN dbo.View_basicinfo ON dbo.winnewdate.股票代號 = dbo.View_basicinfo.代號 WHERE (dbo.View_basicinfo.總量 > 5000) AND (dbo.winnewdate.日期 = 20260327) AND (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.winnewdate.均量黃金交叉次數 >= 0) AND (dbo.winnewdate.k9 - dbo.winnewdate.d9 >= 0) AND (dbo.winnewdate.macd > 0) ORDER BY dbo.winnewdate.均價黃金交叉次數 DESC, dbo.winnewdate.均量黃金交叉次數 DESC, dbo.winnewdate.三大法人黃金交叉次數 DESC,
