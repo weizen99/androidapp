@@ -65,6 +65,15 @@ gps_iis.py+map_iis.html:
 https://weizen99.github.io/androidapp/mylink.html:
 手機大小專用,連結SQLserver可儲存超連結,crud及排序,排序分三種:自訂按輸入權重,按加入順序,按點擊次數,上方有導覽列等等
 
+[https://zen2965.duckdns.org:8888/androidapp/mygithub.html
+左邊是Ai的對話流程,有提問及Ai思考及產生的程式碼
+
+https://zen2965.duckdns.org:8888/androidapp/mygithub1.html
+數據管理門戶,專業設計by Ai
+
+https://zen2965.duckdns.org:8888/androidapp/mygithub.html
+左邊是Ai的對話流程及Ai產生的程式碼)
+
 
 
 
