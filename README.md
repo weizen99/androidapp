@@ -1,7 +1,7 @@
 https://weizen99.github.io/androidapp/excelsql.html 
 1.可自己輸入ms sqlserver select類的查詢,有提供範本(頁面上有範本查詢)讓你編輯
 2.自己建置的股票資料,提供給大家參考測試使用
-3.html+aspx.vb,前端是html,後端是asp.net的後置程式碼(整合得很棒!)
+3.html+aspx.vb,前端是html,後端是asp.net的後置程式碼(Ai整合得很棒!)
 4.上面的導航頁 webapi彙總(https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html) 所提供的藝廊查詢,使用html+webapi,前端是html串接webapi
 5.資料庫如果有圖片也可以自動顯示出來(欄位:photo)
 6.含有一些關鍵字會報錯,資料庫只有查詢權限
