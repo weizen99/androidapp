@@ -59,7 +59,8 @@ https://weizen99.github.io/androidapp/image_api2.html:
 
 https://zen2965.duckdns.org:8888/gps_by_adb/map.html
 gps_iis.py+map_iis.html: 
-在asp.net架構下電腦發送定位座給手機並完成跳轉至定位,手機跟電腦同步會看到藍色定位點移動的軌跡,也有瞬移 走路 繞圈的設定,可以使用adb有線連接或adb無線連接,不需模擬位置跟Root,但開啓寶可夢只能移動無法抓寶,網路執行https://zen2965.duckdns.org:8888/gps_by_adb/map_iis.html網頁便能控制手機的定位,但手機要執行gps_iis.py
+在asp.net架構下電腦發送定位座給手機並完成跳轉至定位,手機跟電腦同步會看到藍色定位點移動的軌跡,也有瞬移 走路 繞圈的設定,可以使用adb有線連接或adb無線連接,不需模擬位置跟Root,但開啓寶可夢只能移動無法抓寶,網路執行https://zen2965.duckdns.org:8888/gps_by_adb/map_iis.html
+網頁便能控制手機的定位,但手機要執行gps_iis.py
 
 https://weizen99.github.io/androidapp/mylink.html:
 手機大小專用,連結SQLserver可儲存超連結,crud及排序,排序分三種:自訂按輸入權重,按加入順序,按點擊次數,上方有導覽列等等
