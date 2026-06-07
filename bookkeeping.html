@@ -1,0 +1,900 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zen Accounting v3.5</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+    <style>
+        html, body {
+            background-color: #050a15;
+            color: #ffffff;
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* 頂部選單固定在上方 */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            background: #050a15;
+            z-index: 1000;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-pills .nav-link {
+            color: #64748b;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+            .nav-pills .nav-link.active {
+                background-color: #3b82f6;
+                color: white;
+            }
+
+        /* 統計卡片 */
+        .summary-box {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 18px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-val {
+            font-size: 18px;
+            font-weight: 800;
+            margin-top: 5px;
+        }
+
+        .text-income {
+            color: #4ade80;
+        }
+
+        .text-expense {
+            color: #f87171;
+        }
+
+        /* 類別圖示 */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .cat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            color: white;
+            font-size: 20px;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .cat-label {
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+
+        /* Modal 內圖示縮小 */
+        #modalCatGrid {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+            #modalCatGrid .cat-icon {
+                width: 36px;
+                height: 38px;
+                font-size: 15px;
+            }
+
+        /* 紀錄卡片 */
+        .record-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .record-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .record-title {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .record-note {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .record-amount {
+            font-weight: 800;
+            font-size: 16px;
+            text-align: right;
+        }
+
+        /* SQL 查詢區寬度自動 */
+        .sql-panel {
+            padding: 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .table-wrapper {
+            background: white;
+            color: black;
+            border-radius: 12px;
+            padding: 5px;
+            margin-top: 15px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+
+        /* 修正 DataTables 凍結表頭 */
+        #excelResultTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #212529 !important;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .btn-add-hero {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            z-index: 100;
+            font-size: 20px;
+        }
+
+        /* 管理按鈕的特殊虛線樣式 */
+        .btn-manage-icon {
+            border: 2px dashed rgba(255,255,255,0.2) !important;
+            background: rgba(255,255,255,0.05) !important;
+            color: #64748b;
+        }
+
+        /* 修正 Modal 內的對比度 */
+        .modal-content {
+            background-color: #1a202c !important; /* 更深的背景色 */
+            color: #f8fafc !important;
+            border: 1px solid #2d3748;
+        }
+
+        .modal-header .fw-bold {
+            color: #ffffff;
+        }
+
+        /* 讓 Label 顯示為淺灰色，與白色標題區分 */
+        .modal-body label.opacity-50 {
+            color: #94a3b8 !important; /* 淺灰藍色 */
+            opacity: 1 !important;
+            font-weight: 600;
+        }
+
+        /* 修正輸入框文字顏色，確保輸入時是白色的 */
+        .form-control {
+            background-color: #0f172a !important;
+            color: #ffffff !important;
+            border: 1px solid #334155 !important;
+        }
+
+            .form-control:focus {
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+            }
+
+        /* 類別標籤文字加強 */
+        .cat-label {
+            color: #e2e8f0 !important;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* 修正好市多類別沒圖示的問題 */
+        .fas {
+            font-family: "Font Awesome 6 Free" !important;
+            font-weight: 900;
+        }
+
+        /* 未選取時的圖示，預設加一個淡邊框 */
+        .cat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            color: white;
+            font-size: 20px;
+            border: 3px solid rgba(255,255,255,0.1); /* 預設淡邊框 */
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* 【關鍵】選取後的狀態：強烈發光 + 放大 */
+        .cat-item.active .cat-icon {
+            border-color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8) !important;
+            transform: scale(1.15); /* 稍微放大一點 */
+        }
+
+        /* 選取後的文字加亮 */
+        .cat-item.active .cat-label {
+            color: #ffffff !important;
+            font-weight: bold;
+        }
+
+        /* 計算機面板 */
+        .calculator-box {
+            background: #111827;
+            border-radius: 25px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .calc-display {
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 36px;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: right;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            word-wrap: break-word;
+            min-height: 70px;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .btn-calc {
+            height: 60px;
+            border-radius: 15px;
+            border: none;
+            background: #1f2937;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            transition: 0.1s;
+        }
+
+            .btn-calc:active {
+                transform: scale(0.9);
+                background: #374151;
+            }
+
+        .btn-func {
+            background: #374151;
+            color: #60a5fa;
+        }
+
+        .btn-equal {
+            background: #3b82f6;
+            color: white;
+            grid-row: span 2; /* 高度佔兩格 */
+            height: 132px;
+        }
+
+        .btn-zero {
+            grid-column: span 2; /* 寬度佔兩格 */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 頂部切換選單 -->
+    <div class="top-nav">
+        <div class="app-container">
+            <ul class="nav nav-pills nav-fill" id="pills-tab">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-main"><i class="fas fa-home me-1"></i>記帳</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-query"><i class="fas fa-database me-1"></i>數據中心</button>
+                </li>
+
+                <!-- 新增計算機分頁 -->
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-calc"><i class="fas fa-calculator me-1"></i>計算機</button>
+
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="tab-content" id="pills-tabContent">
+        <!-- 頁面 1: 記帳首頁 -->
+        <div class="tab-pane fade show active" id="tab-main">
+            <div class="app-container">
+                <div class="summary-box">
+                    <div class="stat-card">
+                        <div class="small opacity-50">本月收入</div>
+                        <div class="stat-val text-income" id="sumIncome">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="small opacity-50">本月支出</div>
+                        <div class="stat-val text-expense" id="sumExpense">0</div>
+                    </div>
+                </div>
+                <div class="category-grid" id="mainCatGrid"></div>
+                <h6 class="fw-bold mb-3">最近紀錄</h6>
+                <div id="recordContainer"></div>
+            </div>
+        </div>
+
+        <!-- 頁面 2: 數據查詢中心 -->
+        <div class="tab-pane fade" id="tab-query">
+            <div class="container-fluid px-2 px-md-4 mt-3">
+                <div class="sql-panel">
+                    <h6 class="fw-bold text-info mb-3">SQL 指令查詢</h6>
+                    <textarea id="sqlText" class="form-control font-monospace mb-2" rows="3">SELECT TOP 100 * FROM AccountingRecords ORDER BY Date DESC</textarea>
+                    <button class="btn btn-info w-100 fw-bold text-white" onclick="runExcelQuery()">🚀 執行查詢</button>
+
+                    <div class="table-wrapper" id="sqlResultWrapper" style="display:none;">
+                        <table id="excelResultTable" class="table table-sm table-striped table-hover w-100"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-add-hero" onclick="openAddModal()"><i class="fas fa-plus"></i></button>
+
+    <!-- Modal: 表單保持不變，僅類別網格 ID 需確認 -->
+    <div class="modal fade" id="recordModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header border-0 pb-0"><h5 class="fw-bold" id="recordModalTitle">新增帳務</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="editRecordId">
+                    <div class="row g-2 mb-3">
+                        <div class="col-6"><label class="small opacity-50 mb-1">日期</label><input type="date" id="iptDate" class="form-control"></div>
+                        <div class="col-6"><label class="small opacity-50 mb-1">類型</label><select id="iptType" class="form-select"><option value="支出">支出</option><option value="收入">收入</option></select></div>
+                    </div>
+                    <div class="mb-3"><label class="small opacity-50 mb-1">金額</label><input type="number" id="iptAmount" class="form-control form-control-lg fw-bold" placeholder="0"></div>
+                    <label class="small opacity-50 mb-2">選擇類別</label>
+                    <div class="category-grid" id="modalCatGrid"></div>
+                    <input type="hidden" id="selectedCat">
+                    <div class="mt-3"><label class="small opacity-50 mb-1">備註</label><input type="text" id="iptNote" class="form-control"></div>
+                </div>
+                <div class="modal-footer border-0"><button type="button" class="btn btn-primary w-100 py-3 rounded-4 fw-bold" onclick="submitData()">儲存</button></div>
+            </div>
+        </div>
+    </div>
+    <!-- 類別管理 Modal -->
+    <div class="modal fade" id="manageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold">類別管理</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="small opacity-50 mb-2">現有類別 (點擊垃圾桶刪除)</label>
+                    <div class="manage-cat-list" id="manageCatList">
+                        <!-- JS 動態載入 -->
+                    </div>
+                    <hr class="opacity-10">
+                    <h6 class="fw-bold mb-3">新增類別</h6>
+                    <div class="mb-3">
+                        <label class="small opacity-50">名稱</label>
+                        <input type="text" id="newCatName" class="form-control" placeholder="例如: 好市多">
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="small opacity-50">圖示 (FA)</label>
+                            <input type="text" id="newCatIcon" class="form-control" value="fa-cart-shopping">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="small opacity-50">顏色</label>
+                            <input type="color" id="newCatColor" class="form-control" value="#3b82f6" style="height:45px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button class="btn btn-primary w-100 py-3 rounded-4" onclick="addNewCategory()">儲存新類別</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁面 3: 計算機 -->
+    <div class="tab-pane fade" id="tab-calc">
+        <div class="app-container">
+            <div class="calculator-box">
+                <div class="calc-display" id="calcDisplay">0</div>
+                <div class="calc-grid">
+                    <button class="btn-calc btn-func" onclick="clearCalc()">C</button>
+                    <button class="btn-calc btn-func" onclick="backspaceCalc()">←</button>
+                    <button class="btn-calc btn-func" onclick="appendCalc('/')">÷</button>
+                    <button class="btn-calc btn-func" onclick="appendCalc('*')">×</button>
+
+                    <button class="btn-calc" onclick="appendCalc('7')">7</button>
+                    <button class="btn-calc" onclick="appendCalc('8')">8</button>
+                    <button class="btn-calc" onclick="appendCalc('9')">9</button>
+                    <button class="btn-calc btn-func" onclick="appendCalc('-')">-</button>
+
+                    <button class="btn-calc" onclick="appendCalc('4')">4</button>
+                    <button class="btn-calc" onclick="appendCalc('5')">5</button>
+                    <button class="btn-calc" onclick="appendCalc('6')">6</button>
+                    <button class="btn-calc btn-func" onclick="appendCalc('+')">+</button>
+
+                    <button class="btn-calc" onclick="appendCalc('1')">1</button>
+                    <button class="btn-calc" onclick="appendCalc('2')">2</button>
+                    <button class="btn-calc" onclick="appendCalc('3')">3</button>
+                    <button class="btn-calc btn-equal" onclick="evalCalc()">=</button>
+
+                    <button class="btn-calc btn-zero" onclick="appendCalc('0')">0</button>
+                    <button class="btn-calc" onclick="appendCalc('.')">.</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS 邏輯修正 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        //var API_URL = "bookkeeping.aspx";
+        var API_URL = "https://zen2965.duckdns.org:8888/showimage/bookkeeping.aspx";
+        var addModal, manageModal; // 確保宣告在最外面
+        var categories = [];
+        var excelDataTable = null;
+
+        // 定義全局函數，確保動態生成的 HTML 絕對點得到
+        function openManageModal() {
+            if (manageModal) {
+                manageModal.show();
+            } else {
+                // 如果變數失效，嘗試重新抓取
+                manageModal = new bootstrap.Modal(document.getElementById('manageModal'));
+                manageModal.show();
+            }
+        }
+
+        // --- 核心工具：修正 JSON 日期格式 ---
+        function formatJsonDate(jsonDate) {
+            if (typeof jsonDate === "string" && jsonDate.indexOf("/Date(") === 0) {
+                var offset = new Date().getTimezoneOffset() * 60000; // 本地時區偏移
+                var parts = /\/Date\((-?\d+)\)\//.exec(jsonDate);
+                if (parts) {
+                    var d = new Date(parseInt(parts[1], 10));
+                    return d.getFullYear() + "/" + (d.getMonth() + 1).toString().padStart(2, '0') + "/" + d.getDate().toString().padStart(2, '0');
+                }
+            }
+            return jsonDate;
+        }
+
+        $(document).ready(function () {
+            // 初始化 Bootstrap Modal
+            var elAdd = document.getElementById('recordModal');
+            var elManage = document.getElementById('manageModal');
+            if (elAdd) addModal = new bootstrap.Modal(elAdd);
+            if (elManage) manageModal = new bootstrap.Modal(elManage);
+
+            loadCategories();
+            loadRecords();
+        });
+
+        // 強制打開管理視窗的函數
+        function openManageModal() {
+            if (manageModal) manageModal.show();
+            else {
+                manageModal = new bootstrap.Modal(document.getElementById('manageModal'));
+                manageModal.show();
+            }
+        }
+
+        // 載入類別
+        function loadCategories() {
+            callAPI("GetCategories", {}, function (r) {
+                if (r.success) {
+                    categories = r.data;
+                    renderCategoryUI(); // 渲染所有類別 UI
+                }
+            });
+        }
+
+        // 渲染 UI (主畫面網格 + Modal 網格 + 管理清單)
+        function renderCategoryUI() {
+            var gridHtml = "";
+            var listHtml = "";
+
+            categories.forEach(function (c) {
+                var icon = c.icon_class || "fa-tag";
+                var color = c.bg_color || "#64748b";
+
+                // 1. 網格 HTML (用於主畫面與新增視窗)
+                gridHtml += `
+                <div class="cat-item" data-name="${c.name}" onclick="selectCat('${c.name}', this)">
+                    <div class="cat-icon" style="background-color: ${color}">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="cat-label">${c.name}</div>
+                </div>`;
+
+                // 2. 管理列表 HTML (用於管理視窗)
+                listHtml += `
+                <div class="manage-cat-item" style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                    <span><i class="fas ${icon} me-2" style="color:${color}"></i>${c.name}</span>
+                    <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteCategory('${c.name}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>`;
+            });
+
+            var manageBtn = `
+            <div class="cat-item" onclick="openManageModal()">
+                <div class="cat-icon btn-manage-icon"><i class="fas fa-gear"></i></div>
+                <div class="cat-label">管理</div>
+            </div>`;
+
+            $("#mainCatGrid").html(gridHtml + manageBtn);
+            $("#modalCatGrid").html(gridHtml);
+            $("#manageCatList").html(listHtml);
+        }
+
+        // 新增類別函數
+        function addNewCategory() {
+            var name = $("#newCatName").val().trim();
+            var icon = $("#newCatIcon").val().trim() || "fa-tag";
+            var color = $("#newCatColor").val();
+
+            if (!name) {
+                Swal.fire("提示", "請輸入類別名稱", "warning");
+                return;
+            }
+
+            // 這裡發送的 Key (name, icon, color) 必須對應 VB 的 ByVal 名稱
+            callAPI("InsertCategory", { name: name, icon: icon, color: color }, function (r) {
+                if (r.success) {
+                    $("#newCatName").val(""); // 清空
+                    loadCategories(); // 重新載入並渲染
+                    Swal.fire({ icon: 'success', title: '類別新增成功', timer: 1000, showConfirmButton: false });
+                } else {
+                    Swal.fire("錯誤", r.msg, "error");
+                }
+            });
+        }
+
+        // 刪除類別函數
+        function deleteCategory(name) {
+            Swal.fire({
+                title: '確定刪除 [' + name + '] ？',
+                text: "這不會刪除已記錄的帳務，但圖示會消失",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '確定刪除',
+                cancelButtonText: '取消'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    callAPI("DeleteCategory", { name: name }, function (r) {
+                        if (r.success) {
+                            loadCategories();
+                        } else {
+                            Swal.fire("失敗", r.msg, "error");
+                        }
+                    });
+                }
+            });
+        }
+
+
+        function callAPI(method, data, callback) {
+            $.ajax({
+                type: "POST", url: API_URL + "/" + method,
+                data: JSON.stringify(data), contentType: "application/json; charset=utf-8", dataType: "json",
+                success: function (res) { callback(res.d); },
+                error: function (xhr) { console.error(xhr.responseText); }
+            });
+        }
+
+        function runExcelQuery() {
+            var sql = $("#sqlText").val();
+            $("#sqlResultWrapper").hide();
+
+            callAPI("ExecuteExcelSQL", { sql: sql }, function (r) {
+                if (!r.success) return Swal.fire("SQL 錯誤", r.msg, "error");
+                if (excelDataTable) { excelDataTable.destroy(); $("#excelResultTable").empty(); }
+
+                var data = r.data;
+                if (data.length === 0) return Swal.fire("提示", "查無資料", "info");
+
+                // 處理資料：自動掃描並轉換日期格式
+                var cleanedData = data.map(row => {
+                    var newRow = {};
+                    for (var key in row) {
+                        newRow[key] = formatJsonDate(row[key]);
+                    }
+                    return newRow;
+                });
+
+                var columns = Object.keys(cleanedData[0]).map(key => ({ title: key, data: key }));
+
+                $("#sqlResultWrapper").show();
+                excelDataTable = $('#excelResultTable').DataTable({
+                    data: cleanedData,
+                    columns: columns,
+                    pageLength: 10,
+                    scrollX: true,
+                    language: { url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" }
+                });
+            });
+        }
+
+        // --- 以下為原有邏輯，維持不變 ---
+        function loadCategories() {
+            callAPI("GetCategories", {}, function (r) {
+                if (r.success) { categories = r.data; renderCategoryUI(); }
+            });
+        }
+
+        function renderCategoryUI() {
+            var gridHtml = "";
+            categories.forEach(function (c) {
+                gridHtml += `<div class="cat-item" data-name="${c.name}" onclick="selectCat('${c.name}', this)">
+                                <div class="cat-icon" style="background-color: ${c.bg_color}"><i class="fas ${c.icon_class}"></i></div>
+                                <div class="cat-label">${c.name}</div></div>`;
+            });
+
+            // 補回「管理」按鈕，並保留「刷新」按鈕
+            var actionBtns = `
+                            <div class="cat-item" onclick="openManageModal()">
+                <div class="cat-icon btn-manage-icon"><i class="fas fa-gear"></i></div>
+                <div class="cat-label">管理</div>
+            </div>
+                            <div class="cat-item" onclick="location.reload()">
+                                <div class="cat-icon bg-secondary opacity-50"><i class="fas fa-sync"></i></div>
+                                <div class="cat-label">刷新</div>
+                            </div>`;
+
+            $("#mainCatGrid").html(gridHtml + actionBtns); // 主畫面顯示全部
+            $("#modalCatGrid").html(gridHtml);            // 新增視窗內只顯示類別
+        }
+
+        function selectCat(name, el) {
+            // 1. 找到 Modal 內所有的類別項目，移除 active 樣式
+            $("#modalCatGrid .cat-item").removeClass("active");
+
+            // 2. 如果是直接傳入 element (從 onclick="selectCat('...', this)" 進來的)
+            if (el) {
+                $(el).addClass("active");
+            } else {
+                // 3. 如果是從「修改」功能呼叫過來的 (只有名稱)，則透過 data-name 尋找
+                $(`#modalCatGrid .cat-item[data-name='${name}']`).addClass("active");
+            }
+
+            // 4. 更新隱藏欄位的值
+            $("#selectedCat").val(name);
+
+            // 除錯用：在控制台確認
+            console.log("當前選取類別：" + name);
+        }
+
+        function loadRecords() {
+            callAPI("GetRecords", { type: "全部" }, function (r) {
+                if (r.success) renderRecords(r.data);
+                $("#sumIncome").text("NT$ " + r.sumIncome);
+                $("#sumExpense").text("NT$ " + r.sumExpense);
+            });
+        }
+
+        function renderRecords(list) {
+            var html = "";
+            list.forEach(function (item) {
+                var isInc = item.record_type === "收入";
+                var catInfo = categories.find(c => c.name === item.category) || { bg_color: '#64748b', icon_class: 'fa-tag' };
+                var itemStr = JSON.stringify(item).replace(/"/g, '&quot;');
+                html += `<div class="record-card">
+                                    <div class="icon-circle" style="background: ${catInfo.bg_color}33; color: ${catInfo.bg_color}"><i class="fas ${catInfo.icon_class}"></i></div>
+                                    <div class="record-info">
+                                        <div class="record-title">${item.category}</div>
+                                        <div class="record-note">${item.date} • ${item.note || '無備註'}</div>
+                                    </div>
+                                    <div class="record-amount">
+                                        <div class="${isInc ? 'text-income' : 'text-expense'}">${isInc ? '+' : '-'} ${item.amount.toLocaleString()}</div>
+                                        <div class="small mt-1"><span class="text-info me-2" style="cursor:pointer" onclick="openEditRecord(${itemStr})">修改</span><span class="text-danger" style="cursor:pointer" onclick="deleteRecord(${item.id})">刪除</span></div>
+                                    </div></div>`;
+            });
+            $("#recordContainer").html(html || "<div class='text-center opacity-25 py-5'>尚無交易紀錄</div>");
+        }
+
+        function openAddModal() {
+            $("#editRecordId").val(""); $("#recordModalTitle").text("新增帳務");
+            $("#iptDate").val(new Date().toISOString().split('T')[0]);
+            $("#iptAmount").val(""); $("#iptNote").val("");
+            $(".cat-item").removeClass("active"); $("#selectedCat").val("");
+            addModal.show();
+        }
+
+        function openEditRecord(item) {
+            $("#editRecordId").val(item.id);
+            $("#iptDate").val(item.date.replace(/\//g, '-'));
+            $("#iptType").val(item.record_type);
+            $("#iptAmount").val(item.amount);
+            $("#iptNote").val(item.note);
+            $("#recordModalTitle").text("修改帳務");
+            selectCat(item.category);
+            addModal.show();
+        }
+
+        function submitData() {
+            var recordId = $("#editRecordId").val();
+            var d = { dateVal: $("#iptDate").val(), type: $("#iptType").val(), amount: parseFloat($("#iptAmount").val()), category: $("#selectedCat").val(), note: $("#iptNote").val() };
+            if (!d.amount || !d.category) return Swal.fire("提示", "金額與類別為必填", "warning");
+            var method = recordId ? "UpdateData" : "InsertData";
+            if (recordId) d.id = parseInt(recordId);
+            callAPI(method, d, function (r) {
+                if (r.success) { addModal.hide(); loadRecords(); }
+                else { Swal.fire("錯誤", r.msg, "error"); }
+            });
+        }
+
+        function deleteRecord(id) {
+            Swal.fire({ title: '確定刪除嗎？', icon: 'warning', showCancelButton: true }).then((res) => {
+                if (res.isConfirmed) callAPI("DeleteData", { id: id }, function (r) { if (r.success) loadRecords(); });
+            })
+        }
+
+        function renderCategoryUI() {
+            var gridHtml = "";
+            var modalHtml = "";
+
+            if (!categories || categories.length === 0) return;
+
+            categories.forEach(function (c) {
+                // 安全檢查：如果 SQL 沒傳回圖示或顏色，給予預設值
+                var icon = c.icon_class || "fa-tag";
+                var color = c.bg_color || "#64748b";
+
+                // 產出共用的類別 HTML
+                var itemHtml = `
+                            <div class="cat-item" data-name="${c.name}" onclick="selectCat('${c.name}', this)">
+                                <div class="cat-icon" style="background-color: ${color}">
+                                    <i class="fas ${icon}"></i>
+                                </div>
+                                <div class="cat-label">${c.name}</div>
+                            </div>`;
+
+                gridHtml += itemHtml;
+                modalHtml += itemHtml;
+            });
+
+            // 主畫面額外加上「管理」與「刷新」
+            var actionBtns = `
+                        <div class="cat-item" onclick="manageModal.show()">
+                            <div class="cat-icon btn-manage-icon"><i class="fas fa-gear"></i></div>
+                            <div class="cat-label">管理</div>
+                        </div>
+                        <div class="cat-item" onclick="location.reload()">
+                            <div class="cat-icon bg-secondary opacity-50"><i class="fas fa-sync"></i></div>
+                            <div class="cat-label">刷新</div>
+                        </div>`;
+
+            $("#mainCatGrid").html(gridHtml + actionBtns);
+            $("#modalCatGrid").html(modalHtml); // 這裡會自動套用 CSS 縮小效果
+
+            // 同步更新管理 Modal 內的清單
+            renderManageList();
+        }
+
+        // 專門渲染管理 Modal 內的「現有類別清單」
+        function renderManageList() {
+            var listHtml = "";
+            categories.forEach(function (c) {
+                listHtml += `
+                            <div class="manage-cat-item">
+                                <span><i class="fas ${c.icon_class} me-2" style="color:${c.bg_color}"></i>${c.name}</span>
+                                <i class="fas fa-trash text-danger" style="cursor:pointer" onclick="deleteCategory('${c.name}')"></i>
+                            </div>`;
+            });
+            $("#manageCatList").html(listHtml);
+        }
+
+        // --- 計算機邏輯 ---
+        let calcExpression = "";
+
+        function appendCalc(val) {
+            // 防止連續輸入運算符
+            const lastChar = calcExpression.slice(-1);
+            if (['+', '-', '*', '/', '.'].includes(val) && ['+', '-', '*', '/', '.'].includes(lastChar)) return;
+
+            calcExpression += val;
+            updateDisplay();
+        }
+
+        function clearCalc() {
+            calcExpression = "";
+            $("#calcDisplay").text("0");
+        }
+
+        function backspaceCalc() {
+            calcExpression = calcExpression.slice(0, -1);
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            $("#calcDisplay").text(calcExpression || "0");
+        }
+
+        function evalCalc() {
+            try {
+                // 使用 Function 代替 eval 較安全
+                const result = new Function('return ' + calcExpression)();
+                // 限制小數點位數
+                calcExpression = Number.isInteger(result) ? result.toString() : result.toFixed(2);
+                updateDisplay();
+            } catch (e) {
+                $("#calcDisplay").text("Error");
+                calcExpression = "";
+            }
+        }
+
+    </script>
+</body>
+</html>
