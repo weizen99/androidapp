@@ -26,9 +26,9 @@ https://weizen99.github.io/androidapp/excelsql2.html
 --專家實戰總分: OBV分+價均分+技術分 + 籌碼分+量能分
 --★追高(五日乖離):(盤中成交價 - 五日均線)/五日均線 8%~18%
 --🔥量價齊揚:站上成交量均線個數>= 7 AND 盤中漲幅 > 3%
---💎大戶鎖碼:較長期時間太短可能只是當沖等比較不準 ((集保庫存3週比率-集保庫存6週比率)+ (集保庫存4週比率-集保庫存7週比率))/2 > 2% 用兩個區段來平均比較不會錯過
+--💎大戶鎖碼:較長期時間太短可能只是當沖等比較不準 ((集保存3週比率-集保庫存6週比率)+ (集保庫存4週比率-集保庫存7週比率))/2 > 2% 用兩個區段來平均比較不會錯過
 
-https://weizen99.github.io/androidapp/message4.html:
+https://weizen99.github.io/androidapp/message4.html
 1.專業的留言系統
 2.除了可留言,重要提醒或留備註等也都可以
 3.新增 編輯 刪除 分頁(可選分頁筆數) 凍結表頭 搜尋 都有支援
@@ -36,25 +36,25 @@ https://weizen99.github.io/androidapp/message4.html:
 https://weizen99.github.io/androidapp/googlesheet.html
 讀取Google試算表的內容固定的一些欄位 photo欄放圖片的連結(要按表頭結構,文字或圖片)
 
-https://weizen99.github.io/androidapp/map.html:
+https://weizen99.github.io/androidapp/map.html
 可以將目前定位資料或任一點座標建檔到資料庫中,按同步將座標送到Somee資料庫建檔
 
 https://weizen99.github.io/androidapp/message5.html
 播放系統:我的電腦檔案mp4檔 nas檔案mp4檔 youtube連結,有撥放清單按序撥放,可新增youtube連結
 
-https://weizen99.github.io/androidapp/message6.html message6s.html:
+https://weizen99.github.io/androidapp/message6.html message6s.html
 同上電腦版,版面等更好看,目前都會用到本機電腦,關機時便無法使用後置程式碼
 
-https://weizen99.github.io/androidapp/message6_1.html : 
+https://weizen99.github.io/androidapp/message6_1.html
 youtube連結播放專用
 
-https://weizen99.github.io/androidapp/tour.html:
+https://weizen99.github.io/androidapp/tour.html
 Ai聊天,可自動切換模型,到 https://aistudio.google.com/app/apikey 申請Api key
 
-https://weizen99.github.io/androidapp/voiceinput.html  voiceinput1.html : 
+https://weizen99.github.io/androidapp/voiceinput.html  voiceinput1.html 
 網頁版語音輸入或自動朗讀,可由Ai潤稿,複製到剪貼簿,任意地方按貼上(省打字)
 
-https://weizen99.github.io/androidapp/image_api2.html: 
+https://weizen99.github.io/androidapp/image_api2.html
 照片輸播,直接抓取ds215圖片,增加每100張為一組,方便跳轉檔案
 
 https://zen2965.duckdns.org:8888/gps_by_adb/map.html
@@ -62,7 +62,7 @@ gps_iis.py+map_iis.html:
 在asp.net架構下電腦發送定位座給手機並完成跳轉至定位,手機跟電腦同步會看到藍色定位點移動的軌跡,也有瞬移 走路 繞圈的設定,可以使用adb有線連接或adb無線連接,不需模擬位置跟Root,但開啓寶可夢只能移動無法抓寶,網路執行https://zen2965.duckdns.org:8888/gps_by_adb/map_iis.html
 網頁便能控制手機的定位,但手機要執行gps_iis.py
 
-https://weizen99.github.io/androidapp/mylink.html:
+https://weizen99.github.io/androidapp/mylink.html
 手機大小專用,連結SQLserver可儲存超連結,crud及排序,排序分三種:自訂按輸入權重,按加入順序,按點擊次數,上方有導覽列等等
 
 [https://zen2965.duckdns.org:8888/androidapp/mygithub.html
@@ -74,7 +74,8 @@ https://zen2965.duckdns.org:8888/androidapp/mygithub1.html
 https://zen2965.duckdns.org:8888/androidapp/mygithub.html
 左邊是Ai的對話流程及Ai產生的程式碼)
 
-
+https://weizen99.github.io/androidapp/bookkeeping.html
+簡易記帳+SQL查詢+計算機
 
 
 
