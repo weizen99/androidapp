@@ -1,0 +1,671 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zen AI 智旅工作站 v12.1</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0b0e14;
+            --card: #1c2128;
+            --primary: #00f2fe;
+        }
+
+        body {
+            background: var(--bg);
+            color: #adbac7;
+            font-family: 'Segoe UI', "Microsoft JhengHei";
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        #map {
+            height: 420px;
+            width: 100%;
+            border-bottom: 2px solid #30363d;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 15px;
+            position: relative;
+            top: -40px;
+            z-index: 10;
+        }
+
+        .glass-panel {
+            background: rgba(28, 33, 40, 0.98);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 35px;
+            padding: 25px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+        }
+
+        .tip-badge {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .cmd-badge {
+            background: rgba(248, 81, 73, 0.1);
+            color: #f85149;
+            border: 1px solid rgba(248, 81, 73, 0.2);
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: #0d1117;
+            color: #fff;
+            border: 1px solid #444c56;
+            border-radius: 20px;
+            padding: 15px;
+            outline: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .map-tools {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 50;
+        }
+
+        .tool-btn {
+            width: 45px;
+            height: 45px;
+            background: white;
+            color: #333;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .main-btn {
+            padding: 15px 25px;
+            border-radius: 20px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-record {
+            background: #f85149;
+            color: white;
+            min-width: 120px;
+        }
+
+            .btn-record.active {
+                background: #2ea043;
+                animation: pulse 1.5s infinite;
+            }
+
+        .btn-ai {
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            color: #0b0e14;
+            flex: 1;
+        }
+
+        .btn-tour {
+            background: #6366f1;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(46, 160, 67, 0.8);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(46, 160, 67, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(46, 160, 67, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="relative">
+        <div id="map"></div>
+        <div class="map-tools">
+            <div class="tool-btn" onclick="centerMe()" title="我的位置"><i class="fas fa-crosshairs text-blue-500"></i></div>
+            <div class="tool-btn" onclick="startNavigation()" title="開始導航"><i class="fas fa-route text-green-600"></i></div>
+            <div class="tool-btn" onclick="exportData()" title="匯出行程"><i class="fas fa-file-download text-orange-500"></i></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="glass-panel">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-xl font-black text-white"><i class="fas fa-robot text-cyan-400 mr-2"></i>AI 智旅管家</h1>
+               
+                <div class="flex flex-wrap justify-between items-center mb-3 gap-2 px-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-gray-500">🔑 Gemini Key:</span>
+                        <input type="password" id="geminiKey" class="bg-black/50 border border-gray-700 text-[11px] w-48 p-1 rounded-lg text-white" placeholder="貼上 AI Studio Key">
+                    </div>
+                    <div id="statusInfo" class="text-[10px] text-gray-600">系統就緒</div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <select id="historyList" class="bg-gray-900 border border-gray-700 text-[10px] text-cyan-400 p-2 rounded-xl outline-none w-32" onchange="loadRoute(this.value)">
+                        <option value="">載入歷史...</option>
+                    </select>
+                    <i class="fas fa-trash-alt text-gray-600 hover:text-red-500 cursor-pointer" onclick="deleteCurrent()"></i>
+                </div>
+            </div>
+
+            <div class="guide-tips">
+                <span class="tip-badge">飯店起點？</span>
+                <span class="tip-badge">交通/景點？</span>
+                <span class="tip-badge">美食/必吃？</span>
+                <span class="tip-badge">同行/年齡？</span>
+                <span class="tip-badge cmd-badge">口令：清除內容/逗號/句號</span>
+            </div>
+
+            <textarea id="userInput" placeholder="請說出您的規劃...建議包含：1. 飯店或起點 2. 交通方式/景點 3.美食 4.人員/喜好"></textarea>
+
+            <div class="flex flex-wrap gap-3 mt-6">
+                <button id="recordBtn" class="main-btn btn-record" onclick="toggleRecord()"><i class="fas fa-microphone"></i> 語音</button>
+                <button id="aiBtn" class="main-btn btn-ai" onclick="runAI()"><i class="fas fa-paper-plane"></i> 智慧規劃</button>
+                <!-- 新增：協作微調按鈕 (使用橘色系，代表修正) -->
+                <button id="refineBtn" class="main-btn bg-orange-600 text-white" onclick="refineCurrentPlan()"><i class="fas fa-tools"></i> 協作微調</button>
+                <!-- 新按鈕 -->
+                <button id="parseBtn" class="main-btn bg-emerald-600 text-white" onclick="parseText()"><i class="fas fa-rocket"></i> 文本轉地圖</button>
+                <button id="tourBtn" class="main-btn btn-tour" onclick="startVirtualTour()"><i class="fas fa-bolt"></i> 巡航</button>
+                <button class="main-btn bg-gray-700 text-white" onclick="viewReport()"><i class="fas fa-file-alt"></i></button>
+            </div>
+
+            <div class="flex justify-between items-center mt-4 opacity-50">
+                <div id="statusInfo" class="text-[10px] uppercase">GPS Connected | v12.1</div>
+                <div class="text-[9px]">ENGINE: GEMINI 2.0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 修正：移除多餘的 callback 參數 -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjls_Lx6XQpblHvYK4zy_l1yXrwOtUFOA&callback=initMap" async defer></script>
+
+    <script>
+        var map, userMarker, routeLine, markers = [], currentPlanId = null, currentRouteData = [];
+        var tourTimer = null;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 25.033, lng: 121.564 }, zoom: 14,
+                fullscreenControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
+                styles: [{ "elementType": "geometry", "stylers": [{ "color": "#242f3e" }] }, { "elementType": "labels.text.fill", "stylers": [{ "color": "#746855" }] }, { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#17263c" }] }]
+            });
+
+            userMarker = new google.maps.Marker({
+                map: map, zIndex: 999,
+                icon: { path: google.maps.SymbolPath.CIRCLE, scale: 7, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 }
+            });
+
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(p => {
+                    if (!tourTimer) userMarker.setPosition({ lat: p.coords.latitude, lng: p.coords.longitude });
+                }, null, { enableHighAccuracy: true });
+            }
+            loadHistory();
+        }
+
+        function startVirtualTour() {
+            if (currentRouteData.length === 0) return Swal.fire("提示", "請先讀取行程", "info");
+            let i = 0;
+            clearInterval(tourTimer);
+            $("#tourBtn").addClass("opacity-50").prop("disabled", true);
+            tourTimer = setInterval(() => {
+                if (i >= currentRouteData.length) {
+                    clearInterval(tourTimer); tourTimer = null;
+                    $("#tourBtn").removeClass("opacity-50").prop("disabled", false);
+                    return;
+                }
+                let pos = { lat: currentRouteData[i].lat, lng: currentRouteData[i].lng };
+                userMarker.setPosition(pos);
+                map.panTo(pos);
+                map.setZoom(16);
+                if (markers[i]) { markers[i].setAnimation(google.maps.Animation.BOUNCE); setTimeout(() => markers[i].setAnimation(null), 800); }
+                $("#statusInfo").text(`巡航中: ${currentRouteData[i].location}`);
+                i++;
+            }, 5000);
+        }
+
+        function centerMe() { clearInterval(tourTimer); tourTimer = null; map.panTo(userMarker.getPosition()); map.setZoom(16); }
+
+        async function runAI() {
+            const text = $("#userInput").val().trim();
+            const apiKey = $("#geminiKey").val().trim(); // 使用者自行輸入的 AI Key
+
+            if (!apiKey) return Swal.fire("提示", "請輸入您的 Gemini API Key", "warning");
+            if (!text) return Swal.fire("提示", "請輸入旅遊願望或環島需求", "info");
+
+            // 儲存 Key 到瀏覽器，下次不用重打
+            localStorage.setItem('gemini_user_key', apiKey);
+
+            $("#aiBtn").prop("disabled", true).text("AI 正在撰寫指南...");
+
+            // 定義備援模型清單 (依照您成功的黃金通道)
+            const models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"];
+            let finalAiJson = "";
+
+            Swal.fire({
+                title: 'AI 達人規劃中',
+                html: '<div id="ai-status" class="text-sm">正在計算座標並撰寫預算與生活規劃...</div>',
+                background: '#0b0e14', color: '#fff',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            // --- 強化版 Prompt：要求 AI 產出有溫度的旅行指南 ---
+            const prompt = `你是一位資深旅遊導覽與環島專家。請根據需求規劃全新行程。
+【重要規範】：
+1. JSON 的 "summary" 欄位必須是【純文字字串】，嚴禁使用巢狀物件。請手動使用 \\n 進行換行。
+2. summary 內容必須包含：預算規劃、交通工具維修建議、此天數優勢分析、特別提醒(如逆時鐘優勢)。
+3. 格式範例："summary": "預算：3000元\\n維修：檢查胎壓..."
+
+結構如下：
+{ 
+  "title": "行程標題", 
+  "destination": "目的地", 
+  "summary": "此處填入有溫度的達人建議字串...", 
+  "details": [ 
+    {"day":1, "order":1, "location":"地點名", "lat":0.0, "lng":0.0, "desc":"景點描述", "time":"09:00"} 
+  ] 
+}
+需求內容：${text}`;
+
+            // --- 多模型自動備援連線 ---
+            for (let m of models) {
+                try {
+                    $("#ai-status").text(`正在嘗試通道: ${m}...`);
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`;
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+
+                    const data = await resp.json();
+                    if (resp.ok && data.candidates) {
+                        let rawText = data.candidates[0].content.parts[0].text;
+                        // 暴力擷取 JSON 部分
+                        finalAiJson = rawText.substring(rawText.indexOf("{"), rawText.lastIndexOf("}") + 1);
+                        break; // 成功獲取，跳出模型輪詢
+                    } else if (resp.status === 429) {
+                        // 流量限制，等待 1.5 秒再試下一個
+                        await new Promise(r => setTimeout(r, 1500));
+                    }
+                } catch (e) {
+                    console.warn(`${m} 連線失敗，嘗試下一個...`);
+                }
+            }
+
+            if (!finalAiJson) {
+                Swal.fire("規劃失敗", "目前所有 AI 通道均忙碌中，請稍後再試。", "error");
+                resetAIButton();
+                return;
+            }
+
+            // --- 呼叫 VB 後端 SaveAIPlan (API 已經過您的優化) ---
+            $.ajax({
+                type: "POST",
+                url: "https://zen2965.duckdns.org:8888/showimage/TravelPlanner.aspx/GenerateAIPlan", // 確保此處對應您最新的後端
+                data: JSON.stringify({ userText: text, userApiKey: apiKey }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    Swal.close();
+                    const r = res.d;
+                    if (r.success) {
+                        // 1. 同步地圖與歷史清單
+                        loadRoute(r.newPlanId);
+                        loadHistory();
+
+                        // 2. 詢問是否查看帶有「達人建議」的明細頁
+                        Swal.fire({
+                            title: '規劃成功！',
+                            text: 'AI 已產出行程與專屬規劃建議，要立即查看報告嗎？',
+                            icon: 'success',
+                            showCancelButton: true,
+                            confirmButtonColor: '#00f2fe',
+                            cancelButtonColor: '#444',
+                            confirmButtonText: '查看明細報告',
+                            cancelButtonText: '留在地圖',
+                            background: '#1c2128',
+                            color: '#fff'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // 使用您新改名的檔案 travelgo.html
+                                window.open(`travelgo.html?id=${r.newPlanId}`, '_blank');
+                            }
+                        });
+                    } else {
+                        Swal.fire("後端報錯", r.msg, "error");
+                    }
+                    resetAIButton();
+                },
+                error: function () {
+                    Swal.fire("連線錯誤", "無法聯繫伺服器，請檢查網路狀態。", "error");
+                    resetAIButton();
+                }
+            });
+        }
+
+        // 輔助函數：恢復按鈕狀態
+        function resetAIButton() {
+            $("#aiBtn").prop("disabled", false).html('<i class="fas fa-paper-plane"></i> 執行 AI 規劃');
+            $("#statusInfo").text("Ready");
+        }
+
+        function loadHistory() {
+            $.ajax({
+                type: "POST", url: "https://zen2965.duckdns.org:8888/showimage/TravelPlanner.aspx/GetPlanHistory",
+                contentType: "application/json; charset=utf-8",
+                success: function (r) {
+                    if (r.d.success) {
+                        let h = '<option value="">歷史紀錄...</option>';
+                        r.d.data.forEach(p => h += `<option value="${p.id}">${p.date} - ${p.title}</option>`);
+                        $("#historyList").html(h);
+                    }
+                }
+            });
+        }
+
+        function loadRoute(pid) {
+            if (!pid) return;
+            currentPlanId = pid;
+            $.ajax({
+                type: "POST", url: "https://zen2965.duckdns.org:8888/showimage/TravelPlanner.aspx/GetPlanDetails",
+                data: JSON.stringify({ planId: parseInt(pid) }),
+                contentType: "application/json; charset=utf-8",
+                success: function (r) { if (r.d.success) { currentRouteData = r.d.data; drawMap(r.d.data); } }
+            });
+        }
+
+        function drawMap(data) {
+            markers.forEach(m => m.setMap(null)); markers = [];
+            if (routeLine) routeLine.setMap(null);
+            const path = [], bounds = new google.maps.LatLngBounds();
+            data.forEach((loc, i) => {
+                const pos = { lat: loc.lat, lng: loc.lng };
+                path.push(pos);
+                markers.push(new google.maps.Marker({ position: pos, map: map, label: (i + 1).toString() }));
+                bounds.extend(pos);
+            });
+            routeLine = new google.maps.Polyline({ path: path, map: map, strokeColor: '#3b82ff', strokeWeight: 5 });
+            if (data.length > 0) map.fitBounds(bounds);
+        }
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'zh-TW'; recognition.continuous = true;
+        recognition.onresult = (e) => {
+            let t = ''; for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+            if (t.includes("清除")) $("#userInput").val("");
+            else { t = t.replace(/逗號/g, "，").replace(/句號/g, "。"); $("#userInput").val($("#userInput").val() + t); }
+        };
+
+        function toggleRecord() {
+            if ($("#recordBtn").hasClass('active')) { recognition.stop(); $("#recordBtn").removeClass('active'); }
+            else { recognition.start(); $("#recordBtn").addClass('active'); }
+        }
+
+        function startNavigation() {
+            if (currentRouteData.length === 0) return;
+            let dest = currentRouteData[currentRouteData.length - 1];
+            let waypoints = currentRouteData.slice(0, -1).map(p => `${p.lat},${p.lng}`).join('|');
+            window.open(`https://www.google.com/maps/dir/?api=1&origin=My+Location&destination=${dest.lat},${dest.lng}&waypoints=${waypoints}&travelmode=driving`, '_blank');
+        }
+
+        function exportData() {
+            if (currentRouteData.length === 0) return;
+            let text = "行程匯出\n" + currentRouteData.map((p, i) => `站點${i + 1}: ${p.location}\n時間: ${p.time}\n描述: ${p.desc}`).join('\n---\n');
+            let blob = new Blob([text], { type: "text/plain" });
+            let a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "trip.txt"; a.click();
+        }
+
+        function viewReport() { if (currentPlanId) window.open(`travelgo.html?id=${currentPlanId}`, '_blank'); }
+        function deleteCurrent() {
+            if (!currentPlanId) return;
+            $.ajax({ type: "POST", url: "https://zen2965.duckdns.org:8888/showimage/TravelPlanner.aspx/DeletePlan", data: JSON.stringify({ planId: currentPlanId }), contentType: "application/json; charset=utf-8", success: function () { loadHistory(); drawMap([]); Swal.fire("已刪除"); } });
+        }
+
+
+        $(document).ready(function () {
+            // 初始載入：從本地儲存抓回之前的 Key
+            $("#geminiKey").val(localStorage.getItem('gemini_user_key') || '');
+            loadHistory();
+            // ... 地圖初始化 ...
+        });
+
+        async function runAI() {
+            const text = $("#userInput").val().trim();
+            const apiKey = $("#geminiKey").val().trim(); // 抓取使用者輸入的 Key
+
+            if (!apiKey) return Swal.fire("提示", "請輸入您的 Gemini API Key", "warning");
+            if (!text) return Swal.fire("提示", "請輸入旅遊願望", "info");
+
+            // 儲存 Key 方便下次使用
+            localStorage.setItem('gemini_user_key', apiKey);
+
+            Swal.fire({
+                title: 'AI 智慧規劃中',
+                html: '正在使用您的 API Key 連線通道...',
+                background: '#111827', color: '#fff',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "https://zen2965.duckdns.org:8888/showimage/TravelPlanner.aspx/GenerateAIPlan",
+                // 傳送兩個參數：內容 + 金鑰
+                data: JSON.stringify({ userText: text, userApiKey: apiKey }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    Swal.close();
+                    const r = res.d;
+                    if (r.success) {
+                        loadRoute(r.newPlanId);
+                        loadHistory();
+                        Swal.fire("成功", "行程已產出並存入資料庫", "success");
+                    } else {
+                        Swal.fire("AI 報錯", r.msg, "error");
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire("後端連線失敗", "請檢查 Web.config 設定或伺服器連線", "error");
+                }
+            });
+        }
+
+        async function parseText() {
+            const text = $("#userInput").val().trim();
+            const apiKey = $("#geminiKey").val().trim();
+
+            if (!apiKey) return Swal.fire("提示", "請輸入 Gemini API Key", "warning");
+            if (text.length < 20) return Swal.fire("提示", "請貼入完整的行程文本以便解析", "info");
+
+            // 儲存 Key 到本地
+            localStorage.setItem('gemini_user_key', apiKey);
+
+            Swal.fire({
+                title: '🚀 文本轉地圖引擎啟動',
+                html: `
+            <div class="text-left text-xs p-2">
+                <p class="text-cyan-400 mb-1">1. 正在上傳原始文本...</p>
+                <p class="mb-1">2. AI 正在掃描景點並查詢精確座標...</p>
+                <p>3. 正在提取預算、維修與安全建議...</p>
+            </div>
+        `,
+                background: '#0b0e14', color: '#fff',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "https://zen2965.duckdns.org:8888/showimage/TravelPlanner.aspx/ParseTextToPlan", // 建議使用相對路徑，較穩定
+                data: JSON.stringify({ rawText: text, userApiKey: apiKey }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    Swal.close();
+                    const r = res.d;
+                    if (r.success) {
+                        // 1. 同步當前地圖
+                        loadRoute(r.newPlanId);
+                        // 2. 更新歷史紀錄下拉選單
+                        loadHistory();
+
+                        Swal.fire({
+                            title: '文本轉換完成！',
+                            text: `已成功從文本提取行程，並由 ${r.usedModel} 完成定位。`,
+                            icon: 'success',
+                            confirmButtonText: '查看明細指南',
+                            showCancelButton: true,
+                            cancelButtonText: '留在地圖',
+                            confirmButtonColor: '#00f2fe',
+                            background: '#1c2128',
+                            color: '#fff'
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                // 另開分頁開啟新的明細頁檔案 travelgo.html
+                                window.open(`travelgo.html?id=${r.newPlanId}`, '_blank');
+                            }
+                        });
+                    } else {
+                        // 如果後端報錯，顯示詳細診斷訊息
+                        Swal.fire({
+                            title: "轉換失敗",
+                            html: `<div class="text-left text-[10px] bg-black p-3 rounded overflow-auto max-h-40 font-mono text-red-400">${r.msg}</div>`,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.close();
+                    Swal.fire("系統錯誤", "無法連線至伺服器 API，請檢查網路或發佈狀態。", "error");
+                }
+            });
+        }
+
+
+        // --- 🔧 協作微調核心函數 ---
+        async function refineCurrentPlan() {
+            const instruction = $("#userInput").val().trim();
+            const apiKey = $("#geminiKey").val().trim();
+
+            // 1. 檢查是否有基礎資料
+            if (!currentPlanId || currentRouteData.length === 0) {
+                return Swal.fire("提示", "請先載入或規劃一個行程，才能進行微調修改。", "info");
+            }
+            if (!instruction) {
+                return Swal.fire("提示", "請在輸入框說出或寫下您想修改的地方。\n(例如：第二天下午改去吃冰、這天不要去爬山)", "question");
+            }
+
+            // 2. 自動將當前地圖上的所有站點序列化為「上下文文字」
+            // 這是防止後面行程消失的關鍵步驟
+            let contextText = "【目前現有的完整行程如下】：\n";
+            currentRouteData.forEach((item, idx) => {
+                contextText += `Day${item.day}, 第${idx + 1}站: ${item.location} (時間:${item.time}) - ${item.desc}\n`;
+            });
+
+            // 3. 儲存 Key 到本地
+            localStorage.setItem('gemini_user_key', apiKey);
+
+            // 4. 顯示 Loading UI
+            Swal.fire({
+                title: 'AI 正在精準優化',
+                html: `<div class="text-left text-xs text-gray-400">
+                <p class="text-orange-400 mb-1">正在讀取原始路徑...</p>
+                <p>正在根據指令：「${instruction}」重新計算座標...</p>
+              </div>`,
+                background: '#0b0e14', color: '#fff',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            // 5. 封裝給 AI 的終極指令
+            const refinedRequest = `
+        你是一位細心的旅遊秘書。
+        使用者現在對這份行程有修改意見。
+        
+        ${contextText}
+        
+        【使用者的修改要求】：『${instruction}』
+        
+        【重要規範 (不可違反)】：
+        1. 你必須回傳「整份行程」的完整 JSON，包含沒被修改的所有天數與站點。
+        2. 僅針對要求的部分進行替換，其餘原本的行程「必須原封不動保留」。
+        3. 重新查詢新加入地點的正確 lat 與 lng 座標。
+        4. 如果修改導致時間重疊，請自動微調後續站點的時間。
+        5. summary 欄位請更新為「修改後的達人建議」。
+        
+        請嚴格回傳純 JSON 格式，格式如下：
+        { 
+          "title": "原本標題(或因應修改自擬)", 
+          "destination": "目的地", 
+          "summary": "更新後的指南建議(純文字字串)", 
+          "details": [ {"day":1, "order":1, "location":"...", "lat":0.0, "lng":0.0, "desc":"...", "time":"..."} ] 
+        }`;
+
+            // 6. 呼叫後端連線
+            $.ajax({
+                type: "POST",
+                url: "TravelPlanner.aspx/GenerateAIPlan", // 複用穩定且超時長的規劃引擎
+                data: JSON.stringify({ userText: refinedRequest, userApiKey: apiKey }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    Swal.close();
+                    const r = res.d;
+                    if (r.success) {
+                        // 更新地圖與歷史
+                        loadRoute(r.newPlanId);
+                        loadHistory();
+
+                        // 清空輸入框
+                        $("#userInput").val("");
+                        $("#charCount").text("0");
+
+                        Swal.fire({
+                            title: "微調成功！",
+                            text: "已根據您的觀點更新行程，並產生新的歷史紀錄。",
+                            icon: "success",
+                            timer: 2000
+                        });
+                    } else {
+                        Swal.fire("微調失敗", r.msg, "error");
+                    }
+                },
+                error: function () {
+                    Swal.fire("連線錯誤", "後端伺服器通訊異常", "error");
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>
