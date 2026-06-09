@@ -2,216 +2,226 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
-    <!--<script runat="server">
-        
-        /* Protected Sub btnSubmit_Click(sender As Object, e As EventArgs) Handles btnSubmit.Click*/
-        Protected Sub btnSubmit111_Click(sender As Object, e As EventArgs)
-       
-        Session("x軸") = hfX.Value
-        Session("y軸") = hfY.Value
-        Response.Write(Session("x軸"))
-        Response.Write("資料已成功存入 Session！")
-      End Sub
-    </script>-->
+    <title>地圖座標同步系統 - 進階標記版</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', "Microsoft JhengHei";
+            padding: 20px;
+            background: #f4f7f6;
+        }
+
+        .map-box {
+            height: 450px;
+            width: 80%;
+            border-radius: 12px;
+            border: 2px solid #ddd;
+            margin-bottom: 20px;
+            background: #eee;
+        }
+
+        .coord-group {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+            button:hover {
+                background: #0056b3;
+            }
+
+
+        /* 自訂標記跳動動畫 */
+        @keyframes custom-bounce {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .marker-bounce {
+            animation: custom-bounce 0.5s infinite alternate;
+        }
+
+
+
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">
-
-
-
-
-        <div>
+        <div class="coord-group">
             <div>
-                緯度: <input type="text" id="txtlat" value="25.0339" size="7" /> 經度: <input type="text" id="txtlng" value="121.5644" size="7" />
+                目標緯度: <input type="text" id="txtlat" value="25.0339" size="10" />
+                目標經度: <input type="text" id="txtlng" value="121.5644" size="10" />
+                <button type="button" onclick="loadMap()">📍 座標位置地圖</button>
             </div>
-               <br />
-            <button type="button" onclick="loadMap()">座標位置地圖</button>
-            <br />   <br />
-            <div>
-                目前緯度: <input type="text" id="txtlat1" value="" size="7" /> 目前經度: <input type="text" id="txtlng1" value="" size="7" />
+            <br />
+            <div style="color: #666;">
+                我的目前位置: <input type="text" id="txtlat1" readonly size="10" />
+                <input type="text" id="txtlng1" readonly size="10" />
+                <button type="button" style="background: #28a745;" onclick="mychange()">⬅️ 套用</button>
+                <button type="button" style="background: #6f42c1;" onclick="mychange1()">🔗 同步跳轉</button>
             </div>
-
-            <button type="button" onclick="mychange()" placeholder="要重新按座標位置地圖才會更新至目前定位座標">變更目前位置到座標位置</button>
-            <button type="button" onclick="mychange1()" placeholder="同步到map.aspx網頁">同步</button>
-
-            <!--<asp:HiddenField ID="hfX" runat="server" />
-            <asp:HiddenField ID="hfY" runat="server" />-->
-
-            <!--<asp:Button ID="btnSubmit" runat="server" Text="傳送資料" OnClick="btnSubmit_Click" />-->
-            <!--<asp:Button ID="btnSubmit111" runat="server" Text="傳送資料" OnClick="btnSubmit_Click" />-->
-            <!--<input id="Submit1" type="submit" value="submit" OnClick="btnSubmit_Click"/>-->
-
         </div>
-       <br />   <br />
-        <div id="map" style="height: 500px; width: 60%; margin-top: 10px;"></div>
 
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
+        <div id="map" class="map-box"></div>
+        <div id="map1" class="map-box"></div>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
         <script>
-
             let map, userMarker, lastManualMarker = null;
+            let AdvancedMarkerElement, PinElement; // 新版標記變數
+            const googleKey = "AIzaSyBjls_Lx6XQpblHvYK4zy_l1yXrwOtUFOA";
 
-            function initMap() {
-                const initialPos = { lat: 25.0339, lng: 121.5644 };
-                map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 16, center: initialPos, gestureHandling: 'greedy'
-                });
+            function loadGoogleMaps() {
+                if (window.google && window.google.maps) {
+                    initMap();
+                    return;
+                }
+                const script = document.createElement('script');
+                // 【修正】：將 loading=async 改為單純參數，並確保 callback 在最後
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${googleKey}&callback=initMap&v=weekly`;
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            }
 
-                // 藍色目前位置標記 [[3](https://developers.google.com/maps/documentation/javascript/examples/map-geolocation)]
-                userMarker = new google.maps.Marker({
-                    position: initialPos, map: map,
-                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4285F4', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 },
-                    zIndex: 1000
-                });
+            // 改為 async 函數以支援最新標記庫
+            async function initMap() {
+                try {
+                    const initialPos = { lat: 25.0339, lng: 121.5644 };
 
-                const btn = document.createElement('button');
-                btn.textContent = '回到目前位置';
-                btn.style.cssText = "margin: 10px; padding: 12px; cursor: pointer; background: white; border: 2px solid #ccc; font-weight: bold;";
-                map.controls[google.maps.ControlPosition.TOP_CENTER].push(btn);
+                    // 1. 載入標記庫
+                    const markerLib = await google.maps.importLibrary("marker");
+                    const { AdvancedMarkerElement, PinElement } = markerLib;
 
-                btn.onclick = () => {
-                    if (!navigator.geolocation) return alert("不支援定位");
-                    // 關鍵修正：歸位至追蹤到的最新位置而非 initialPos [[6](https://dev.to/pubnub/geolocation-tracking-with-the-google-maps-api-2eee)]
-                    const currentPos = userMarker.getPosition();
-                    map.panTo(currentPos);
-                    document.getElementById('txtlat').value = currentPos.lat().toFixed(6);
-                    document.getElementById('txtlng').value = currentPos.lng().toFixed(6);
-                };
+                    // 2. 初始化地圖
+                    map = new google.maps.Map(document.getElementById('map'), {
+                        zoom: 16,
+                        center: initialPos,
+                        mapId: "DEMO_MAP_ID",
+                        gestureHandling: 'greedy'
+                    });
 
-                map.addListener('click', (e) => { updateMarker(e.latLng); });
+                    // 3. 只有在地圖成功建立後，才建立標記
+                    const userPin = new PinElement({
+                        background: "#4285F4",
+                        borderColor: "white",
+                        glyphColor: "white",
+                        scale: 0.8
+                    });
 
-                // 實時追蹤位置並更新藍點 [[2](https://www.codeofaninja.com/geolocation-watchposition/)][[5](https://javascript.plainenglish.io/real-examples-of-using-the-geolocation-api-for-live-tracking-89dc0ff1b3fb)]
-                if (navigator.geolocation) {
-                    navigator.geolocation.watchPosition((p) => {
-                        const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-                        document.getElementById('txtlat1').value = p.coords.latitude.toFixed(6)
-                        document.getElementById('txtlng1').value = p.coords.longitude.toFixed(6)
-                        userMarker.setPosition(pos); // 動態移動標記 [[1](https://stackoverflow.com/questions/26308666/how-to-update-a-markers-location-on-google-map-without-having-to-refresh-entire)]
-                    }, null, { enableHighAccuracy: true, maximumAge: 0 });
+                    userMarker = new AdvancedMarkerElement({
+                        map: map,
+                        position: initialPos,
+                        content: userPin,
+                        title: "我的位置"
+                    });
+
+                    // 點擊事件
+                    map.addListener('click', (e) => { updateMarker(e.latLng); });
+
+                    // GPS 追蹤
+                    if (navigator.geolocation) {
+                        navigator.geolocation.watchPosition((p) => {
+                            const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+                            document.getElementById('txtlat1').value = pos.lat.toFixed(6);
+                            document.getElementById('txtlng1').value = pos.lng.toFixed(6);
+                            if (userMarker) userMarker.position = pos;
+                        }, null, { enableHighAccuracy: true });
+                    }
+
+                    initLeaflet();
+                } catch (err) {
+                    console.error("地圖初始化中斷，通常是金鑰或權限問題。");
                 }
             }
 
             function updateMarker(latLng) {
-                if (lastManualMarker) lastManualMarker.setMap(null);
+                // 1. 移除舊標記
+                if (lastManualMarker) lastManualMarker.map = null;
+
                 document.getElementById('txtlat').value = latLng.lat().toFixed(6);
                 document.getElementById('txtlng').value = latLng.lng().toFixed(6);
-                lastManualMarker = new google.maps.Marker({
-                    position: latLng, map: map, animation: google.maps.Animation.BOUNCE, optimized: false
+
+                // 2. 建立新版標記
+                const pin = new google.maps.marker.PinElement({
+                    background: "#EA4335",
+                    borderColor: "white",
+                    glyphColor: "white",
                 });
+
+                // 3. 【關鍵】把跳動的 CSS 類別加到標記元件上
+                pin.element.classList.add("marker-bounce");
+
+                lastManualMarker = new google.maps.marker.AdvancedMarkerElement({
+                    map: map,
+                    position: latLng,
+                    content: pin.element, // 使用帶有動畫的 element
+                    title: "選取位置"
+                });
+
                 map.panTo(latLng);
             }
 
             function loadMap() {
                 const lat = parseFloat(document.getElementById('txtlat').value);
                 const lng = parseFloat(document.getElementById('txtlng').value);
-                updateMarker(new google.maps.LatLng(lat, lng));
+                updateMarker({ lat: lat, lng: lng });
             }
+
             function mychange() {
                 document.getElementById('txtlat').value = document.getElementById('txtlat1').value;
                 document.getElementById('txtlng').value = document.getElementById('txtlng1').value;
-
-                //location.href = "http://www.hacker1.somee.com/map.aspx";
-                //location.href = "map.aspx";
+                loadMap();
             }
 
             function mychange1() {
-                document.getElementById('txtlat').value = document.getElementById('txtlat1').value;
-                document.getElementById('txtlng').value = document.getElementById('txtlng1').value;
-
-                sessionStorage.setItem("myx軸", document.getElementById('txtlat1').value);
-                sessionStorage.setItem("myy軸", document.getElementById('txtlng1').value);
-                // 賦值給 ASP.NET 隱藏欄位 (後端用)
-                //document.getElementById('<%= hfX.ClientID %>').value = document.getElementById('txtlat1').value;
-                //document.getElementById('<%= hfY.ClientID %>').value = document.getElementById('txtlng1').value;
-                //alert(document.getElementById('txtlat1').value);
-                //location.href = "http://www.hacker1.somee.com/map.aspx";
-                var x = sessionStorage.getItem("myx軸");
-                var y = sessionStorage.getItem("myy軸");
-                //alert(x);
-                // 跳轉並傳值：Default.aspx?x=123&y=456
-             
-                //location.href = "map.aspx?x=" + x + "&y=" + y;
-                window.location.href = "http://www.hacker1.somee.com/map.aspx?x=" + x + "&y=" + y;
+                const x = document.getElementById('txtlat').value;
+                const y = document.getElementById('txtlng').value;
+                location.href = "map.aspx?x=" + x + "&y=" + y;
             }
 
-           
-
-
-
-        </script>
-
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-
-        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-
-        <div id="map1" style="height: 500px; width: 60%;"></div>
-        <div>
-            緯度: <input type="text" id="lat" /> 經度: <input type="text" id="lng" />
-        </div>
-
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-        <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-        <script>
-            const map1 = L.map('map1').setView([25.0339, 121.5644], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map1);
-
-            let marker = L.marker([25.0339, 121.5644], { draggable: true }).addTo(map1);
-
-
-
-            // 1. 關鍵字搜尋功能 [[1](https://docs.maptiler.com/leaflet/examples/geocoding-control/)]
-            const geocoder = L.Control.geocoder({ defaultMarkGeocode: false })
-                .on('markgeocode', function (e) {
-                    const bbox = e.geocode.bbox;
-                    const center = e.geocode.center;
-                    updateMarker1(center.lat, center.lng);
-                    map1.fitBounds(bbox);
-                }).addTo(map1);
-
-
-
-
-
-
-
-
-            // 2. 點擊與拖動更新座標 [[5](https://dev.to/geoapify-maps-api/leaflet-location-picker-with-address-autocomplete-geolocation-and-draggable-pin-with-geoapify-1gfa)]
-            map1.on('click', (e) => updateMarker1(e.latlng.lat, e.latlng.lng));
-            marker.on('dragend', () => {
-                const pos = marker.getLatLng();
-
-                updateMarker1(pos.lat, pos.lng);
-            });
-
-            function updateMarker1(lat, lng) {
-                marker.setLatLng([lat, lng]);
-                document.getElementById('lat').value = lat.toFixed(6);
-                document.getElementById('lng').value = lng.toFixed(6);
-                document.getElementById('txtlat').value = lat.toFixed(6);
-                document.getElementById('txtlng').value = lng.toFixed(6);
-
-
-
-                alert(`已選取座標：\n緯度: ${lat.toFixed(6)}\n經度: ${lng.toFixed(6)}\n加上名稱及備註並按下上方的"加到資料庫"即可加入資料`);
-                ////////document.getElementById('<%= txtLat.ClientID %>').value = latLng.lat().toFixed(6);
+            function initLeaflet() {
+                const map1 = L.map('map1').setView([25.0339, 121.5644], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map1);
+                let marker = L.marker([25.0339, 121.5644], { draggable: true }).addTo(map1);
+                map1.on('click', (e) => {
+                    marker.setLatLng(e.latlng);
+                    document.getElementById('txtlat').value = e.latlng.lat.toFixed(6);
+                    document.getElementById('txtlng').value = e.latlng.lng.toFixed(6);
+                });
             }
 
-
-
+            window.onload = loadGoogleMaps;
         </script>
-
-
-
     </form>
-
 </body>
-
 </html>
