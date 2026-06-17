@@ -1,3 +1,14 @@
+Ai規劃:
+申請Gemini API key
+https://ithelp.ithome.com.tw/m/articles/10383051
+
+https://zen2965.duckdns.org:8888/excelimport/stockmaster.html
+股票戰情室 :1.語音輸入(常用話術)=> 兩主題:啟動AI篩選   專家實戰選股 ,  3.使用範本執行SQL指令(參考指令用用語音修改輸入) 2.選擇下方的結果可進行"解盤"或"勝率"(回測240天的數據)3.產業熱力:今日產業焦點,族群的領頭羊
+
+https://zen2965.duckdns.org:8888/....../TravelPlanner.html
+AI 智旅管家:語音輸入旅𨘋資訊,由Ai幫你作行程規劃(智彗規劃),製作行程明細,明細 內有導航,也可以選右上圖示開始Google巡航導航,微調可以將目前的行程做增刪,如:如刪除第二天的某個行程或在第三天插入某個行程,資料都好了之後按"微調"修改,如果有文本資料(如ai巳幫你規劃)請貼上,讓AI幫你規劃行程並找座標,最後按"文本轉圖"去執行,按"巡航"的話會在規劃的點,按順序每5秒鐘跳一個景點
+
+一般:
 https://weizen99.github.io/androidapp/excelsql.html 
 1.可自己輸入ms sqlserver select類的查詢,有提供範本(頁面上有範本查詢)讓你編輯
 2.自己建置的股票資料,提供給大家參考測試使用
