@@ -1,125 +1,444 @@
 ﻿<!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel SQL 數據中心 - 高級版</title>
-    <!-- 引入核心樣式: Bootstrap 5 + DataTables -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zen AI 股票戰情室 Pro</title>
+    <!-- 1. 核心資源 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- DataTables 核心 -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        /* 1. 核心配色定義 */
+        :root {
+            --bg: #050a15;
+            --card: rgba(15, 23, 42, 0.95);
+            --primary: #00f2fe; /* 雲端模式 - 青色 */
+            --expert: #10b981; /* 專家模式 - 翡翠綠 */
+            --danger: #f85149; /* 錄音模式 - 紅色 */
+            --text: #adbac7;
+            --white: #ffffff;
+        }
+
         body {
-            font-family: '標楷體';
-            background-color: #f0f2f5;
-            padding: 2px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif;
+            margin: 0;
+            overflow-x: hidden;
         }
 
-        .sql-box {
-            background: #fff;
-            padding: 2px;
-            border-radius: 8px;
-            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        /* 2. 佈局容器 */
+        .top-spacer {
+            height: 40px;
+            background: linear-gradient(to bottom, #050a15, #0b0e14);
         }
 
-        /* 凍結表頭與 Excel 滾動效果 */
-        .table-wrapper {
-            height: 95vh; /* 固定高度，產生捲軸 原65vh */
-            overflow: auto;
-            margin-top: 20px;
-            border: 1px solid #dee2e6;
-            background: #fff;
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 15px;
+            position: relative;
+            top: -15px;
         }
 
-        /* 凍結表頭 CSS */
-        #resultTable thead th {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background-color: #212529 !important;
-            color: white;
+        /* 3. 玻璃擬態面板 */
+        .glass-panel {
+            background: var(--card);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 25px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        /* 4. 策略標籤 (Pills) */
+        .tip-badge {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid rgba(59, 130, 246, 0.3);
             white-space: nowrap;
+            transition: 0.3s;
+            display: inline-block;
         }
 
-        /* 圖片樣式 */
-        .data-img {
-            max-width: 400px; /* 你可以根據需求調整成 400px 或 500px */
-            height: auto;
-            border-radius: 4px;
-            cursor: zoom-in;
-            transition: transform 0.2s;
-        }
-
-            .data-img:hover {
-                max-width: 600px; /* 移上去時再變大一點 */
-                transform: scale(2.5);
-                z-index: 999;
-                position: relative;
+            .tip-badge:hover {
+                background: var(--accent);
+                color: white;
+                transform: translateY(-2px);
             }
 
-        .template-section {
-            background: #f8f9fa;
+        .badge-expert {
+            background: rgba(16, 185, 129, 0.15) !important;
+            color: var(--expert) !important;
+            border-color: rgba(16, 185, 129, 0.3) !important;
+        }
+
+        /* 5. 輸入區域 */
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: #020617;
+            color: var(--white);
+            border: 1px solid #1e293b;
+            border-radius: 20px;
+            padding: 18px;
+            outline: none;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+            transition: 0.3s;
+        }
+
+            textarea:focus {
+                border-color: var(--primary);
+            }
+
+        /* 6. 按鈕系統 */
+        .main-btn {
+            padding: 15px 25px;
+            border-radius: 20px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-record {
+            background: var(--danger);
+            color: white;
+            min-width: 140px;
+        }
+
+            .btn-record.active {
+                background: #2ea043;
+                animation: pulse 1.5s infinite;
+            }
+
+        .btn-ai {
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            color: #000;
+            flex: 1.5;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.3);
+        }
+
+        .btn-expert {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            flex: 1.5;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(248, 81, 73, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(248, 81, 73, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(248, 81, 73, 0);
+            }
+        }
+
+        /* 7. DataTables 終極深色修復 (解決看不清的問題) */
+        .dataTables_wrapper {
+            color: var(--white) !important;
             padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
         }
 
-        /* DataTables 樣式微調 */
-        .dataTables_wrapper .dataTables_filter {
-            margin-bottom: 10px;
+        /* 凍結表頭配色 */
+        .dataTables_scrollHead {
+            background-color: #1e293b !important;
+            border-radius: 15px 15px 0 0;
         }
 
-        .status-msg {
+        table.dataTable thead th {
+            color: var(--primary) !important;
+            font-weight: 900 !important;
+            text-align: center !important;
+            white-space: nowrap !important;
+            border-bottom: 2px solid var(--primary) !important;
+            padding: 12px 15px !important;
+        }
+
+        /* 表格內容列 */
+        table.dataTable tbody tr {
+            background-color: transparent !important;
+            color: #e2e8f0 !important;
+        }
+
+            table.dataTable tbody tr:hover {
+                background-color: rgba(59, 130, 246, 0.1) !important;
+            }
+
+        table.dataTable tbody td {
+            border-bottom: 1px solid #1e293b !important;
+            vertical-align: middle;
+        }
+
+        /* 控制列配色 (顯示幾筆 / 搜尋) */
+        .dataTables_length label, .dataTables_filter label {
+            color: var(--white) !important;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 14px;
         }
+
+        .dataTables_length select, .dataTables_filter input {
+            background: #020617 !important;
+            color: var(--primary) !important;
+            border: 1px solid #334155 !important;
+            border-radius: 10px;
+            padding: 6px 12px;
+        }
+
+        /* 8. 分頁按鈕美化 (強制橫向排列且清晰) */
+        .dataTables_paginate .pagination {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: flex-end !important;
+            list-style: none !important;
+            margin-top: 15px !important;
+        }
+
+        .pagination .page-item .page-link {
+            background-color: #1e293b !important;
+            border: 1px solid #334155 !important;
+            color: #adbac7 !important;
+            margin: 0 3px;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: bold;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary) !important;
+            color: #000 !important;
+            border-color: var(--primary) !important;
+        }
+
+        /* 9. 數據看板看板 */
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .stat-value {
+            font-size: 16px !important;
+            font-weight: bold;
+            color: var(--primary) !important;
+        }
+
+        /* 10. 自訂捲軸 (細部質感) */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050a15;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #334155;
+            }
+
+        /* 1. 按鈕移入(Hover)與點擊(Active)效果 */
+        .main-btn {
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .main-btn:hover {
+                box-shadow: 0 0 20px var(--primary); /* 外圈光圈 */
+                transform: translateY(-2px);
+                filter: brightness(1.1);
+            }
+
+            .main-btn:active {
+                transform: translateY(1px) scale(0.95); /* 點擊縮小 */
+                filter: brightness(1.3); /* 點擊變亮 */
+                box-shadow: 0 0 5px var(--primary);
+            }
+
+        /* 2. 針對不同顏色的按鈕設定專屬光圈 */
+        .btn-ai:hover {
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
+        }
+
+        .btn-expert:hover {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+        }
+
+        .btn-record:hover {
+            box-shadow: 0 0 20px rgba(248, 81, 73, 0.6);
+        }
+
+        /* 3. 超連結 (Hyperlink) 效果 */
+        a {
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+            a:hover {
+                color: var(--primary) !important;
+                text-shadow: 0 0 10px var(--primary);
+                text-decoration: underline !important;
+            }
+
+            a:active {
+                color: #fff !important;
+                filter: brightness(1.5);
+            }
+
+        /* 表格內的按鈕點擊效果 */
+        #stockTable button:active {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+
+
+
+
+        /* 1. 按鈕基礎樣式與過渡 */
+        .main-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent !important;
+        }
+
+            /* 2. 移入時：出現外圈光暈 */
+            .main-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 0 15px var(--primary); /* 青色光圈 */
+                border: 2px solid var(--primary) !important;
+                filter: brightness(1.2);
+            }
+
+            /* 3. 點擊時：改變顏色 (變白) 且縮放 */
+            .main-btn:active {
+                transform: scale(0.95);
+                background: #ffffff !important; /* 點擊瞬間變亮白 */
+                color: #000000 !important;
+                box-shadow: 0 0 25px #ffffff;
+            }
+
+        /* 4. 超連結 (Hyperlink) 移入/點擊效果 */
+        #stockTable a {
+            color: #00f2fe;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+            #stockTable a:hover {
+                color: #fff !important;
+                text-shadow: 0 0 10px #00f2fe;
+                text-decoration: underline !important;
+            }
+
+            #stockTable a:active {
+                color: #ff0 !important; /* 點擊變黃色 */
+            }
     </style>
 </head>
 <body>
 
-    <div class="container-fluid">
-        <ul class="nav nav-tabs xs-3">
-            <li class="nav-item"><a class="nav-link active" href="#">Excel SQL 數據中心</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/excelimport2" target="_blank">指令彙總</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html" target="_blank">WebApi彙總</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/map.html" target="_blank">地圖定位建檔</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/fishnew5/favorites2" target="_blank">網站簡介</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/stockquery/incomeedit1" target="_blank">自選股編輯</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/mymvc/selfselected1.aspx" target="_blank">自選股內容</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/message5.html" target="_blank">與我連絡</a></li>
-        </ul>
+    <div class="top-spacer"></div>
 
-        <div class="sql-box">
-            <!-- 範本載入區 -->
-            <div class="template-section">
-                <div class="row g-2">
-                    <div class="col-sm-3">
+    <div class="container">
+        <!-- 核心控制面板 -->
+        <div class="glass-panel mb-6">
 
-                        <label class="form-label fw-bold">🔍 搜尋範本：</label>
-                        <input type="text" id="templateSearch" class="form-control" placeholder="輸入關鍵字...">
-                    </div>
-                    <div class="col-sm-9">
-                        <label class="form-label fw-bold">📑 選擇 50+ 組 SQL 範本：</label>
-                        <select id="sqlTemplates" class="form-select">
-                            <option value="">-- 請選擇範本 --</option>
-                        </select>
-                    </div>
+            <!-- 第一排：標題、常用話術與 API Key -->
+            <div class="flex justify-between items-center mb-5">
+                <h1 class="text-2xl font-black text-white tracking-tighter">
+                    <i class="fas fa-chart-line text-cyan-400 mr-2"></i>AI 股票智能助教
+                </h1>
+                <div class="flex items-center gap-3">
+                    <select id="phraseSelect" class="bg-gray-800 border-0 text-xs text-yellow-400 p-2 rounded-xl outline-none w-40" onchange="injectCmd(this.value)">
+                        <option value="">💬 常用話術</option>
+                        <optgroup label="【專家實戰總分系列】">
+                            <option value="找專家實戰總分大於 35 且今天分數連三升的強勢股">🏆 專家總分連三升</option>
+                            <option value="找專家實戰總分大於 40 且實戰標籤包含量價齊揚的股票">🔥 實戰總分高標股</option>
+                            <option value="找 6月10號 專家實戰總分最高的前 20 名">📅 指定日期回測</option>
+                            <option value="找大戶鎖碼且專家總分大於 25 的中小型股">💎 大戶鎖碼專家股</option>
+                            <option value="幫我尋找代號是2330的所有資料,找出的資料按日期由大到小排列">📊 單股多天</option>
+                            <option value="幫我尋找最新的日期且專家實戰總分大於20的資料,按專家實戰總分由大到小排列">📈 分數>20股票</option>
+                            <option value="幫我尋找最新的日期且實戰標籤是大戶鎖碼,按專家實戰總分由大到小排列">🔒 實戰標籤是大戶鎖碼</option>
+                        </optgroup>
+                        <optgroup label="【一年期歷史回測系列】">
+                            <option value="找過去一年中，台積電(2330)專家實戰總分最高的前 10 名日期">📅 台積電歷史高分日</option>
+                            <option value="找去年 10 月份，專家實戰總分大於 35 且漲幅前 10 名的股票">🍁 去年十月強勢股</option>
+                            <option value="找出過去一年，哪些日期曾出現過『專家實戰總分 > 40』且當天『漲幅 > 8%』">🔥 歷史大爆發偵測</option>
+                        </optgroup>
+
+                        <optgroup label="【籌碼與趨勢連續性】">
+                            <option value="找最近連續三天，專家實戰總分都在上升，且集中度1日都是正數的股票">📈 評分連增+籌碼吸碼</option>
+                            <option value="找今日專家總分大於 30 且 OBV 累積金叉次數大於 10 次的能量噴發股">⚡ OBV長期能量股</option>
+                            <option value="找股本小於 50 億，但三大法人黃金交叉次數大於 5 且總分大於 25 的黑馬">🐎 中小型籌碼黑馬</option>
+                            <option value="找本週以來（日期 > 20260608）一日漲幅大於 5% 且量倍數大於 2 的強勢攻擊股">🚀 本週短線強攻</option>
+                        </optgroup>
+
+                        <optgroup label="【極致選股組合】">
+                            <option value="找專家實戰總分 > 30，且 K9 > D9 且 MACD 紅綠棒值 > 0 的技術共振股">🎯 技術指標三共振</option>
+                            <option value="找產業分類是『電子上游-IC-設計』且今日專家總分排名前 5 名的領頭羊">💻 IC設計領頭羊</option>
+                            <option value="找價五日乖離小於 2 且專家總分大於 28 的潛伏起漲股">🧘 貼線潛伏起漲股</option>
+                        </optgroup>
+                    </select>
+                    <input type="password" id="geminiKey" class="bg-black/50 border border-gray-700 text-[10px] p-2 rounded-lg w-32 text-white" placeholder="Gemini API Key">
                 </div>
             </div>
 
-            <div class="row g-3">
-                <div class="col-sm-2">
-                    <label class="fw-bold text-danger">密碼：</label>
-                    <input type="password" id="txtPwd" class="form-control" value="2157">
+            <!-- 第二排：快捷標籤 -->
+            <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+                <span class="tip-badge" onclick="injectCmd('找今天最強勢的金融股')">🔥 金融強勢</span>
+                <span class="tip-badge" onclick="injectCmd('找大戶正在吸碼的股票')">💎 籌碼集中</span>
+                <span class="tip-badge" onclick="injectCmd('找OBV能量噴發的股票')">⚡ 能量噴發</span>
+                <span class="tip-badge bg-purple-900/40" onclick="runIndustryAI()"><i class="fas fa-layer-group"></i> 產業熱力</span>
+                <span class="tip-badge text-red-400" onclick="injectCmd('清除')">🗑️ 清除</span>
+            </div>
+
+            <!-- 第三排：搜尋、範本、資料庫三合一 -->
+            <div class="flex gap-2 mb-4">
+                <div class="flex-[1.2]">
+                    <input type="text" id="tplSearch" class="bg-gray-900/80 border border-gray-700 text-[11px] p-2 rounded-xl w-full text-white placeholder-gray-500" placeholder="🔍 搜尋範本..." oninput="filterTemplates(this.value)">
                 </div>
-                <div class="col-sm-3">
-                    <label class="fw-bold">資料庫：</label>
-                    <select id="useDatabase" class="form-select">
+                <div class="flex-[1.5]">
+                    <select id="sqlTemplates" class="bg-gray-900/80 border border-gray-700 text-[11px] p-2 rounded-xl w-full text-cyan-400 outline-none" onchange="injectSql(this.value)">
+                        <option value="">📑 選擇 SQL 範本</option>
+                    </select>
+                </div>
+                <div class="flex-[1.3]">
+                    <select id="dbSelect" class="bg-gray-800 border border-yellow-600/50 text-[11px] p-2 rounded-xl w-full text-yellow-400 outline-none font-bold">
                         <option value="stockchangedate">stockchangedate</option>
                         <option value="favor2">favor2 (含圖片)</option>
                         <option value="poemleg">poemleg</option>
@@ -132,41 +451,63 @@
                         <option value="wordvoice">wordvoice</option>
                         <option value="favor1">favor1</option>
                         <option value="favor3">favor3</option>
-
                     </select>
-                </div>
-                <!--<div class="col-sm-3">
-                    <label class="fw-bold">日期參數：</label>
-                    <input type="text" id="txtDate" class="form-control" placeholder="YYYYMMDD">
-                </div>-->
-                <div class="col-sm-4 d-flex align-items-end">
-                    <button id="btnQuery" class="btn btn-primary w-100 fw-bold">🚀 執行 Excel 格式查詢</button>
-                </div>
-                <div class="col-sm-3 d-flex align-items-end">
-                    <button id="btnQuery1" class="btn btn-primary w-100 fw-bold">🚀 執行預存程序</button>
-                </div>
-
-
-                <div class="col-12 sm-3">
-                    <label class="fw-bold">SQL 指令 (SELECT 已自動補上)：</label>
-                    <textarea id="sqlText" class="form-control font-monospace" rows="4"> top 50 * FROM chips5 order by 日期 desc,漲幅 desc</textarea>
                 </div>
             </div>
 
-            <div id="msg" class="status-msg sm-3 text-primary"></div>
+            <!-- 【核心結果區】 這是你紅圈指定的位置，整合了解盤與勝率 -->
+            <div id="unifiedAnalysisBox" class="hidden my-4 p-5 rounded-2xl border-2 border-emerald-500/50 bg-emerald-950/40 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                <div class="flex flex-col md:flex-row justify-between gap-6">
+                    <div class="flex-1">
+                        <div id="boxHeader" class="text-xs font-black text-emerald-400 tracking-widest mb-2 uppercase">── AI 專家即時解盤 ──</div>
+                        <!-- 文字顯示 -->
+                        <div id="mainResultText" class="text-base text-white leading-relaxed font-medium whitespace-pre-wrap" style="min-height: 80px;"></div>
+
+                        <div class="flex gap-4 mt-4">
+                            <button onclick="window.speechSynthesis.cancel()" class="text-[11px] bg-red-900/50 text-red-300 px-3 py-1 rounded-lg hover:bg-red-800">停止語音</button>
+                            <button onclick="$('#unifiedAnalysisBox').fadeOut()" class="text-[11px] bg-gray-800 text-gray-400 px-3 py-1 rounded-lg hover:bg-gray-700">關閉看板</button>
+                        </div>
+                    </div>
+
+                    <!-- 右側圖表/分析圖 -->
+                    <div class="w-full md:w-1/3">
+                        <div class="text-[10px] text-gray-500 mb-2 font-bold text-center">趨勢動能 / 專家指標</div>
+                        <div style="height: 180px;"><canvas id="mainStockChartCanvas"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第四排：文字輸入框 -->
+            <textarea id="userInput" class="mt-2" placeholder="請說出您的選股需求... (口令：清除、逗號、句號)"></textarea>
+
+            <!-- 第五排：功能按鈕 -->
+            <div class="flex gap-4 mt-6">
+                <button id="recordBtn" class="main-btn btn-record" onclick="toggleRecord()">
+                    <i class="fas fa-microphone"></i> 語音輸入
+                </button>
+                <button id="aiBtn" class="main-btn btn-ai flex-1 justify-center" onclick="runStockAI()">
+                    <i class="fas fa-brain"></i> 啟動 AI 篩選
+                </button>
+                <button id="expertBtn" class="main-btn btn-expert flex-1 justify-center" onclick="runStockAI1()">
+                    <i class="fas fa-user-tie"></i> 專家實戰選股
+                </button>
+                <button id="manualBtn" class="main-btn bg-slate-700 text-white flex-1 justify-center" onclick="runManualSQL()">
+                    <i class="fas fa-terminal"></i> 執行 SQL
+                </button>
+            </div>
+
+            <div id="statusInfo" class="text-center text-[10px] text-gray-600 mt-4 italic">Ready | v21.0 Stable</div>
         </div>
 
-        <!-- 表格顯示區 -->
-        <div class="table-wrapper">
-            <table id="resultTable" class="table table-bordered table-hover table-sm w-100">
-                <!-- DataTables 會動態產生內容 -->
-            </table>
+        <!-- 資料表格區 -->
+        <div class="glass-panel p-0 overflow-hidden">
+            <table id="stockTable" class="table table-dark table-hover w-100 m-0"></table>
         </div>
     </div>
 
     <script>
-        // --- 範本資料庫 ---
-        const sqlTemplateLibrary = [
+        // --- 1. SQL 範本資料庫 (您可以自行在次加入更多) ---
+        const sqlLib = [
             {
                 cat: "多重金身加持",
                 title: "共振彙總最新日",
@@ -984,7 +1325,7 @@ ORDER BY   站上五日平均線張數 DESC` },
 exec myequity1 20260327,20260410, N'2330'` },
             {
                 cat: "預存程序", title: "兩日間之股權變動2", sql: `/*資料庫選:stockprice,日期以週五為原則,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
-exec myequity2 20260327,20260410, N'2330'` }, 
+exec myequity2 20260327,20260410, N'2330'` },
 
 
             { cat: "黃金交叉次數", title: "黃金交叉次數選股", sql: `TOP (100) PERCENT dbo.winnewdate.股票名稱, dbo.winnewdate.股票代號, dbo.winnewdate.站均, dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.均量黃金交叉次數, dbo.winnewdate.三大法人黃金交叉次數, dbo.winnewdate.外資黃金交叉次數, dbo.winnewdate.投信黃金交叉次數, dbo.winnewdate.k9, dbo.winnewdate.d9, dbo.winnewdate.週k9, dbo.winnewdate.週d9, dbo.winnewdate.月k9, dbo.winnewdate.月d9, dbo.winnewdate.macd, dbo.winnewdate.資使用率, dbo.winnewdate.資使用率黃金交叉次數, dbo.winnewdate.券使用率, dbo.winnewdate.券使用率黃金交叉次數, dbo.winnewdate.券資比, dbo.winnewdate.券資比黃金交叉次數, dbo.winnewdate.產業分類, dbo.winnewdate.交易所分類, dbo.winnewdate.股本億, dbo.winnewdate.日期 FROM dbo.winnewdate INNER JOIN dbo.View_basicinfo ON dbo.winnewdate.股票代號 = dbo.View_basicinfo.代號 WHERE (dbo.View_basicinfo.總量 > 5000) AND (dbo.winnewdate.日期 = 20260327) AND (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.winnewdate.均量黃金交叉次數 >= 0) AND (dbo.winnewdate.k9 - dbo.winnewdate.d9 >= 0) AND (dbo.winnewdate.macd > 0) ORDER BY dbo.winnewdate.均價黃金交叉次數 DESC, dbo.winnewdate.均量黃金交叉次數 DESC, dbo.winnewdate.三大法人黃金交叉次數 DESC` },
@@ -1594,131 +1935,576 @@ FOR JSON PATH` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
 
         ];
-        /*資料庫:stockchange*/
-        let dataTableInstance = null; // 用於存放 DataTables 實例
 
+
+        // --- 2. 核心變數初始化 ---
+        var stockTable = null;
+        var chartInstance = null;
+        var isRecording = false;
+
+        // 語音辨識初始化 (防呆處理)
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        var recognition = null;
+        if (window.SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'zh-TW';
+            recognition.onresult = function (e) {
+                $("#userInput").val(e.results[0][0].transcript);
+                toggleRecord();
+            };
+            recognition.onerror = function () { toggleRecord(); };
+        }
+
+        // --- 3. 頁面啟動邏輯 ---
         $(document).ready(function () {
+            console.log("系統啟動中...");
+            $("#geminiKey").val(localStorage.getItem('gemini_stock_key') || '');
 
-            // --- 初始化範本選單 ---
-            function loadTemplates(filter = "") {
-                const $select = $("#sqlTemplates").empty().append('<option value="">-- 請選擇範本 --</option>');
-                const filtered = sqlTemplateLibrary.filter(t => t.title.includes(filter) || t.cat.includes(filter));
-                let lastCat = "";
-                let $group = null;
-                filtered.forEach(t => {
-                    if (t.cat !== lastCat) {
-                        lastCat = t.cat;
-                        $group = $(`<optgroup label="【${lastCat}】"></optgroup>`).appendTo($select);
-                    }
-                    $group.append(`<option value="${t.sql}">${t.title}</option>`);
-                });
-            }
-            loadTemplates();
-            $("#templateSearch").on("input", function () { loadTemplates($(this).val()); });
-            $("#sqlTemplates").on("change", function () { if ($(this).val()) $("#sqlText").val($(this).val()); });
-
-
-            // 綁定兩個按鈕到同一個處理函式，但傳入不同的參數
-            $("#btnQuery").click(function () { executeQuery(true); });  // 自動補 SELECT
-            $("#btnQuery1").click(function () { executeQuery(false); }); // 原始指令/預存程序
-
-            function executeQuery(autoSelect) {
-                let sql = $("#sqlText").val();
-                if (autoSelect) {
-                    sql = "SELECT " + sql;
-                }
-
-                const db = $("#useDatabase").val();
-                const pwd = $("#txtPwd").val();
-
-                $("#msg").text("⏳ 執行中...");
-
-                if (dataTableInstance) {
-                    dataTableInstance.destroy();
-                    $("#resultTable").empty();
-                }
-
-                $.ajax({
-                    type: "POST",
-                    url: "https://zen2965.duckdns.org:8888/excelimport/DataService2.aspx/ExecuteSQL",
-                    //url: "DataService2.aspx/ExecuteSQL",
-                    data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    // --- 加入這行：設定前端等待時間 (單位為毫秒，300000 = 5 分鐘) ---
-                    timeout: 300000,
-                    success: function (res) {
-                        const dataStr = res.d;
-
-                        // 1. 檢查是否為錯誤或成功文字訊息
-                        if (dataStr.startsWith("錯誤：")) {
-                            $("#msg").html(`<span class="text-danger">${dataStr}</span>`);
-                            return;
-                        }
-                        if (dataStr.startsWith("SUCCESS:")) {
-                            $("#msg").html(`<span class="text-success">${dataStr}</span>`);
-                            return;
-                        }
-
-                        // 2. 解析 JSON
-                        try {
-                            const data = JSON.parse(dataStr);
-                            if (data.length === 0) {
-                                $("#msg").text("✅ 指令執行成功，但無回傳資料。");
-                                return;
-                            }
-
-                            // 3. 渲染 DataTables (你原本的邏輯)
-                            renderDataTable(data);
-                            $("#msg").text(`✅ 查詢完成，共 ${data.length} 筆資料。`);
-                        } catch (e) {
-                            $("#msg").text("❌ 解析失敗：" + dataStr);
-                        }
-                    },
-                    error: function (xhr) {
-                        $("#msg").text("❌ 伺服器錯誤 (500)，請檢查 SQL 語法或資料庫連線。");
-                        console.log(xhr.responseText);
-                    }
-                });
-            }
-
-            function renderDataTable(data) {
-                let keys = Object.keys(data[0]);
-                let thead = "<thead><tr>" + keys.map(k => `<th>${k}</th>`).join('') + "</tr></thead>";
-                let tbody = "<tbody>";
-
-                data.forEach(row => {
-                    tbody += "<tr>";
-                    keys.forEach(k => {
-                        let val = row[k] || "";
-                        if (typeof val === "string" && val.startsWith("data:image")) {
-                            tbody += `<td><img src="${val}" class="data-img" onclick="window.open(this.src)"></td>`;
-                        } else {
-                            tbody += `<td>${val}</td>`;
-                        }
-                    });
-                    tbody += "</tr>";
-                });
-                tbody += "</tbody>";
-
-                $("#resultTable").append(thead + tbody);
-                dataTableInstance = $('#resultTable').DataTable({
-                    "language": { "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" },
-                    "pageLength": 20, // 預設一頁 50 筆
-                    "order": [],      // 預設不排序，由 SQL 控制
-                    "searching": true, // 開啟關鍵字搜尋
-                    "ordering": true,  // 開啟點擊表頭排序
-                    "info": true,
-                    "lengthMenu": [5, 10, 20, 50, 100, 500],
-                    "scrollCollapse": true,
-                });
-            }
+            // 執行初始化，按順序來
+            initTemplateDropdown();
+            loadHistory();
+            console.log("系統就緒");
         });
 
+        // --- 4. 基礎功能函數 (解決按鈕沒反應) ---
+
+        function loadHistory() { console.log("歷史紀錄已掛載"); }
+
+        function injectCmd(t) {
+            if (!t) return;
+            $("#userInput").val(t === '清除' ? '' : t);
+        }
+
+        function injectSql(sql) {
+            if (!sql) return;
+            $("#userInput").val(sql);
+            const dbMatch = sql.match(/\/\*資料庫:(.*?)\*\//);
+            if (dbMatch) $("#dbSelect").val(dbMatch[1].trim());
+        }
+
+        function initTemplateDropdown() {
+            const $select = $("#sqlTemplates").empty().append('<option value="">📑 選擇 SQL 範本</option>');
+            let cats = [...new Set(sqlLib.map(t => t.cat))];
+            cats.forEach(c => {
+                let $g = $(`<optgroup label="【${c}】"></optgroup>`).appendTo($select);
+                sqlLib.filter(t => t.cat === c).forEach(t => $g.append(`<option value="${t.sql}">${t.title}</option>`));
+            });
+        }
+
+        function filterTemplates(val) {
+            const filtered = sqlLib.filter(t => t.title.includes(val) || t.cat.includes(val));
+            const $select = $("#sqlTemplates").empty().append('<option value="">📑 選擇 SQL 範本</option>');
+            filtered.forEach(t => $select.append(`<option value="${t.sql}">${t.title}</option>`));
+        }
+
+        function toggleRecord() {
+            if (!recognition) return Swal.fire("錯誤", "瀏覽器不支援語音", "error");
+            if (isRecording) {
+                recognition.stop();
+                $("#recordBtn").removeClass("active").html('<i class="fas fa-microphone"></i> 語音輸入');
+            } else {
+                recognition.start();
+                $("#recordBtn").addClass("active").html('<i class="fas fa-stop"></i> 停止錄音');
+            }
+            isRecording = !isRecording;
+        }
+
+        // --- 5. 數據查詢與 AI 執行 ---
+        function runManualSQL() {
+            let sql = $("#userInput").val().trim();
+            if (!sql) return;
+
+            // 1. 移除註解，取得純淨的指令開頭
+            let pureSql = sql.replace(/\/\*[\s\S]*?\*\//g, '').trim().toUpperCase();
+
+            // 2. 只有在完全沒有 SELECT/WITH/EXEC 時才補
+            if (pureSql !== "" &&
+                !pureSql.startsWith("SELECT") &&
+                !pureSql.startsWith("WITH") &&
+                !pureSql.startsWith("EXEC")) {
+
+                sql = "SELECT " + sql;
+            }
+
+            // 3. 防呆：如果 AI 產出了 "SELECT SELECT"，強行修正
+            sql = sql.replace(/^SELECT\s+SELECT/i, "SELECT");
+
+            fetchStockData(sql, false);
+        }
+
+
+
+
+
+        function runStockAI() {
+            const text = $("#userInput").val().trim();
+            const key = $("#geminiKey").val().trim();
+            if (!text || !key) return;
+
+            // 加入嚴格的欄位名稱指令
+            const enhancedPrompt = text + ` (規範：1.禁止縮寫欄位。2.必須使用完整名稱：均價黃金交叉次數, OBV金叉總數。3.嚴禁使用中括號。4.嚴禁在欄位後加別名如 [產業分類]分類。)`;
+
+            $.ajax({
+                type: "POST",
+                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/TranslateToSQL",
+                data: JSON.stringify({ userSpeech: enhancedPrompt, userApiKey: key }),
+                contentType: "application/json; charset=utf-8",
+                success: (res) => {
+                    if (res.d.success) fetchStockData(res.d.sql, false);
+                }
+            });
+        }
+
+
+
+        function runStockAI1() {
+            const text = $("#userInput").val().trim();
+            if (!text) return Swal.fire("提示", "請輸入專家指令", "info");
+
+            Swal.fire({ title: '專家運算中...', didOpen: () => Swal.showLoading() });
+
+            // 【核心修正】：針對本地模型 gemma 加上更死板的 SQL 規範指令
+            const strictText = text + " (規則：使用 StockScore 表，欄位嚴禁別名，不准用中括號，日期必須過濾 MAX(日期)，僅輸出 SELECT 語句)";
+
+            $.ajax({
+                type: "POST",
+                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/TranslateToSQL1",
+                data: JSON.stringify({ userSpeech: strictText }),
+                contentType: "application/json; charset=utf-8",
+                success: (res) => {
+                    if (res.d.success) {
+                        console.log("專家產出 SQL:", res.d.sql);
+                        fetchStockData(res.d.sql, true);
+                    } else {
+                        Swal.fire("錯誤", res.d.msg, "error");
+                    }
+                },
+                error: () => { Swal.close(); Swal.fire("失敗", "無法連線至 StockAI.aspx", "error"); }
+            });
+        }
+
+        function fetchStockData(sql, isExpert) {
+            const db = $("#dbSelect").val();
+            const $btns = $(".main-btn");
+
+            // 1. 立即鎖定按鈕
+            $btns.prop("disabled", true).css("opacity", "0.5");
+
+            // 2. 使用 Swal.fire 並確保它立即渲染
+            Swal.fire({
+                title: '<i class="fas fa-sync fa-spin text-cyan-400"></i> 指令執行中',
+                html: `
+                <div class="text-left">
+                    <div class="mb-2 text-xs text-yellow-400">正在查詢資料庫：${db}</div>
+                    <div class="text-[10px] text-gray-500 mb-1">完整的 SQL 指令：</div>
+                    <textarea id="executingSql" class="w-full h-32 text-[10px] p-2 bg-black border border-gray-700 text-cyan-300 rounded font-mono" readonly>${sql}</textarea>
+                    <div class="mt-2 text-center text-xs text-gray-400 anim-pulse">伺服器數據檢索中...</div>
+                </div>
+            `,
+                background: '#050a15',
+                color: '#fff',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+
+                    // 3. 【關鍵】確保 Swal 渲染完成後才發送 AJAX
+                    setTimeout(() => {
+                        executeAjaxCall(sql, db, isExpert, $btns);
+                    }, 50);
+                }
+            });
+        }
+
+        // 將 AJAX 獨立出來，確保 UI 已經跑出來了
+        function executeAjaxCall(sql, db, isExpert, $btns) {
+            $.ajax({
+                type: "POST",
+                url: "DataService2.aspx/ExecuteSQL",
+                data: JSON.stringify({ sql: sql, db: db, pwd: "2157" }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    Swal.close();
+                    let rawData = res.d;
+
+                    // 錯誤捕捉：現在會顯示出錯的 SQL 指令
+                    if (typeof rawData === "string" && rawData.indexOf("錯誤") !== -1) {
+                        Swal.fire({
+                            title: "SQL 指令錯誤",
+                            html: `
+                            <div class="text-left">
+                                <div class="bg-red-100 p-3 rounded text-red-700 text-xs font-bold mb-3 border-l-4 border-red-500">${rawData}</div>
+                                <div class="text-[10px] text-gray-500 mb-1">出錯的完整指令如下：</div>
+                                <textarea class="w-full h-40 text-[10px] p-2 bg-gray-100 border text-black font-mono" readonly>${sql}</textarea>
+                            </div>
+                        `,
+                            icon: "error",
+                            width: '600px'
+                        });
+                        return;
+                    }
+
+                    try {
+                        if (typeof rawData === "string" && rawData.lastIndexOf(']') !== -1) {
+                            rawData = rawData.substring(0, rawData.lastIndexOf(']') + 1);
+                        }
+                        const data = JSON.parse(rawData);
+                        if (Array.isArray(data) && data.length > 0) {
+                            renderTable(data, isExpert);
+                        } else {
+                            Swal.fire("查無資料", "SQL 執行成功，但條件下查無結果。", "info");
+                        }
+                    } catch (e) {
+                        Swal.fire("解析失敗", "回傳非 JSON 格式內容", "error");
+                    }
+                },
+                error: () => {
+                    Swal.close();
+                    Swal.fire("連線失敗", "伺服器無回應", "error");
+                },
+                complete: () => {
+                    $btns.prop("disabled", false).css("opacity", "1");
+                }
+            });
+        }
+
+        //
+        //}
+
+        // --- 6. 表格渲染與診斷連動 (修正 ID 對應) ---
+
+        function renderTable(data, isExpert) {
+            if (stockTable) stockTable.destroy();
+            $("#stockTable").empty();
+
+            // 1. 建立動態欄位定義，並加入數值優化邏輯 (解決小數點過長問題)
+            let cols = Object.keys(data[0]).map(k => ({
+                title: k,
+                data: k,
+                className: "text-center nowrap",
+                render: function (val, type, row) {
+                    if (typeof val === 'number') {
+                        // 如果是整數 (如：總量、成交量、日期)
+                        if (Number.isInteger(val)) {
+                            // 針對大於 1000 的整數加上千分位逗號 (日期欄位不加)
+                            if (k === '日期' || k.includes('代號')) return val;
+                            return val.toLocaleString();
+                        }
+                        // 如果是小數 (如：漲幅、乖離、KD、MACD)，四捨五入到小數點後 2 位
+                        return parseFloat(val.toFixed(2));
+                    }
+                    return val;
+                }
+            }));
+
+            // 2. 在最前面插入「AI 診斷」功能列 (保留 20 個專家任務與功能按鈕)
+            cols.unshift({
+                title: "AI 診斷",
+                data: null,
+                width: "150px",
+                render: (d, t, row) => {
+                    const rowJson = JSON.stringify(row).replace(/"/g, '&quot;');
+                    const sId = row["代號"] || row["股票代號"] || "";
+                    const sName = row["名稱"] || row["股票名稱"] || "";
+                    return `
+                <div class="flex flex-col gap-1">
+                    <div class="flex gap-1">
+                        <button class="bg-cyan-600 text-black text-[10px] py-1 px-2 rounded font-bold hover:brightness-125" onclick="startSimpleTutor(${rowJson})">解盤</button>
+                        <button class="bg-yellow-500 text-black text-[10px] py-1 px-2 rounded font-bold hover:brightness-125" onclick="runBacktest('${sId}', '${sName}')">勝率</button>
+                    </div>
+                    <select class="bg-gray-800 text-emerald-400 text-[10px] rounded p-1 outline-none border border-emerald-900/50" onchange="runExpertTask(this.value, ${rowJson})">
+                        <option value="">🔬 專家任務...</option>
+                        <optgroup label="A. 綜合診斷">
+                            <option value="A1">A1 健康檢查</option>
+                            <option value="A2">A2 標籤深度解析</option>
+                            <option value="A3">A3 總分強弱拆解</option>
+                            <option value="A4">A4 短線爆發潛力</option>
+                        </optgroup>
+                        <optgroup label="B. 籌碼大戶">
+                            <option value="B1">B1 大戶鎖碼追蹤</option>
+                            <option value="B2">B2 法人資金共識</option>
+                            <option value="B3">B3 籌碼吸吐深挖</option>
+                            <option value="B4">B4 資券對抗預警</option>
+                        </optgroup>
+                        <optgroup label="C. 技術趨勢">
+                            <option value="C1">C1 多週期 KD 分析</option>
+                            <option value="C2">C2 MACD 動能評估</option>
+                            <option value="C3">C3 乖離率風險</option>
+                            <option value="C4">C4 量能突破判定</option>
+                        </optgroup>
+                        <optgroup label="D. 策略建議">
+                            <option value="D1">D1 進場時機建議</option>
+                            <option value="D2">D2 止損止盈建議</option>
+                            <option value="D3">D3 波段持有分析</option>
+                            <option value="D4">D4 隱藏風險挖掘</option>
+                        </optgroup>
+                        <optgroup label="E. 異常偵測">
+                            <option value="E1">E1 量價背離偵測</option>
+                            <option value="E2">E2 潛伏低位偵測</option>
+                            <option value="E3">E3 過熱出貨警報</option>
+                            <option value="E4">E4 極速反轉預測</option>
+                        </optgroup>
+                    </select>
+                </div>`;
+                }
+            });
+
+            // 3. 初始化 DataTable
+            stockTable = $('#stockTable').DataTable({
+                data: data,
+                columns: cols,
+                scrollX: true,
+                scrollY: "500px",
+                scrollCollapse: true,
+                pageLength: 50,
+                destroy: true,
+                language: { url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" },
+                drawCallback: function () {
+                    $('.pagination').addClass('justify-content-end');
+                }
+            });
+        }
+
+        // --- 7. 結果看板控制 (對應新 HTML ID: unifiedAnalysisBox) ---
+
+        function showAnalysisUI(headerText, mainText) {
+            $("#unifiedAnalysisBox").removeClass("hidden").fadeIn();
+            $("#boxHeader").html(headerText);
+            $("#mainResultText").text(mainText);
+
+            // 捲動到看板
+            $('html, body').animate({ scrollTop: $("#unifiedAnalysisBox").offset().top - 150 }, 500);
+
+            // 語音
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(mainText);
+            msg.lang = 'zh-TW';
+            window.speechSynthesis.speak(msg);
+        }
+
+        function startSimpleTutor(rowData) {
+            const sName = rowData["名稱"] || rowData["股票名稱"] || "該股";
+            const sId = rowData["代號"] || rowData["股票代號"] || "";
+
+            showAnalysisUI(`🔍 <span class="text-white">${sName}</span> 即時解盤中...`, "AI 正在讀取數據並產生報告...");
+
+            $.ajax({
+                type: "POST",
+                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/AnalyzeStockData",
+                data: JSON.stringify({ stockDataJson: JSON.stringify(rowData), userApiKey: $("#geminiKey").val() }),
+                contentType: "application/json; charset=utf-8",
+                success: (res) => {
+                    if (res.d.success) {
+                        showAnalysisUI(`🔍 <span class="text-white">${sName}</span> 診斷結果`, res.d.analysis);
+                        // 【關鍵補件】解盤成功後畫出趨勢圖
+                        if (sId) drawTrendChart(sId);
+                    }
+                }
+            });
+        }
+
+        // 確保繪圖函數指向正確的 Canvas ID
+        function drawTrendChart(sId) {
+            $.ajax({
+                type: "POST", url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/GetStockTrendData",
+                data: JSON.stringify({ stockId: sId }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    if (!res.d.success || !res.d.data.length) return;
+                    // 修正：必須對應到我們新版 HTML 的 ID
+                    const ctx = document.getElementById('mainStockChartCanvas').getContext('2d');
+                    if (chartInstance) chartInstance.destroy();
+                    chartInstance = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: res.d.data.map(h => h.date),
+                            datasets: [{ label: '價', data: res.d.data.map(h => h.price), borderColor: '#00f2fe', borderWidth: 2, tension: 0.3, pointRadius: 1 }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                    });
+                }
+            });
+        }
+
+
+
+        function runExpertTask(taskId, rowData) {
+            if (!taskId) return;
+
+            // 顯示看板
+            $("#unifiedAnalysisBox").removeClass("hidden").show();
+            $("#boxHeader").html(`<i class='fas fa-microchip'></i> 專家任務 ${taskId} | ${rowData.名稱} (${rowData.代號})`);
+            $("#mainResultText").html("<i class='fas fa-brain fa-spin'></i> 正在對一年份寬表數據進行深度建模分析...");
+
+            $.ajax({
+                type: "POST",
+                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/AnalyzeExpertTask", // 修改為你的後端
+                data: JSON.stringify({
+                    stockDataJson: JSON.stringify(rowData), // 這裡已經包含了一切需要的 47 個欄位
+                    taskId: taskId
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: (res) => {
+                    if (res.d.success) {
+                        $("#mainResultText").text(res.d.analysis);
+                        speak(res.d.analysis);
+                    }
+                }
+            });
+        }
+
+        function runBacktest(id, name) {
+            showAnalysisUI(`🎯 勝率回測: ${name} (${id})`, "正在計算該股策略歷史勝率，請稍候...");
+
+            $.ajax({
+                type: "POST",
+                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/GetWinRateAnalysis", // 對接真實後端
+                data: JSON.stringify({ stockId: id, userApiKey: $("#geminiKey").val() }),
+                contentType: "application/json; charset=utf-8",
+                success: (res) => {
+                    if (res.d.success) {
+                        showAnalysisUI(`🎯 ${name}(${id}) 歷史勝率診斷`, res.d.analysis);
+                    }
+                }
+            });
+        }
+
+
+
+        async function runIndustryAI() {
+            const key = $("#geminiKey").val().trim();
+
+            // 顯示載入中看板
+            $("#unifiedAnalysisBox").removeClass("hidden").show();
+            $("#boxHeader").html("<i class='fas fa-fire text-red-500 mr-2'></i> 產業熱力全盤診斷中...");
+            $("#mainResultText").html("<i class='fas fa-sync fa-spin mr-2'></i>正在調用本地 gemma 與 Gemini 聯手運算族群動能...");
+
+            Swal.fire({
+                title: '掃描產業熱力',
+                html: '正在計算各族群強度...',
+                background: '#050a15',
+                color: '#fff',
+                didOpen: () => Swal.showLoading()
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/GetIndustryAnalysis", // 指向你的後端
+                data: JSON.stringify({ userApiKey: key }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    Swal.close();
+                    if (res.d.success) {
+                        // 1. 填入分析文字
+                        $("#mainResultText").html(res.d.analysis.replace(/\n/g, '<br/>'));
+
+                        // 2. 繪製產業圖表 (傳入後端給的 rawData)
+                        if (res.d.rawData) {
+                            drawIndustryChart(res.d.rawData);
+                        }
+
+                        // 3. 語音朗讀
+                        speak(res.d.analysis);
+
+                        // 4. 捲動到看板
+                        $('html, body').animate({ scrollTop: $("#unifiedAnalysisBox").offset().top - 100 }, 500);
+                    } else {
+                        $("#mainResultText").text("診斷失敗：" + res.d.msg);
+                    }
+                },
+                error: function () {
+                    Swal.close();
+                    Swal.fire("錯誤", "無法連線至 StockAI1.aspx", "error");
+                }
+            });
+        }
+
+        function drawIndustryChart(rawData) {
+            const ctx = document.getElementById('mainStockChartCanvas').getContext('2d');
+            if (chartInstance) { chartInstance.destroy(); }
+
+            let labels = [];
+            let values = [];
+
+            try {
+                const data = (typeof rawData === "string") ? JSON.parse(rawData) : rawData;
+
+                // 自動偵測欄位名稱 (優先找強度、漲幅、或數值型欄位)
+                labels = data.map(item => item.industry || item.名稱 || item.產業 || "未知");
+
+                values = data.map(item => {
+                    // 優先順序：strength > Avg_Change > 漲幅 > 數值
+                    return item.strength || item.Avg_Change || item.avg_change || item.漲幅 || Object.values(item).find(v => typeof v === 'number') || 0;
+                });
+
+                console.log("圖表標籤:", labels);
+                console.log("圖表數值:", values);
+
+            } catch (e) {
+                console.error("數據解析失敗", e);
+                return;
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '族群動能',
+                        data: values,
+                        backgroundColor: values.map(v => v >= 0 ? 'rgba(248, 81, 73, 0.6)' : 'rgba(35, 134, 54, 0.6)'), // 紅漲綠跌
+                        borderColor: values.map(v => v >= 0 ? '#f85149' : '#2ea043'),
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // 橫向排列
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#888' }
+                        },
+                        y: {
+                            ticks: { color: '#fff', font: { size: 11, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        function speak(text) {
+            if (!text) return;
+
+            // 1. 清理文字：移除 Markdown 符號與特殊字元，避免語音引擎當機
+            let cleanText = text.replace(/\*\*|##|---|#|>|`|\[|\]/g, '')
+                .replace(/\(.*\)/g, '') // 移除括號內的原文
+                .trim();
+
+            // 2. 停止當前所有語音
+            window.speechSynthesis.cancel();
+
+            // 3. 延遲一小段時間再播放（解決部分瀏覽器 Bug）
+            setTimeout(() => {
+                const msg = new SpeechSynthesisUtterance(cleanText);
+                msg.lang = 'zh-TW';
+                msg.rate = 1.1;  // 速度稍快一點比較自然
+                msg.pitch = 1.0;
+                msg.volume = 1.0;
+
+                // 監聽錯誤
+                msg.onerror = (e) => console.error("語音播放失敗:", e);
+
+                window.speechSynthesis.speak(msg);
+            }, 100);
+        }
 
 
     </script>
-
-
 </body>
 </html>
