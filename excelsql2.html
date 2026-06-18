@@ -167,6 +167,17 @@
     <script>
         // --- 範本資料庫 ---
         const sqlTemplateLibrary = [
+
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            {
+                cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序有勝率統計(不同天數回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal1] 2330,10`
+            },
+            {
+                cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序無勝率統計(不同天數回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal] 2330,10`
+            },
+
             {
                 cat: "多重金身加持",
                 title: "共振彙總最新日",
