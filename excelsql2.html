@@ -83,8 +83,217 @@
         // --- 範本資料庫 ---
         const sqlTemplateLibrary = [
 
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            {
+                cat: "產業類選股", title: "【核心選股】2026 頂級題材 + 強勢共振", sql: `TOP 10 
+    名稱, 代號, 專家實戰總分, 盤中漲幅, 具體概念, 產業價值鏈資訊
+FROM MasterStockAnalysis
+WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+  AND (具體概念 LIKE '%GB200%' 
+       OR 具體概念 LIKE '%CPO%' 
+       OR 具體概念 LIKE '%FOPLP%' 
+       OR 具體概念 LIKE '%BBU%')
+ORDER BY 專家實戰總分 DESC` },
+
+            {
+                cat: "產業類選股", title: "【題材疊加王】多重概念 + 高勝率回測", sql: `TOP 20 
+    M.名稱, M.代號, M.專家實戰總分, M.具體概念,
+    (LEN(M.具體概念) - LEN(REPLACE(M.具體概念, '|', '')) + 1) as 題材數量
+FROM MasterStockAnalysis M
+WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+  AND M.具體概念 <> '無特定概念'
+  AND (LEN(M.具體概念) - LEN(REPLACE(M.具體概念, '|', ''))) >= 2 -- 至少3個標籤
+ORDER BY 專家實戰總分 DESC` },
+
+            //{ cat: "產業類選股", title: "【題材疊加王】多重概念 + 高勝率回測", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+
+            //{ cat: "產業類選股", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+
+
+
+            {
+                cat: "產業類選股", title: "🔥 產業熱度溫度計", sql: `日期, 產業分類, 
+       COUNT(*) as [產業強勢股數量], 
+       ROUND(AVG(平均專家總分), 2) as [產業平均分],
+       STRING_AGG(CAST(名稱 AS NVARCHAR(MAX)), ' | ') WITHIN GROUP (ORDER BY 平均專家總分 DESC) as [代表股名單]
+FROM (
+    -- 第一層：先找出符合 3 項以上的股票，並聯集寬表抓取產業分類
+    SELECT 
+        H.日期, H.代號, M.名稱, M.產業分類,
+        COUNT(*) as 符合次數, 
+        AVG(H.專家總分) as 平均專家總分
+    FROM [dbo].[ResonanceHits] H
+    INNER JOIN [dbo].[MasterStockAnalysis] M ON H.代號 = M.代號 AND H.日期 = M.日期
+    GROUP BY H.日期, H.代號, M.名稱, M.產業分類
+    HAVING COUNT(*) >= 3 
+) AS IndustryBase
+GROUP BY 日期, 產業分類
+ORDER BY 日期 DESC, [產業強勢股數量] DESC
+--群聚效應」 (Cluster Effect)：
+--如果某個產業（如：電子上游-IC-設計）在當天有 5 檔以上 同時符合 3 項共振，這就是「主流族群表態」。
+--單打獨鬥的強勢股（數量=1）風險較高，群聚的族群勝率最高。
+--「區塊平均分」的意義：
+--如果該產業數量多，且平均分 > 40，代表這不是落後補漲，而是「集體主升段」。
+--觀察「代表股」的變化：
+--透過 STRING_AGG 列出的名單，您可以觀察領頭羊是誰。如果領頭羊從「台積電」換成「中小型 IC 股」，代表資金開始往二線擴散。` },
            
+            {
+                cat: "產業類選股", title: "洗盤結束：低位放量起漲點", sql: `TOP 20 * FROM (
+    SELECT
+        代號, 名稱, 專家實戰總分, obv累積金叉次數, 具體概念, 產業價值鏈資訊, 盤中總量,
+        LAG(盤中總量) OVER (PARTITION BY 代號 ORDER BY 日期) as 前一日總量,
+        LAG(盤中總量, 2) OVER (PARTITION BY 代號 ORDER BY 日期) as 前二日總量,
+        日期
+    FROM MasterStockAnalysis
+) AS v
+WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+  AND 盤中總量 > 前一日總量 AND 前一日總量 < 前二日總量 
+  AND 專家實戰總分 > 30 
+ORDER BY 專家實戰總分 DESC`
+            },
+            {
+                cat: "產業類選股", title: "共振彙總最新日", sql: `ResonanceHits.日期, ResonanceHits.代號, ResonanceHits.名稱, COUNT(*) AS 符合條件數, 
+                            STRING_AGG(ResonanceHits.符合類型, ' | ') AS 符合清單, MAX(ResonanceHits.專家總分) AS 專家總分, 
+                            MasterStockAnalysis.具體概念, MasterStockAnalysis.產業價值鏈資訊
+FROM              ResonanceHits INNER JOIN
+                            MasterStockAnalysis ON ResonanceHits.代號 = MasterStockAnalysis.代號 AND 
+                            ResonanceHits.日期 = MasterStockAnalysis.日期
+WHERE          (ResonanceHits.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               ResonanceHits AS ResonanceHits_1))
+GROUP BY   ResonanceHits.日期, ResonanceHits.代號, ResonanceHits.名稱, MasterStockAnalysis.具體概念, 
+                            MasterStockAnalysis.產業價值鏈資訊
+ORDER BY   符合條件數 DESC, 專家總分 DESC`
+            },
+            {
+                cat: "產業類選股", title: "六維度共振+專家高分", sql: `TOP (30) M.名稱, M.代號, M.日期, M.專家實戰總分, M.實戰標籤, M.盤中漲幅, A.成交價黃金交叉次數 AS 價金叉, 
+                            A.obv黃金交叉次數 AS OBV金叉, A.總量黃金交叉次數 AS 量金叉, A.外資黃金交叉次數 AS 外資金叉, 
+                            A.投信黃金交叉次數 AS 投信金叉, A.三大法人黃金交叉次數 AS 法人金叉, 
+                            CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
+                             0 END AS 共振數, M.具體概念, M.產業價值鏈資訊
+FROM              MasterStockAnalysis AS M INNER JOIN
+                            allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
+WHERE          (M.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis)) AND 
+                            (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
+                             0 END >= 5)
+ORDER BY   M.專家實戰總分 DESC`
+            },
+            {
+                cat: "產業類選股", title: "獵鷹行動：內外資聯手鎖碼", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.盤中漲幅, A.外資黃金交叉次數 AS 外資, A.投信黃金交叉次數 AS 投信, 
+                            M.具體概念, M.產業價值鏈資訊
+FROM              MasterStockAnalysis AS M INNER JOIN
+                            allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
+WHERE          (M.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis)) AND (A.外資黃金交叉次數 >= 3) AND (A.投信黃金交叉次數 >= 3)
+ORDER BY   A.外資黃金交叉次數 + A.投信黃金交叉次數 DESC`
+            },
+            {
+                cat: "產業類選股", title: "能量噴發：低位階全共振黑馬", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅, 
+                            CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
+                             0 END AS 共振數, M.具體概念, M.產業價值鏈資訊
+FROM              MasterStockAnalysis AS M INNER JOIN
+                            allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
+WHERE          (M.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis)) AND (M.k9 < 50) AND 
+                            (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
+                             0 END >= 5)
+ORDER BY   M.專家實戰總分 DESC`
+            },
+            {
+                cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅, 
+                            CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
+                             0 END AS 共振數, M.具體概念, M.產業價值鏈資訊
+FROM              MasterStockAnalysis AS M INNER JOIN
+                            allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
+WHERE          (M.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis)) AND (M.k9 < 50) AND 
+                            (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
+                             + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
+                             0 END >= 5)
+ORDER BY   M.專家實戰總分 DESC`
+            },
+            {
+                cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測預設+select版", sql: `TOP 20 * FROM (
+        SELECT *, LAG(共振數) OVER (PARTITION BY 代號 ORDER BY 日期) as 昨日共振
+        FROM (
+            SELECT M.代號, M.名稱, M.日期, M.專家實戰總分, M.盤中漲幅, M.具體概念, M.產業價值鏈資訊,
+                   (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END +
+                    CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END +
+                    CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END +
+                    CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END +
+                    CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END +
+                    CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 共振數
+            FROM MasterStockAnalysis M
+            INNER JOIN allcross A ON M.代號 = A.代號 AND M.日期 = A.日期
+        ) AS DailyRes
+) AS Trend
+WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+      AND 共振數 >= 5
+      AND (昨日共振 <= 2 OR 昨日共振 IS NULL)
+ORDER BY 專家實戰總分 DESC`
+            },
+            {
+                cat: "產業類選股", title: "王者再臨：高分籌碼龍頭股 (穩健版)", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.盤中漲幅, A.obv黃金交叉次數 AS OBV能量, 
+                            A.三大法人黃金交叉次數 AS 法人力量, M.具體概念, M.產業價值鏈資訊
+FROM              MasterStockAnalysis AS M INNER JOIN
+                            allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
+WHERE          (M.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis)) AND (M.專家實戰總分 > 30) AND (A.obv黃金交叉次數 >= 2) AND 
+                            (A.三大法人黃金交叉次數 >= 2)
+ORDER BY   M.專家實戰總分 DESC`
+            },
+            {
+                cat: "產業類選股", title: "王者再臨：多維度戰力排行", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.產業分類, 
+                            A.obv黃金交叉次數 + A.三大法人黃金交叉次數 + A.成交價黃金交叉次數 AS 總戰力值, A.obv黃金交叉次數 AS OBV, 
+                            A.三大法人黃金交叉次數 AS 法人, M.具體概念, M.產業價值鏈資訊
+FROM              MasterStockAnalysis AS M INNER JOIN
+                            allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
+WHERE          (M.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis)) AND (M.專家實戰總分 > 25) AND 
+                            (A.obv黃金交叉次數 + A.三大法人黃金交叉次數 >= 4)
+ORDER BY   總戰力值 DESC, M.專家實戰總分 DESC`
+            },
+            {
+                cat: "產業類選股", title: "王者再臨：產業熱門領頭羊", sql: `TOP (30) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.股本億, A.obv黃金交叉次數 AS OBV能量, 
+                            A.三大法人黃金交叉次數 AS 法人, M.具體概念, M.產業價值鏈資訊
+FROM              MasterStockAnalysis AS M INNER JOIN
+                            allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
+WHERE          (M.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis)) AND (M.專家實戰總分 > 32) AND (M.股本億 > 20) AND 
+                            (A.obv黃金交叉次數 > 0) OR
+                            (M.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis AS MasterStockAnalysis_1)) AND (M.專家實戰總分 > 32) AND (M.股本億 > 20) 
+                            AND (A.三大法人黃金交叉次數 > 0)
+ORDER BY   M.產業分類, M.專家實戰總分 DESC`
+            },
+
+
 
             {
                 cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序有勝率統計(不同天數回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal1] 2330,10`
@@ -1608,7 +1817,7 @@ FOR JSON PATH` },
             { cat: "自選股", title: "黃金交金叉", sql: `* FROM incomechar19` },
             { cat: "自選股", title: "所有自選股資訊", sql: ` * from textmsg where 識別碼 >= 21` },
 
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
 
