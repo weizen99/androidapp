@@ -95,7 +95,7 @@ WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
 ORDER BY 專家實戰總分 DESC` },
 
             {
-                cat: "產業類選股", title: "【題材疊加王】多重概念 + 高勝率回測", sql: `TOP 20 
+                cat: "產業類選股", title: "【題材疊加王】多重概念 + 高勝率回測", sql: `TOP 100 
     M.名稱, M.代號, M.專家實戰總分, M.具體概念,
     (LEN(M.具體概念) - LEN(REPLACE(M.具體概念, '|', '')) + 1) as 題材數量
 FROM MasterStockAnalysis M
@@ -144,7 +144,7 @@ ORDER BY 日期 DESC, [產業強勢股數量] DESC
 --透過 STRING_AGG 列出的名單，您可以觀察領頭羊是誰。如果領頭羊從「台積電」換成「中小型 IC 股」，代表資金開始往二線擴散。` },
            
             {
-                cat: "產業類選股", title: "洗盤結束：低位放量起漲點", sql: `TOP 20 * FROM (
+                cat: "產業類選股", title: "洗盤結束：低位放量起漲點", sql: `TOP 100 * FROM (
     SELECT
         代號, 名稱, 專家實戰總分, obv累積金叉次數, 具體概念, 產業價值鏈資訊, 盤中總量,
         LAG(盤中總量) OVER (PARTITION BY 代號 ORDER BY 日期) as 前一日總量,
@@ -172,7 +172,7 @@ GROUP BY   ResonanceHits.日期, ResonanceHits.代號, ResonanceHits.名稱, Mas
 ORDER BY   符合條件數 DESC, 專家總分 DESC`
             },
             {
-                cat: "產業類選股", title: "六維度共振+專家高分", sql: `TOP (30) M.名稱, M.代號, M.日期, M.專家實戰總分, M.實戰標籤, M.盤中漲幅, A.成交價黃金交叉次數 AS 價金叉, 
+                cat: "產業類選股", title: "六維度共振+專家高分", sql: `TOP (100) M.名稱, M.代號, M.日期, M.專家實戰總分, M.實戰標籤, M.盤中漲幅, A.成交價黃金交叉次數 AS 價金叉, 
                             A.obv黃金交叉次數 AS OBV金叉, A.總量黃金交叉次數 AS 量金叉, A.外資黃金交叉次數 AS 外資金叉, 
                             A.投信黃金交叉次數 AS 投信金叉, A.三大法人黃金交叉次數 AS 法人金叉, 
                             CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
@@ -191,7 +191,7 @@ WHERE          (M.日期 =
 ORDER BY   M.專家實戰總分 DESC`
             },
             {
-                cat: "產業類選股", title: "獵鷹行動：內外資聯手鎖碼", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.盤中漲幅, A.外資黃金交叉次數 AS 外資, A.投信黃金交叉次數 AS 投信, 
+                cat: "產業類選股", title: "獵鷹行動：內外資聯手鎖碼", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.盤中漲幅, A.外資黃金交叉次數 AS 外資, A.投信黃金交叉次數 AS 投信, 
                             M.具體概念, M.產業價值鏈資訊
 FROM              MasterStockAnalysis AS M INNER JOIN
                             allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -201,7 +201,7 @@ WHERE          (M.日期 =
 ORDER BY   A.外資黃金交叉次數 + A.投信黃金交叉次數 DESC`
             },
             {
-                cat: "產業類選股", title: "能量噴發：低位階全共振黑馬", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅, 
+                cat: "產業類選股", title: "能量噴發：低位階全共振黑馬", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅, 
                             CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
                              + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
                              + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
@@ -218,7 +218,7 @@ WHERE          (M.日期 =
 ORDER BY   M.專家實戰總分 DESC`
             },
             {
-                cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅, 
+                cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅, 
                             CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
                              + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
                              + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
@@ -235,7 +235,7 @@ WHERE          (M.日期 =
 ORDER BY   M.專家實戰總分 DESC`
             },
             {
-                cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測預設+select版", sql: `TOP 20 * FROM (
+                cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測預設+select版", sql: `TOP 100 * FROM (
         SELECT *, LAG(共振數) OVER (PARTITION BY 代號 ORDER BY 日期) as 昨日共振
         FROM (
             SELECT M.代號, M.名稱, M.日期, M.專家實戰總分, M.盤中漲幅, M.具體概念, M.產業價值鏈資訊,
@@ -255,7 +255,7 @@ WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
 ORDER BY 專家實戰總分 DESC`
             },
             {
-                cat: "產業類選股", title: "王者再臨：高分籌碼龍頭股 (穩健版)", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.盤中漲幅, A.obv黃金交叉次數 AS OBV能量, 
+                cat: "產業類選股", title: "王者再臨：高分籌碼龍頭股 (穩健版)", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.盤中漲幅, A.obv黃金交叉次數 AS OBV能量, 
                             A.三大法人黃金交叉次數 AS 法人力量, M.具體概念, M.產業價值鏈資訊
 FROM              MasterStockAnalysis AS M INNER JOIN
                             allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -266,7 +266,7 @@ WHERE          (M.日期 =
 ORDER BY   M.專家實戰總分 DESC`
             },
             {
-                cat: "產業類選股", title: "王者再臨：多維度戰力排行", sql: `TOP (20) M.名稱, M.代號, M.專家實戰總分, M.產業分類, 
+                cat: "產業類選股", title: "王者再臨：多維度戰力排行", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.產業分類, 
                             A.obv黃金交叉次數 + A.三大法人黃金交叉次數 + A.成交價黃金交叉次數 AS 總戰力值, A.obv黃金交叉次數 AS OBV, 
                             A.三大法人黃金交叉次數 AS 法人, M.具體概念, M.產業價值鏈資訊
 FROM              MasterStockAnalysis AS M INNER JOIN
@@ -278,7 +278,7 @@ WHERE          (M.日期 =
 ORDER BY   總戰力值 DESC, M.專家實戰總分 DESC`
             },
             {
-                cat: "產業類選股", title: "王者再臨：產業熱門領頭羊", sql: `TOP (30) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.股本億, A.obv黃金交叉次數 AS OBV能量, 
+                cat: "產業類選股", title: "王者再臨：產業熱門領頭羊", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.股本億, A.obv黃金交叉次數 AS OBV能量, 
                             A.三大法人黃金交叉次數 AS 法人, M.具體概念, M.產業價值鏈資訊
 FROM              MasterStockAnalysis AS M INNER JOIN
                             allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -328,7 +328,7 @@ ORDER BY 日期 DESC;
 --如果強勢股數量多，且「平均分」同步上升（例如從 30 變 45），代表領漲股力道非常紮實。`
             },
             {
-                cat: "專家組合", title: "洗盤結束：低位放量起漲點", sql: `TOP 20 * FROM (
+                cat: "專家組合", title: "洗盤結束：低位放量起漲點", sql: `TOP 100 * FROM (
         SELECT
             代號, 名稱, 日期, 專家實戰總分, obv累積金叉次數, 盤中總量, 實戰標籤,
             -- 取得前一天與前兩天的總量來比對洗盤特徵
@@ -410,7 +410,7 @@ ORDER BY   這段期間共振次數 DESC`
                 cat: "最強組合",
                 title: "六維度共振+專家高分",
                 sql: `/*資料庫:stockchangedate*/
-TOP 30 M.名稱, M.代號, M.日期, M.專家實戰總分, M.實戰標籤, M.盤中漲幅,
+TOP 100 M.名稱, M.代號, M.日期, M.專家實戰總分, M.實戰標籤, M.盤中漲幅,
            A.成交價黃金交叉次數 AS 價金叉, A.obv黃金交叉次數 AS OBV金叉, A.總量黃金交叉次數 AS 量金叉,
            A.外資黃金交叉次數 AS 外資金叉, A.投信黃金交叉次數 AS 投信金叉, A.三大法人黃金交叉次數 AS 法人金叉,
            (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 共振數
@@ -425,7 +425,7 @@ ORDER BY 專家實戰總分 DESC`
                 cat: "最強組合",
                 title: "獵鷹行動：內外資聯手鎖碼",
                 sql: `/*資料庫:stockchangedate*/
-TOP 20 M.名稱, M.代號, M.專家實戰總分, M.盤中漲幅,
+TOP 100 M.名稱, M.代號, M.專家實戰總分, M.盤中漲幅,
            A.外資黃金交叉次數 AS 外資, A.投信黃金交叉次數 AS 投信
 FROM MasterStockAnalysis M
 INNER JOIN allcross A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -438,7 +438,7 @@ ORDER BY (A.外資黃金交叉次數 + A.投信黃金交叉次數) DESC`
                 cat: "最強組合",
                 title: "能量噴發：低位階全共振黑馬",
                 sql: `/*資料庫:stockchangedate*/
-TOP 20 M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
+TOP 100 M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
            (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 共振數
 FROM MasterStockAnalysis M
 INNER JOIN allcross A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -453,7 +453,7 @@ ORDER BY M.專家實戰總分 DESC`
                 cat: "最強組合",
                 title: "勝率診斷：歷史共振噴發點回測",
                 sql: `/*資料庫:stockchangedate*/
-TOP 20 M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
+TOP 100 M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
            (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 共振數
 FROM MasterStockAnalysis M
 INNER JOIN allcross A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -467,7 +467,7 @@ ORDER BY M.專家實戰總分 DESC`
                 cat: "最強組合",
                 title: "勝率診斷：歷史共振噴發點回測預設+select版",
                 sql: `/*資料庫:stockchangedate*/
-TOP 20 * FROM (
+TOP 100 * FROM (
         SELECT *, LAG(共振數) OVER (PARTITION BY 代號 ORDER BY 日期) as 昨日共振
         FROM (
             SELECT M.代號, M.名稱, M.日期, M.專家實戰總分, M.盤中漲幅,
@@ -491,7 +491,7 @@ ORDER BY 專家實戰總分 DESC`
                 cat: "最強組合",
                 title: "王者再臨：高分籌碼龍頭股 (穩健版)",
                 sql: `/*資料庫:stockchangedate*/
-TOP 20 M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.盤中漲幅,
+TOP 100 M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.盤中漲幅,
            A.obv黃金交叉次數 AS OBV能量, A.三大法人黃金交叉次數 AS 法人力量
 FROM MasterStockAnalysis M
 INNER JOIN allcross A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -506,7 +506,7 @@ ORDER BY M.專家實戰總分 DESC`
                 cat: "最強組合",
                 title: "王者再臨：多維度戰力排行",
                 sql: `/*資料庫:stockchangedate*/
-TOP 20 M.名稱, M.代號, M.專家實戰總分, M.產業分類,
+TOP 100 M.名稱, M.代號, M.專家實戰總分, M.產業分類,
            (A.obv黃金交叉次數 + A.三大法人黃金交叉次數 + A.成交價黃金交叉次數) AS 總戰力值,
            A.obv黃金交叉次數 AS OBV, A.三大法人黃金交叉次數 AS 法人
 FROM MasterStockAnalysis M
@@ -522,7 +522,7 @@ ORDER BY 總戰力值 DESC, M.專家實戰總分 DESC`
                 cat: "最強組合",
                 title: "王者再臨：產業熱門領頭羊",
                 sql: `/*資料庫:stockchangedate*/
-TOP 30 M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.股本億,
+TOP 100 M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.股本億,
            A.obv黃金交叉次數 AS OBV能量, A.三大法人黃金交叉次數 AS 法人
 FROM MasterStockAnalysis M
 INNER JOIN allcross A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -535,7 +535,7 @@ ORDER BY M.產業分類, M.專家實戰總分 DESC`
 
 
             {
-                cat: "盤中操盤", title: "盤中起漲黑馬獵人可修改", sql: `/*資料庫:stockchange*/TOP (30) I.名稱, I.代號, I.成交價 AS 盤中價, I.漲幅 AS 盤中漲幅, 
+                cat: "盤中操盤", title: "盤中起漲黑馬獵人可修改", sql: `/*資料庫:stockchange*/TOP (100) I.名稱, I.代號, I.成交價 AS 盤中價, I.漲幅 AS 盤中漲幅, 
                             Y.昨OBV + (CASE WHEN I.漲跌 > 0 THEN I.總量 WHEN I.漲跌 < 0 THEN - I.總量 ELSE 0 END) AS 盤中OBV, 
                             (Y.前四日OBV總和 + (Y.昨OBV + (CASE WHEN I.漲跌 > 0 THEN I.總量 WHEN I.漲跌 < 0 THEN - I.總量 ELSE 0 END))) 
                             / 5 AS 新OBV五日均線, Y.昨共振, 
