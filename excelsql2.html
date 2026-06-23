@@ -622,7 +622,7 @@ ORDER BY   預估收盤共振 DESC, Y.昨總分 DESC
 --放寬條件方可找到資料來顯示obv站上其五日均線,,盤後更後不會有資料
 --按鍵精靈+python，可以自動更新盤中成交價等資料
 --可以抓取共振2可能變成共振3或obv站上其五日均線--前端採集：按鍵精靈 (QuickMacro)，每 5 分鐘執行一次。
---中台搬運：Python (Watchdog + pyodbc)，監控 C:\StockExport，自動清洗理*寶欄位並 TRUNCATE/INSERT 進 SQL。
+--中台搬運：Python (Watchdog + pyodbc)，監控 C:\StockExport，自動清洗理*寶欄位並  進 SQL。
 --核心運算：View_盤中起漲黑馬獵人，實現「歷史 vs 盤中」跨庫比對，計算「新 OBV 五日均線」與「預估共振進化」。`
             },
 
@@ -632,9 +632,153 @@ FROM              View_盤中起漲黑馬獵人
 --預設條件不可更改,盤後更後不會有資料
 --可以抓取共振2可能變成共振3或obv站上其五日均線
 --前端採集：按鍵精靈 (QuickMacro)，每 5 分鐘執行一次。
---中台搬運：Python (Watchdog + pyodbc)，監控 C:\StockExport，自動清洗理*寶欄位並 TRUNCATE/INSERT 進 SQL。
+--中台搬運：Python (Watchdog + pyodbc)，監控 C:\StockExport，自動清洗理*寶欄位 SQL。
 --核心運算：View_盤中起漲黑馬獵人，實現「歷史 vs 盤中」跨庫比對，計算「新 OBV 五日均線」與「預估共振進化」。`
             },
+
+            {
+                cat: "盤中操盤", title: "🎯 盤中主流族群偵測 (自動對齊版)", sql: `/*資料庫:stockchange*/M.產業分類, 
+       COUNT(DISTINCT I.代號) as [起漲股數], 
+       ROUND(AVG(CAST(I.漲幅 AS FLOAT)), 2) as [平均漲幅]
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 BETWEEN 2.0 AND 10.5
+  AND I.總量 > 500
+GROUP BY M.產業分類
+HAVING COUNT(DISTINCT I.代號) >= 2
+ORDER BY [起漲股數] DESC`
+            },
+
+            {
+                cat: "盤中操盤", title: "🔗 族群聯動：尋找同產業補漲標的", sql: `/*資料庫:stockchange*/
+ M.名稱, M.代號, M.專家實戰總分, I.漲幅 as 盤中漲幅, M.具體概念, M.產業分類
+FROM stockchangedate.dbo.MasterStockAnalysis M
+INNER JOIN dbo.basicinfo I ON M.代號 = I.代號
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 BETWEEN -1 AND 1.5 -- 還沒噴出 (漲幅微小)
+  AND M.專家實戰總分 > 30       -- 但底子好 (專家分高)
+  AND M.產業分類 IN (
+      -- 找出盤中平均漲幅大於 4% 的熱門產業
+      SELECT TOP 3 M2.產業分類
+      FROM dbo.basicinfo I2
+      INNER JOIN stockchangedate.dbo.MasterStockAnalysis M2 ON I2.代號 = M2.代號
+      WHERE M2.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+      GROUP BY M2.產業分類
+      HAVING COUNT(*) >= 2
+      ORDER BY AVG(I2.漲幅) DESC
+  )
+ORDER BY M.專家實戰總分 DESC
+/*-- 解讀：當領先股拉開空間，這些「高分低位」的同業極大機率會被資金帶動。*/`
+            },
+
+            {
+                cat: "盤中操盤", title: "⚠️ 避險警報：盤中跌破五日線", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, 
+       A.price_ma5 as 五日線, M.專家實戰總分
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+INNER JOIN stockchangedate.dbo.allcross A ON RTRIM(I.代號) = RTRIM(A.代號) AND M.日期 = A.日期
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.成交價 < A.price_ma5
+  AND I.漲幅 < 0
+  AND M.專家實戰總分 > 30
+ORDER BY I.漲幅 ASC`
+            },
+
+            {
+                cat: "盤中操盤", title: "🛑 獲利了結：高檔回落警示", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, 
+       M.盤中現價 as 昨收價, M.專家實戰總分
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 < 1.0  -- 漲幅收斂
+  AND M.專家實戰總分 > 40 -- 原本是高分股
+  AND I.成交價 < (M.盤中現價 * 1.01) -- 幾乎回到平盤
+ORDER BY M.專家實戰總分 DESC`
+            },
+
+            {
+                cat: "盤中操盤", title: "⚡ 急拉獵人：盤中爆量攻擊偵測", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.漲幅, 
+       I.總量 as 盤中量, M.盤中總量 as 昨全天量,
+       ROUND(CAST(I.總量 AS FLOAT) / NULLIF(M.盤中總量, 0), 2) as [今日量能倍數],
+       M.具體概念
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.總量 > M.盤中總量
+  AND I.漲幅 > 2.0
+ORDER BY [今日量能倍數] DESC`
+            },
+
+            {
+                cat: "盤中操盤", title: "🎯 盤中主流：族群強勢表態掃描", sql: `/*資料庫:stockchange*/
+M.產業分類, COUNT(DISTINCT I.代號) as [起漲股數], ROUND(AVG(CAST(I.漲幅 AS FLOAT)), 2) as [平均漲幅]
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 BETWEEN 3.0 AND 10.5 -- 漲幅要在 3% 以上才算表態
+GROUP BY M.產業分類
+HAVING COUNT(DISTINCT I.代號) >= 3 -- 該產業至少 3 檔起漲才叫主流
+ORDER BY [起漲股數] DESC
+
+/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
+--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
+--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
+            },
+
+            {
+                cat: "盤中操盤", title: "🔗 族群聯動：高分低位補漲獵人", sql: `/*資料庫:stockchange*/
+I.名稱, I.代號, M.專家實戰總分, I.漲幅 as 今日漲幅, M.具體概念, M.產業分類
+FROM stockchangedate.dbo.MasterStockAnalysis M
+INNER JOIN dbo.basicinfo I ON RTRIM(M.代號) = RTRIM(I.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 BETWEEN -1 AND 1.5 -- 漲幅還沒拉開
+  AND M.專家實戰總分 > 35       -- 專家分高 (有基因)
+  AND M.產業分類 IN (
+      -- 鎖定盤中平均漲幅前 3 名的產業
+      SELECT TOP 3 M2.產業分類
+      FROM dbo.basicinfo I2
+      INNER JOIN stockchangedate.dbo.MasterStockAnalysis M2 ON RTRIM(I2.代號) = RTRIM(M2.代號)
+      WHERE M2.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+      GROUP BY M2.產業分類
+      ORDER BY AVG(I2.漲幅) DESC
+  )
+ORDER BY M.專家實戰總分 DESC
+
+/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
+--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
+--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
+            },
+            {
+                cat: "盤中操盤", title: "⚠️ 避險賣點：高分股盤中破線警示", sql: `/*資料庫:stockchange*/
+I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, A.price_ma5 as 五日線, M.專家實戰總分
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+INNER JOIN stockchangedate.dbo.allcross A ON RTRIM(I.代號) = RTRIM(A.代號) AND M.日期 = A.日期
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.成交價 < A.price_ma5 -- 關鍵：盤中價跌破 5 日線
+  AND M.專家實戰總分 > 30     -- 監控您追蹤的高分股
+ORDER BY I.漲幅 ASC
+
+/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
+--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
+--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
+            },
+
+            {
+                cat: "盤中操盤", title: "🛑 風險預警：盤中重挫標的掃描", sql: `/*資料庫:stockchange*/
+I.名稱, I.代號, I.漲幅, I.成交價, M.專家實戰總分, M.實戰標籤
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 < -4.5 -- 單日跌幅過大，通常是主力出貨或利空
+ORDER BY I.漲幅 ASC
+
+/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
+--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
+--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
+            },
+
 
 
             {
@@ -1906,15 +2050,36 @@ FOR JSON PATH` },
             $("#btnQuery1").click(function () { executeQuery(false); }); // 原始指令/預存程序
 
             function executeQuery(autoSelect) {
-                let sql = $("#sqlText").val();
+                // 1. 取得原始 SQL 並偵測是否包含 /*資料庫:xxx*/ 標籤
+                let rawSql = $("#sqlText").val();
+
+                // --- 自動偵測並切換資料庫邏輯 (新增) ---
+                const dbRegex = /\/\*\s*資料庫\s*:\s*(\w+)\s*\*\//i;
+                const match = rawSql.match(dbRegex);
+
+                if (match && match[1]) {
+                    const detectedDB = match[1].toLowerCase().trim();
+                    // 如果偵測到標籤，且下拉選單中有這個選項，則切換
+                    if ($("#useDatabase option[value='" + detectedDB + "']").length > 0) {
+                        $("#useDatabase").val(detectedDB);
+                        console.log("📡 自動切換資料庫至: " + detectedDB);
+                    }
+                } else {
+                    // 如果 SQL 裡沒寫標籤，則自動切換回預設的主資料庫
+                    $("#useDatabase").val("stockchangedate");
+                }
+                // ---------------------------------------
+
+                // 2. 取得切換後的資料庫、SQL 與密碼
+                let sql = $("#sqlText").val(); // 重新讀取，確保準確
                 if (autoSelect) {
                     sql = "SELECT " + sql;
                 }
 
-                const db = $("#useDatabase").val();
+                const db = $("#useDatabase").val(); // 此時已經是自動切換後的正確資料庫了
                 const pwd = $("#txtPwd").val();
 
-                $("#msg").text("⏳ 執行中...");
+                $("#msg").text("⏳ 執行中 (資料庫: " + db + ")...");
 
                 if (dataTableInstance) {
                     dataTableInstance.destroy();
@@ -1924,16 +2089,13 @@ FOR JSON PATH` },
                 $.ajax({
                     type: "POST",
                     url: "https://zen2965.duckdns.org:8888/excelimport/DataService2.aspx/ExecuteSQL",
-                    //url: "DataService2.aspx/ExecuteSQL",
                     data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    // --- 加入這行：設定前端等待時間 (單位為毫秒，300000 = 5 分鐘) ---
-                    timeout: 300000,
+                    timeout: 300000, // 5 分鐘
                     success: function (res) {
                         const dataStr = res.d;
 
-                        // 1. 檢查是否為錯誤或成功文字訊息
                         if (dataStr.startsWith("錯誤：")) {
                             $("#msg").html(`<span class="text-danger">${dataStr}</span>`);
                             return;
@@ -1943,17 +2105,14 @@ FOR JSON PATH` },
                             return;
                         }
 
-                        // 2. 解析 JSON
                         try {
                             const data = JSON.parse(dataStr);
                             if (data.length === 0) {
                                 $("#msg").text("✅ 指令執行成功，但無回傳資料。");
                                 return;
                             }
-
-                            // 3. 渲染 DataTables (你原本的邏輯)
                             renderDataTable(data);
-                            $("#msg").text(`✅ 查詢完成，共 ${data.length} 筆資料。`);
+                            $("#msg").text(`✅ 查詢完成 [${db}]，共 ${data.length} 筆資料。`);
                         } catch (e) {
                             $("#msg").text("❌ 解析失敗：" + dataStr);
                         }
