@@ -303,6 +303,61 @@ ORDER BY   M.產業分類, M.專家實戰總分 DESC`
             },
 
             {
+                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序顯示黃金建議及性格診斷", sql: `EXEC sp_FindOptimalHoldingPeriod1 N'2330'`
+            },
+
+            {
+                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期", sql: `EXEC sp_FindOptimalHoldingPeriod N'2330'`
+            },
+
+            {
+                cat: "回測+回報+勝率", title: "篩選今日專家分 > 30 且歷史勝率 100% 的完美標的", sql: `TOP 50 
+            M.名稱, M.代號, M.專家實戰總分, P.最佳天數, P.最高勝率, P.股性標籤
+FROM MasterStockAnalysis M
+INNER JOIN StockPersonality P ON M.代號 = P.代號
+WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+            AND M.專家實戰總分 > 30
+  AND P.最高勝率 = 100
+ORDER BY M.專家實戰總分 DESC
+
+--1. 【必殺技】高分共振 + 歷史 100% 勝率` },
+
+            {
+                cat: "回測+回報+勝率", title: "找股性屬於「快攻型」，且歷史預期報酬最高的股票", sql: `TOP 50 
+    M.名稱, M.代號, M.專家實戰總分, P.最佳天數, M.實戰標籤, P.預期報酬
+FROM MasterStockAnalysis M
+INNER JOIN StockPersonality P ON M.代號 = P.代號
+WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+  AND P.股性標籤 = N'快攻獵豹型'
+  AND M.專家實戰總分 > 15 -- 維持基本門檻即可
+ORDER BY P.預期報酬 DESC
+
+--2. 【效率之王】快攻獵豹型 (放寬量價限制)
+--用途：捕捉那些「股性活潑」且「歷史期望值最高」的短線股` },
+
+
+            {
+                cat: "回測+回報+勝率", title: "找勝率 > 85% 且 K9 尚在低檔的長線績優股", sql: `TOP 50 
+    M.名稱, M.代號, P.最高勝率, P.最佳天數, M.k9
+FROM MasterStockAnalysis M
+INNER JOIN StockPersonality P ON M.代號 = P.代號
+WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+  AND P.股性標籤 = N'長線保護型'
+  AND M.k9 < 50
+  AND P.最高勝率 > 85
+ORDER BY P.最高勝率 DESC
+--3. 【防守反擊】長線保護 + 低位階
+--用途：針對台積電這類股票，找回測勝率高且現在位階還在低檔的。` },
+
+            {
+                cat: "回測+回報+勝率", title: "找全市場勝率 > 80% 且預期報酬 > 5% 的黃金名單", sql: ` * 
+FROM StockPersonality 
+WHERE 最高勝率 > 80 AND 預期報酬 > 5
+ORDER BY 預期報酬 DESC;`
+            },
+
+
+            {
                 cat: "專家組合", title: "市場熱度統計 (市場溫度計)", sql: `日期,
         COUNT(*) as [符合3項以上強勢股數量],
         ROUND(AVG(平均專家總分), 2) as [當日強勢股平均分]
