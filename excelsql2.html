@@ -84,6 +84,644 @@
         const sqlTemplateLibrary = [
 
             {
+                cat: "盤中操盤", title: "盤中+obv及量能突(跌)破+共振量能總分全部", sql: `/*資料庫:stockchange*/ * FROM (
+    SELECT 
+        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, 
+        T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
+        T2.乖離率, T2.量倍率,
+        -- 價格五日線狀態
+        CASE 
+            WHEN T2.昨收 < T2.昨MA5 AND T2.盤中價 > T2.盤中MA5 THEN N'✅ 突破'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 跌破'
+            WHEN T2.盤中價 > T2.盤中MA5 THEN N'站上'
+            ELSE N'線下'
+        END AS 價格狀態,
+        -- OBV 能量狀態
+        CASE 
+            WHEN T2.昨OBV < T2.昨OBV_MA5 AND T2.盤中OBV > T2.盤中OBV_MA5 THEN N'🚀 金叉'
+            WHEN T2.昨OBV > T2.昨OBV_MA5 AND T2.盤中OBV < T2.盤中OBV_MA5 THEN N'💀 死叉'
+            WHEN T2.盤中OBV > T2.盤中OBV_MA5 THEN N'強勢'
+            ELSE N'弱勢'
+        END AS OBV狀態,
+        -- 專家點評 (現在可以安全使用 T2 定義好的欄位)
+        CASE 
+            WHEN T2.預估收盤共振 >= 5 AND T2.昨總分 > 35 AND T2.盤中價 > T2.盤中MA5 THEN N'⭐ 極致強勢股'
+            WHEN T2.預估收盤共振 >= 5 AND T2.量倍率 > 1.2 THEN N'🔥 價量齊揚'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 轉弱減碼'
+            ELSE N'--'
+        END AS 專家點評,
+        T2.盤中突破項目,
+        T2.產業價值鏈資訊
+    FROM (
+        SELECT 
+            T1.*,
+            -- 計算數值 (下移至此層，解決別名無效問題)
+            ROUND(((T1.盤中價 - T1.盤中MA5) / NULLIF(T1.盤中MA5, 0)) * 100, 2) AS 乖離率,
+            ROUND((CAST(T1.盤中量 AS FLOAT) / NULLIF(T1.昨全天量, 0)), 2) AS 量倍率,
+            -- 計算增減分
+            CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 
+                 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END AS 價增分,
+            CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 
+                 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END AS OBV增分,
+            CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 
+                 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END AS 量增分,
+            -- 預估共振總數
+            (T1.昨共振 + 
+                (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中價 < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 預估收盤共振,
+            (
+                (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 盤中增減項,
+            -- 突破項目
+            CASE WHEN (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 ELSE 0 END) = 1 THEN N'[價突破] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 ELSE 0 END) = 1 THEN N'[量能噴發] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 ELSE 0 END) = 1 THEN N'[異常放量] ' ELSE '' END AS 盤中突破項目
+        FROM (
+            SELECT 
+                I.名稱, I.代號, I.成交價 AS 盤中價, I.漲幅 AS 盤中漲幅, I.總量 AS 盤中量, I.漲跌,
+                Y.日期 AS 昨日期, Y.盤中現價 AS 昨收, Y.obv淨額 AS 昨OBV, Y.專家實戰總分 AS 昨總分, Y.盤中總量 AS 昨全天量,
+                N.name1 AS 具體概念,
+                -- 【修正點】補全 View_notioninfoskill 的資料庫路徑
+                (SELECT TOP 1 STRING_AGG(CAST(RTRIM(V2.name1) + '(' + RTRIM(V2.mail1) + ')' AS NVARCHAR(MAX)), ' | ') 
+                 FROM stockchangedate.dbo.View_notioninfoskill V2 WHERE V2.memo LIKE '%' + REPLACE(RTRIM(I.名稱), '*', '') + '%') AS 產業價值鏈資訊,
+                -- 歷史共振
+                (CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 昨共振,
+                CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨價金叉,
+                CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END AS 昨OBV金叉,
+                CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨量金叉,
+                -- 均線與預估
+                (SELECT AVG(盤中現價) FROM (SELECT TOP 5 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) a) AS 昨MA5,
+                ((SELECT AVG(盤中現價) FROM (SELECT TOP 4 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) b) * 4 + I.成交價) / 5 AS 盤中MA5,
+                (SELECT AVG(obv淨額) FROM (SELECT TOP 5 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) c) AS 昨OBV_MA5,
+                CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END AS 盤中OBV,
+                ((SELECT AVG(obv淨額) FROM (SELECT TOP 4 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) d) * 4 + (CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END)) / 5 AS 盤中OBV_MA5,
+                ((SELECT AVG(盤中總量) FROM (SELECT TOP 4 盤中總量 FROM stockchangedate.dbo.MasterStockAnalysis M4 WHERE M4.代號 = I.代號 AND M4.日期 <= Y.日期 ORDER BY M4.日期 DESC) e) * 4 + I.總量) / 5 AS 盤中量MA5
+            FROM dbo.basicinfo I
+            INNER JOIN stockchangedate.dbo.MasterStockAnalysis Y ON I.代號 = Y.代號
+            LEFT JOIN stockchangedate.dbo.notioninfo N ON REPLACE(RTRIM(I.名稱), '*', '') = REPLACE(RTRIM(N.mail1), '*', '')
+            WHERE Y.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+        ) T1
+    ) T2
+) Final
+
+ORDER BY 
+    (CASE WHEN Final.價格狀態 = N'🚨 跌破' OR Final.OBV狀態 = N'💀 死叉' THEN 1 ELSE 2 END), 
+    Final.預估收盤共振 DESC, 
+    Final.量倍率 DESC;
+
+--盤中全部股票`
+            },
+            {
+                cat: "盤中操盤", title: "昨天基因好，今天帶量剛突破，且還沒漲到噴出（乖離不過大）", sql: `/*資料庫:stockchange*/ * FROM (
+    SELECT 
+        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, 
+        T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
+        T2.乖離率, T2.量倍率,
+        -- 價格五日線狀態
+        CASE 
+            WHEN T2.昨收 < T2.昨MA5 AND T2.盤中價 > T2.盤中MA5 THEN N'✅ 突破'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 跌破'
+            WHEN T2.盤中價 > T2.盤中MA5 THEN N'站上'
+            ELSE N'線下'
+        END AS 價格狀態,
+        -- OBV 能量狀態
+        CASE 
+            WHEN T2.昨OBV < T2.昨OBV_MA5 AND T2.盤中OBV > T2.盤中OBV_MA5 THEN N'🚀 金叉'
+            WHEN T2.昨OBV > T2.昨OBV_MA5 AND T2.盤中OBV < T2.盤中OBV_MA5 THEN N'💀 死叉'
+            WHEN T2.盤中OBV > T2.盤中OBV_MA5 THEN N'強勢'
+            ELSE N'弱勢'
+        END AS OBV狀態,
+        -- 專家點評 (現在可以安全使用 T2 定義好的欄位)
+        CASE 
+            WHEN T2.預估收盤共振 >= 5 AND T2.昨總分 > 35 AND T2.盤中價 > T2.盤中MA5 THEN N'⭐ 極致強勢股'
+            WHEN T2.預估收盤共振 >= 5 AND T2.量倍率 > 1.2 THEN N'🔥 價量齊揚'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 轉弱減碼'
+            ELSE N'--'
+        END AS 專家點評,
+        T2.盤中突破項目,
+        T2.產業價值鏈資訊
+    FROM (
+        SELECT 
+            T1.*,
+            -- 計算數值 (下移至此層，解決別名無效問題)
+            ROUND(((T1.盤中價 - T1.盤中MA5) / NULLIF(T1.盤中MA5, 0)) * 100, 2) AS 乖離率,
+            ROUND((CAST(T1.盤中量 AS FLOAT) / NULLIF(T1.昨全天量, 0)), 2) AS 量倍率,
+            -- 計算增減分
+            CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 
+                 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END AS 價增分,
+            CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 
+                 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END AS OBV增分,
+            CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 
+                 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END AS 量增分,
+            -- 預估共振總數
+            (T1.昨共振 + 
+                (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中價 < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 預估收盤共振,
+            (
+                (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 盤中增減項,
+            -- 突破項目
+            CASE WHEN (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 ELSE 0 END) = 1 THEN N'[價突破] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 ELSE 0 END) = 1 THEN N'[量能噴發] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 ELSE 0 END) = 1 THEN N'[異常放量] ' ELSE '' END AS 盤中突破項目
+        FROM (
+            SELECT 
+                I.名稱, I.代號, I.成交價 AS 盤中價, I.漲幅 AS 盤中漲幅, I.總量 AS 盤中量, I.漲跌,
+                Y.日期 AS 昨日期, Y.盤中現價 AS 昨收, Y.obv淨額 AS 昨OBV, Y.專家實戰總分 AS 昨總分, Y.盤中總量 AS 昨全天量,
+                N.name1 AS 具體概念,
+                -- 【修正點】補全 View_notioninfoskill 的資料庫路徑
+                (SELECT TOP 1 STRING_AGG(CAST(RTRIM(V2.name1) + '(' + RTRIM(V2.mail1) + ')' AS NVARCHAR(MAX)), ' | ') 
+                 FROM stockchangedate.dbo.View_notioninfoskill V2 WHERE V2.memo LIKE '%' + REPLACE(RTRIM(I.名稱), '*', '') + '%') AS 產業價值鏈資訊,
+                -- 歷史共振
+                (CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 昨共振,
+                CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨價金叉,
+                CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END AS 昨OBV金叉,
+                CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨量金叉,
+                -- 均線與預估
+                (SELECT AVG(盤中現價) FROM (SELECT TOP 5 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) a) AS 昨MA5,
+                ((SELECT AVG(盤中現價) FROM (SELECT TOP 4 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) b) * 4 + I.成交價) / 5 AS 盤中MA5,
+                (SELECT AVG(obv淨額) FROM (SELECT TOP 5 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) c) AS 昨OBV_MA5,
+                CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END AS 盤中OBV,
+                ((SELECT AVG(obv淨額) FROM (SELECT TOP 4 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) d) * 4 + (CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END)) / 5 AS 盤中OBV_MA5,
+                ((SELECT AVG(盤中總量) FROM (SELECT TOP 4 盤中總量 FROM stockchangedate.dbo.MasterStockAnalysis M4 WHERE M4.代號 = I.代號 AND M4.日期 <= Y.日期 ORDER BY M4.日期 DESC) e) * 4 + I.總量) / 5 AS 盤中量MA5
+            FROM dbo.basicinfo I
+            INNER JOIN stockchangedate.dbo.MasterStockAnalysis Y ON I.代號 = Y.代號
+            LEFT JOIN stockchangedate.dbo.notioninfo N ON REPLACE(RTRIM(I.名稱), '*', '') = REPLACE(RTRIM(N.mail1), '*', '')
+            WHERE Y.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+        ) T1
+    ) T2
+) Final
+WHERE Final.預估收盤共振 >= 5 
+  AND Final.價格狀態 = N'✅ 突破' 
+  AND Final.量倍率 > 0.7
+  AND Final.乖離率 BETWEEN 0.1 AND 6.0
+
+ORDER BY 
+    (CASE WHEN Final.價格狀態 = N'🚨 跌破' OR Final.OBV狀態 = N'💀 死叉' THEN 1 ELSE 2 END), 
+    Final.預估收盤共振 DESC, 
+    Final.量倍率 DESC;
+
+--1. 嚴選強勢進攻股 (最推薦：高共振 + 剛突破 + 量能爆發)
+--這組條件找的是：昨天基因好，今天帶量剛突破，且還沒漲到噴出（乖離不過大）。`
+            },
+            {
+                cat: "盤中操盤", title: "原本可能在盤整，但今天突然「多維度共振」跳升，且大戶明顯進場。", sql: `/*資料庫:stockchange*/ * FROM (
+    SELECT 
+        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, 
+        T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
+        T2.乖離率, T2.量倍率,
+        -- 價格五日線狀態
+        CASE 
+            WHEN T2.昨收 < T2.昨MA5 AND T2.盤中價 > T2.盤中MA5 THEN N'✅ 突破'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 跌破'
+            WHEN T2.盤中價 > T2.盤中MA5 THEN N'站上'
+            ELSE N'線下'
+        END AS 價格狀態,
+        -- OBV 能量狀態
+        CASE 
+            WHEN T2.昨OBV < T2.昨OBV_MA5 AND T2.盤中OBV > T2.盤中OBV_MA5 THEN N'🚀 金叉'
+            WHEN T2.昨OBV > T2.昨OBV_MA5 AND T2.盤中OBV < T2.盤中OBV_MA5 THEN N'💀 死叉'
+            WHEN T2.盤中OBV > T2.盤中OBV_MA5 THEN N'強勢'
+            ELSE N'弱勢'
+        END AS OBV狀態,
+        -- 專家點評 (現在可以安全使用 T2 定義好的欄位)
+        CASE 
+            WHEN T2.預估收盤共振 >= 5 AND T2.昨總分 > 35 AND T2.盤中價 > T2.盤中MA5 THEN N'⭐ 極致強勢股'
+            WHEN T2.預估收盤共振 >= 5 AND T2.量倍率 > 1.2 THEN N'🔥 價量齊揚'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 轉弱減碼'
+            ELSE N'--'
+        END AS 專家點評,
+        T2.盤中突破項目,
+        T2.產業價值鏈資訊
+    FROM (
+        SELECT 
+            T1.*,
+            -- 計算數值 (下移至此層，解決別名無效問題)
+            ROUND(((T1.盤中價 - T1.盤中MA5) / NULLIF(T1.盤中MA5, 0)) * 100, 2) AS 乖離率,
+            ROUND((CAST(T1.盤中量 AS FLOAT) / NULLIF(T1.昨全天量, 0)), 2) AS 量倍率,
+            -- 計算增減分
+            CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 
+                 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END AS 價增分,
+            CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 
+                 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END AS OBV增分,
+            CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 
+                 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END AS 量增分,
+            -- 預估共振總數
+            (T1.昨共振 + 
+                (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中價 < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 預估收盤共振,
+            (
+                (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 盤中增減項,
+            -- 突破項目
+            CASE WHEN (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 ELSE 0 END) = 1 THEN N'[價突破] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 ELSE 0 END) = 1 THEN N'[量能噴發] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 ELSE 0 END) = 1 THEN N'[異常放量] ' ELSE '' END AS 盤中突破項目
+        FROM (
+            SELECT 
+                I.名稱, I.代號, I.成交價 AS 盤中價, I.漲幅 AS 盤中漲幅, I.總量 AS 盤中量, I.漲跌,
+                Y.日期 AS 昨日期, Y.盤中現價 AS 昨收, Y.obv淨額 AS 昨OBV, Y.專家實戰總分 AS 昨總分, Y.盤中總量 AS 昨全天量,
+                N.name1 AS 具體概念,
+                -- 【修正點】補全 View_notioninfoskill 的資料庫路徑
+                (SELECT TOP 1 STRING_AGG(CAST(RTRIM(V2.name1) + '(' + RTRIM(V2.mail1) + ')' AS NVARCHAR(MAX)), ' | ') 
+                 FROM stockchangedate.dbo.View_notioninfoskill V2 WHERE V2.memo LIKE '%' + REPLACE(RTRIM(I.名稱), '*', '') + '%') AS 產業價值鏈資訊,
+                -- 歷史共振
+                (CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 昨共振,
+                CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨價金叉,
+                CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END AS 昨OBV金叉,
+                CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨量金叉,
+                -- 均線與預估
+                (SELECT AVG(盤中現價) FROM (SELECT TOP 5 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) a) AS 昨MA5,
+                ((SELECT AVG(盤中現價) FROM (SELECT TOP 4 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) b) * 4 + I.成交價) / 5 AS 盤中MA5,
+                (SELECT AVG(obv淨額) FROM (SELECT TOP 5 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) c) AS 昨OBV_MA5,
+                CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END AS 盤中OBV,
+                ((SELECT AVG(obv淨額) FROM (SELECT TOP 4 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) d) * 4 + (CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END)) / 5 AS 盤中OBV_MA5,
+                ((SELECT AVG(盤中總量) FROM (SELECT TOP 4 盤中總量 FROM stockchangedate.dbo.MasterStockAnalysis M4 WHERE M4.代號 = I.代號 AND M4.日期 <= Y.日期 ORDER BY M4.日期 DESC) e) * 4 + I.總量) / 5 AS 盤中量MA5
+            FROM dbo.basicinfo I
+            INNER JOIN stockchangedate.dbo.MasterStockAnalysis Y ON I.代號 = Y.代號
+            LEFT JOIN stockchangedate.dbo.notioninfo N ON REPLACE(RTRIM(I.名稱), '*', '') = REPLACE(RTRIM(N.mail1), '*', '')
+            WHERE Y.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+        ) T1
+    ) T2
+) Final
+WHERE Final.盤中增減項 >= 2 
+  AND Final.預估收盤共振 >= 4
+  AND Final.量倍率 > 0.8
+  AND Final.OBV狀態 <> N'弱勢'
+ORDER BY 
+    (CASE WHEN Final.價格狀態 = N'🚨 跌破' OR Final.OBV狀態 = N'💀 死叉' THEN 1 ELSE 2 END), 
+    Final.預估收盤共振 DESC, 
+    Final.量倍率 DESC;
+
+
+--2. 潛力黑馬股 (共振跳升 + 基因厚實)
+--這組條件找的是：原本可能在盤整，但今天突然「多維度共振」跳升，且大戶明顯進場。`
+            },
+
+            {
+                cat: "盤中操盤", title: "趨勢已經形成，目前穩穩站在五日線上，且 OBV 持續強勢。", sql: `/*資料庫:stockchange*/ * FROM (
+    SELECT 
+        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, 
+        T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
+        T2.乖離率, T2.量倍率, T2.昨總分,
+        -- 價格五日線狀態
+        CASE 
+            WHEN T2.昨收 < T2.昨MA5 AND T2.盤中價 > T2.盤中MA5 THEN N'✅ 突破'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 跌破'
+            WHEN T2.盤中價 > T2.盤中MA5 THEN N'站上'
+            ELSE N'線下'
+        END AS 價格狀態,
+        -- OBV 能量狀態
+        CASE 
+            WHEN T2.昨OBV < T2.昨OBV_MA5 AND T2.盤中OBV > T2.盤中OBV_MA5 THEN N'🚀 金叉'
+            WHEN T2.昨OBV > T2.昨OBV_MA5 AND T2.盤中OBV < T2.盤中OBV_MA5 THEN N'💀 死叉'
+            WHEN T2.盤中OBV > T2.盤中OBV_MA5 THEN N'強勢'
+            ELSE N'弱勢'
+        END AS OBV狀態,
+        -- 專家點評
+        CASE 
+            WHEN T2.預估收盤共振 >= 5 AND T2.昨總分 > 35 AND T2.盤中價 > T2.盤中MA5 THEN N'⭐ 極致強勢股'
+            WHEN T2.預估收盤共振 >= 5 AND T2.量倍率 > 1.2 THEN N'🔥 價量齊揚'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 轉弱減碼'
+            ELSE N'--'
+        END AS 專家點評,
+        T2.盤中突破項目,
+        T2.產業價值鏈資訊
+    FROM (
+        SELECT 
+            T1.名稱, T1.代號, T1.盤中價, T1.盤中漲幅, T1.盤中量, T1.昨收, T1.昨MA5, T1.昨OBV, T1.昨OBV_MA5, T1.昨總分, T1.昨全天量,
+            T1.具體概念, T1.產業價值鏈資訊, T1.昨共振, T1.昨價金叉, T1.昨OBV金叉, T1.昨量金叉, T1.盤中MA5, T1.盤中OBV, T1.盤中OBV_MA5, T1.盤中量MA5,
+            -- 計算數值
+            ROUND(((T1.盤中價 - T1.盤中MA5) / NULLIF(T1.盤中MA5, 0)) * 100, 2) AS 乖離率,
+            ROUND((CAST(T1.盤中量 AS FLOAT) / NULLIF(T1.昨全天量, 0)), 2) AS 量倍率,
+            -- 計算增減分
+            (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) AS 價增分,
+            (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) AS OBV增分,
+            (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END) AS 量增分,
+            -- 預估共振總數
+            (T1.昨共振 + 
+                (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 預估收盤共振,
+            -- 盤中增減項
+            ((CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+             (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+             (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 盤中增減項,
+            -- 項目
+            CASE WHEN (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 ELSE 0 END) = 1 THEN N'[價突破] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 ELSE 0 END) = 1 THEN N'[量能噴發] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 ELSE 0 END) = 1 THEN N'[異常放量] ' ELSE '' END AS 盤中突破項目
+        FROM (
+            SELECT 
+                I.名稱, I.代號, I.成交價 AS 盤中價, I.漲幅 AS 盤中漲幅, I.總量 AS 盤中量, I.漲跌,
+                Y.盤中現價 AS 昨收, Y.obv淨額 AS 昨OBV, Y.專家實戰總分 AS 昨總分, Y.盤中總量 AS 昨全天量,
+                N.name1 AS 具體概念,
+                (SELECT TOP 1 STRING_AGG(CAST(RTRIM(V2.name1) + '(' + RTRIM(V2.mail1) + ')' AS NVARCHAR(MAX)), ' | ') 
+                 FROM stockchangedate.dbo.View_notioninfoskill V2 WHERE V2.memo LIKE '%' + REPLACE(RTRIM(I.名稱), '*', '') + '%') AS 產業價值鏈資訊,
+                (CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 昨共振,
+                CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨價金叉,
+                CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END AS 昨OBV金叉,
+                CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨量金叉,
+                (SELECT AVG(盤中現價) FROM (SELECT TOP 5 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) a) AS 昨MA5,
+                ((SELECT AVG(盤中現價) FROM (SELECT TOP 4 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) b) * 4 + I.成交價) / 5 AS 盤中MA5,
+                (SELECT AVG(obv淨額) FROM (SELECT TOP 5 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) c) AS 昨OBV_MA5,
+                CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END AS 盤中OBV,
+                ((SELECT AVG(obv淨額) FROM (SELECT TOP 4 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) d) * 4 + (CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END)) / 5 AS 盤中OBV_MA5,
+                ((SELECT AVG(盤中總量) FROM (SELECT TOP 4 盤中總量 FROM stockchangedate.dbo.MasterStockAnalysis M4 WHERE M4.代號 = I.代號 AND M4.日期 <= Y.日期 ORDER BY M4.日期 DESC) e) * 4 + I.總量) / 5 AS 盤中量MA5
+            FROM dbo.basicinfo I
+            INNER JOIN stockchangedate.dbo.MasterStockAnalysis Y ON I.代號 = Y.代號
+            LEFT JOIN stockchangedate.dbo.notioninfo N ON REPLACE(RTRIM(I.名稱), '*', '') = REPLACE(RTRIM(N.mail1), '*', '')
+            WHERE Y.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+        ) T1
+    ) T2
+) Final
+WHERE Final.預估收盤共振 >= 5 
+  AND Final.價格狀態 = N'站上'
+  AND Final.OBV狀態 IN (N'🚀 金叉', N'強勢')
+  AND Final.昨總分 > 35
+
+ORDER BY 
+    (CASE WHEN Final.價格狀態 = N'🚨 跌破' OR Final.OBV狀態 = N'💀 死叉' THEN 1 ELSE 2 END), 
+    Final.預估收盤共振 DESC, 
+    Final.量倍率 DESC;
+
+--	3. 穩健多頭股 (適合回檔後續強)
+--這組條件找的是：趨勢已經形成，目前穩穩站在五日線上，且 OBV 持續強勢。`
+            },
+
+            {
+                cat: "盤中操盤", title: "一次看到所有好股票（不分強度），可以使用這個綜合條件", sql: `/*資料庫:stockchange*/ * FROM (
+    SELECT 
+        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, 
+        T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
+        T2.乖離率, T2.量倍率, T2.昨總分,
+        -- 價格五日線狀態
+        CASE 
+            WHEN T2.昨收 < T2.昨MA5 AND T2.盤中價 > T2.盤中MA5 THEN N'✅ 突破'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 跌破'
+            WHEN T2.盤中價 > T2.盤中MA5 THEN N'站上'
+            ELSE N'線下'
+        END AS 價格狀態,
+        -- OBV 能量狀態
+        CASE 
+            WHEN T2.昨OBV < T2.昨OBV_MA5 AND T2.盤中OBV > T2.盤中OBV_MA5 THEN N'🚀 金叉'
+            WHEN T2.昨OBV > T2.昨OBV_MA5 AND T2.盤中OBV < T2.盤中OBV_MA5 THEN N'💀 死叉'
+            WHEN T2.盤中OBV > T2.盤中OBV_MA5 THEN N'強勢'
+            ELSE N'弱勢'
+        END AS OBV狀態,
+        -- 專家點評
+        CASE 
+            WHEN T2.預估收盤共振 >= 5 AND T2.昨總分 > 35 AND T2.盤中價 > T2.盤中MA5 THEN N'⭐ 極致強勢股'
+            WHEN T2.預估收盤共振 >= 5 AND T2.量倍率 > 1.2 THEN N'🔥 價量齊揚'
+            WHEN T2.昨收 > T2.昨MA5 AND T2.盤中價 < T2.盤中MA5 THEN N'🚨 轉弱減碼'
+            ELSE N'--'
+        END AS 專家點評,
+        T2.盤中突破項目,
+        T2.產業價值鏈資訊
+    FROM (
+        SELECT 
+            T1.名稱, T1.代號, T1.盤中價, T1.盤中漲幅, T1.盤中量, T1.昨收, T1.昨MA5, T1.昨OBV, T1.昨OBV_MA5, T1.昨總分, T1.昨全天量,
+            T1.具體概念, T1.產業價值鏈資訊, T1.昨共振, T1.昨價金叉, T1.昨OBV金叉, T1.昨量金叉, T1.盤中MA5, T1.盤中OBV, T1.盤中OBV_MA5, T1.盤中量MA5,
+            -- 計算數值
+            ROUND(((T1.盤中價 - T1.盤中MA5) / NULLIF(T1.盤中MA5, 0)) * 100, 2) AS 乖離率,
+            ROUND((CAST(T1.盤中量 AS FLOAT) / NULLIF(T1.昨全天量, 0)), 2) AS 量倍率,
+            -- 計算增減分
+            (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) AS 價增分,
+            (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) AS OBV增分,
+            (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END) AS 量增分,
+            -- 預估共振總數
+            (T1.昨共振 + 
+                (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+                (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 預估收盤共振,
+            -- 盤中增減項
+            ((CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 WHEN T1.昨價金叉 = 1 AND T1.盤中價 < T1.盤中MA5 THEN -1 ELSE 0 END) + 
+             (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 WHEN T1.昨OBV金叉 = 1 AND T1.盤中OBV < T1.盤中OBV_MA5 THEN -1 ELSE 0 END) + 
+             (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 WHEN T1.昨量金叉 = 1 AND T1.盤中量 < T1.盤中量MA5 THEN -1 ELSE 0 END)
+            ) AS 盤中增減項,
+            -- 項目
+            CASE WHEN (CASE WHEN T1.昨價金叉 = 0 AND T1.盤中價 > T1.盤中MA5 THEN 1 ELSE 0 END) = 1 THEN N'[價突破] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨OBV金叉 = 0 AND T1.盤中OBV > T1.盤中OBV_MA5 THEN 1 ELSE 0 END) = 1 THEN N'[量能噴發] ' ELSE '' END +
+            CASE WHEN (CASE WHEN T1.昨量金叉 = 0 AND T1.盤中量 > T1.盤中量MA5 THEN 1 ELSE 0 END) = 1 THEN N'[異常放量] ' ELSE '' END AS 盤中突破項目
+        FROM (
+            SELECT 
+                I.名稱, I.代號, I.成交價 AS 盤中價, I.漲幅 AS 盤中漲幅, I.總量 AS 盤中量, I.漲跌,
+                Y.盤中現價 AS 昨收, Y.obv淨額 AS 昨OBV, Y.專家實戰總分 AS 昨總分, Y.盤中總量 AS 昨全天量,
+                N.name1 AS 具體概念,
+                (SELECT TOP 1 STRING_AGG(CAST(RTRIM(V2.name1) + '(' + RTRIM(V2.mail1) + ')' AS NVARCHAR(MAX)), ' | ') 
+                 FROM stockchangedate.dbo.View_notioninfoskill V2 WHERE V2.memo LIKE '%' + REPLACE(RTRIM(I.名稱), '*', '') + '%') AS 產業價值鏈資訊,
+                (CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN Y.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 昨共振,
+                CASE WHEN Y.均價黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨價金叉,
+                CASE WHEN Y.obv累積金叉次數 > 0 THEN 1 ELSE 0 END AS 昨OBV金叉,
+                CASE WHEN Y.均量黃金交叉次數 > 0 THEN 1 ELSE 0 END AS 昨量金叉,
+                (SELECT AVG(盤中現價) FROM (SELECT TOP 5 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) a) AS 昨MA5,
+                ((SELECT AVG(盤中現價) FROM (SELECT TOP 4 盤中現價 FROM stockchangedate.dbo.MasterStockAnalysis M2 WHERE M2.代號 = I.代號 AND M2.日期 <= Y.日期 ORDER BY M2.日期 DESC) b) * 4 + I.成交價) / 5 AS 盤中MA5,
+                (SELECT AVG(obv淨額) FROM (SELECT TOP 5 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) c) AS 昨OBV_MA5,
+                CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END AS 盤中OBV,
+                ((SELECT AVG(obv淨額) FROM (SELECT TOP 4 obv淨額 FROM stockchangedate.dbo.MasterStockAnalysis M3 WHERE M3.代號 = I.代號 AND M3.日期 <= Y.日期 ORDER BY M3.日期 DESC) d) * 4 + (CASE WHEN I.漲跌 > 0 THEN Y.obv淨額 + I.總量 WHEN I.漲跌 < 0 THEN Y.obv淨額 - I.總量 ELSE Y.obv淨額 END)) / 5 AS 盤中OBV_MA5,
+                ((SELECT AVG(盤中總量) FROM (SELECT TOP 4 盤中總量 FROM stockchangedate.dbo.MasterStockAnalysis M4 WHERE M4.代號 = I.代號 AND M4.日期 <= Y.日期 ORDER BY M4.日期 DESC) e) * 4 + I.總量) / 5 AS 盤中量MA5
+            FROM dbo.basicinfo I
+            INNER JOIN stockchangedate.dbo.MasterStockAnalysis Y ON I.代號 = Y.代號
+            LEFT JOIN stockchangedate.dbo.notioninfo N ON REPLACE(RTRIM(I.名稱), '*', '') = REPLACE(RTRIM(N.mail1), '*', '')
+            WHERE Y.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+        ) T1
+    ) T2
+) Final
+
+WHERE Final.預估收盤共振 >= 5                -- 條件一：高維度共振（基本門檻）
+  AND Final.價格狀態 <> N'🚨 跌破'           -- 條件二：排除正在轉弱的
+  AND Final.乖離率 < 7.0                    -- 條件三：防止追在當天最高點（乖離保護）
+  AND (Final.量倍率 > 0.6 OR Final.昨總分 > 40) -- 條件四：要有量，或是原本就是選股名單的高分股
+ORDER BY 
+    (CASE WHEN Final.價格狀態 = N'🚨 跌破' OR Final.OBV狀態 = N'💀 死叉' THEN 1 ELSE 2 END), 
+    Final.預估收盤共振 DESC, 
+    Final.量倍率 DESC;
+
+--	💡 專家小提醒：
+--如果您想在 Excel 裡一次看到所有好股票（不分強度），可以使用這個綜合條件：`
+            },
+
+            //{
+            //    cat: "盤中操盤", title: "盤中+obv及量能突(跌)破+共振量能總分", sql: `/*資料庫:stockchange*/ `
+            //},
+
+
+
+
+
+
+
+            {
+                cat: "盤中操盤", title: "盤中起漲黑馬獵人", sql: `/*資料庫:stockchangedate*/名稱, 代號, 盤中價, 盤中漲幅, 盤中OBV, 新OBV五日均線, 昨共振, 預估收盤共振, 昨總分, 盤中狀態
+FROM              View_盤中起漲黑馬獵人
+--預設條件不可更改,盤後更後不會有資料
+--可以抓取共振2可能變成共振3或obv站上其五日均線
+--前端採集：按鍵精靈 (QuickMacro)，每 5 分鐘執行一次。
+--中台搬運：Python (Watchdog + pyodbc)，監控 C:\StockExport，自動清洗理*寶欄位 SQL。
+--核心運算：View_盤中起漲黑馬獵人，實現「歷史 vs 盤中」跨庫比對，計算「新 OBV 五日均線」與「預估共振進化」。`
+            },
+
+            {
+                cat: "盤中操盤", title: "🎯 盤中主流族群偵測 (自動對齊版)", sql: `/*資料庫:stockchange*/M.產業分類, 
+       COUNT(DISTINCT I.代號) as [起漲股數], 
+       ROUND(AVG(CAST(I.漲幅 AS FLOAT)), 2) as [平均漲幅]
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 BETWEEN 2.0 AND 10.5
+  AND I.總量 > 500
+GROUP BY M.產業分類
+HAVING COUNT(DISTINCT I.代號) >= 2
+ORDER BY [起漲股數] DESC`
+            },
+
+            {
+                cat: "盤中操盤", title: "🔗 族群聯動：尋找同產業補漲標的", sql: `/*資料庫:stockchange*/
+ M.名稱, M.代號, M.專家實戰總分, I.漲幅 as 盤中漲幅, M.具體概念, M.產業分類
+FROM stockchangedate.dbo.MasterStockAnalysis M
+INNER JOIN dbo.basicinfo I ON M.代號 = I.代號
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 BETWEEN -1 AND 1.5 -- 還沒噴出 (漲幅微小)
+  AND M.專家實戰總分 > 30       -- 但底子好 (專家分高)
+  AND M.產業分類 IN (
+      -- 找出盤中平均漲幅大於 4% 的熱門產業
+      SELECT TOP 3 M2.產業分類
+      FROM dbo.basicinfo I2
+      INNER JOIN stockchangedate.dbo.MasterStockAnalysis M2 ON I2.代號 = M2.代號
+      WHERE M2.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+      GROUP BY M2.產業分類
+      HAVING COUNT(*) >= 2
+      ORDER BY AVG(I2.漲幅) DESC
+  )
+ORDER BY M.專家實戰總分 DESC
+/*-- 解讀：當領先股拉開空間，這些「高分低位」的同業極大機率會被資金帶動。*/`
+            },
+
+            {
+                cat: "盤中操盤", title: "⚠️ 避險警報：盤中跌破五日線", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, 
+       A.price_ma5 as 五日線, M.專家實戰總分
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+INNER JOIN stockchangedate.dbo.allcross A ON RTRIM(I.代號) = RTRIM(A.代號) AND M.日期 = A.日期
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.成交價 < A.price_ma5
+  AND I.漲幅 < 0
+  AND M.專家實戰總分 > 30
+ORDER BY I.漲幅 ASC`
+            },
+
+            {
+                cat: "盤中操盤", title: "🛑 獲利了結：高檔回落警示", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, 
+       M.盤中現價 as 昨收價, M.專家實戰總分
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 < 1.0  -- 漲幅收斂
+  AND M.專家實戰總分 > 40 -- 原本是高分股
+  AND I.成交價 < (M.盤中現價 * 1.01) -- 幾乎回到平盤
+ORDER BY M.專家實戰總分 DESC`
+            },
+
+            {
+                cat: "盤中操盤", title: "⚡ 急拉獵人：盤中爆量攻擊偵測", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.漲幅, 
+       I.總量 as 盤中量, M.盤中總量 as 昨全天量,
+       ROUND(CAST(I.總量 AS FLOAT) / NULLIF(M.盤中總量, 0), 2) as [今日量能倍數],
+       M.具體概念
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.總量 > M.盤中總量
+  AND I.漲幅 > 2.0
+ORDER BY [今日量能倍數] DESC`
+            },
+
+            {
+                cat: "盤中操盤", title: "🎯 盤中主流：族群強勢表態掃描", sql: `/*資料庫:stockchange*/
+M.產業分類, COUNT(DISTINCT I.代號) as [起漲股數], ROUND(AVG(CAST(I.漲幅 AS FLOAT)), 2) as [平均漲幅]
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 BETWEEN 3.0 AND 10.5 -- 漲幅要在 3% 以上才算表態
+GROUP BY M.產業分類
+HAVING COUNT(DISTINCT I.代號) >= 3 -- 該產業至少 3 檔起漲才叫主流
+ORDER BY [起漲股數] DESC
+
+/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
+--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
+--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
+            },
+
+            {
+                cat: "盤中操盤", title: "🔗 族群聯動：高分低位補漲獵人", sql: `/*資料庫:stockchange*/
+I.名稱, I.代號, M.專家實戰總分, I.漲幅 as 今日漲幅, M.具體概念, M.產業分類
+FROM stockchangedate.dbo.MasterStockAnalysis M
+INNER JOIN dbo.basicinfo I ON RTRIM(M.代號) = RTRIM(I.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 BETWEEN -1 AND 1.5 -- 漲幅還沒拉開
+  AND M.專家實戰總分 > 35       -- 專家分高 (有基因)
+  AND M.產業分類 IN (
+      -- 鎖定盤中平均漲幅前 3 名的產業
+      SELECT TOP 3 M2.產業分類
+      FROM dbo.basicinfo I2
+      INNER JOIN stockchangedate.dbo.MasterStockAnalysis M2 ON RTRIM(I2.代號) = RTRIM(M2.代號)
+      WHERE M2.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+      GROUP BY M2.產業分類
+      ORDER BY AVG(I2.漲幅) DESC
+  )
+ORDER BY M.專家實戰總分 DESC
+
+/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
+--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
+--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
+            },
+            {
+                cat: "盤中操盤", title: "⚠️ 避險賣點：高分股盤中破線警示", sql: `/*資料庫:stockchange*/
+I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, A.price_ma5 as 五日線, M.專家實戰總分
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+INNER JOIN stockchangedate.dbo.allcross A ON RTRIM(I.代號) = RTRIM(A.代號) AND M.日期 = A.日期
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.成交價 < A.price_ma5 -- 關鍵：盤中價跌破 5 日線
+  AND M.專家實戰總分 > 30     -- 監控您追蹤的高分股
+ORDER BY I.漲幅 ASC
+
+/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
+--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
+--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
+            },
+
+            {
+                cat: "盤中操盤", title: "🛑 風險預警：盤中重挫標的掃描", sql: `/*資料庫:stockchange*/
+I.名稱, I.代號, I.漲幅, I.成交價, M.專家實戰總分, M.實戰標籤
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.漲幅 < -4.5 -- 單日跌幅過大，通常是主力出貨或利空
+ORDER BY I.漲幅 ASC
+
+/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
+--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
+--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
+            },
+
+
+
+            {
                 cat: "產業類選股", title: "【核心選股】2026 頂級題材 + 強勢共振", sql: `TOP 10 
     名稱, 代號, 專家實戰總分, 盤中漲幅, 具體概念, 產業價值鏈資訊
 FROM MasterStockAnalysis
@@ -102,19 +740,7 @@ FROM MasterStockAnalysis M
 WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
   AND M.具體概念 <> '無特定概念'
   AND (LEN(M.具體概念) - LEN(REPLACE(M.具體概念, '|', ''))) >= 2 -- 至少3個標籤
-ORDER BY 專家實戰總分 DESC` },
-
-            //{ cat: "產業類選股", title: "【題材疊加王】多重概念 + 高勝率回測", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-
-            //{ cat: "產業類選股", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-
-            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-
-            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-
-            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-
+ORDER BY 專家實戰總分 DESC` },        
 
 
             {
@@ -624,160 +1250,7 @@ ORDER BY   預估收盤共振 DESC, Y.昨總分 DESC
 --可以抓取共振2可能變成共振3或obv站上其五日均線--前端採集：按鍵精靈 (QuickMacro)，每 5 分鐘執行一次。
 --中台搬運：Python (Watchdog + pyodbc)，監控 C:\StockExport，自動清洗理*寶欄位並  進 SQL。
 --核心運算：View_盤中起漲黑馬獵人，實現「歷史 vs 盤中」跨庫比對，計算「新 OBV 五日均線」與「預估共振進化」。`
-            },
-
-            {
-                cat: "盤中操盤", title: "盤中起漲黑馬獵人", sql: `/*資料庫:stockchangedate*/名稱, 代號, 盤中價, 盤中漲幅, 盤中OBV, 新OBV五日均線, 昨共振, 預估收盤共振, 昨總分, 盤中狀態
-FROM              View_盤中起漲黑馬獵人
---預設條件不可更改,盤後更後不會有資料
---可以抓取共振2可能變成共振3或obv站上其五日均線
---前端採集：按鍵精靈 (QuickMacro)，每 5 分鐘執行一次。
---中台搬運：Python (Watchdog + pyodbc)，監控 C:\StockExport，自動清洗理*寶欄位 SQL。
---核心運算：View_盤中起漲黑馬獵人，實現「歷史 vs 盤中」跨庫比對，計算「新 OBV 五日均線」與「預估共振進化」。`
-            },
-
-            {
-                cat: "盤中操盤", title: "🎯 盤中主流族群偵測 (自動對齊版)", sql: `/*資料庫:stockchange*/M.產業分類, 
-       COUNT(DISTINCT I.代號) as [起漲股數], 
-       ROUND(AVG(CAST(I.漲幅 AS FLOAT)), 2) as [平均漲幅]
-FROM dbo.basicinfo I
-INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
-WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-  AND I.漲幅 BETWEEN 2.0 AND 10.5
-  AND I.總量 > 500
-GROUP BY M.產業分類
-HAVING COUNT(DISTINCT I.代號) >= 2
-ORDER BY [起漲股數] DESC`
-            },
-
-            {
-                cat: "盤中操盤", title: "🔗 族群聯動：尋找同產業補漲標的", sql: `/*資料庫:stockchange*/
- M.名稱, M.代號, M.專家實戰總分, I.漲幅 as 盤中漲幅, M.具體概念, M.產業分類
-FROM stockchangedate.dbo.MasterStockAnalysis M
-INNER JOIN dbo.basicinfo I ON M.代號 = I.代號
-WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-  AND I.漲幅 BETWEEN -1 AND 1.5 -- 還沒噴出 (漲幅微小)
-  AND M.專家實戰總分 > 30       -- 但底子好 (專家分高)
-  AND M.產業分類 IN (
-      -- 找出盤中平均漲幅大於 4% 的熱門產業
-      SELECT TOP 3 M2.產業分類
-      FROM dbo.basicinfo I2
-      INNER JOIN stockchangedate.dbo.MasterStockAnalysis M2 ON I2.代號 = M2.代號
-      WHERE M2.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-      GROUP BY M2.產業分類
-      HAVING COUNT(*) >= 2
-      ORDER BY AVG(I2.漲幅) DESC
-  )
-ORDER BY M.專家實戰總分 DESC
-/*-- 解讀：當領先股拉開空間，這些「高分低位」的同業極大機率會被資金帶動。*/`
-            },
-
-            {
-                cat: "盤中操盤", title: "⚠️ 避險警報：盤中跌破五日線", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, 
-       A.price_ma5 as 五日線, M.專家實戰總分
-FROM dbo.basicinfo I
-INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
-INNER JOIN stockchangedate.dbo.allcross A ON RTRIM(I.代號) = RTRIM(A.代號) AND M.日期 = A.日期
-WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-  AND I.成交價 < A.price_ma5
-  AND I.漲幅 < 0
-  AND M.專家實戰總分 > 30
-ORDER BY I.漲幅 ASC`
-            },
-
-            {
-                cat: "盤中操盤", title: "🛑 獲利了結：高檔回落警示", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, 
-       M.盤中現價 as 昨收價, M.專家實戰總分
-FROM dbo.basicinfo I
-INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
-WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-  AND I.漲幅 < 1.0  -- 漲幅收斂
-  AND M.專家實戰總分 > 40 -- 原本是高分股
-  AND I.成交價 < (M.盤中現價 * 1.01) -- 幾乎回到平盤
-ORDER BY M.專家實戰總分 DESC`
-            },
-
-            {
-                cat: "盤中操盤", title: "⚡ 急拉獵人：盤中爆量攻擊偵測", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.漲幅, 
-       I.總量 as 盤中量, M.盤中總量 as 昨全天量,
-       ROUND(CAST(I.總量 AS FLOAT) / NULLIF(M.盤中總量, 0), 2) as [今日量能倍數],
-       M.具體概念
-FROM dbo.basicinfo I
-INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
-WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-  AND I.總量 > M.盤中總量
-  AND I.漲幅 > 2.0
-ORDER BY [今日量能倍數] DESC`
-            },
-
-            {
-                cat: "盤中操盤", title: "🎯 盤中主流：族群強勢表態掃描", sql: `/*資料庫:stockchange*/
-M.產業分類, COUNT(DISTINCT I.代號) as [起漲股數], ROUND(AVG(CAST(I.漲幅 AS FLOAT)), 2) as [平均漲幅]
-FROM dbo.basicinfo I
-INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
-WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-  AND I.漲幅 BETWEEN 3.0 AND 10.5 -- 漲幅要在 3% 以上才算表態
-GROUP BY M.產業分類
-HAVING COUNT(DISTINCT I.代號) >= 3 -- 該產業至少 3 檔起漲才叫主流
-ORDER BY [起漲股數] DESC
-
-/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
---09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
---11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
-            },
-
-            {
-                cat: "盤中操盤", title: "🔗 族群聯動：高分低位補漲獵人", sql: `/*資料庫:stockchange*/
-I.名稱, I.代號, M.專家實戰總分, I.漲幅 as 今日漲幅, M.具體概念, M.產業分類
-FROM stockchangedate.dbo.MasterStockAnalysis M
-INNER JOIN dbo.basicinfo I ON RTRIM(M.代號) = RTRIM(I.代號)
-WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-  AND I.漲幅 BETWEEN -1 AND 1.5 -- 漲幅還沒拉開
-  AND M.專家實戰總分 > 35       -- 專家分高 (有基因)
-  AND M.產業分類 IN (
-      -- 鎖定盤中平均漲幅前 3 名的產業
-      SELECT TOP 3 M2.產業分類
-      FROM dbo.basicinfo I2
-      INNER JOIN stockchangedate.dbo.MasterStockAnalysis M2 ON RTRIM(I2.代號) = RTRIM(M2.代號)
-      WHERE M2.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-      GROUP BY M2.產業分類
-      ORDER BY AVG(I2.漲幅) DESC
-  )
-ORDER BY M.專家實戰總分 DESC
-
-/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
---09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
---11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
-            },
-            {
-                cat: "盤中操盤", title: "⚠️ 避險賣點：高分股盤中破線警示", sql: `/*資料庫:stockchange*/
-I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, A.price_ma5 as 五日線, M.專家實戰總分
-FROM dbo.basicinfo I
-INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
-INNER JOIN stockchangedate.dbo.allcross A ON RTRIM(I.代號) = RTRIM(A.代號) AND M.日期 = A.日期
-WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-  AND I.成交價 < A.price_ma5 -- 關鍵：盤中價跌破 5 日線
-  AND M.專家實戰總分 > 30     -- 監控您追蹤的高分股
-ORDER BY I.漲幅 ASC
-
-/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
---09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
---11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
-            },
-
-            {
-                cat: "盤中操盤", title: "🛑 風險預警：盤中重挫標的掃描", sql: `/*資料庫:stockchange*/
-I.名稱, I.代號, I.漲幅, I.成交價, M.專家實戰總分, M.實戰標籤
-FROM dbo.basicinfo I
-INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
-WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
-  AND I.漲幅 < -4.5 -- 單日跌幅過大，通常是主力出貨或利空
-ORDER BY I.漲幅 ASC
-
-/*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
---09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
---11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
-            },
+            },          
 
 
 
