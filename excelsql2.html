@@ -86,7 +86,7 @@
             {
                 cat: "盤中操盤", title: "盤中+obv及量能突(跌)破+共振量能總分全部", sql: `/*資料庫:stockchange*/ * FROM (
     SELECT 
-        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, 
+        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, T2.昨總分,
         T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
         T2.乖離率, T2.量倍率,
         -- 價格五日線狀態
@@ -178,7 +178,7 @@ ORDER BY
             {
                 cat: "盤中操盤", title: "昨天基因好，今天帶量剛突破，且還沒漲到噴出（乖離不過大）", sql: `/*資料庫:stockchange*/ * FROM (
     SELECT 
-        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, 
+        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, T2.昨總分,
         T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
         T2.乖離率, T2.量倍率,
         -- 價格五日線狀態
@@ -275,7 +275,7 @@ ORDER BY
             {
                 cat: "盤中操盤", title: "原本可能在盤整，但今天突然「多維度共振」跳升，且大戶明顯進場。", sql: `/*資料庫:stockchange*/ * FROM (
     SELECT 
-        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, 
+        T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, T2.昨總分,
         T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
         T2.乖離率, T2.量倍率,
         -- 價格五日線狀態
@@ -556,9 +556,82 @@ ORDER BY
 --如果您想在 Excel 裡一次看到所有好股票（不分強度），可以使用這個綜合條件：`
             },
 
-            //{
-            //    cat: "盤中操盤", title: "盤中+obv及量能突(跌)破+共振量能總分", sql: `/*資料庫:stockchange*/ `
-            //},
+            {
+                cat: "盤中操盤", title: "⚡ 盤中預警：權值三雄即時氣象站 (避崩專用)", sql: `/*資料庫:stockchange*/I.名稱 + '(' + I.代號 + ')' AS 股票,
+I.成交價 AS 盤中價,
+I.漲幅 AS 盤中漲幅,
+(CASE 
+    WHEN I.成交價 < A.price_ma5 AND I.漲幅 < -2.0 THEN N'⛈️ 災難爆發 (破五日線)'
+    WHEN I.成交價 < A.price_ma5 THEN N'🌧️ 轉雨 (均線之下)'
+    WHEN I.漲幅 > 2.0 AND I.成交價 > A.price_ma5 THEN N'☀️ 總攻中'
+    ELSE N'☁️ 盤整觀望' 
+END) AS 即時氣象,
+-- 成交值校準：假設 I.總量 為股數，除以 1 億換算為「億」；若為張數請改除以 10 萬
+CAST(CAST((I.成交價 * I.總量 / 100000.0) AS DECIMAL(18,1)) AS VARCHAR) + '億' AS 估計成交,
+(CASE 
+    WHEN I.成交價 < A.price_ma5 AND I.代號 = '2330' THEN N'⚠️ 權王破線，大盤危險！'
+    WHEN I.漲幅 < -3.0 THEN N'🚨 主力大單出脫'
+    ELSE '--' 
+END) AS 專家急電
+FROM dbo.basicinfo I
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
+INNER JOIN stockchangedate.dbo.allcross A ON RTRIM(I.代號) = RTRIM(A.代號) AND A.日期 = M.日期
+WHERE I.自動編號 IN (SELECT MAX(自動編號) FROM dbo.basicinfo WHERE 代號 IN ('2330', '2454', '2317') GROUP BY 代號)
+  AND M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+
+--  設定排程/習慣：在 09:15、10:30、13:00 各跑一次這個指令。
+--觀察「台積電」的連動：
+--台積電☀️ + 另外二雄⛈️ = 拉積盤（只有權王動，個股要小心）。
+--台積電⛈️ + 另外二雄⛈️ = 全面撤退（如 6/24 盤中的慘狀）。
+--預防 6/24 的悲劇重演：
+--回顧 6/24，台積電盤中就一路走低。這套 SQL 會在盤中不斷提醒您 「台積電破線，大盤危險！」。
+--「黃金橫盤」☀️ ☀️ ☀️：
+--如果一整橫排都是太陽，代表權值股全速前進，那是大盤最穩的噴發段。
+--「結構裂解」⛈️ ⛅ ☀️：
+--這最精彩！如果您看到台積電是 ⛈️ 暴雨，但聯發科跟鴻海是 ☀️ 晴天。
+--專家觀點：這就是「拉小護大」或「資金轉向」。外資在砍權王，但內資大戶死守另外兩雄。這時候大盤指數會跌，但個股依然有戲。
+--「全體淪陷」⛈️ ⛈️ ⛈️：`
+            },
+
+
+
+
+            {
+                cat: "盤中操盤", title: "🏆 三雄戰情儀表板：21日對照 (含名稱、億兆單位、外資共振)", sql: `M.日期,
+-- 【台積電 2330】
+MAX(CASE WHEN M.代號 = '2330' THEN (CASE WHEN M.專家實戰總分 > 30 THEN N'☀️' WHEN M.專家實戰總分 BETWEEN 10 AND 30 THEN N'⛅' WHEN M.專家實戰總分 BETWEEN 0 AND 10 THEN N'☁️' ELSE N'⛈️' END) + CAST(CAST(M.專家實戰總分 AS DECIMAL(10,1)) AS VARCHAR) END) AS [台積電2330_氣象分],
+MAX(CASE WHEN M.代號 = '2330' THEN CAST(M.盤中漲幅 AS VARCHAR) + '%' END) AS [台積電2330_漲幅],
+MAX(CASE WHEN M.代號 = '2330' THEN (CASE WHEN P.mail1 >= 1000000 THEN CAST(CAST(P.mail1/1000000.0 AS DECIMAL(10,2)) AS VARCHAR) + '兆' ELSE CAST(CAST(P.mail1/100.0 AS DECIMAL(10,1)) AS VARCHAR) + '億' END) END) AS [台積電2330_成交值],
+MAX(CASE WHEN M.代號 = '2330' THEN CAST(A.外資黃金交叉次數 AS VARCHAR) + ' / ' + CAST((ISNULL(A.obv黃金交叉次數,0) + ISNULL(A.成交價黃金交叉次數,0) + ISNULL(A.外資黃金交叉次數,0) + ISNULL(A.投信黃金交叉次數,0)) AS VARCHAR) END) AS [台積電2330_外資/總共振],
+
+-- 【聯發科 2454】
+MAX(CASE WHEN M.代號 = '2454' THEN (CASE WHEN M.專家實戰總分 > 30 THEN N'☀️' WHEN M.專家實戰總分 BETWEEN 10 AND 30 THEN N'⛅' WHEN M.專家實戰總分 BETWEEN 0 AND 10 THEN N'☁️' ELSE N'⛈️' END) + CAST(CAST(M.專家實戰總分 AS DECIMAL(10,1)) AS VARCHAR) END) AS [聯發科2454_氣象分],
+MAX(CASE WHEN M.代號 = '2454' THEN CAST(M.盤中漲幅 AS VARCHAR) + '%' END) AS [聯發科2454_漲幅],
+MAX(CASE WHEN M.代號 = '2454' THEN (CASE WHEN P.mail1 >= 1000000 THEN CAST(CAST(P.mail1/1000000.0 AS DECIMAL(10,2)) AS VARCHAR) + '兆' ELSE CAST(CAST(P.mail1/100.0 AS DECIMAL(10,1)) AS VARCHAR) + '億' END) END) AS [聯發科2454_成交值],
+MAX(CASE WHEN M.代號 = '2454' THEN CAST(A.外資黃金交叉次數 AS VARCHAR) + ' / ' + CAST((ISNULL(A.obv黃金交叉次數,0) + ISNULL(A.成交價黃金交叉次數,0) + ISNULL(A.外資黃金交叉次數,0) + ISNULL(A.投信黃金交叉次數,0)) AS VARCHAR) END) AS [聯發科2454_外資/總共振],
+
+-- 【鴻海 2317】
+MAX(CASE WHEN M.代號 = '2317' THEN (CASE WHEN M.專家實戰總分 > 30 THEN N'☀️' WHEN M.專家實戰總分 BETWEEN 10 AND 30 THEN N'⛅' WHEN M.專家實戰總分 BETWEEN 0 AND 10 THEN N'☁️' ELSE N'⛈️' END) + CAST(CAST(M.專家實戰總分 AS DECIMAL(10,1)) AS VARCHAR) END) AS [鴻海2317_氣象分],
+MAX(CASE WHEN M.代號 = '2317' THEN CAST(M.盤中漲幅 AS VARCHAR) + '%' END) AS [鴻海2317_漲幅],
+MAX(CASE WHEN M.代號 = '2317' THEN (CASE WHEN P.mail1 >= 1000000 THEN CAST(CAST(P.mail1/1000000.0 AS DECIMAL(10,2)) AS VARCHAR) + '兆' ELSE CAST(CAST(P.mail1/100.0 AS DECIMAL(10,1)) AS VARCHAR) + '億' END) END) AS [鴻海2317_成交值],
+MAX(CASE WHEN M.代號 = '2317' THEN CAST(A.外資黃金交叉次數 AS VARCHAR) + ' / ' + CAST((ISNULL(A.obv黃金交叉次數,0) + ISNULL(A.成交價黃金交叉次數,0) + ISNULL(A.外資黃金交叉次數,0) + ISNULL(A.投信黃金交叉次數,0)) AS VARCHAR) END) AS [鴻海2317_外資/總共振]
+
+FROM [stockchangedate].[dbo].[MasterStockAnalysis] M
+LEFT JOIN [poem1_stock7].[dbo].[poem] P ON M.代號 = RIGHT(RTRIM(P.name1), 4) AND M.日期 = P.時間戳記
+LEFT JOIN [stockchangedate].[dbo].[allcross] A ON M.代號 = A.代號 AND M.日期 = A.日期
+WHERE M.代號 IN ('2330', '2454', '2317')
+  AND M.日期 IN (SELECT DISTINCT TOP 21 日期 FROM [stockchangedate].[dbo].[MasterStockAnalysis] ORDER BY 日期 DESC)
+GROUP BY M.日期
+ORDER BY M.日期 DESC
+
+--氣象分 (☀️/⛈️)：
+--最直觀的「體質判斷」。☀️ 代表 AI 覺得現在是主升段；⛈️ 代表 AI 建議快跑。-
+--為了節省空間，我將金額除以 1000 並標註為 G (Billions/十億)。例如 162.5G 代表當天成交了 1625 億。這能讓您一眼看出誰是當天的「吸金王」。
+--外資 / 總共振 (例如 3 / 8)：
+--左邊數字：外資黃金交叉次數（看外資臉色）。
+--右邊數字：四維總共振強度（OBV+價+外資+投信）。
+--專家密技：如果「外資/總共振」出現 6 / 15 這種高比值，代表外資正在瘋狂回補。 `
+            },
 
 
 
@@ -976,11 +1049,70 @@ ORDER BY P.最高勝率 DESC
 --用途：針對台積電這類股票，找回測勝率高且現在位階還在低檔的。` },
 
             {
-                cat: "回測+回報+勝率", title: "找全市場勝率 > 80% 且預期報酬 > 5% 的黃金名單", sql: ` * 
+                cat: "回測+回報+勝率", title: "🔥 找全市場勝率 > 80% 且預期報酬 > 5% 的黃金名單", sql: ` * 
 FROM StockPersonality 
 WHERE 最高勝率 > 80 AND 預期報酬 > 5
 ORDER BY 預期報酬 DESC;`
             },
+
+            {
+                cat: "專家組合", title: "🌡️ 大盤溫度計：成交值+實戰標籤家+具體概念", sql: `/*資料庫:stockchangedate*/
+P.時間戳記,
+    MAX(B.上市1上櫃2) AS 上市1上櫃2,
+    LEFT(RTRIM(P.name1), LEN(RTRIM(P.name1)) - 4) AS 股票名稱,
+    RIGHT(RTRIM(P.name1), 4) AS 股票代號,
+    MAX(CAST(P.mail1 AS FLOAT)) AS 成交金額_百萬,
+    MAX(P.word1) AS 排名描述,
+    MAX(M.專家實戰總分) AS 專家實戰總分,
+    MAX(M.實戰標籤) AS 實戰標籤,
+    MAX(M.具體概念) AS 具體概念,
+    MAX(M.產業分類) AS 產業分類
+FROM
+    poem1_stock7.dbo.poem AS P
+INNER JOIN
+    basicinfo AS B ON RIGHT(RTRIM(P.name1), 4) = RTRIM(B.代號)
+INNER JOIN
+   MasterStockAnalysis AS M ON RIGHT(RTRIM(P.name1), 4) = RTRIM(M.代號) AND P.時間戳記 = M.日期
+WHERE
+    P.時間戳記 = (SELECT MAX(時間戳記) FROM poem1_stock7.dbo.poem)
+GROUP BY
+    P.時間戳記, P.name1 -- 關鍵：針對日期與股票名稱進行群組，強制合併重複列
+ORDER BY
+    成交金額_百萬 DESC;`
+            },
+
+            {
+                cat: "專家組合",
+                title: "📈 個股資金與專家分數 (手動換代號)",
+                sql: `TOP 60 P.時間戳記,P.name1 as 名稱代號, P.mail1 AS [個股成交額_百萬], M.專家實戰總分, M.盤中漲幅, P.word1 AS [今日排名動態] 
+FROM [poem1_stock7].[dbo].[poem] P 
+INNER JOIN [stockchangedate].[dbo].[MasterStockAnalysis] M 
+ON RIGHT(RTRIM(P.name1), 4) = RTRIM(M.代號) AND P.時間戳記 = M.日期 
+WHERE M.代號 = '2330' 
+ORDER BY P.時間戳記 DESC`
+            },
+            {
+                cat: "專家組合",
+                title: "📈 個股資金與專家分數最新日",
+                sql: `TOP 60 P.時間戳記,p.name1, P.mail1 AS [個股成交額_百萬], M.專家實戰總分, M.盤中漲幅, P.word1 AS [今日排名動態] 
+FROM [poem1_stock7].[dbo].[poem] P 
+INNER JOIN [stockchangedate].[dbo].[MasterStockAnalysis] M 
+ON RIGHT(RTRIM(P.name1), 4) = RTRIM(M.代號) AND P.時間戳記 = M.日期 
+WHERE M.日期 = (select max(日期) from [stockchangedate].[dbo].[MasterStockAnalysis])
+ORDER BY P.mail1 DESC`
+            },
+
+            {
+                cat: "專家組合", title: "🏆 金牌基因：歷史勝率 100% 且今日剛發訊", sql: `/*資料庫:stockchangedate*/
+M.名稱, M.代號, M.專家實戰總分, P.最佳天數, P.最高勝率, P.預期報酬, P.股性標籤, M.具體概念
+FROM MasterStockAnalysis M
+INNER JOIN StockPersonality P ON M.代號 = P.代號
+WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+  AND M.專家實戰總分 > 30
+  AND P.最高勝率 = 100
+ORDER BY P.預期報酬 DESC`
+            },          
+
 
 
             {
@@ -2686,7 +2818,7 @@ FOR JSON PATH` },
                         <option value="wordvoice">wordvoice</option>
                         <option value="favor1">favor1</option>
                         <option value="favor3">favor3</option>
-
+                        <option value="poem1_stock7">poem1_stock7</option>
                     </select>
                 </div>
                 <!--<div class="col-sm-3">
