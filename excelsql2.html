@@ -83,6 +83,223 @@
         // --- 範本資料庫 ---
         const sqlTemplateLibrary = [
 
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            {
+                cat: "【主力監控】", title: "🚩 AI 精銳雷達 (自選 26-29 綜合看板)", sql: `/*資料庫:stockchangedate*/
+* FROM View_AI_Elite_Radar
+ORDER BY [分組] ASC, [日線分] DESC
+
+/*用途： 監控 26 區 (目標)、27 區 (大資金)、28 區 (100%勝率)、29 區 (伏兵)。
+🚩先執行 sp_RefreshAIWatchlist 自動更新三區自選股名單,View_AllMyWatchlists 所有自選股名單
+WHEN S.OSC > 0 AND S.K > S.D THEN N'🟢 ☀️ 轉強'
+WHEN S.OSC < 0 AND S.K > S.D THEN N'🟡 ☁️ 止跌'
+ELSE N'🔴 ⛈️ 修正'
+*/` }, 
+
+            {
+                cat: "【主力監控】", title: "🚩 AI 精銳雷達 (自選 26-29 綜合看板) 最新行情", sql: `/*資料庫:stockchangedate*/
+V.名稱, 
+V.代號, 
+MAX(B.成交價) AS [盤中價], 
+MAX(B.漲幅) AS [今日漲幅%], 
+MAX(B.總量) AS [盤中總量],
+MAX(CAST(M.專家實戰總分 AS DECIMAL(10,2))) AS [昨日分],
+MAX(M.實戰標籤) AS [實戰標籤],
+MAX(V.equityinfo) AS [操作筆記], -- 重複時取其中一個筆記顯示
+MAX(P.最高勝率) AS [勝率%],
+MAX(P.最佳天數) AS [抱幾天],
+MAX(CASE 
+    WHEN B.成交價 > A.price_ma5 THEN N'🟢☀️ 站上5日'
+    WHEN B.成交價 < A.price_ma5 THEN N'🔴⛈️ 跌破5日'
+    ELSE N'🟡偏弱' 
+END) AS [即時動能],
+MAX(CASE 
+    WHEN B.成交價 > A.price_ma5 AND M.專家實戰總分 BETWEEN 5 AND 30 THEN N'🔔伏兵異動，請按F10搬移60M'
+    WHEN B.成交價 < A.price_ma5 AND M.專家實戰總分 > 30 THEN N'⚠️警報！高分股跌破5日線'
+    ELSE '' 
+END) AS [VoiceScript],
+MAX(M.具體概念) AS [具體概念]
+FROM View_AllMyWatchlists AS V
+-- 1. 關聯盤中即時表
+INNER JOIN [stockchange].[dbo].[basicinfo] AS B ON RTRIM(V.代號) = RTRIM(B.代號)
+-- 2. 關聯歷史大寬表
+INNER JOIN [dbo].[MasterStockAnalysis] AS M ON RTRIM(V.代號) = RTRIM(M.代號) 
+-- 3. 關聯股性 DNA 表
+INNER JOIN [dbo].[StockPersonality] AS P ON RTRIM(V.代號) = RTRIM(P.代號)
+-- 4. 關聯昨日均線
+INNER JOIN [dbo].[allcross] AS A ON RTRIM(V.代號) = RTRIM(A.代號) AND A.日期 = M.日期
+WHERE V.來源標籤 IN ('自選股26','自選股27','自選股28','自選股29')
+  AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+  AND B.自動編號 IN (SELECT MAX(自動編號) FROM [stockchange].[dbo].[basicinfo] GROUP BY 代號)
+GROUP BY V.代號, V.名稱 -- 關鍵修正點：按代號群組，移除重複行
+ORDER BY [昨日分] DESC
+
+--先搬運basicinfo後才有最新數據,IN ('自選股26','自選股27','自選股28','自選股29')可調整所需要的自選股
+` },
+
+            {
+                cat: "盤中60M", title: "「🛰️ 三雄全時空導航儀 (60M技術+法人籌碼)」", sql: `/*資料庫:stockchangedate*/S.名稱, 
+S.代號, 
+S.日期 AS [今日日期],
+S.時間 AS [最後小時],
+S.收盤價 AS [盤中價],
+S.OSC AS [今日60M力道],
+S.K AS [今日60M_K],
+-- 將標題修正為「昨收」，反映真實數據來源
+V.外資 AS [昨收外資_億],
+V.投信 AS [昨收投信_億],
+V.外資3日合計 AS [外資3日金額],
+N.外資10日合計 AS [外資10日張數],
+
+-- 核心診斷邏輯：利用「昨日籌碼」驗證「今日小時轉折」
+(CASE 
+    WHEN V.外資 > 0 AND V.投信 > 0 AND S.OSC > 0 AND S.K > S.D THEN N'☀️ 土洋金身：昨日大買+今日小時反攻'
+    WHEN V.外資 > 0 AND S.OSC > 0 THEN N'🌤️ 昨買今發：外資昨日護盤，今日小時翻多'
+    WHEN V.外資 < 0 AND S.OSC > 0 THEN N'🔄 跌深反彈：法人昨日提款，今日僅短線反彈'
+    WHEN N.外資10日合計 < 0 AND S.收盤價 < S.SMA20 THEN N'⛈️ 趨勢走空：長線提款+小時破位'
+    ELSE N'☁️ 盤整觀察' 
+END) AS [戰情診斷]
+
+FROM (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn
+    FROM [stockchange].[dbo].[Stock60M]
+) AS S
+INNER JOIN [stockchangedate].[dbo].[threemastervalue] V 
+    ON RTRIM(S.代號) = RTRIM(V.代號) 
+    AND V.日期 = (SELECT MAX(日期) FROM [stockchangedate].[dbo].[threemastervalue])
+INNER JOIN [stockchangedate].[dbo].[threemasternumber] N 
+    ON RTRIM(S.代號) = RTRIM(N.代號) 
+    AND N.日期 = V.日期
+WHERE S.rn = 1 
+  AND S.代號 IN ('2330', '2454', '2317')
+ORDER BY S.OSC DESC
+
+/*核心邏輯： 當法人在日線級別「大買（金額）」且「持續（10日合計張數）」，而 60M 小時線正好出現「OSC 翻正」或「KD 低檔金叉」，這就是您勝率最高的**「大戶順風車」**進場點。
+🚀 專家實戰建議：
+盤中 (13:30 前)：使用這個「昨收法人」對齊「今日 60M」的指令，判斷昨日大戶的態度在今天是否有延續性。
+盤後 (16:00 後)：等您搬運完今日（6/30）最新的法人買賣超數據後，再執行一次。屆時，「昨收外資」就會變成「今日外資」，戰情診斷會切換到下一個循環。
+*/` },
+
+
+            {
+                cat: "盤中60M", title: "「🎭 龍頭陷阱偵測儀 (避開法人誘多盤)」", sql: `/*資料庫:stockchangedate*/
+S.名稱, 
+S.代號, 
+S.時間 AS [最後小時],
+S.收盤價 AS [盤中價],
+S.SMA20 AS [60M生命線], -- 使用 60M 生命線作為防禦基準
+N.外資10日合計 AS [外資10日累計張數],
+S.OSC AS [60M動能],
+-- 診斷邏輯：偵測長線撤退與短線破位的死亡組合
+(CASE 
+    -- 情況 1：外資長線大撤退 + 小時線跌破生命線 = 崩盤預警
+    WHEN N.外資10日合計 < -1000 AND S.收盤價 < S.SMA20 THEN N'💀 崩盤預警：法人提款+破生命線'
+    
+    -- 情況 2：外資長線撤退 + 盤中漲卻動能轉弱 = 假面反彈 (誘多)
+    WHEN N.外資10日合計 < 0 AND S.OSC < 0 THEN N'🎭 假面反彈：大戶出貨中，切勿追高'
+    
+    -- 情況 3：股價在生命線下掙扎
+    WHEN S.收盤價 < S.SMA20 THEN N'🌧️ 小時轉弱：靜待止跌'
+    
+    ELSE N'✅ 結構安全'
+END) AS [陷阱診斷],
+-- 計算與生命線的距離
+ROUND(((S.收盤價 - S.SMA20) / S.SMA20) * 100, 2) AS [距生命線%]
+
+FROM (
+    -- 抓取 60M 最後一跳
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn
+    FROM [stockchange].[dbo].[Stock60M]
+) AS S
+-- 關聯法人10日累計數據 (昨日結算值)
+INNER JOIN [stockchangedate].[dbo].[threemasternumber] N 
+    ON RTRIM(S.代號) = RTRIM(N.代號) 
+    AND N.日期 = (SELECT MAX(日期) FROM [stockchangedate].[dbo].[threemasternumber])
+WHERE S.rn = 1 
+  AND S.代號 IN ('2330', '2454', '2317')
+ORDER BY [外資10日累計張數] ASC
+
+/*這是一個極具防禦價值的實戰戰術。在操盤上，最怕的就是看到紅K就想追，結果進場後才發現是法人趁反彈大舉倒貨。
+這套 【大戶假面偵測】 系統，核心功能就是**「拆穿法人的假面具」**：利用日線級別的「外資10日總體態度」來對抗 60M 的「短線誘多」。
+🛡️ 什麼是「真反轉」？
+只有當 外資10日累計 開始由負轉正（或賣壓連續三天大幅縮小），且 60M 價格成功站回 SMA20 且 OSC > 0。這時，我們才會把「假面具」標籤移除，轉為「金身重啟」。
+
+*/` },
+
+
+            {
+                cat: "盤中60M", title: "三雄盤中紅綠燈預警系統", sql: `/*資料庫:stockchangedate*/
+    S.名稱, 
+    S.代號,
+    -- 1. 視覺燈號 (DataTables 顯示用)
+    (CASE 
+        WHEN S.OSC > 0 AND S.收盤價 > S.SMA20 THEN N'🟢 綠燈 (安全)'
+        WHEN S.OSC > 0 AND S.收盤價 < S.SMA20 THEN N'🟡 黃燈 (陷阱)'
+        ELSE N'🔴 紅燈 (修正)' 
+    END) AS [目前燈號],
+
+    -- 2. 語音警報 (包含燈號朗讀)
+    (CASE 
+        WHEN S.OSC > 0 AND S.收盤價 > S.SMA20 
+            THEN N'綠燈！' + S.名稱 + N'小時線翻正並站上生命線，結構安全，多頭進攻。'
+        WHEN S.OSC > 0 AND S.收盤價 < S.SMA20 
+            THEN N'黃燈警告！' + S.名稱 + N'目前為假面反彈，雖然動能翻正但仍低於生命線，大戶持續出貨中，請勿追高。'
+        WHEN N.外資10日合計 < -50000 AND S.收盤價 < S.SMA20 
+            THEN N'紅燈大警報！' + S.名稱 + N'偵測到崩盤預警，外資大舉提款且股價破位，請立即執行避險。'
+        ELSE N'紅燈！' + S.名稱 + N'目前處於空頭修正，動能低迷。'
+    END) AS [語音警報內容],
+
+    S.收盤價 AS [盤中價],
+    S.SMA20 AS [60M生命線],
+    ROUND(((S.收盤價 - S.SMA20) / S.SMA20) * 100, 2) AS [距生命線%],
+    N.外資10日合計 AS [外資10日趨勢]
+
+FROM (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn
+    FROM [stockchange].[dbo].[Stock60M]
+) AS S
+INNER JOIN [stockchangedate].[dbo].[threemasternumber] N 
+    ON RTRIM(S.代號) = RTRIM(N.代號) AND N.日期 = (SELECT MAX(日期) FROM [stockchangedate].[dbo].[threemasternumber])
+WHERE S.rn = 1 AND S.代號 IN ('2330', '2454', '2317')
+ORDER BY [目前燈號] ASC -- 讓紅燈跟黃燈排在最前面` },
+
+
+            {
+                cat: "凱利金流導航儀", title: "「💰 凱利金流導航儀：最佳投入比例與持股期」", sql: `/*資料庫:stockchangedate*/
+M.名稱, 
+M.代號, 
+M.專家實戰總分 AS [今日得分],
+P.股性標籤,
+P.最佳天數 AS [建議持有天數],
+P.最高勝率 AS [歷史勝率%],
+P.預期報酬 AS [贏面%],
+
+-- 凱利公式計算 (假設 5% 固定停損)
+-- F = (B*P - Q) / B
+-- B = 預期報酬 / 5, P = 勝率/100, Q = 1 - P
+CAST(
+    (( (P.預期報酬/5.0) * (P.最高勝率/100.0) - (1 - P.最高勝率/100.0) ) / (NULLIF(P.預期報酬/5.0, 0))) * 100 
+AS DECIMAL(10,1)) AS [凱利全倉比例%],
+
+-- 半凱利建議 (更穩健)
+CAST(
+    (( (P.預期報酬/5.0) * (P.最高勝率/100.0) - (1 - P.最高勝率/100.0) ) / (NULLIF(P.預期報酬/5.0, 0))) * 50 
+AS DECIMAL(10,1)) AS [半凱利建議投組%],
+
+M.具體概念
+FROM MasterStockAnalysis M
+INNER JOIN StockPersonality P ON M.代號 = P.代號
+WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+  AND M.專家實戰總分 > 30 -- 買入時間判定：總分 > 30
+  AND P.最高勝率 > 55    -- 凱利公式前提：勝率必須大於一定門檻才有正期望值
+ORDER BY [半凱利建議投組%] DESC
+
+/*這是一個非常高階的量化交易思維！將「凱利公式（Kelly Criterion）」引入您的「數據坦克」，等於是為您的戰情室裝上了**「自動金流控盤大腦」**。
+在股票實戰中，凱利公式能解決最難的兩個問題：「這檔該買多少？」以及「如何避免一次大賠就畢業？」
+以下我將凱利公式與您的 StockPersonality（股性基因）與 MasterStockAnalysis（專家分數）結合，為您開發出一套 「凱利金流導航系統」。*/` },
+
+
             {
                 cat: "盤中操盤", title: "盤中+obv及量能突(跌)破+共振量能總分全部", sql: `/*資料庫:stockchange*/ * FROM (
     SELECT 
@@ -2846,7 +3063,7 @@ FOR JSON PATH` },
                 $("#resultTable").append(thead + tbody);
                 dataTableInstance = $('#resultTable').DataTable({
                     "language": { "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" },
-                    "pageLength": 20, // 預設一頁 50 筆
+                    "pageLength": 100, // 預設一頁 50 筆
                     "order": [],      // 預設不排序，由 SQL 控制
                     "searching": true, // 開啟關鍵字搜尋
                     "ordering": true,  // 開啟點擊表頭排序
