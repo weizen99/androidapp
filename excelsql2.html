@@ -84,7 +84,91 @@
         const sqlTemplateLibrary = [
 
             //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+           
+            {
+                cat: "股權分散表", title: "每週五全市場籌碼大體檢", sql: `TOP (100) WeeklyChipAudit.代號, WeeklyChipAudit.名稱, MasterStockAnalysis.盤中現價, 
+                            MasterStockAnalysis.盤中總量, MasterStockAnalysis.專家實戰總分, WeeklyChipAudit.籌碼健康分, 
+                            WeeklyChipAudit.診斷狀態, WeeklyChipAudit.[散戶變動%], WeeklyChipAudit.[特大戶變動%], 
+                            WeeklyChipAudit.[中實戶變動%], WeeklyChipAudit.是否為金牌股, MasterStockAnalysis.股本億, 
+                            WeeklyChipAudit.更新日期, MasterStockAnalysis.實戰標籤, MasterStockAnalysis.具體概念
+FROM              WeeklyChipAudit INNER JOIN
+                            MasterStockAnalysis ON WeeklyChipAudit.代號 = MasterStockAnalysis.代號 AND 
+                            WeeklyChipAudit.更新日期 = MasterStockAnalysis.日期
+ORDER BY   WeeklyChipAudit.[中實戶變動%] DESC, WeeklyChipAudit.籌碼健康分 DESC
+
+/* -- 評分邏輯 (基礎 60 分)  特大戶變動 > 0 THEN 15 ELSE -10 END) + (CASE WHEN C.散戶變動 < 0 THEN 15 ELSE -10 END) +  + (CASE WHEN C.中實戶變動 > 5 THEN 10 ELSE 0 END)) AS 籌碼健康分
+WHEN C.特大戶變動 > 2 AND C.散戶變動 < -2 THEN N'💎 籌碼金身：大戶強吸散戶退'
+WHEN C.特大戶變動 > 0 AND C.中實戶變動 > 5 THEN N'🔥 內資接棒：中實戶湧入'
+WHEN C.散戶變動 > 5 AND C.特大戶變動 < 0 THEN N'⚠️ 籌碼潰散：散戶接刀中'
+ELSE N'☁️ 橫盤整理'
+(CASE WHEN P.最高勝率 >= 80 THEN 1 ELSE 0 END) AS 是否為金牌股
+*/` },
+
+            { cat: "股權分散表", title: "全市場任兩期籌碼對比工具", sql: `EXEC [sp_CompareChipPeriods] 20260529, 20260703` },
+
+
+            {
+                cat: "體質、動能、基因、與凱利建議", title: "【AI 坦克全功能控制台】", sql: ` /*資料庫:stockchangedate*/ F.名稱, F.代號, 
+    M.專家實戰總分 AS [昨日分],
+    S.OSC AS [60M動能],
+    F.財務信評, 
+    F.內外盤比, 
+    P.最高勝率,
+    P.最佳天數 AS [建議抱幾天],
+    -- 凱利公式自動修正：如果財務信評優良 (<=3)，凱利比例維持；若信評差 (>=7)，比例減半
+    CAST(
+        (((P.預期報酬/5.0)*(P.最高勝率/100.0)-(1-P.最高勝率/100.0))/(NULLIF(P.預期報酬/5.0,0))) * 
+        (CASE WHEN F.財務信評 <= 3 THEN 50 ELSE 25 END) 
+    AS DECIMAL(10,1)) AS [建議本金%],
+    F.產業地位
+FROM StockFundamental F
+LEFT JOIN MasterStockAnalysis M ON F.代號 = M.代號 AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+LEFT JOIN StockPersonality P ON F.代號 = P.代號
+LEFT JOIN (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn
+    FROM [stockchange].[dbo].[Stock60M]
+) S ON F.代號 = S.代號 AND S.rn = 1
+WHERE F.代號 IN ('2330', '2454', '2317', '2327') -- 或直接指向您的自選股清單
+ORDER BY F.財務信評 ASC, S.OSC DESC
+
+--選特定自選股  IN (SELECT 代號 FROM  incomechar26)
+` },
+
+            {
+                cat: "類戰略綜合評價", title: "全維度精銳戰情看板", sql: ` /*資料庫:stockchangedate*/  F.名稱, F.代號, 
+    I.漲幅 AS [今日漲幅%],
+    M.專家實戰總分 AS [日線分],
+    S.OSC AS [60M動能],
+    F.財務信評, 
+    F.內外盤比, 
+    F.產業地位,
+    -- 戰略綜合評價
+    (CASE 
+        WHEN F.財務信評 <= 3 AND S.OSC > 0 AND I.漲幅 > 0 THEN N'💎 核心配置 (優質龍頭起漲)'
+        WHEN F.產業地位 LIKE N'%龍頭%' AND S.OSC > 0 THEN N'👑 權威反攻'
+        WHEN F.內外盤比 > 0.5 AND S.OSC > 0 THEN N'🔥 資金強攻'
+        ELSE N'☁️ 觀察待命'
+    END) AS [戰略評價],
+    F.營業焦點
+FROM [StockFundamental] F
+INNER JOIN [stockchange].[dbo].[basicinfo] I ON F.代號 = I.代號
+LEFT JOIN [dbo].[MasterStockAnalysis] M ON F.代號 = M.代號 AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+LEFT JOIN (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn
+    FROM [stockchange].[dbo].[Stock60M]
+) S ON F.代號 = S.代號 AND S.rn = 1
+WHERE I.自動編號 IN (SELECT MAX(自動編號) FROM [stockchange].[dbo].[basicinfo] GROUP BY 代號)
+  AND F.代號 IN ('2330', '2454', '2317', '2327') -- 這裡可擴張為您的自選股 26
+ORDER BY S.OSC DESC
+
+--「日線體質」、「小時動能」與「基本面」合三為一，成為您下週一開盤的主控畫面。
+----選特定自選股  IN (SELECT 代號 FROM  incomechar26)
+` },
+
+
             {
                 cat: "【主力監控】", title: "🚩 AI 精銳雷達 (自選 26-29 綜合看板)", sql: `/*資料庫:stockchangedate*/
 * FROM View_AI_Elite_Radar
