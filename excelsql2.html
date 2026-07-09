@@ -88,21 +88,21 @@
 
             {
                 cat: "扣抵值及kd共振", title: "日/週 全維度扣抵窗口雷達 (V4.0)", sql: `/*資料庫:stockchangedate*/
-T.名稱, T.代號, T.盤中現價,
+T.名稱, T.代號, T.成交價 as 盤中成交價,T.漲幅 as 盤中漲幅,T.總量 as 盤中總量,T.盤中現價 as 昨成交價,
 -- --- 日線 MA5 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
-'P:' + CAST(CAST(T.D_P1 AS DECIMAL(10,1)) AS VARCHAR) + 
-' >【' + CAST(CAST(T.D_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' + 
-CAST(CAST(T.D_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' + 
+'P:' + CAST(CAST(T.D_P1 AS DECIMAL(10,1)) AS VARCHAR) +
+' >【' + CAST(CAST(T.D_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+CAST(CAST(T.D_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
 CAST(CAST(T.D_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [日MA5扣抵窗口],
 
 -- --- 週線 MA60 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
-'P:' + CAST(CAST(T.W_P1 AS DECIMAL(10,1)) AS VARCHAR) + 
-' >【' + CAST(CAST(T.W_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' + 
-CAST(CAST(T.W_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' + 
+'P:' + CAST(CAST(T.W_P1 AS DECIMAL(10,1)) AS VARCHAR) +
+' >【' + CAST(CAST(T.W_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+CAST(CAST(T.W_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
 CAST(CAST(T.W_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [週MA60扣抵窗口],
 
 -- --- 戰略診斷 ---
-(CASE 
+(CASE
     WHEN T.盤中現價 > V.W_Max THEN N'🟢☀️ 脫離引力 (全數過關)'
     WHEN T.盤中現價 * 1.05 > V.W_Max THEN N'🟡⚡ 準備翻轉 (5%過關)'
     WHEN T.W_N > T.W_X2 THEN N'🌤️ 壓力遞減 (扣抵將大降)'
@@ -115,9 +115,8 @@ T.具體概念
 
 FROM (
     -- 第一層：先算出所有 LAG 指標 (解決 4108 錯誤)
-    SELECT 
-        M.名稱, M.代號, M.盤中現價, M.日期, M.具體概念,
-        M.k9, M.d9, M.週k9, M.週d9, M.月k9, M.月d9,
+    SELECT
+        M.名稱, M.代號,b.成交價,b.漲幅,b.總量, M.盤中現價, M.日期, M.具體概念,
         -- 日扣抵窗口
         LAG(M.盤中現價, 6) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_P1,
         LAG(M.盤中現價, 5) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_N,
@@ -134,6 +133,7 @@ FROM (
         ' 月:' + (CASE WHEN M.月k9 > M.月d9 THEN N'🔼' ELSE N'🔻' END) AS [KD同步率]
     FROM MasterStockAnalysis M
     INNER JOIN StockPersonality P ON RTRIM(M.代號) = RTRIM(P.代號)
+    INNER JOIN stockchange.dbo.basicinfo as B ON RTRIM(M.代號) = RTRIM(B.代號)
     WHERE P.最高勝率 >= 80 -- 鎖定金牌 124 檔
 ) AS T
 -- 第二層：計算窗口最大值 (此時數據已是純數值)
@@ -142,6 +142,73 @@ CROSS APPLY (
 ) AS V
 WHERE T.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
 ORDER BY T.盤中現價 / NULLIF(T.W_N, 0) DESC
+
+/*如何利用這份報表「預知未來」？可套用到任何股票進行快速檢查
+看 [日MA5扣抵窗口]：如果未來兩位數字（後1、後2）比現在小很多，代表後天日線 MA5 會強勢翻揚。
+看 [週MA60扣抵窗口]：如果未來數字變小，代表一年前的大戶套牢區已經過去。這就是大波段主升段的啟航點。
+週抗壓比 > 1.0：代表一年前買的人全部賺錢。
+週抗壓比 = 1.65：代表一年前買的人已經賺了 65%。
+這代表股價往上拉抬時，「完全沒有解套賣壓」，只有獲利了結的賣壓
+週抗壓比:A. 長線趨勢的「助漲力道」均線的斜率是由「現價」與「扣抵價」的差距決定的。B. 徹底「脫離引力」C. 「無人套牢」
+ */` },
+
+            {
+                cat: "扣抵值及kd共振", title: "202606營收創新高公司，累計122家(至7/8止)", sql: `/*資料庫:stockchangedate*/
+T.名稱, T.代號, T.成交價 as 盤中成交價,T.漲幅 as 盤中漲幅,T.總量 as 盤中總量,T.盤中現價 as 昨成交價,T.專家實戰總分,
+-- --- 日線 MA5 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
+'P:' + CAST(CAST(T.D_P1 AS DECIMAL(10,1)) AS VARCHAR) +
+' >【' + CAST(CAST(T.D_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+CAST(CAST(T.D_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
+CAST(CAST(T.D_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [日MA5扣抵窗口],
+
+-- --- 週線 MA60 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
+'P:' + CAST(CAST(T.W_P1 AS DECIMAL(10,1)) AS VARCHAR) +
+' >【' + CAST(CAST(T.W_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+CAST(CAST(T.W_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
+CAST(CAST(T.W_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [週MA60扣抵窗口],
+
+-- --- 戰略診斷 ---
+(CASE
+    WHEN T.盤中現價 > V.W_Max THEN N'🟢☀️ 脫離引力 (全數過關)'
+    WHEN T.盤中現價 * 1.05 > V.W_Max THEN N'🟡⚡ 準備翻轉 (5%過關)'
+    WHEN T.W_N > T.W_X2 THEN N'🌤️ 壓力遞減 (扣抵將大降)'
+    ELSE N'🔴⛈️ 扣高重壓'
+END) AS [長線戰略狀態],
+
+T.[KD同步率],
+ROUND(T.盤中現價 / NULLIF(T.W_N, 0), 2) AS [週抗壓比],
+T.具體概念
+
+FROM (
+    -- 第一層：先算出所有 LAG 指標 (解決 4108 錯誤)
+    SELECT
+        M.名稱, M.代號,b.成交價,b.漲幅,b.總量, M.盤中現價, M.日期, M.具體概念,M.專家實戰總分,
+        -- 日扣抵窗口
+        LAG(M.盤中現價, 6) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_P1,
+        LAG(M.盤中現價, 5) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_N,
+        LAG(M.盤中現價, 4) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_X1,
+        LAG(M.盤中現價, 3) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_X2,
+        -- 週扣抵窗口
+        LAG(M.盤中現價, 301) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS W_P1,
+        LAG(M.盤中現價, 300) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS W_N,
+        LAG(M.盤中現價, 299) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS W_X1,
+        LAG(M.盤中現價, 298) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS W_X2,
+        -- KD 同步狀態
+        '日:' + (CASE WHEN M.k9 > M.d9 THEN N'🔼' ELSE N'🔻' END) +
+        ' 週:' + (CASE WHEN M.週k9 > M.週d9 THEN N'🔼' ELSE N'🔻' END) +
+        ' 月:' + (CASE WHEN M.月k9 > M.月d9 THEN N'🔼' ELSE N'🔻' END) AS [KD同步率]
+    FROM MasterStockAnalysis M
+    LEFT JOIN StockPersonality P ON RTRIM(M.代號) = RTRIM(P.代號)
+    INNER JOIN stockchange.dbo.basicinfo as B ON RTRIM(M.代號) = RTRIM(B.代號)
+    WHERE  (M.代號 IN (SELECT 代號 FROM  incomechar20))
+) AS T
+-- 第二層：計算窗口最大值 (此時數據已是純數值)
+CROSS APPLY (
+    SELECT MAX(val) as W_Max FROM (VALUES (T.W_N), (T.W_X1), (T.W_X2)) AS VT(val)
+) AS V
+WHERE T.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+ORDER BY T.盤中現價 / NULLIF(T.W_N, 0) DESC
+
 /*如何利用這份報表「預知未來」？可套用到任何股票進行快速檢查
 看 [日MA5扣抵窗口]：如果未來兩位數字（後1、後2）比現在小很多，代表後天日線 MA5 會強勢翻揚。
 看 [週MA60扣抵窗口]：如果未來數字變小，代表一年前的大戶套牢區已經過去。這就是大波段主升段的啟航點。
@@ -178,7 +245,7 @@ ORDER BY [量加速度] DESC
 --不同特性的「狙擊目標」，這完全體現了我們第二套方法的**「領先預判」**價值
 ` },
             {
-                cat: "剛突破起漲", title: "OBV純日線級別的高頻監控", sql: `W.名稱, W.代號,B.成交價,B.漲幅,B.總量,round(A.obv淨額,0) as obv淨額,round(A.obv_ma5,0) as [obv五日均線],round(A.obv_ma34,0) as [obv34日均線],
+                cat: "剛突破起漲", title: "OBV純日線級別的高頻監控", sql: `W.名稱, W.代號,B.成交價 as 盤中成交價,B.漲幅,B.總量,round(A.obv淨額,0) as obv淨額,round(A.obv_ma5,0) as [obv五日均線],round(A.obv_ma34,0) as [obv34日均線],
     M.專家實戰總分 AS [日線分],
     A.obv黃金交叉次數 AS [OBV金叉],
     -- 用日線 KD 與 MACD 判定即時氣象
