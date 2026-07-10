@@ -88,60 +88,67 @@
 
             {
                 cat: "扣抵值及kd共振", title: "日/週 全維度扣抵窗口雷達 (V4.0)", sql: `/*資料庫:stockchangedate*/
-T.名稱, T.代號, T.成交價 as 盤中成交價,T.漲幅 as 盤中漲幅,T.總量 as 盤中總量,T.盤中現價 as 昨成交價,
--- --- 日線 MA5 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
-'P:' + CAST(CAST(T.D_P1 AS DECIMAL(10,1)) AS VARCHAR) +
-' >【' + CAST(CAST(T.D_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
-CAST(CAST(T.D_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
-CAST(CAST(T.D_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [日MA5扣抵窗口],
+T.名稱,
+    T.代號,
+    T.成交價 AS 盤中成交價,
+    T.漲幅 AS 盤中漲幅,
+    T.總量 AS 盤中總量,
+    T.盤中現價 AS 昨成交價,
 
--- --- 週線 MA60 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
-'P:' + CAST(CAST(T.W_P1 AS DECIMAL(10,1)) AS VARCHAR) +
-' >【' + CAST(CAST(T.W_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
-CAST(CAST(T.W_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
-CAST(CAST(T.W_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [週MA60扣抵窗口],
+    -- --- 日線 MA5 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
+    'P:' + CAST(CAST(T.D_P1 AS DECIMAL(10,1)) AS VARCHAR) +
+    ' >【' + CAST(CAST(T.D_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+    CAST(CAST(T.D_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
+    CAST(CAST(T.D_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [日MA5扣抵窗口],
 
--- --- 戰略診斷 ---
-(CASE
-    WHEN T.盤中現價 > V.W_Max THEN N'🟢☀️ 脫離引力 (全數過關)'
-    WHEN T.盤中現價 * 1.05 > V.W_Max THEN N'🟡⚡ 準備翻轉 (5%過關)'
-    WHEN T.W_N > T.W_X2 THEN N'🌤️ 壓力遞減 (扣抵將大降)'
-    ELSE N'🔴⛈️ 扣高重壓'
-END) AS [長線戰略狀態],
+    -- --- 週線 MA60 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
+    -- 直接讀取快照表對應之欄位：前1週 (MA60), 本週中心 (MA59), 後1週 (MA58), 後2週 (MA57)
+    'P:' + CAST(CAST(W.前1週 AS DECIMAL(10,1)) AS VARCHAR) +
+    ' >【' + CAST(CAST(W.本週中心 AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+    CAST(CAST(W.後1週 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
+    CAST(CAST(W.後2週 AS DECIMAL(10,1)) AS VARCHAR) AS [週MA60扣抵窗口],
 
-T.[KD同步率],
-ROUND(T.盤中現價 / NULLIF(T.W_N, 0), 2) AS [週抗壓比],
-T.具體概念
+    -- --- 戰略診斷 (基於快照欄位進行區間判定) ---
+    (CASE
+        WHEN T.盤中現價 > V.W_Max THEN N'🟢☀️ 脫離引力 (全數過關)'
+        WHEN T.盤中現價 * 1.05 > V.W_Max THEN N'🟡⚡ 準備翻轉 (5%過關)'
+        WHEN W.本週中心 > W.後2週 THEN N'🌤️ 壓力遞減 (扣抵將大降)'
+        ELSE N'🔴⛈️ 扣高重壓'
+    END) AS [長線戰略狀態],
+
+    T.[KD同步率],
+    ROUND(T.盤中現價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
+    T.具體概念
 
 FROM (
-    -- 第一層：先算出所有 LAG 指標 (解決 4108 錯誤)
+    -- 第一層：日線寬表與即時庫 JOIN 運算
     SELECT
-        M.名稱, M.代號,b.成交價,b.漲幅,b.總量, M.盤中現價, M.日期, M.具體概念,
+        M.名稱, M.代號, B.成交價, B.漲幅, B.總量, M.盤中現價, M.日期, M.具體概念,
         -- 日扣抵窗口
         LAG(M.盤中現價, 6) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_P1,
         LAG(M.盤中現價, 5) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_N,
         LAG(M.盤中現價, 4) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_X1,
         LAG(M.盤中現價, 3) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS D_X2,
-        -- 週扣抵窗口
-        LAG(M.盤中現價, 301) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS W_P1,
-        LAG(M.盤中現價, 300) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS W_N,
-        LAG(M.盤中現價, 299) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS W_X1,
-        LAG(M.盤中現價, 298) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS W_X2,
-        -- KD 同步狀態
+        -- KD 同步率
         '日:' + (CASE WHEN M.k9 > M.d9 THEN N'🔼' ELSE N'🔻' END) +
         ' 週:' + (CASE WHEN M.週k9 > M.週d9 THEN N'🔼' ELSE N'🔻' END) +
         ' 月:' + (CASE WHEN M.月k9 > M.月d9 THEN N'🔼' ELSE N'🔻' END) AS [KD同步率]
     FROM MasterStockAnalysis M
     INNER JOIN StockPersonality P ON RTRIM(M.代號) = RTRIM(P.代號)
-    INNER JOIN stockchange.dbo.basicinfo as B ON RTRIM(M.代號) = RTRIM(B.代號)
-    WHERE P.最高勝率 >= 80 -- 鎖定金牌 124 檔
+    INNER JOIN stockchange.dbo.basicinfo AS B ON RTRIM(M.代號) = RTRIM(B.代號)
+    WHERE P.最高勝率 >= 80 -- 篩選高勝率 DNA
 ) AS T
--- 第二層：計算窗口最大值 (此時數據已是純數值)
+
+-- 2. 核心改進：直接與快照資料表進行 1:1 的索引關聯
+INNER JOIN dbo.WeeklyMA60Snapshot W ON RTRIM(T.代號) = RTRIM(W.代號)
+
+-- 3. 計算週線窗口最大值 (W_Max) 用於戰診斷
 CROSS APPLY (
-    SELECT MAX(val) as W_Max FROM (VALUES (T.W_N), (T.W_X1), (T.W_X2)) AS VT(val)
+    SELECT MAX(val) AS W_Max FROM (VALUES (W.本週中心), (W.後1週), (W.後2週)) AS VT(val)
 ) AS V
+
 WHERE T.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
-ORDER BY T.盤中現價 / NULLIF(T.W_N, 0) DESC
+ORDER BY T.盤中現價 / NULLIF(W.本週中心, 0) DESC;
 
 /*如何利用這份報表「預知未來」？可套用到任何股票進行快速檢查
 看 [日MA5扣抵窗口]：如果未來兩位數字（後1、後2）比現在小很多，代表後天日線 MA5 會強勢翻揚。
@@ -377,7 +384,7 @@ ORDER BY   m.專家實戰總分 DESC
 
 
             {
-                cat: "主力監控", title: "🚩 AI 精銳雷達 (自選 24-29 綜合看板)", sql: `/*資料庫:stockchangedate*/
+                cat: "主力監控", title: "🚩 AI 精銳雷達 (自選 22-29 綜合看板)", sql: `/*資料庫:stockchangedate*/
 * FROM View_AI_Elite_Radar
 ORDER BY [分組] ASC, [日線分] DESC
 
@@ -389,7 +396,7 @@ ELSE N'🔴 ⛈️ 修正'
 */` }, 
 
             {
-                cat: "主力監控", title: "🚩 AI 精銳雷達 (自選 24-29 綜合看板) 最新行情", sql: `/*資料庫:stockchangedate*/
+                cat: "主力監控", title: "🚩 AI 精銳雷達 (自選 22-29 綜合看板) 最新行情", sql: `/*資料庫:stockchangedate*/
 V.[來源標籤],
 V.名稱, 
 V.代號, 
@@ -421,7 +428,7 @@ INNER JOIN [dbo].[MasterStockAnalysis] AS M ON RTRIM(V.代號) = RTRIM(M.代號)
 INNER JOIN [dbo].[StockPersonality] AS P ON RTRIM(V.代號) = RTRIM(P.代號)
 -- 4. 關聯昨日均線
 INNER JOIN [dbo].[allcross] AS A ON RTRIM(V.代號) = RTRIM(A.代號) AND A.日期 = M.日期
-WHERE V.來源標籤 IN ('自選股24','自選股25','自選股26','自選股27','自選股28','自選股29')
+WHERE V.來源標籤 IN ('自選股22','自選股23','自選股24','自選股25','自選股26','自選股27','自選股28','自選股29')
   AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
   AND B.自動編號 IN (SELECT MAX(自動編號) FROM [stockchange].[dbo].[basicinfo] GROUP BY 代號)
 GROUP BY V.代號, V.名稱,V.[來源標籤] -- 關鍵修正點：按代號群組，移除重複行
@@ -555,6 +562,106 @@ INNER JOIN [stockchangedate].[dbo].[threemasternumber] N
     ON RTRIM(S.代號) = RTRIM(N.代號) AND N.日期 = (SELECT MAX(日期) FROM [stockchangedate].[dbo].[threemasternumber])
 WHERE S.rn = 1 AND S.代號 IN ('2330', '2454', '2317')
 ORDER BY [目前燈號] ASC -- 讓紅燈跟黃燈排在最前面` },
+
+            {
+                cat: "盤中60M", title: "【60M 級別】KD 低檔黃金交叉", sql: `/*資料庫:stockchange*/L.代號,
+    L.名稱,
+    L.最新日期 AS [最新60M日期],
+    L.最新時間 AS [最新60M時間],
+    L.最新收盤 AS [盤中現價],
+    B.漲幅 AS [今日漲幅(%)],
+    B.總量 AS [今日總成交量(張)],
+    ROUND(L.Curr_K, 2) AS [當前60M_K],
+    ROUND(L.Curr_D, 2) AS [當前60M_D],
+    W.本週中心 AS [週MA60扣抵],
+    ROUND(L.最新收盤 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
+    M.具體概念
+FROM (
+    -- 巢狀子查詢 A：橫向對齊最新一根(Rn=1)與前一根(Rn=2)
+    SELECT 
+        R1.代號,
+        R1.名稱,
+        R1.日期 AS 最新日期,
+        R1.時間 AS 最新時間,
+        R1.收盤價 AS 最新收盤,
+        R1.K AS Curr_K,
+        R1.D AS Curr_D,
+        R2.K AS Prev_K,
+        R2.D AS Prev_D
+    FROM (
+        -- 取得每檔股票 60M 排序
+        SELECT 
+            代號, 名稱, 日期, 時間, 收盤價, K, D,
+            ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS Rn
+        FROM stockchange.dbo.Stock60M
+    ) R1
+    INNER JOIN (
+        SELECT 
+            代號, K, D,
+            ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS Rn
+        FROM stockchange.dbo.Stock60M
+    ) R2 ON R1.代號 = R2.代號 AND R2.Rn = 2
+    WHERE R1.Rn = 1
+) AS L
+INNER JOIN stockchange.dbo.basicinfo B ON RTRIM(L.代號) = RTRIM(B.代號)
+LEFT JOIN stockchangedate.dbo.WeeklyMA60Snapshot W ON RTRIM(L.代號) = RTRIM(W.代號)
+LEFT JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(L.代號) = RTRIM(M.代號) 
+    -- 核心修正：個別對齊最新日期，防止盤中交替期因 Null 出現現價為 0
+    AND M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis WHERE 代號 = L.代號)
+WHERE 
+    L.Prev_K <= L.Prev_D
+    AND L.Curr_K > L.Curr_D
+    AND L.Curr_D <= 30.0
+    AND B.總量 >= 500
+ORDER BY B.總量 DESC;` },
+
+            {
+                cat: "盤中60M", title: "強勢股回檔第二波起漲", sql: `/*資料庫:stockchange*/C.代號,
+    C.名稱,
+    C.最新日期 AS [日線日期],
+    C.收盤價,
+    B.漲幅 AS [今日漲幅(%)],
+    B.總量 AS [今日總成交量(張)],
+    ROUND(C.Curr_K, 2) AS [日線K],
+    ROUND(C.Curr_D, 2) AS [日線D],
+    W.本週中心 AS [週MA60扣抵],
+    ROUND(C.收盤價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
+    M.具體概念
+FROM (
+    -- 巢狀子查詢 B：對齊今日與昨日日線進行黃金交叉判定
+    SELECT 
+        D1.代號,
+        D1.名稱,
+        D1.日期 AS 最新日期,
+        D1.盤中現價 AS 收盤價,
+        D1.K AS Curr_K,
+        D1.D AS Curr_D,
+        D2.K AS Prev_K,
+        D2.D AS Prev_D
+    FROM (
+        SELECT 
+            代號, 名稱, 日期, 盤中現價, k9 AS K, d9 AS D, 
+            ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS Rn
+        FROM stockchangedate.dbo.MasterStockAnalysis
+    ) D1
+    INNER JOIN (
+        SELECT 
+            代號, k9 AS K, d9 AS D, 
+            ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS Rn
+        FROM stockchangedate.dbo.MasterStockAnalysis
+    ) D2 ON D1.代號 = D2.代號 AND D2.Rn = 2
+    WHERE D1.Rn = 1
+) AS C
+INNER JOIN stockchange.dbo.basicinfo B ON RTRIM(C.代號) = RTRIM(B.代號)
+LEFT JOIN stockchangedate.dbo.WeeklyMA60Snapshot W ON RTRIM(C.代號) = RTRIM(W.代號)
+LEFT JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(C.代號) = RTRIM(M.代號) AND M.日期 = C.最新日期
+WHERE 
+    C.Prev_K <= C.Prev_D
+    AND C.Curr_K > C.Curr_D
+    AND C.Curr_D <= 30.0
+    AND B.總量 >= 500
+ORDER BY B.總量 DESC;` },
+
 
 
             {
