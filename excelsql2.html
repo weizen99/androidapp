@@ -85,6 +85,92 @@
 
             //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+
+
+            {
+                cat: "扣抵值及kd共振", title: "技術 ＋ 籌碼 ＋ 週線 MA60 快照 ＋ FactSet 機構估值", sql: `/*資料庫:stockchangedate*/
+    T.名稱, 
+    T.代號, 
+    T.盤中成交價, 
+    T.盤中漲幅, 
+    T.盤中總量, 
+    T.昨成交價,
+
+    -- --- 日線 MA5 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
+    T.[日MA5扣抵窗口],
+
+    -- --- 週線 MA60 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
+    'P:' + CAST(CAST(W.前1週 AS DECIMAL(10,1)) AS VARCHAR) +
+    ' >【' + CAST(CAST(W.本週中心 AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+    CAST(CAST(W.後1週 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
+    CAST(CAST(W.後2週 AS DECIMAL(10,1)) AS VARCHAR) AS [週MA60扣抵窗口],
+
+    -- --- 戰略診斷 ---
+    -- --- 戰略診斷 (優化：加入 3% 降幅梯度化判定) ---
+(CASE
+    WHEN T.昨成交價 > V.W_Max THEN N'🟢☀️ 脫離引力 (全數過關)'
+    WHEN T.昨成交價 * 1.05 > V.W_Max THEN N'🟡⚡ 準備翻轉 (5%過關)'
+
+    -- 🛠️ 核心優化 A：未來兩週降幅大於等於 3%，才判定為「扣抵將大降」(高信心進攻)
+    WHEN W.本週中心 > W.後2週 AND ((W.本週中心 - W.後2週) / NULLIF(W.本週中心, 0)) >= 0.03
+         THEN N'🌤️ 壓力遞減 (扣抵將大降)'
+
+    -- 🛠️ 核心優化 B：未來兩週有降、但降幅未達 3%，判定為「扣抵續緩降」(橫盤防守)
+    WHEN W.本週中心 > W.後2週
+         THEN N'🌤️ 壓力遞減 (扣抵續緩降)'
+
+    ELSE N'🔴⛈️ 扣高重壓'
+END) AS [長線戰略狀態],
+
+    T.[KD同步率],
+    ROUND(T.昨成交價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
+
+    -- --- 🏆 核心新增：FactSet 機構估值與空間計算 ---
+    F.預估年份 AS [EPS預估年份],
+    F.最新EPS中位數 AS [FactSet預估EPS],
+    -- 動態計算預估本益比 (當前盤中價 / 預估EPS)
+    ROUND(T.盤中成交價 / NULLIF(F.最新EPS中位數, 0), 1) AS [預估本益比(F_PE)],
+    F.預估目標價 AS [共識目標價],
+    -- 動態計算距離目標價之潛在空間
+    ROUND(((F.預估目標價 - T.盤中成交價) / NULLIF(T.盤中成交價, 0)) * 100, 1) AS [潛在空間(%)],
+    F.分析師人數 AS [覆蓋分析師],
+
+    T.具體概念
+
+FROM (
+    -- 第一層：日線寬表與即時庫 JOIN 運算
+    SELECT
+        M.名稱, M.代號, B.成交價 AS 盤中成交價, B.漲幅 AS 盤中漲幅, B.總量 AS 盤中總量, M.盤中現價 AS 昨成交價, M.日期, M.具體概念,
+        -- 日扣抵窗口
+        'P:' + CAST(CAST(LAG(M.盤中現價, 6) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS DECIMAL(10,1)) AS VARCHAR) +
+        ' >【' + CAST(CAST(LAG(M.盤中現價, 5) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+        CAST(CAST(LAG(M.盤中現價, 4) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
+        CAST(CAST(LAG(M.盤中現價, 3) OVER (PARTITION BY M.代號 ORDER BY M.日期) AS DECIMAL(10,1)) AS VARCHAR) AS [日MA5扣抵窗口],
+        -- KD 同步率
+        '日:' + (CASE WHEN M.k9 > M.d9 THEN N'🔼' ELSE N'🔻' END) +
+        ' 週:' + (CASE WHEN M.週k9 > M.週d9 THEN N'🔼' ELSE N'🔻' END) +
+        ' 月:' + (CASE WHEN M.月k9 > M.月d9 THEN N'🔼' ELSE N'🔻' END) AS [KD同步率]
+    FROM stockchangedate.dbo.MasterStockAnalysis M
+    INNER JOIN stockchangedate.dbo.StockPersonality P ON RTRIM(M.代號) = RTRIM(P.代號)
+    INNER JOIN stockchange.dbo.basicinfo AS B ON RTRIM(M.代號) = RTRIM(B.代號)
+    WHERE P.最高勝率 >= 80 -- 篩選金牌 DNA 股
+) AS T
+
+-- 2. 關聯週線 MA60 快照表
+INNER JOIN stockchangedate.dbo.WeeklyMA60Snapshot W ON RTRIM(T.代號) = RTRIM(W.代號)
+
+-- 3. 關聯我們剛剛同步成功的 FactSet 機構估值表
+LEFT JOIN stockchangedate.dbo.FactSetEstimates F ON RTRIM(T.代號) = RTRIM(F.代號)
+
+-- 4. 計算週線窗口最大值 (W_Max)
+CROSS APPLY (
+    SELECT MAX(val) AS W_Max FROM (VALUES (W.本週中心), (W.後1週), (W.後2週)) AS VT(val)
+) AS V
+
+-- 5. 確保資料對齊最新日期
+WHERE T.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+ORDER BY T.盤中總量 DESC;` },
 
             {
                 cat: "扣抵值及kd共振", title: "日/週 全維度扣抵窗口雷達 (V4.0)", sql: `/*資料庫:stockchangedate*/
@@ -109,12 +195,20 @@ T.名稱,
     CAST(CAST(W.後2週 AS DECIMAL(10,1)) AS VARCHAR) AS [週MA60扣抵窗口],
 
     -- --- 戰略診斷 (基於快照欄位進行區間判定) ---
-    (CASE
-        WHEN T.盤中現價 > V.W_Max THEN N'🟢☀️ 脫離引力 (全數過關)'
-        WHEN T.盤中現價 * 1.05 > V.W_Max THEN N'🟡⚡ 準備翻轉 (5%過關)'
-        WHEN W.本週中心 > W.後2週 THEN N'🌤️ 壓力遞減 (扣抵將大降)'
-        ELSE N'🔴⛈️ 扣高重壓'
-    END) AS [長線戰略狀態],
+   (CASE
+     WHEN T.盤中現價 > V.W_Max THEN N'🟢☀️ 脫離引力 (全數過關)'
+     WHEN T.盤中現價 * 1.05 > V.W_Max THEN N'🟡⚡ 準備翻轉 (5%過關)'
+
+     -- 🛠️ 核心優化 A：未來兩週降幅大於等於 3%，才判定為「扣抵將大降」(高信心進攻)
+     WHEN W.本週中心 > W.後2週 AND ((W.本週中心 - W.後2週) / NULLIF(W.本週中心, 0)) >= 0.03
+          THEN N'🌤️ 壓力遞減 (扣抵將大降)'
+
+     -- 🛠️ 核心優化 B：未來兩週有降、但降幅未達 3%，判定為「扣抵續緩降」(橫盤防守)
+     WHEN W.本週中心 > W.後2週
+          THEN N'🌤️ 壓力遞減 (扣抵續緩降)'
+
+     ELSE N'🔴⛈️ 扣高重壓'
+ END) AS [長線戰略狀態],
 
     T.[KD同步率],
     ROUND(T.盤中現價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
@@ -163,28 +257,38 @@ ORDER BY T.盤中現價 / NULLIF(W.本週中心, 0) DESC;
                 cat: "扣抵值及kd共振", title: "202606營收創新高公司，累計122家(至7/8止)", sql: `/*資料庫:stockchangedate*/
 T.名稱, T.代號, T.成交價 as 盤中成交價,T.漲幅 as 盤中漲幅,T.總量 as 盤中總量,T.盤中現價 as 昨成交價,T.專家實戰總分,
 -- --- 日線 MA5 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
-'P:' + CAST(CAST(T.D_P1 AS DECIMAL(10,1)) AS VARCHAR) +
-' >【' + CAST(CAST(T.D_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
-CAST(CAST(T.D_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
-CAST(CAST(T.D_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [日MA5扣抵窗口],
+ -- --- 日線 MA5 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
+    'P:' + CAST(CAST(T.D_P1 AS DECIMAL(10,1)) AS VARCHAR) +
+    ' >【' + CAST(CAST(T.D_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+    CAST(CAST(T.D_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
+    CAST(CAST(T.D_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [日MA5扣抵窗口],
 
--- --- 週線 MA60 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
-'P:' + CAST(CAST(T.W_P1 AS DECIMAL(10,1)) AS VARCHAR) +
-' >【' + CAST(CAST(T.W_N AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
-CAST(CAST(T.W_X1 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
-CAST(CAST(T.W_X2 AS DECIMAL(10,1)) AS VARCHAR) AS [週MA60扣抵窗口],
+    -- --- 週線 MA60 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
+    -- 直接讀取快照表對應之欄位：前1週 (MA60), 本週中心 (MA59), 後1週 (MA58), 後2週 (MA57)
+    'P:' + CAST(CAST(W.前1週 AS DECIMAL(10,1)) AS VARCHAR) +
+    ' >【' + CAST(CAST(W.本週中心 AS DECIMAL(10,1)) AS VARCHAR) + '】> ' +
+    CAST(CAST(W.後1週 AS DECIMAL(10,1)) AS VARCHAR) + ' > ' +
+    CAST(CAST(W.後2週 AS DECIMAL(10,1)) AS VARCHAR) AS [週MA60扣抵窗口],
 
--- --- 戰略診斷 ---
-(CASE
-    WHEN T.盤中現價 > V.W_Max THEN N'🟢☀️ 脫離引力 (全數過關)'
-    WHEN T.盤中現價 * 1.05 > V.W_Max THEN N'🟡⚡ 準備翻轉 (5%過關)'
-    WHEN T.W_N > T.W_X2 THEN N'🌤️ 壓力遞減 (扣抵將大降)'
-    ELSE N'🔴⛈️ 扣高重壓'
-END) AS [長線戰略狀態],
+    -- --- 戰略診斷 (基於快照欄位進行區間判定) ---
+    (CASE
+     WHEN T.盤中現價 > V.W_Max THEN N'🟢☀️ 脫離引力 (全數過關)'
+     WHEN T.盤中現價 * 1.05 > V.W_Max THEN N'🟡⚡ 準備翻轉 (5%過關)'
 
-T.[KD同步率],
-ROUND(T.盤中現價 / NULLIF(T.W_N, 0), 2) AS [週抗壓比],
-T.具體概念
+     -- 🛠️ 核心優化 A：未來兩週降幅大於等於 3%，才判定為「扣抵將大降」(高信心進攻)
+     WHEN W.本週中心 > W.後2週 AND ((W.本週中心 - W.後2週) / NULLIF(W.本週中心, 0)) >= 0.03
+          THEN N'🌤️ 壓力遞減 (扣抵將大降)'
+
+     -- 🛠️ 核心優化 B：未來兩週有降、但降幅未達 3%，判定為「扣抵續緩降」(橫盤防守)
+     WHEN W.本週中心 > W.後2週
+          THEN N'🌤️ 壓力遞減 (扣抵續緩降)'
+
+     ELSE N'🔴⛈️ 扣高重壓'
+ END) AS [長線戰略狀態],
+
+    T.[KD同步率],
+    ROUND(T.盤中現價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
+    T.具體概念
 
 FROM (
     -- 第一層：先算出所有 LAG 指標 (解決 4108 錯誤)
@@ -209,6 +313,9 @@ FROM (
     INNER JOIN stockchange.dbo.basicinfo as B ON RTRIM(M.代號) = RTRIM(B.代號)
     WHERE  (M.代號 IN (SELECT 代號 FROM  incomechar20))
 ) AS T
+
+-- 2. 核心改進：直接與快照資料表進行 1:1 的索引關聯
+INNER JOIN dbo.WeeklyMA60Snapshot W ON RTRIM(T.代號) = RTRIM(W.代號)
 -- 第二層：計算窗口最大值 (此時數據已是純數值)
 CROSS APPLY (
     SELECT MAX(val) as W_Max FROM (VALUES (T.W_N), (T.W_X1), (T.W_X2)) AS VT(val)
@@ -3526,6 +3633,336 @@ FOR JSON PATH` },
             }
         }
 
+
+       
+    //}===========================================================================================================
+
+    // 開啟與關閉面板控制
+    function openAIPanel() {
+        document.getElementById('ai-backdrop').style.display = 'block';
+        document.getElementById('ai-panel').style.right = '0';
+    }
+    function closeAIPanel() {
+        document.getElementById('ai-backdrop').style.display = 'none';
+        document.getElementById('ai-panel').style.right = '-450px';
+    }
+
+    /**
+     * 核心自動化：自動解析點選列的數據並觸發 AI 解盤
+     * @param {HTMLElement} btnObj 點擊的 HTML 按鈕物件
+     */
+    async function analyzeRowData(btnObj) {
+        // 1. 尋找按鈕所在的整列 (tr)
+        const row = btnObj.closest('tr');
+        if (!row) return;
+
+        // 🛠️【新增這行】：暫存當前選中的資料列，供後續數據卡片抓取使用
+        window.currentSelectedRow = row; 
+
+        // 2. 依據您的 excelsql2 表格欄位順序自動抓取數據 (請依實際網頁欄位索引微調 index)
+        // 假設您的欄位順序為: 名稱[0], 代號[1], 盤中價[2], ..., 週抗壓比[10], FactSet預估EPS[12], 共識目標價[14]
+        const cells = row.getElementsByTagName('td');
+
+        const stockName = cells[0]?.innerText.trim() || "-";
+        const stockCode = cells[1]?.innerText.trim() || "-";
+        const price = parseFloat(cells[2]?.innerText.trim()) || 0;
+        const ratio = parseFloat(cells[10]?.innerText.trim()) || 0;
+        const estEps = parseFloat(cells[12]?.innerText.trim()) || 0;
+        const targetPrice = parseFloat(cells[14]?.innerText.trim()) || 0;
+
+        // 3. 填入面板小卡片
+        document.getElementById('ai-meta-name').innerText = `${stockName} (${stockCode})`;
+        document.getElementById('ai-meta-price').innerText = `${price} 元`;
+        document.getElementById('ai-meta-ratio').innerText = `${ratio}`;
+        document.getElementById('ai-meta-eps').innerText = estEps > 0 ? `${estEps} 元 (目標 ${targetPrice} 元)` : "暫無機構資料";
+
+        // 4. 開啟面板
+        openAIPanel();
+
+        // 5. 組合 Prompt
+        const promptText = `你是一位資深的台股量化操盤專家。請根據以下數據，為【${stockName}(${stockCode})】進行簡短且具體客觀的「戰術解盤」：
+1. 盤中現價：${price}元，週抗壓比為${ratio}。
+2. 機構預估 EPS 中位數為 ${estEps > 0 ? estEps + '元' : '無資料'}，共識目標價為 ${targetPrice > 0 ? targetPrice + '元' : '無資料'}。
+請針對下週一開盤給出「進攻防守點」與「本金凱利部位」配置建議。`;
+
+        const outputBox = document.getElementById('ai-output-box');
+        outputBox.innerHTML = '正在建立安全管道，連線本機 Qwen-1.5B 進行分析中...';
+
+        // 6. 呼叫本地串流 API
+        try {
+            const response = await fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'qwen2.5:1.5b',
+                    prompt: promptText,
+                    stream: true
+                })
+            });
+
+            if (!response.ok) throw new Error('Ollama 連線異常');
+
+            outputBox.innerHTML = ''; // 清空準備打字效果
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
+                for (const line of lines) {
+                    if (line.trim() !== '') {
+                        const parsed = JSON.parse(line);
+                        outputBox.innerHTML += parsed.response;
+                    }
+                }
+            }
+        } catch (error) {
+            outputBox.innerHTML = `<span style="color: #ef4444;">❌ 本地解盤連線失敗。請確認 Ollama 已啟動，且已設定 OLLAMA_ORIGINS = * 並重新啟動。</span>`;
+        }
+    }
+
+        // 確保 DOM 載入完成後執行
+        document.addEventListener("DOMContentLoaded", function () {
+            // 監聽網頁中所有表格列 (tr) 的雙擊事件
+            document.addEventListener("dblclick", function (event) {
+                // 尋找雙擊的目標是否在表格列內
+                const row = event.target.closest("tr");
+                if (row) {
+                    // 避免雙擊到表頭 (th)
+                    if (row.querySelector("th")) return;
+
+                    console.log("🖱️ 雙擊列偵測成功，啟動動態欄位解析與解盤...");
+
+                    // 1. 尋找這一列中，我們需要傳給 AI 的按鈕（此處將 'row' 作為虛擬按鈕傳入）
+                    // 這樣您就不需要按鈕，雙擊整列就能直接調用我們前一節寫好的 analyzeRowData 函數！
+                    analyzeRowData(row);
+                }
+            });
+        });
+
+        // 微調前面的解析函數，使其同時支援「點擊按鈕」與「雙擊整列」
+        async function analyzeRowData(triggerObj) {
+            // 如果傳入的是按鈕，尋找 tr；如果雙擊傳入的就是 tr，則直接使用
+            const row = (triggerObj.tagName === "TR") ? triggerObj : triggerObj.closest('tr');
+            if (!row) return;
+
+            const cells = row.getElementsByTagName('td');
+
+            // 以下維持原有的解析與請求邏輯...
+            const stockName = cells[0]?.innerText.trim() || "-";
+            const stockCode = cells[1]?.innerText.trim() || "-";
+            const price = parseFloat(cells[2]?.innerText.trim()) || 0;
+            const ratio = parseFloat(cells[10]?.innerText.trim()) || 0;
+            const estEps = parseFloat(cells[12]?.innerText.trim()) || 0;
+            const targetPrice = parseFloat(cells[14]?.innerText.trim()) || 0;
+
+            document.getElementById('ai-meta-name').innerText = `${stockName} (${stockCode})`;
+            document.getElementById('ai-meta-price').innerText = `${price} 元`;
+            document.getElementById('ai-meta-ratio').innerText = `${ratio}`;
+            document.getElementById('ai-meta-eps').innerText = estEps > 0 ? `${estEps} 元 (目標 ${targetPrice} 元)` : "暫無機構資料";
+
+            openAIPanel();
+
+            const promptText = `你是一位資深的台股量化操盤專家。請根據以下數據，為【${stockName}(${stockCode})】進行簡短且具體客觀的「戰術解盤」：
+1. 盤中現價：${price}元，週抗壓比為${ratio}。
+2. 機構預估 EPS 中位數為 ${estEps > 0 ? estEps + '元' : '無資料'}，共識目標價為 ${targetPrice > 0 ? targetPrice + '元' : '無資料'}。
+請針對下週一開盤給出「進攻防守點」與「本金凱利部位」配置建議。`;
+
+            const outputBox = document.getElementById('ai-output-box');
+            outputBox.innerHTML = '正在連線本機 Qwen-1.5B 進行分析中...';
+
+            try {
+                const response = await fetch('http://localhost:11434/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'qwen2.5:1.5b',
+                        prompt: promptText,
+                        stream: true
+                    })
+                });
+
+                if (!response.ok) throw new Error('Ollama 連線異常');
+
+                outputBox.innerHTML = '';
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+                    for (const line of lines) {
+                        if (line.trim() !== '') {
+                            const parsed = JSON.parse(line);
+                            outputBox.innerHTML += parsed.response;
+                        }
+                    }
+                }
+            } catch (error) {
+                outputBox.innerHTML = `<span style="color: #ef4444;">❌ 本地解盤連線失敗。請確認 Ollama 正在背景運行。</span>`;
+            }
+        }
+
+
+        /**
+ * 實戰功能：將當前解盤標的一鍵推播至您的手機 LINE [Operational Manual]
+ */
+        async function pushReportToLine() {
+            // 1. 自動從面板中解析當前正在解盤的股票代號
+            const metaNameText = document.getElementById('ai-meta-name').innerText; // 例如 "南亞科 (2408)"
+            const stockCodeMatch = metaNameText.match(/\((\d{4})\)/);
+
+            if (!stockCodeMatch) {
+                alert("⚠️ 請先在表格上雙擊個股，開啟解盤面板後再進行推播！");
+                return;
+            }
+            const stockCode = stockCodeMatch[1];
+
+            // 2. 變更按鈕狀態為讀取中
+            const btn = document.getElementById('push-line-btn');
+            btn.disabled = true;
+            btn.innerText = "⏳ 正在生成報告並推送至手機 LINE...";
+
+            try {
+                // 3. 直接向本機運行的 Flask API 發送推播指令
+                const response = await fetch('http://localhost:5000/push_to_line', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code: stockCode })
+                });
+
+                const resData = await response.json();
+                alert(resData.message); // 跳出成功/失敗提示視窗
+
+            } catch (error) {
+                console.error(error);
+                alert("❌ 連線中斷：請確認本機 line_ai_bot.py 程式正在運行，且 ngrok 隧道已開啟。");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "📲 一鍵推播解盤至手機 LINE";
+            }
+        }
+
+        /**
+ * 實戰功能：自動抓取當前 double-click 的所有欄位與數值，一鍵發送至 LINE [Operational Manual]
+ */
+        // =======================================================
+        // 【1. 核心優化：全自動全域資料列捕獲器】
+        //   不論您是用點擊、雙擊還是按鈕，只要觸發到表格列，自動在背景鎖定該行！
+        // =======================================================
+        document.addEventListener("dblclick", function (event) {
+            const tr = event.target.closest("tr");
+            if (tr && !tr.querySelector("th")) {
+                window.currentSelectedRow = tr;
+                console.log("🎯 已自動捕獲雙擊選中列: ", tr.cells[0]?.innerText);
+            }
+        });
+
+        document.addEventListener("click", function (event) {
+            const tr = event.target.closest("tr");
+            if (tr && !tr.querySelector("th")) {
+                window.currentSelectedRow = tr;
+                console.log("🎯 已自動捕獲單擊選中列: ", tr.cells[0]?.innerText);
+            }
+        });
+
+
+        // =======================================================
+        // 【2. 一鍵推播「量化數據卡片」至 LINE 主函數 (高相容、抗卡死優化版)】
+        // =======================================================
+        async function pushDataCardToLine() {
+            // 1. 讀取全自動捕獲的資料列
+            let row = window.currentSelectedRow;
+
+            // 防線：如果因為極端情況未捕獲到，主動嘗試去右側面板或當前畫面中抓取
+            if (!row) {
+                const activeRows = document.querySelectorAll('table tbody tr');
+                // 尋找剛剛被雙擊亮顯或點擊過的行 (或是預設抓第一行)
+                if (activeRows.length > 0) {
+                    row = activeRows[0];
+                    window.currentSelectedRow = row;
+                }
+            }
+
+            if (!row) {
+                alert("⚠️ 系統未能自動鎖定行，請先在左側表格中「單擊」或「雙擊」選中您要推播的股票！");
+                return;
+            }
+
+            // 2. 自動定位該列所屬的 Table，精確抓取表頭 (th) 與數值 (td)
+            const table = row.closest('table');
+            if (!table) {
+                alert("⚠️ 無法定位表格結構！");
+                return;
+            }
+
+            const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText.trim());
+            const cells = Array.from(row.getElementsByTagName('td')).map(td => td.innerText.trim());
+
+            if (headers.length === 0 || cells.length === 0) {
+                alert("⚠️ 數據讀取不完整，請確認表格中是否已有資料。");
+                return;
+            }
+
+            // 3. 欄位鍵值對動態組裝
+            const metrics = {};
+            let stockName = "";
+            let stockCode = "";
+
+            headers.forEach((header, index) => {
+                const value = cells[index] || "";
+                if (header === "名稱") stockName = value;
+                if (header === "代號") stockCode = value;
+
+                // 過濾多餘無用的系統欄位或空值
+                if (header && value && header !== "自動編號" && header !== "AI 診斷" && header !== "解盤") {
+                    metrics[header] = value;
+                }
+            });
+
+            // 備用防線：如果 header 沒有名稱，嘗試從右側面板的 Meta 中強制讀取
+            if (!stockName) {
+                const metaNameText = document.getElementById('ai-meta-name')?.innerText || "";
+                const match = metaNameText.match(/^(.+?)\s*\((\d{4})\)/);
+                if (match) {
+                    stockName = match[1];
+                    stockCode = match[2];
+                }
+            }
+
+            const btn = document.getElementById('push-data-line-btn');
+            btn.disabled = true;
+            btn.innerText = "⏳ 正在包裝量化數據並推送中...";
+
+            try {
+                // 4. 發送請求給本機 Python 後端 API
+                const response = await fetch('http://localhost:5000/push_data_to_line', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: stockName,
+                        code: stockCode,
+                        metrics: metrics
+                    })
+                });
+                const resData = await response.json();
+                alert(resData.message); // 提示結果
+            } catch (error) {
+                alert("❌ 連線失敗，請確認本機 line_ai_bot.py 正在運行，且 ngrok 已經啟動。");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "📊 一鍵推播「量化數據卡片」至手機 LINE";
+            }
+        }
+
     </script>
 </head>
 <body>
@@ -3612,8 +4049,37 @@ FOR JSON PATH` },
         </div>
     </div>
 
-    
 
+    <!-- 1. AI 解盤滑動面板與背景遮罩 -->
+    <div id="ai-backdrop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:999;" onclick="closeAIPanel()"></div>
+    <div id="ai-panel" style="position:fixed; top:0; right:-450px; width:400px; height:100%; background:#111d2e; border-left:2px solid #1e2e42; box-shadow:-8px 0 32px rgba(0,0,0,0.5); z-index:1000; transition: right 0.3s ease; padding:25px; box-sizing:border-box; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #1e2e42; padding-bottom:10px;">
+            <h3 id="ai-title" style="color:#00f2fe; margin:0; font-family:Microsoft JhengHei;">🤖 Zen AI 即時解盤</h3>
+            <span style="color:#718096; cursor:pointer; font-size:24px; font-weight:bold;" onclick="closeAIPanel()">&times;</span>
+        </div>
+        <!-- 數據概覽卡片 -->
+        <div style="background:#080f1a; border:1px solid #1b2a3f; border-radius:8px; padding:15px; margin-bottom:20px; font-size:14px; line-height:1.8;">
+            <div style="color:#718096;">個股標的：<span id="ai-meta-name" style="color:#e2e8f0; font-weight:bold;">-</span></div>
+            <div style="color:#718096;">收盤現價：<span id="ai-meta-price" style="color:#38bdf8; font-weight:bold;">-</span></div>
+            <div style="color:#718096;">週抗壓比：<span id="ai-meta-ratio" style="color:#f59e0b; font-weight:bold;">-</span></div>
+            <div style="color:#718096;">機構預估：<span id="ai-meta-eps" style="color:#4ade80; font-weight:bold;">-</span></div>
+        </div>
+        <div style="font-weight:bold; color:#00f2fe; margin-bottom:10px; font-size:14px;">📝 串流分析報告：</div>
+
+        <!-- 新增的「一鍵推播至 LINE」按鈕 -->
+        <button id="push-line-btn" onclick="pushReportToLine()" style="width: 100%; margin-bottom: 15px; background: linear-gradient(135deg, #00b900 0%, #009900 100%); color: white; border: none; padding: 10px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer;">
+            📲 一鍵推播解盤至手機 LINE
+        </button>
+
+        <!-- 亮藍色：一鍵推播量化數據卡片 -->
+        <button id="push-data-line-btn" onclick="pushDataCardToLine()" style="width: 100%; margin-bottom: 15px; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color: white; border: none; padding: 10px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer;">
+            📊 一鍵推播「量化數據卡片」至手機 LINE
+        </button>
+        <!-- AI 打字輸出區 -->
+        <div id="ai-output-box" style="background:#080f1a; border:1px solid #1b2a3f; border-radius:8px; padding:15px; min-height:300px; font-size:14px; line-height:1.6; color:#cbd5e1; white-space:pre-line; font-family:inherit;">
+            等待讀取盤面數據...
+        </div>
+    </div>
 
 </body>
 </html>
