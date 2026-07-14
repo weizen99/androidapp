@@ -1810,29 +1810,54 @@ WHERE          (M.日期 =
 ORDER BY   M.產業分類, M.專家實戰總分 DESC`
             },
             {
-                cat: "回測+回報+勝率", title: "最大勝率:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [dbo].[sp_FindOptimalStrategy_GridSearch] 2330`
+                cat: "回測+回報+勝率", title: "最大勝率:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [sp_FindOptimalStrategy_GridSearch] 2330`
             },
             {
-                cat: "回測+回報+勝率", title: "最大報酬💎:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [dbo].[sp_FindOptimalStrategy_GridSearch1] 2330`
+                cat: "回測+回報+勝率", title: "最大報酬💎:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [sp_FindOptimalStrategy_GridSearch1] 2330`
+            },
+            {
+                cat: "回測+回報+勝率", title: "最大報酬💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,所有訊號都算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate1] 20250101,2330`
+            },
+            {
+                cat: "回測+回報+勝率", title: "最大報酬💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,訊號須回落才重新起算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate] 20250101,2330`
             },
             {
                 cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序有勝率統計(不同天數>30 回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal1] 2330,10`
             },
             {
                 cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序無勝率統計(不同天數>15 回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal15] 2330,10`
-            },   
+            },
             {
                 cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期,指定起日 >30", sql: `EXEC sp_FindOptimalHoldingPerioddate 20260101,2330`
             },
             {
                 cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期,指定起日 >15", sql: `EXEC sp_FindOptimalHoldingPeriods15date 20260101,2330`
 
-            },           
+            },
             {
                 cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期 >30", sql: `EXEC sp_FindOptimalHoldingPeriod N'2330'`
             },
             {
                 cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期 >15", sql: `EXEC sp_FindOptimalHoldingPeriod15 N'2330'`
+            },
+
+            {
+                cat: "回測+回報+勝率", title: "💎 結算明細 >10分", sql: `EXEC sp_GetStockBacktest_Universals10date 20250101,2330,10`
+            },
+            {
+                cat: "回測+回報+勝率", title: "💎 結算明細 >15分", sql: `EXEC sp_GetStockBacktest_Universals15date 20250101,2330,10`
+            },
+
+            {
+                cat: "回測+回報+勝率", title: "💎 結算明細 >20分", sql: `EXEC sp_GetStockBacktest_Universals20date 20250101,2330,10`
+            },
+
+            {
+                cat: "回測+回報+勝率", title: "💎 結算明細 >25分", sql: `EXEC sp_GetStockBacktest_Universals25date 20250101,2330,10`
+            },
+
+            {
+                cat: "回測+回報+勝率", title: "💎 結算明細 >30分", sql: `EXEC sp_GetStockBacktest_Universaldate 20250101,2330,10`
             },
 
             {
@@ -1846,6 +1871,16 @@ WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
 ORDER BY M.專家實戰總分 DESC
 
 --1. 【必殺技】高分共振 + 歷史 100% 勝率` },
+            {
+
+            cat: "回測+回報+勝率", title: "篩選今日專家分 > 15 ", sql: `p.代號, m.名稱, m.專家實戰總分, p.最高勝率, p.最高勝率天數, p.最大平均報酬, p.最大報酬天數, p.更新時間
+FROM              MasterStockAnalysis AS m INNER JOIN
+                            StockPersonality_S15 AS p ON m.代號 = p.代號
+WHERE          (m.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis)) AND (m.專家實戰總分 > 15)
+ORDER BY   m.專家實戰總分 DESC
+-->15分模型及其StockPersonality_S15` },
 
             {
                 cat: "回測+回報+勝率", title: "找股性屬於「快攻型」，且歷史預期報酬最高的股票", sql: `TOP 50 
