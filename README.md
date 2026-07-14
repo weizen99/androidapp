@@ -29,7 +29,8 @@ https://weizen99.github.io/androidapp/excelsql2.html
 2.提醒要先刪除才能執行(選範本,改資料庫,改日期(改為最新日期,股權為週為單位,原則為週五有放假除外),刪除提醒,最後執行
 3.有些自選股筆數較多,要執行比較久
 4.選擇範本 => 專家實戰總分(五種查詢),由Ai 給出的選股權數,
-5.查詢結果點股票會側滑解盤,可再選一鍵推播解盤或一鍵推播量化數據卡片到line或telegram(須先啓動python)
+5.查詢結果點股票會側滑解盤,可再選一鍵推播解盤或一鍵推播量化數據卡片到line或telegram或discard(須先啓動python)
+6.實戰總分+起算日期 10分 15分(後加) 20分 25分 30分(原有) 35分 40分,直接計算不同股票報酬率最高的勝率策略+區間(1~30天),再列出結算明細看詳細資料,可按1/10(舉例)資金陸續進場,參考建議持有天數出場
 --(五日乖離:盤中成交價-前一日的價五日均線)/前一日的價五日均線(今天還沒出來)
 --量倍數:盤中總量 / 前一日的二十日均量(今天還沒出來)
 --OBV分:obv黃金交叉次數*2 (使用obv多空淨額法)
@@ -71,6 +72,60 @@ SQL Agent：每日 21:00 執行 sp_RefreshAIWatchlist 自動更新自選股 24-2
 View_AI_Elite_Radar：大一統視圖，整合所有 AI 分組、日線分與短線氣象。
 紅綠燈報警中心：🟢 (安全)、🟡 (陷阱)、🔴 (修正)。
 語音警報中心：SQL 邏輯診斷生成 VoiceScript，瀏覽器 Web Speech API 自動播報，實現「盤中無感避險」。
+6.💾 Zen AI 戰情室 Pro V7.0 系統架構總藍圖
+📌 模組一：數據指標與基本面自動落地（數據坦克）
+此模組負責在背景「完全無人工干預」地抓取數據、計算指標並寫入本機資料庫 [Database Architecture, Operational Manual]。
+1. 60M 技術指標自動同步
+核心 Python 程式：C:\test_c\autorunyahoo1.py
+搭配工具 / 外部依賴：
+Python 庫：yfinance、pandas、numpy、pyodbc。
+外部接口：Discord Webhook（發送即時警報）。
+執行時機 / 自動化排程：
+透過 Windows 工作排程器 (Task Scheduler) [Operational Manual]，設定於每週一至週五的 13:50（收盤後）自動執行。
+數據流向：
+自動向 Yahoo Finance 下載 3 個月的 60M 數據 [Anue鉅亨網]。
+在記憶體中運算完 19 項指標後，直接寫入即時庫 stockchange.dbo.Stock60M [Database Architecture]。
+【警報觸發】：在寫入成功的瞬間，若偵測到當前小時線觸發 KD 低檔黃金交叉，會自動跨庫撈取週快照與 FactSet 估值 [WeeklyMA60Snapshot, Database Architecture]，並將「精美富文本警報卡片」直接推送至您的 Discord 手機端 [Operational Manual]！
+2. FactSet 機構估值自動爬網
+核心 Python 程式：C:\test_c\facset_to_db.py
+搭配工具 / 外部依賴：
+Python 庫：beautifulsoup4（網頁解析）、requests、re（正則數據提取）、pyodbc。
+執行時機 / 自動化排程：
+建議放進 Windows 工作排程器，設定於 每週六 / 週日的中午 執行（因週五收盤後，各機構通常會更新最新的調查速報）。
+數據流向：
+自動抓取金牌股在鉅亨網上的最新 FactSet 分析師調查速報 [Anue鉅亨網]。
+利用正則表達式將文字提取為純數字，並以 MERGE 寫入主庫的 stockchangedate.dbo.FactSetEstimates 資料表 [WeeklyMA60Snapshot, Database Architecture]。
+📌 模組二：主戰情室網頁與本地端 AI 解盤（桌機實戰端）
+此模組用於您在電腦前操盤時，提供直覺且不佔系統資源的動態解盤 [Operational Manual]。
+主網頁與後端：excelsql2.html（或 stockmaster.html） ＋ stockai.aspx.vb [Operational Manual]
+搭配工具 / 外部依賴：
+Ollama 軟體（背景服務）：加載超輕量、省顯存的繁體中文模型 qwen2.5:1.5b。
+Ollama 跨網域設定：Windows 系統環境變數設定 OLLAMA_ORIGINS = *，允許網頁直接以 JS Fetch 連線 [Operational Manual]。
+執行時機 / 觸發方式：
+手動觸發：當您在 excelsql2.html 表格中，雙擊（Double Click）任意股票那一列 [Operational Manual]。
+數據與資訊流：
+網頁前端 JS 自動抽取該列的名稱、收盤價、週抗壓比與預估 EPS 等數據 [Database Architecture, Operational Manual, Anue鉅亨網]。
+自動合成為解盤 Prompt，直接連線本機 127.0.0.1:11434，右側解盤面板滑出，並以「打字機串流效果」即時輸出解盤報告 [Operational Manual]。
+📌 模組三：行動端雙向對話解盤助手（手機隨身端）
+此模組讓您出門在外時，能用語音隨時向本機資料庫與 Ollama 索取最新報表 [Operational Manual]。
+1. LINE 雙向對話機器人 (推薦，台灣生活首選)
+核心 Python 程式：C:\test_c\line_ai_bot.py
+搭配工具 / 外部依賴：
+Ollama 背景服務：加載 qwen2.5:1.5b [Operational Manual]。
+ngrok 隧道（雙向橋樑）：執行命令 ngrok http 127.0.0.1:5000 --domain=您的固定網域（將本地 Port 5000 的 Flask 服務暴露給公網） [Operational Manual, Anue鉅亨網, 玩股網]。
+LINE Developers 帳號：設定 Webhook URL [Operational Manual]，並關閉官方帳號後台的罐頭回覆，切換為 Bot 模式。
+執行與測試方式：
+本機開啟 python line_ai_bot.py ➔ 手機 LINE 傳送 「解盤 2408」 或 「選股」 [Operational Manual]。
+資訊流：
+手機 ➔ LINE 雲端 ➔ ngrok ➔ 本地 Python (Port 5000) ➔ 執行 SQL ➔ 呼叫本地 Ollama (Port 11434) ➔ 組裝文字 ➔ LINE 推回手機 [Operational Manual, Database Architecture]。
+2. Telegram 雙向對話機器人 (高安全性，免開 Port 備案)
+核心 Python 程式：C:\test_c\zen_ai_bot.py
+搭配工具 / 外部依賴：
+Ollama 背景服務：加載 qwen2.5:1.5b [Operational Manual]。
+註：因採用 Polling 模式，不需 ngrok，也不需開任何外網埠，安全性極高。
+執行與測試方式：
+本機開啟 python zen_ai_bot.py ➔ 手機 TG 傳送指令。
+
 
 
 https://weizen99.github.io/androidapp/message4.html
