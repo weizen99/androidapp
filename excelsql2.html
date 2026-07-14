@@ -1809,22 +1809,30 @@ WHERE          (M.日期 =
                             AND (A.三大法人黃金交叉次數 > 0)
 ORDER BY   M.產業分類, M.專家實戰總分 DESC`
             },
-
-
-
             {
-                cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序有勝率統計(不同天數回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal1] 2330,10`
+                cat: "回測+回報+勝率", title: "最大勝率:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [dbo].[sp_FindOptimalStrategy_GridSearch] 2330`
             },
             {
-                cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序無勝率統計(不同天數回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal] 2330,10`
+                cat: "回測+回報+勝率", title: "最大報酬💎:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [dbo].[sp_FindOptimalStrategy_GridSearch1] 2330`
             },
-
             {
-                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序顯示黃金建議及性格診斷", sql: `EXEC sp_FindOptimalHoldingPeriod1 N'2330'`
+                cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序有勝率統計(不同天數>30 回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal1] 2330,10`
             },
-
             {
-                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期", sql: `EXEC sp_FindOptimalHoldingPeriod N'2330'`
+                cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序無勝率統計(不同天數>15 回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal15] 2330,10`
+            },   
+            {
+                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期,指定起日 >30", sql: `EXEC sp_FindOptimalHoldingPerioddate 20260101,2330`
+            },
+            {
+                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期,指定起日 >15", sql: `EXEC sp_FindOptimalHoldingPeriods15date 20260101,2330`
+
+            },           
+            {
+                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期 >30", sql: `EXEC sp_FindOptimalHoldingPeriod N'2330'`
+            },
+            {
+                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期 >15", sql: `EXEC sp_FindOptimalHoldingPeriod15 N'2330'`
             },
 
             {
