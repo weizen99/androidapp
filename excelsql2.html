@@ -86,7 +86,449 @@
             //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
             //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
 
+            {
+                cat: "實戰總分系統", title: "實戰分數均線完美多頭共振", sql: `/*資料庫:stockchangedate*/TOP 100
+    SCH.代號,
+    SCH.名稱,
+    SCH.日期 AS [資料日期],
+    B.成交價 AS [盤中現價],
+    B.漲幅 AS [今日漲幅(%)],
+    B.總量 AS [今日成交量(張)],
+    
+    -- 分數與均線數值 (確認 MAs 計算是否正確)
+    SCH.實戰總分 AS [今日實戰總分],
+    SCH.實戰總分_ma5 AS [分數5MA],
+    SCH.實戰總分_ma20 AS [分數月線(20MA)],
+    SCH.實戰總分_ma60 AS [分數季線(60MA)],
+    
+    -- 交叉成功狀態 (1 = 站上，-1 = 跌破)
+    SCH.五日交叉成功,
+    SCH.十日交叉成功,
+    SCH.二十日交叉成功,
+    SCH.六十日交叉成功,
+    SCH.二百四十日交叉成功,
+    
+    -- 核心統計：共振強度
+    SCH.實戰總分黃金交叉次數 AS [均分共振次數 (Max: 8)]
+FROM dbo.ScoreCrossHistory SCH
+-- 關聯即時庫獲取最新盤中價量 [Database Architecture]
+INNER JOIN stockchange.dbo.basicinfo B ON RTRIM(SCH.代號) = RTRIM(B.代號)
+WHERE SCH.日期 = (SELECT MAX(日期) FROM dbo.ScoreCrossHistory)
+ORDER BY SCH.實戰總分黃金交叉次數 DESC, B.總量 DESC;` },
+
+            {
+                cat: "戰術分流", title: "全維度實戰戰情表 ＋ 實戰分數均線共振系統(金牌股性)", sql: `/*資料庫:stockchangedate*/T.名稱, 
+    T.代號, 
+    T.盤中成交價, 
+    T.盤中漲幅, 
+    T.盤中總量, 
+    T.當前日線分數,
+
+    -- 🏆 核心新增一：專家分數移動平均線 (Score MAs)
+    T.[分數MA5],
+    T.[分數MA10],
+    T.[分數MA20],
+    T.[分數MA60],
+
+    -- 🏆 核心新增二：動能均線金叉/死叉實戰診斷 (起漲與轉弱領先指標)
+    (CASE
+        WHEN T.當前日線分數 > T.[分數MA5] AND T.[分數MA5] > T.[分數MA20] THEN N'🟢☀️ 均分多頭 (動能起飛)'
+        WHEN T.當前日線分數 > T.[分數MA5] THEN N'🟢 站上五日分 (動能轉強)'
+        WHEN T.當前日線分數 < T.[分數MA20] THEN N'⛈️ 跌破月均分 (中線走弱)'
+        ELSE N'🟡 震盪整理 (均分糾結)'
+    END) AS [動能均線診斷],
+
+    -- 🏆 核心新增三：60日均分長線趨勢診斷
+    (CASE 
+        WHEN T.[分數MA60] >= 10.0 THEN N'☀️ 長線多頭'
+        WHEN T.[分數MA60] BETWEEN 0.0 AND 9.99 THEN N'🌤️ 長線溫和'
+        ELSE N'⛈️ 長線空頭'
+    END) AS [長線分數趨勢],
+
+    -- 60M 即時指標
+    T.[最新60M_K],
+    T.[最新60M_D],
+    T.[最新60M_OSC],
+
+    -- 結合 V7.0 快照表，掌握週線防守位
+    W.本週中心 AS [週MA60扣抵],
+    ROUND(T.盤中成交價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
+
+    -- 結合 FactSet 估值表，鎖定基本面空間 [Anue鉅亨網]
+    F.最新EPS中位數 AS [FactSet預估EPS],
+    F.預估目標價 AS [共識目標價],
+    ROUND(((F.預估目標價 - T.盤中成交價) / NULLIF(T.盤中成交價, 0)) * 100, 1) AS [目標價潛在空間(%)],
+
+    -- 雙維度股性 DNA 最佳持股天數並排比對
+    T.[S15_最佳天數] AS [S15_最佳持股天數(天)],
+    T.[S30_最佳天數] AS [S30_最佳持股天數(天)],
+
+    T.具體概念
+
+FROM (
+    -- 第一層：日線寬表與即時庫 JOIN 運算 (使用視窗函數在背景計算分數均線)
+    SELECT
+        M.名稱, 
+        M.代號, 
+        B.成交價 AS 盤中成交價, 
+        B.漲幅 AS 盤中漲幅, 
+        B.總量 AS 盤中總量, 
+        M.專家實戰總分 AS 當前日線分數,
+        M.日期, 
+        M.具體概念,
+        
+        -- 🛠️ 利用視窗函數計算 5、10、20、60日的分數均線 (精確計算無延遲)
+        ROUND(AVG(M.專家實戰總分) OVER (PARTITION BY M.代號 ORDER BY M.日期 ROWS BETWEEN 4 PRECEDING AND CURRENT ROW), 2) AS [分數MA5],
+        ROUND(AVG(M.專家實戰總分) OVER (PARTITION BY M.代號 ORDER BY M.日期 ROWS BETWEEN 9 PRECEDING AND CURRENT ROW), 2) AS [分數MA10],
+        ROUND(AVG(M.專家實戰總分) OVER (PARTITION BY M.代號 ORDER BY M.日期 ROWS BETWEEN 19 PRECEDING AND CURRENT ROW), 2) AS [分數MA20],
+        ROUND(AVG(M.專家實戰總分) OVER (PARTITION BY M.代號 ORDER BY M.日期 ROWS BETWEEN 59 PRECEDING AND CURRENT ROW), 2) AS [分數MA60],
+
+        K60.Curr_K AS [最新60M_K],
+        K60.Curr_D AS [最新60M_D],
+        K60.Curr_OSC AS [最新60M_OSC],
+        P15.最高勝率天數 AS [S15_最佳天數],
+        P30.最佳天數 AS [S30_最佳天數]
+    FROM stockchangedate.dbo.MasterStockAnalysis M
+    INNER JOIN stockchange.dbo.basicinfo AS B ON RTRIM(M.代號) = RTRIM(B.代號)
+    
+    -- 讀取最新一根 60M 指標 (改用 LEFT JOIN 防禦)
+    LEFT JOIN (
+        SELECT R1.代號, R1.K AS Curr_K, R1.D AS Curr_D, R1.OSC AS Curr_OSC
+        FROM (
+            SELECT 代號, K, D, OSC,
+                ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS Rn
+            FROM stockchange.dbo.Stock60M
+        ) R1
+        WHERE R1.Rn = 1
+    ) K60 ON RTRIM(M.代號) = RTRIM(K60.代號)
+    
+    -- 讀取雙向股性 DNA 1-30天回測結果
+    LEFT JOIN stockchangedate.dbo.StockPersonality_S15 P15 ON RTRIM(M.代號) = RTRIM(P15.代號)
+    LEFT JOIN stockchangedate.dbo.StockPersonality P30 ON RTRIM(M.代號) = RTRIM(P30.代號) -- 預設的 S30 表
+
+    -- 核心條件：僅限制金牌股性 ＋ 今日成交量 > 500 張 (與您的 excelsql2 原始限制一致)
+    WHERE P30.最高勝率 >= 75
+      AND B.總量 >= 500
+) AS T
+
+-- 2. 關聯週線 MA60 快照
+LEFT JOIN stockchangedate.dbo.WeeklyMA60Snapshot W ON RTRIM(T.代號) = RTRIM(W.代號)
+
+-- 3. 關聯 FactSet 機構估值
+LEFT JOIN stockchangedate.dbo.FactSetEstimates F ON RTRIM(T.代號) = RTRIM(F.代號)
+    AND F.新聞日期 = (SELECT MAX(新聞日期) FROM stockchangedate.dbo.FactSetEstimates WHERE 代號 = F.代號)
+
+-- 4. 確保資料對齊最新日期
+WHERE T.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+ORDER BY T.盤中總量 DESC;
+/*有設定總量500張以上
+「過濾噪音」 ➔ 指標黃金交叉：
+當 當前分數 > 分數MA5：這代表今天的真實動能加速力道，已經正式超越了過去 5 天的平均值。這才是真正的**「動能黃金起步點（轉強）」**，能自動濾除單日主力試溫的「假突破」 [Operational Manual]！
+「中線動能警戒」 ➔ 提前防守：
+當 當前分數 < 分數MA20：這代表中線動能已經開始衰竭（跌破月均分）。這是一個非常強大的領先指標，通常此時股價還沒真正崩盤，但動能已經提前亮起紅燈，提示您應該減碼避險 [Operational Manual]！
+「長線生命力」 ➔ 60日均分看趨勢：
+分數MA60 穩定在正數（例如>10）以上，代表這檔股票在過去一整季中，主力資金都處於高頻率的共振防守狀態，這是最穩固的長線多頭溫床 [Operational Manual]。
+此語法會直接在 SQL 背景對整檔股票的歷史分數進行 5~60 天的滾動平均運算（Window Functions），並在前端為您連帶顯示「分數 MA5、MA10、MA20、MA60」，同時自動產出 [動能均線診斷]
+與 [長線分數趨勢] [Database Architecture, Operational Manual]：
+*/` },
+
+            {
+                cat: "戰術分流", title: "全維度實戰戰情表 ＋ 實戰分數均線共振系統(不限制)", sql: `/*資料庫:stockchangedate*/T.名稱, 
+    T.代號, 
+    T.盤中成交價, 
+    T.盤中漲幅, 
+    T.盤中總量, 
+    T.當前日線分數,
+
+    -- 🏆 核心一：專家分數移動平均線 (Score MAs)
+    T.[分數MA5],
+    T.[分數MA10],
+    T.[分數MA20],
+    T.[分數MA60],
+
+    -- 🏆 核心二：動能均線金叉/死叉實戰診斷 (起漲與轉弱領先指標)
+    (CASE
+        WHEN T.當前日線分數 > T.[分數MA5] AND T.[分數MA5] > T.[分數MA20] THEN N'🟢☀️ 均分多頭 (動能起飛)'
+        WHEN T.當前日線分數 > T.[分數MA5] THEN N'🟢 站上五日分 (動能轉強)'
+        WHEN T.當前日線分數 < T.[分數MA20] THEN N'⛈️ 跌破月均分 (中線走弱)'
+        ELSE N'🟡 震盪整理 (均分糾結)'
+    END) AS [動能均線診斷],
+
+    -- 🏆 核心三：60日均分長線趨勢診斷
+    (CASE 
+        WHEN T.[分數MA60] >= 10.0 THEN N'☀️ 長線多頭'
+        WHEN T.[分數MA60] BETWEEN 0.0 AND 9.99 THEN N'🌤️ 長線溫和'
+        ELSE N'⛈️ 長線空頭'
+    END) AS [長線分數趨勢],
+
+    -- 60M 即時指標 (僅作為顯示，不設任何限制，100% 確保全市場個股出現)
+    T.[最新60M_K],
+    T.[最新60M_D],
+    T.[最新60M_OSC],
+
+    -- 結合 V7.0 快照表，掌握週線防守位 (改用 LEFT JOIN 防禦，快照無資料也照常顯示)
+    W.本週中心 AS [週MA60扣抵],
+    ROUND(T.盤中成交價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
+
+    -- 結合 FactSet 估值表，鎖定基本面空間 [Anue鉅亨網]
+    F.最新EPS中位數 AS [FactSet預估EPS],
+    F.預估目標價 AS [共識目標價],
+    ROUND(((F.預估目標價 - T.盤中成交價) / NULLIF(T.盤中成交價, 0)) * 100, 1) AS [目標價潛在空間(%)],
+
+    -- 🏆 雙維度股性 DNA 最佳持股天數與勝率並排比對 (提供最完整的量化線索)
+    T.[S15_最佳勝率] AS [S15_最高勝率(%)],
+    T.[S15_最佳天數] AS [S15_最佳持股天數(天)],
+    T.[S30_最佳勝率] AS [S30_最高勝率(%)],
+    -- T.[S30_最佳天數] AS [S30_最佳持股天數(天)], -- 預留：待您確認舊表欄位後即可取消註解
+
+    T.具體概念
+
+FROM (
+    -- 第一層：日線寬表與即時庫 JOIN 運算 (使用視窗函數在背景計算分數均線)
+    SELECT
+        M.名稱, 
+        M.代號, 
+        B.成交價 AS 盤中成交價, 
+        B.漲幅 AS 盤中漲幅, 
+        B.總量 AS 盤中總量, 
+        M.專家實戰總分 AS 當前日線分數,
+        M.日期, 
+        M.具體概念,
+        
+        -- 利用視窗函數計算 5、10、20、60日的分數均線 (精確計算無延遲)
+        ROUND(AVG(M.專家實戰總分) OVER (PARTITION BY M.代號 ORDER BY M.日期 ROWS BETWEEN 4 PRECEDING AND CURRENT ROW), 2) AS [分數MA5],
+        ROUND(AVG(M.專家實戰總分) OVER (PARTITION BY M.代號 ORDER BY M.日期 ROWS BETWEEN 9 PRECEDING AND CURRENT ROW), 2) AS [分數MA10],
+        ROUND(AVG(M.專家實戰總分) OVER (PARTITION BY M.代號 ORDER BY M.日期 ROWS BETWEEN 19 PRECEDING AND CURRENT ROW), 2) AS [分數MA20],
+        ROUND(AVG(M.專家實戰總分) OVER (PARTITION BY M.代號 ORDER BY M.日期 ROWS BETWEEN 59 PRECEDING AND CURRENT ROW), 2) AS [分數MA60],
+
+        K60.Curr_K AS [最新60M_K],
+        K60.Curr_D AS [最新60M_D],
+        K60.Curr_OSC AS [最新60M_OSC],
+        P15.最高勝率 AS [S15_最佳勝率],
+        P15.最高勝率天數 AS [S15_最佳天數],
+        P30.最高勝率 AS [S30_最佳勝率]
+        -- P30.最高勝率天數 AS [S30_最佳天數] -- 預留：待您確認舊表欄位後即可取消註解
+    FROM stockchangedate.dbo.MasterStockAnalysis M
+    INNER JOIN stockchange.dbo.basicinfo AS B ON RTRIM(M.代號) = RTRIM(B.代號)
+    
+    -- 讀取最新一根 60M 指標 (改用 LEFT JOIN 防禦，確保 60M 無資料時個股也照常出現)
+    LEFT JOIN (
+        SELECT R1.代號, R1.K AS Curr_K, R1.D AS Curr_D, R1.OSC AS Curr_OSC
+        FROM (
+            SELECT 代號, K, D, OSC,
+                ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS Rn
+            FROM stockchange.dbo.Stock60M
+        ) R1
+        WHERE R1.Rn = 1
+    ) K60 ON RTRIM(M.代號) = RTRIM(K60.代號)
+    
+    -- 讀取雙向股性 DNA 1-30天回測結果 (全面改用 LEFT JOIN，不作任何勝率門檻限制)
+    LEFT JOIN stockchangedate.dbo.StockPersonality_S15 P15 ON RTRIM(M.代號) = RTRIM(P15.代號)
+    LEFT JOIN stockchangedate.dbo.StockPersonality P30 ON RTRIM(M.代號) = RTRIM(P30.代號) 
+
+    -- 🛠️【終極解鎖】：移除任何勝率與代號限制，讓 1700 多檔個股皆可進入診斷！僅用總量 >= 500 張過濾無量股
+    WHERE B.總量 >= 500
+) AS T
+
+-- 2. 關聯週線 MA60 快照 (改為 LEFT JOIN 進行防禦，確保快照無資料時個股也 100% 照常顯示)
+LEFT JOIN stockchangedate.dbo.WeeklyMA60Snapshot W ON RTRIM(T.代號) = RTRIM(W.代號)
+
+-- 3. 關聯 FactSet 機構估值
+LEFT JOIN stockchangedate.dbo.FactSetEstimates F ON RTRIM(T.代號) = RTRIM(F.代號)
+    AND F.新聞日期 = (SELECT MAX(新聞日期) FROM stockchangedate.dbo.FactSetEstimates WHERE 代號 = F.代號)
+
+-- 4. 確保資料對齊最新日期
+WHERE T.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+ORDER BY T.盤中總量 DESC;
+/*有設定總量500張以上
+「過濾噪音」 ➔ 指標黃金交叉：
+當 當前分數 > 分數MA5：這代表今天的真實動能加速力道，已經正式超越了過去 5 天的平均值。這才是真正的**「動能黃金起步點（轉強）」**，能自動濾除單日主力試溫的「假突破」 [Operational Manual]！
+「中線動能警戒」 ➔ 提前防守：
+當 當前分數 < 分數MA20：這代表中線動能已經開始衰竭（跌破月均分）。這是一個非常強大的領先指標，通常此時股價還沒真正崩盤，但動能已經提前亮起紅燈，提示您應該減碼避險 [Operational Manual]！
+「長線生命力」 ➔ 60日均分看趨勢：
+分數MA60 穩定在正數（例如>10）以上，代表這檔股票在過去一整季中，主力資金都處於高頻率的共振防守狀態，這是最穩固的長線多頭溫床 [Operational Manual]。
+此語法會直接在 SQL 背景對整檔股票的歷史分數進行 5~60 天的滾動平均運算（Window Functions），並在前端為您連帶顯示「分數 MA5、MA10、MA20、MA60」，同時自動產出 [動能均線診斷]
+與 [長線分數趨勢] [Database Architecture, Operational Manual]：
+*/` },
+
+            {
+                cat: "戰術分流", title: "全維度實戰戰術分流表", sql: `/*資料庫:stockchangedate*/ T.名稱, 
+    T.代號, 
+    T.盤中成交價, 
+    T.盤中漲幅, 
+    T.盤中總量, 
+    T.當前日線分數,
+
+    -- 🏆 核心新增：手動/語音與網頁端全自動戰術分流指引 (一秒分辨短打或長抱)
+    (CASE
+        WHEN T.當前日線分數 < 0 
+             THEN N'⚡ 超跌短打 (僅限短線反彈，2~5天或破5MA即刻停利)'
+        WHEN T.當前日線分數 BETWEEN 0.0 AND 14.99 
+             THEN N'🟢☀️ 伏兵波段 (中長線起步點，可安心持有 10~30天)'
+        ELSE N'🔥 重裝加速 (強勢股噴發，沿日線5MA/20MA極速波段)'
+    END) AS [操盤戰術指引],
+
+    -- 60M 即時指標 (僅作為顯示，不設任何限制，100% 確保個股出現)
+    T.[最新60M_K],
+    T.[最新60M_D],
+    T.[最新60M_OSC],
+
+    -- 結合 V7.0 快照表，掌握週線防守位 (改用 LEFT JOIN 防禦)
+    W.本週中心 AS [週MA60扣抵],
+    ROUND(T.盤中成交價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
+
+    -- 結合 FactSet 估值表，鎖定基本面空間 [Anue鉅亨網]
+    F.最新EPS中位數 AS [FactSet預估EPS],
+    F.預估目標價 AS [共識目標價],
+    ROUND(((F.預估目標價 - T.盤中成交價) / NULLIF(T.盤中成交價, 0)) * 100, 1) AS [目標價潛在空間(%)],
+
+    -- 雙維度股性 DNA 最佳持股天數並排比對 (已先註解舊表天數進行防禦)
+    T.[S15_最佳天數] AS [S15_最佳持股天數(天)],
+    -- T.[S30_最佳天數] AS [S30_最佳持股天數(天)], -- 預留：待您確認舊表欄位後即可取消註解
+
+    T.具體概念
+
+FROM (
+    -- 第一層：日線寬表與即時庫 JOIN 運算 (改為 LEFT JOIN 獲取 60M 數據與雙向 DNA)
+    SELECT
+        M.名稱, 
+        M.代號, 
+        B.成交價 AS 盤中成交價, 
+        B.漲幅 AS 盤中漲幅, 
+        B.總量 AS 盤中總量, 
+        M.專家實戰總分 AS 當前日線分數,
+        M.日期, 
+        M.具體概念,
+        K60.Curr_K AS [最新60M_K],
+        K60.Curr_D AS [最新60M_D],
+        K60.Curr_OSC AS [最新60M_OSC],
+        P15.最高勝率天數 AS [S15_最佳天數]
+    FROM stockchangedate.dbo.MasterStockAnalysis M
+    INNER JOIN stockchange.dbo.basicinfo AS B ON RTRIM(M.代號) = RTRIM(B.代號)
+    
+    -- 讀取最新一根 60M 指標 (改用 LEFT JOIN 防禦，確保 60M 無資料時個股也照常出現)
+    LEFT JOIN (
+        SELECT R1.代號, R1.K AS Curr_K, R1.D AS Curr_D, R1.OSC AS Curr_OSC
+        FROM (
+            SELECT 代號, K, D, OSC,
+                ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS Rn
+            FROM stockchange.dbo.Stock60M
+        ) R1
+        WHERE R1.Rn = 1
+    ) K60 ON RTRIM(M.代號) = RTRIM(K60.代號)
+    
+    -- 讀取雙向股性 DNA 1-30天回測結果
+    LEFT JOIN stockchangedate.dbo.StockPersonality_S15 P15 ON RTRIM(M.代號) = RTRIM(P15.代號)
+    LEFT JOIN stockchangedate.dbo.StockPersonality P30 ON RTRIM(M.代號) = RTRIM(P30.代號) -- 預設的 S30 表
+
+    -- 核心條件：僅限制金牌股性 ＋ 今日成交量 > 500 張
+    WHERE (P30.最高勝率 >= 75 OR M.代號 IN ('2330', '2317', '2454'))
+      AND B.總量 >= 500
+) AS T
+
+-- 2. 關聯週線 MA60 快照
+LEFT JOIN stockchangedate.dbo.WeeklyMA60Snapshot W ON RTRIM(T.代號) = RTRIM(W.代號)
+
+-- 3. 關聯 FactSet 機構估值
+LEFT JOIN stockchangedate.dbo.FactSetEstimates F ON RTRIM(T.代號) = RTRIM(F.代號)
+    AND F.新聞日期 = (SELECT MAX(新聞日期) FROM stockchangedate.dbo.FactSetEstimates WHERE 代號 = F.代號)
+
+-- 4. 確保資料對齊最新日期
+WHERE T.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+ORDER BY T.盤中總量 DESC;
+/*三雄列入觀察
+戰術三終極版：【全維度實戰戰術分流表 (雙維度 DNA 併排 ＋ 60M即時指標 ＋ 全自動操盤戰術指引)】
+*/` },
+            {
+                cat: "戰術分流", title: "全維度實戰戰術分流表+前三龍頭", sql: `/*資料庫:stockchangedate*/ T.名稱, 
+    T.代號, 
+    T.盤中成交價, 
+    T.盤中漲幅, 
+    T.盤中總量, 
+    T.當前日線分數,
+
+    -- 🏆 核心新增：手動/語音與網頁端全自動戰術分流指引 (一秒分辨短打或長抱)
+    (CASE
+        WHEN T.當前日線分數 < 0 
+             THEN N'⚡ 超跌短打 (僅限短線反彈，2~5天或破5MA即刻停利)'
+        WHEN T.當前日線分數 BETWEEN 0.0 AND 14.99 
+             THEN N'🟢☀️ 伏兵波段 (中長線起步點，可安心持有 10~30天)'
+        ELSE N'🔥 重裝加速 (強勢股噴發，沿日線5MA/20MA極速波段)'
+    END) AS [操盤戰術指引],
+
+    -- 60M 即時指標 (僅作為顯示，不設任何限制，100% 確保個股出現)
+    T.[最新60M_K],
+    T.[最新60M_D],
+    T.[最新60M_OSC],
+
+    -- 結合 V7.0 快照表，掌握週線防守位 (改用 LEFT JOIN 防禦)
+    W.本週中心 AS [週MA60扣抵],
+    ROUND(T.盤中成交價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比],
+
+    -- 結合 FactSet 估值表，鎖定基本面空間 [Anue鉅亨網]
+    F.最新EPS中位數 AS [FactSet預估EPS],
+    F.預估目標價 AS [共識目標價],
+    ROUND(((F.預估目標價 - T.盤中成交價) / NULLIF(T.盤中成交價, 0)) * 100, 1) AS [目標價潛在空間(%)],
+
+    -- 雙維度股性 DNA 最佳持股天數並排比對 (已先註解舊表天數進行防禦)
+    T.[S15_最佳天數] AS [S15_最佳持股天數(天)],
+    -- T.[S30_最佳天數] AS [S30_最佳持股天數(天)], -- 預留：待您確認舊表欄位後即可取消註解
+
+    T.具體概念
+
+FROM (
+    -- 第一層：日線寬表與即時庫 JOIN 運算 (改為 LEFT JOIN 獲取 60M 數據與雙向 DNA)
+    SELECT
+        M.名稱, 
+        M.代號, 
+        B.成交價 AS 盤中成交價, 
+        B.漲幅 AS 盤中漲幅, 
+        B.總量 AS 盤中總量, 
+        M.專家實戰總分 AS 當前日線分數,
+        M.日期, 
+        M.具體概念,
+        K60.Curr_K AS [最新60M_K],
+        K60.Curr_D AS [最新60M_D],
+        K60.Curr_OSC AS [最新60M_OSC],
+        P15.最高勝率天數 AS [S15_最佳天數]
+    FROM stockchangedate.dbo.MasterStockAnalysis M
+    INNER JOIN stockchange.dbo.basicinfo AS B ON RTRIM(M.代號) = RTRIM(B.代號)
+    
+    -- 讀取最新一根 60M 指標 (改用 LEFT JOIN 防禦，確保 60M 無資料時個股也照常出現)
+    LEFT JOIN (
+        SELECT R1.代號, R1.K AS Curr_K, R1.D AS Curr_D, R1.OSC AS Curr_OSC
+        FROM (
+            SELECT 代號, K, D, OSC,
+                ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS Rn
+            FROM stockchange.dbo.Stock60M
+        ) R1
+        WHERE R1.Rn = 1
+    ) K60 ON RTRIM(M.代號) = RTRIM(K60.代號)
+    
+    -- 讀取雙向股性 DNA 1-30天回測結果
+    LEFT JOIN stockchangedate.dbo.StockPersonality_S15 P15 ON RTRIM(M.代號) = RTRIM(P15.代號)
+    LEFT JOIN stockchangedate.dbo.StockPersonality P30 ON RTRIM(M.代號) = RTRIM(P30.代號) -- 預設的 S30 表
+
+    -- 核心條件：僅限制金牌股性 ＋ 今日成交量 > 500 張
+    WHERE (P30.最高勝率 >= 75 OR M.代號 IN (select REPLACE(RIGHT(word1, 5), ')', '') AS 代號 FROM fromaccessdatabase.dbo.guestinfowd5 WHERE (時間戳記 = N'20260419')))
+      AND B.總量 >= 500
+) AS T
+
+-- 2. 關聯週線 MA60 快照
+LEFT JOIN stockchangedate.dbo.WeeklyMA60Snapshot W ON RTRIM(T.代號) = RTRIM(W.代號)
+
+-- 3. 關聯 FactSet 機構估值
+LEFT JOIN stockchangedate.dbo.FactSetEstimates F ON RTRIM(T.代號) = RTRIM(F.代號)
+    AND F.新聞日期 = (SELECT MAX(新聞日期) FROM stockchangedate.dbo.FactSetEstimates WHERE 代號 = F.代號)
+
+-- 4. 確保資料對齊最新日期
+WHERE T.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+ORDER BY T.盤中總量 DESC;
+/*前三龍頭列入觀察
+戰術三終極版：【全維度實戰戰術分流表 (雙維度 DNA 併排 ＋ 60M即時指標 ＋ 全自動操盤戰術指引)】
+*/` },
 
             {
                 cat: "扣抵值及kd共振", title: "技術 ＋ 籌碼 ＋ 週線 MA60 快照 ＋ FactSet 機構估值", sql: `/*資料庫:stockchangedate*/
