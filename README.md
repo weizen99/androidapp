@@ -132,6 +132,7 @@ Ollama 背景服務：加載 qwen2.5:1.5b [Operational Manual]。
 本機看盤端：於 excelsql2.html 網頁上，隨點隨看。對特定心儀個股，按下 「📸 一鍵截圖並推送」 秒發 LINE。
 手機隨身端：出門在外直接在 LINE 傳送 [股號] ➔ 秒得 AI 文字解盤；傳送 [股號] 圖片 ➔ 秒得文字解盤 ＋ 最新共振圖卡。
 這整套行動決策控制鏈已經非常強大、流暢且成熟。
+line額度200次一下就用完了,加入Telegram次數無限制來檔主力(推播解盤至LINE+推播解盤至TG及 數據卡片至LINE+數據卡片至 TG)
 
 
 https://weizen99.github.io/androidapp/message4.html
