@@ -4658,7 +4658,7 @@ FOR JSON PATH` },
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        model: 'qwen2.5:1.5b',
+                        model: 'qwen2.5:7b',
                         prompt: promptText,
                         stream: true
                     })
@@ -5189,7 +5189,112 @@ FOR JSON PATH` },
         }
 
 
+        // 🛠️【一鍵 AI 解盤 - LINE 通道】
+        function pushToLine() {
+            const stockCode = document.getElementById('keyword') ? document.getElementById('keyword').value.trim() : "";
+            if (!stockCode) { alert("⚠️ 請先在左側表格點選股票！"); return; }
 
+            fetch(`https://smokiness-supremacy-agonizing.ngrok-free.dev/push_to_line`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: stockCode })
+            })
+                .then(r => r.json())
+                .then(data => alert(data.message))
+                .catch(err => alert("❌ 無法連線至本地伺服器，請確保 line_ai_bot.py 已啟動！"));
+        }
+
+        // 🛠️【一鍵 AI 解盤 - Telegram 通道】
+        function pushToTG() {
+            const stockCode = document.getElementById('keyword') ? document.getElementById('keyword').value.trim() : "";
+            if (!stockCode) { alert("⚠️ 請先在左側表格點選股票！"); return; }
+
+            fetch(`https://smokiness-supremacy-agonizing.ngrok-free.dev/push_to_tg`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: stockCode })
+            })
+                .then(r => r.json())
+                .then(data => alert(data.message))
+                .catch(err => alert("❌ 無法連線至本地伺服器，請確保 line_ai_bot.py 已啟動！"));
+        }
+
+        // 🛠️【一鍵量化數據卡片 - LINE 通道】
+        function pushDataToLine() {
+            sendDataCardApi("push_data_to_line");
+        }
+
+        // 🛠️【一鍵量化數據卡片 - Telegram 通道】
+        function pushDataToTG() {
+            sendDataCardApi("push_data_to_tg");
+        }
+
+        // 🛠️【高階單列數據採集引擎】：自動尋找當前點選股號的「那一列」，並一對一配對表頭 [Operational Manual]
+        function getActiveRowMetrics() {
+            const stockCode = document.getElementById('keyword') ? document.getElementById('keyword').value.trim() : "";
+            if (!stockCode) return {};
+
+            let rowMetrics = {};
+            let targetRow = null;
+
+            // 1. 尋找表格中「包含該股號」的單一列 (tr)，並排除 thead 表頭列
+            document.querySelectorAll("table tr").forEach(tr => {
+                if (tr.innerText.includes(stockCode)) {
+                    if (!tr.querySelector("th")) {
+                        targetRow = tr;
+                    }
+                }
+            });
+
+            if (targetRow) {
+                // 2. 獲取表格的「表頭欄位名稱」
+                const headers = [];
+                const table = targetRow.closest("table");
+                if (table) {
+                    table.querySelectorAll("thead th").forEach(th => {
+                        headers.push(th.innerText.trim());
+                    });
+                }
+
+                // 3. 將表頭與該列的單一數值進行「一對一精準對齊配對」！
+                const cells = targetRow.querySelectorAll("td");
+                cells.forEach((td, idx) => {
+                    const headerName = headers[idx] || `指標_${idx}`;
+                    const value = td.innerText.trim();
+                    // 過濾掉沒必要的系統選取欄位
+                    if (headerName && value && headerName !== "選取" && headerName !== "選擇") {
+                        rowMetrics[headerName] = value;
+                    }
+                });
+            }
+
+            return rowMetrics;
+        }
+
+        // 🛠️【數據卡片通用發送器】
+        function sendDataCardApi(endpoint) {
+            const stockCode = document.getElementById('keyword') ? document.getElementById('keyword').value.trim() : "";
+            if (!stockCode) { alert("⚠️ 請先選擇股票代號！"); return; }
+
+            // 1. 呼叫採集引擎，精準抓取「當前點選的單一列」數據！ [Operational Manual]
+            const rowMetrics = getActiveRowMetrics();
+
+            // 2. 從單列中直接獲取精準的股名
+            const stockName = rowMetrics["名稱"] || rowMetrics["股名"] || "個股";
+
+            fetch(`https://smokiness-supremacy-agonizing.ngrok-free.dev/${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: stockName,
+                    code: stockCode,
+                    metrics: rowMetrics
+                })
+            })
+                .then(r => r.json())
+                .then(data => alert(data.message))
+                .catch(err => alert("❌ 無法連線至本地伺服器，請確保 line_ai_bot.py 已啟動！"));
+        }
 
 
     </script>
@@ -5295,15 +5400,15 @@ FOR JSON PATH` },
         </div>
         <div style="font-weight:bold; color:#00f2fe; margin-bottom:10px; font-size:14px;">📝 串流分析報告：</div>
 
-        <!-- 新增的「一鍵推播至 LINE」按鈕 -->
-        <button id="push-line-btn" onclick="pushReportToLine()" style="width: 100%; margin-bottom: 15px; background: linear-gradient(135deg, #00b900 0%, #009900 100%); color: white; border: none; padding: 10px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer;">
-            📲 一鍵推播解盤至手機 LINE
-        </button>
-
-        <!-- 亮藍色：一鍵推播量化數據卡片 -->
-        <button id="push-data-line-btn" onclick="pushDataCardToLine()" style="width: 100%; margin-bottom: 15px; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color: white; border: none; padding: 10px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer;">
-            📊 一鍵推播「量化數據卡片」至手機 LINE
-        </button>
+        <!-- 🛠️【2026/07/19 升級】：雙排四按鈕設計，左 LINE 右 Telegram，按額度彈性使用！ -->
+        <div style="display: flex; gap: 8px; margin-bottom: 8px; width: 100%;">
+            <button type="button" onclick="pushToLine()" class="btn btn-success" style="flex: 1; font-size: 13px; font-weight: bold; padding: 10px 4px; background-color: #22c55e; border-color: #22c55e; color: white; border-radius: 6px;">📲 推播解盤至 LINE</button>
+            <button type="button" onclick="pushToTG()" class="btn btn-primary" style="flex: 1; font-size: 13px; font-weight: bold; padding: 10px 4px; background-color: #3b82f6; border-color: #3b82f6; color: white; border-radius: 6px;">📲 推播解盤至 TG</button>
+        </div>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px; width: 100%;">
+            <button type="button" onclick="pushDataToLine()" class="btn" style="flex: 1; font-size: 13px; font-weight: bold; padding: 10px 4px; background-color: #10b981; border-color: #10b981; color: white; border-radius: 6px;">📊 數據卡片至 LINE</button>
+            <button type="button" onclick="pushDataToTG()" class="btn" style="flex: 1; font-size: 13px; font-weight: bold; padding: 10px 4px; background-color: #06b6d4; border-color: #06b6d4; color: white; border-radius: 6px;">📊 數據卡片至 TG</button>
+        </div>
 
         <!-- 📈 【核心新增】：自動繪製一季 (60天) 趨勢折線圖 HTML 結構 -->
         <!-- 請將這段代碼貼在藍色「一鍵推播量化數據卡片」按鈕下方、且在「綜合共振度」上方 -->
