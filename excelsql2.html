@@ -83,9 +83,111 @@
         // --- 範本資料庫 ---
         const sqlTemplateLibrary = [
 
-            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+           
+            //{ cat: " ", title: " ", sql: `  ` },
+            //{ cat: " ", title: " ", sql: `  ` },
+            //{ cat: " ", title: " ", sql: `  ` },
+            //{ cat: " ", title: " ", sql: `  ` },
+            {
+                cat: "因子顯著性檢驗與訊號降維-找出勝率高的關鍵因子", title: "全市場因子效能總覽", sql: ` EXEC dbo.sp_AnalyzeFactorSignificance 
+    @TargetFactor = '五日成交價交叉成功',  --obv: 五日交叉成功 五日成交價交叉成功 五日總量交叉成功 五日投信交叉成功 五日外資交叉成功 五日三大法人交叉成功...
+    @ForwardDays = 5,    --「價格五日均線交叉」在未來 5 個交易日後的預測力
+    @StartDate = 20250401, 
+    @EndDate = 20260717,
+    @MinSamples = 15; ` },
+
+
+            {
+                cat: "因子顯著性檢驗與訊號降維-找出勝率高的關鍵因子", title: "單股因子顯著性排行榜", sql: ` EXEC dbo.sp_AnalyzeFactorSignificance1 
+@TargetFactor = '五日成交價交叉成功',  --obv: 五日交叉成功 五日成交價交叉成功 五日總量交叉成功 五日投信交叉成功 五日外資交叉成功 五日三大法人交叉成功...
+@ForwardDays = 5,    --「價格五日均線交叉」在未來 5 個交易日後的預測力
+@StartDate = 20250401, 
+@EndDate = 20260717,
+@MinSamples = 15; ` },
+
+
+            {
+                cat: "價格突破（技術） ✕ 法人建倉（籌碼） ✕ OBV發動（量能）", title: "價格金叉 + OBV金叉 + 法人金叉", sql: `EXEC dbo.sp_GetThreeDimensionalResonanceStocks 
+    @IsLive = 0,             -- 盤後歷史模式 (盤中可改為 1)
+    @MinResonanceCount = 3;  -- 必須三個金叉全部滿足 (價格=1 且 OBV=1 且 法人=1)
+    --股權: 特大戶變動 > 0 THEN 15 ELSE - 10 END) +散戶變動 < 0 THEN 15 ELSE - 10 END) +中實戶變動 > 5 THEN 10 ELSE 0 END)) AS 籌碼健康分
+    --S15 實戰總分 > 15分 模型
+    --@IsLive = 1（盤中即時）：直接讀取 allcross_live。
+    --@IsLive = 0（盤後歷史）：直接讀取 allcross
+    ` },
+            
+            {
+                cat: "五合一終極實戰雷達", title: "量、價、籌、分、60M 五合一終極實戰雷達", sql: `/*資料庫:stockchangedate*/A.代號, 
+    A.名稱, 
+    A.日期 AS [數據日期],
+    A.成交價 AS [當前股價],
+    A.盤中總量 AS [今日總量],
+    
+    -- 📊 【60M級別指標】：由 Stock60M 即時對齊最新的 60M KD [Database Architecture, Operational Manual]
+    ROUND(K60.K, 2) AS [60M_K],
+    ROUND(K60.D, 2) AS [60M_D],
+    
+    -- 📊 【籌碼面】：三大法人籌碼動能棒 (紅柱) [Database Architecture, Operational Manual]
+    ROUND(A.三大法人_ma5 - A.三大法人_ma20, 2) AS [法人籌碼動能],
+    
+    -- 📊 【實戰分數面】：實時撈出真實的「實戰總分」 ✕ 「實戰總分動能棒 (藍柱)」 [Database Architecture, Operational Manual]
+    ROUND(S.實戰總分, 2) AS [實戰總分],
+    ROUND(S.實戰總分 - S.實戰總分_ma20, 2) AS [實戰總分動能],
+    
+    -- 📊 【量能面】：OBV 量能動能與雙突破狀態 [Database Architecture, Operational Manual]
+    ROUND(A.obv淨額 - A.obv_ma5, 2) AS [OBV量動能],
+    CASE WHEN A.obv淨額 > A.obv_ma5 THEN '是' ELSE '否' END AS [OBV突破5MA],
+    CASE WHEN A.obv淨額 > A.obv_ma34 THEN '是' ELSE '否' END AS [OBV突破34MA],
+    
+    -- 📊 【價格面】：股價均線突破確認 [Database Architecture, Operational Manual]
+    CASE WHEN A.成交價 > A.price_ma5 THEN '是' ELSE '否' END AS [股價突破5MA],
+    CASE WHEN A.成交價 > A.price_ma20 THEN '是' ELSE '否' END AS [股價突破20MA],
+    
+    -- 📊 輔助與風控指標
+    ROUND(A.盤中總量 / NULLIF(A.amount_ma5, 0), 2) AS [量能放大倍數],
+    W.本週中心 AS [週MA60中心],
+    ROUND(A.成交價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比(限20MA防守)]
+    
+FROM (
+    -- 🛠️ 巢狀子查詢 A：替代 LatestAllcross CTE，抓取過渡表 allcross_live 中每檔股票最新一筆 [Database Architecture, Operational Manual]
+    SELECT * FROM (
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) as rn
+        FROM stockchangedate.dbo.allcross_live
+    ) t1 WHERE rn = 1
+) A
+INNER JOIN (
+    -- 🛠️ 巢狀子查詢 S：替代 LatestScore CTE，抓取 ScoreCrossHistory 中每檔股票最新一筆 [Database Architecture, Operational Manual]
+    SELECT * FROM (
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) as rn
+        FROM stockchangedate.dbo.ScoreCrossHistory
+    ) t2 WHERE rn = 1
+) S ON A.代號 = S.代號
+LEFT JOIN (
+    -- 🛠️ 巢狀子查詢 K60：替代 LatestStock60M CTE，自動跨庫抓取最新一小時 60M KD [Database Architecture, Operational Manual]
+    SELECT * FROM (
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) as rn
+        FROM stockchange.dbo.Stock60M
+    ) t3 WHERE rn = 1
+) K60 ON A.代號 = K60.代號
+-- 🛠️ 跨庫關聯週快照表 [WeeklyMA60Snapshot, Database Architecture]
+LEFT JOIN stockchangedate.dbo.WeeklyMA60Snapshot W ON A.代號 = W.代號
+WHERE 
+    -- 籌碼與技術面雙動能大於 0 [Database Architecture, Operational Manual]
+    (A.三大法人_ma5 - A.三大法人_ma20) > 0  
+    AND (S.實戰總分 - S.實戰總分_ma20) > 0   
+    -- 總量大於 1000張
+    AND A.盤中總量 >= 1000                  
+    
+ORDER BY 
+    [實戰總分動能] DESC, 
+    [法人籌碼動能] DESC;
+
+/*篩選條件：
+   1. 法人動能 > 0 (籌碼紅柱擴張)
+   2. 實戰總分動能 > 0 (分數藍柱上攻)
+   3. 今日成交量 > 1000張*/            `},
+
+
             {
                 cat: "七維共振儀表板", title: "七維共振 ✕ 股權大戶吃貨加權", sql: ` /*資料庫:stockchangedate*/ T.名稱,
             T.代號,
@@ -5297,6 +5399,69 @@ FOR JSON PATH` },
         }
 
 
+        // ====================================================================================
+        // 🛠️【1. 盤後聯動查詢】：直接讀取正式的 allcross 資料庫，極速直讀 [Database Architecture, Operational Manual]
+        // ====================================================================================
+        //function executePostQuery() {
+        //    const stockCode = document.getElementById('keyword') ? document.getElementById('keyword').value.trim() : "";
+        //    if (!stockCode) { alert("⚠️ 請先選擇股票代號！"); return; }
+
+        //    console.log(`📊 [盤後直讀] 正在為股號 ${stockCode} 讀取正式 allcross 歷史數據...`);
+
+        //    // 呼叫您原本讀取 allcross 的傳統畫圖函數 (例如 loadAndRenderThreeCharts()) [Operational Manual]
+        //    // 確保其後端對應的是 SELECT * FROM allcross
+        //    loadAndRenderThreeCharts();
+        //}
+
+        // 🛠️【1. 盤後按鈕觸發】：直讀正式 allcross (不運算，極速直開)
+        function executePostQuery() {
+            executeChartQuery("post");
+        }
+
+        // 🛠️【2. 盤中按鈕觸發】：直連後端 GetCombinedChartDataLive (在資料庫先執行 SP 再回傳 allcross_live)
+        function executeLiveQuery() {
+            executeChartQuery("live");
+        }
+
+        // 🛠️【核心大分流】：動態路由 WebMethod 的畫圖引擎 [Operational Manual]
+        function executeChartQuery(mode) {
+            const stockCode = document.getElementById('keyword') ? document.getElementById('keyword').value.trim() : "2330";
+            const startDate = document.getElementById('起2') ? document.getElementById('起2').value.trim() : "20260204";
+
+            if (!stockCode) { alert("⚠️ 請先選擇股票代號！"); return; }
+
+            // 🛠️ 根據模式，決定呼叫後端哪一個 WebMethod 接口！
+            let webMethod = "GetCombinedChartData1";  // 預設盤後讀取：GetCombinedChartData1 (對齊 allcross)
+            if (mode === "live") {
+                webMethod = "GetCombinedChartDataLive"; // 盤中讀取：GetCombinedChartDataLive (對齊 allcross_live，先跑 SP)
+            }
+
+            console.log(`📊 [${mode}模式] 正在連線資料庫讀取 ${stockCode} 的圖表數據...`);
+
+            $.ajax({
+                type: "POST",
+                url: "DataService2.aspx/" + webMethod, // 🛠️ 自動對應盤中與盤後端點！
+                data: JSON.stringify({
+                    stockCode: stockCode,
+                    startDate: startDate
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                timeout: 300000,
+                success: function (res) {
+                    const result = JSON.parse(res.d);
+                    if (result.status === "success") {
+                        renderEChartsSync1(result);
+                    } else {
+                        alert("⚠️ 數據讀取失敗: " + result.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("無法連線數據端點: ", error);
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
@@ -5368,7 +5533,35 @@ FOR JSON PATH` },
 
                 <div class="col-12 sm-3">
                     <label class="fw-bold">SQL 指令 (SELECT 已自動補上)：</label>
-                    <textarea id="sqlText" class="form-control font-monospace" rows="4"> top 50 * FROM chips5 order by 日期 desc,漲幅 desc</textarea>
+                    <textarea id="sqlText" class="form-control font-monospace" rows="4"> top 50 * FROM chips5 order by 日期 desc,漲幅 desc
+/*以下為您詳細拆解圖三中各個元素與線條代表的實戰含義：(下拉可看圖,輸入股票代號)
+### 一、 藍綠色系：三大法人籌碼動能（代表資金意圖）
+這部分是由您的資料庫即時計算三大法人的买卖超數據而來，用來觀察市場大戶（外資、投信、自營商）是不是在暗中布局。
+1.  法人 5MA（青藍色點線）：三大法人 5 日移動平均買賣超。代表法人短線的資金態度。
+2.  法人 20MA（淺綠色點線）：三大法人 20 日移動平均買賣超。代表法人中線的布局基調。
+3.  法人動能棒（紅/粉色柱狀體）：
+    *   這是 `5MA` 減去 `20MA` 的差值（即資金加速度）。
+    *   柱子在 0 軸上方且變長（紅色）：代表法人短線買盤正在「加速前進」，大戶積極加碼。
+    *   柱子在 0 軸下方（綠色向下）：代表法人資金正在撤退或轉為觀望。
+### 二、 橘黃色系：實戰總分系統（代表技術強度）
+這是 Zen AI 戰情室最獨特之處。系統將 KD、MACD、MA、均線排列等多項技術指標，在背景自動加權運算成一個 0~100 的「實戰總分」，免去您一條條看技術線的麻煩。
+1.  實戰總分（深黃/橘色點線，帶有微發光特效）：個股當天的技術面綜合評分。分數越高，代表多頭排列與技術強勢度越完美。
+2.  5日均分（粉紅點線） & 20日均分（黃白點線）：
+    *   這就像是「分數的均線」。
+    *   當實戰總分站上它的 5日均分 與 20日均分，代表這檔股票的技術面正在「由弱轉強」或「強勢噴發」。
+3.  分數動能棒（藍色柱狀體）：
+    *   這是 `實戰總分` 減去 `20日均分` 的差值。
+    *   藍色柱子向上增長：代表這檔股票的「多頭共振強度」正在快速擴張，屬於技術面的強烈表態。
+### 三、 實戰中的核心看盤要領：「共振」
+這張圖之所以叫做「共振圖」，是因為它能幫您一眼抓出「資金」與「技術」同時點火的黃金發動點：
+*   📈 黃金共振發動點（買點確認）：
+    當您看到底部的 「法人動能棒（紅柱）」 與 「分數動能棒（藍柱）」 同時翻正並向上拉長，且實戰總分與法人5MA同步交叉向上突破時，代表：
+    > 「大戶資金進來了，且多項技術指標同時翻多！」
+    *   以畫面上右側（大約 6 月前後）為例：圖二出現了代表能量爆發的「黃色巨量金星」，而正下方的圖三也出現了法人籌碼快速向上飆升（青色線陡峭上揚）與分數動能棒（藍柱）大幅擴張的共振現象，隨後便帶動了一波強勢的波段行情。
+*   ⚠️ 背離警訊（利多出盡 / 轉弱訊號）：
+    如果股價還在漲（圖一），但是圖三的實戰總分開始掉下來，或者法人動能（紅柱）開始收斂甚至翻綠，這就是傳統的「指標背離」，暗示大戶正在邊拉邊出，是短線需要注意分批獲利落袋的警訊。
+這張圖表現在可以非常流暢地進行三圖下游標聯動與縮放，您可以拖動最下方的時間軸拉桿，來複盤這檔個股在歷史上每一次「大金星 + 法人與分數共振」時的股價反應，這將對您的實戰交易節奏大有幫助！*/
+</textarea>
                 </div>
             </div>
 
@@ -5525,8 +5718,8 @@ FOR JSON PATH` },
     <div style="width: 100%; max-width: 100%; margin: 0 auto; background: #080f1a; padding: 15px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); box-sizing: border-box;">
         <!-- 輸入項一：個股名稱/代號 -->
         <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 6px;">
-            <span style="font-size: 12px; color: #718096; font-weight: bold; font-family: Microsoft JhengHei;">個股代號/名稱：</span>
-            <input type="text" id="keyword" value="台積電" style="background: #080f1a; color: #e2e8f0; border: 1px solid #1b2a3f; border-radius: 6px; padding: 10px; font-size: 14px; box-sizing: border-box; width: 100%; transition: border-color 0.2s;" onfocus="this.style.borderColor='#00f2fe';" onblur="this.style.borderColor='#1b2a3f';">
+            <span style="font-size: 12px; color: #718096; font-weight: bold; font-family: Microsoft JhengHei;">個股代號：</span>
+            <input type="text" id="keyword" value="2330" style="background: #080f1a; color: #e2e8f0; border: 1px solid #1b2a3f; border-radius: 6px; padding: 10px; font-size: 14px; box-sizing: border-box; width: 100%; transition: border-color 0.2s;" onfocus="this.style.borderColor='#00f2fe';" onblur="this.style.borderColor='#1b2a3f';">
         </div>
 
         <!-- 輸入項二：統計起日 (YYYYMMDD) -->
@@ -5546,11 +5739,14 @@ FOR JSON PATH` },
 
         <!-- 執行按鈕 -->
         <div style="min-width: 180px;">
-            <button onclick="loadAndRenderThreeCharts()" style="width: 50%; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); border: none; color: #0b131f; padding: 11px 20px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';">
-                ⚡ 執行 ECharts 聯動查詢
-            </button>
-            <!-- 新增一鍵截圖按鈕 -->
-            <button type="button" id="btn_screenshot" onclick="triggerScreenshot()" class="btn btn-success" style="margin-left: 10px; background-color: #10b981; border-color: #10b981; color: white;">📸 一鍵截圖並推送</button>
+            <!-- 🛠️【盤中/盤後大分流】：左邊點盤中即時隨動，右邊點盤後歷史直讀，100% 精準分流！ -->
+            <div style="display: flex; gap: 10px; margin-bottom: 12px; width: 100%;">
+                <button type="button" id="btn_query_live" onclick="executeLiveQuery()" class="btn btn-warning" style="flex: 1; font-size: 14px; font-weight: bold; padding: 12px 6px; background-color: #b5414d; border-color: #f59e0b; color: white; border-radius: 6px; box-shadow: 0 2px 6px rgba(245,158,11,0.3); ">⚡ 盤中聯動 (即時)</button>
+                <button type="button" id="btn_query_post" onclick="executePostQuery()" class="btn btn-primary" style="flex: 1; font-size: 14px; font-weight: bold; padding: 12px 6px; background-color: #0284c7; border-color: #0284c7; color: white; border-radius: 6px; box-shadow: 0 2px 6px rgba(2,132,199,0.3);">⚡ 盤後聯動 (歷史)</button>
+
+                <!-- 新增一鍵截圖按鈕 -->
+                <button type="button" id="btn_screenshot" onclick="triggerScreenshot()" class="btn btn-success" style="margin-left: 10px; background-color: #10b981; border-color: #10b981; color: white;">📸 一鍵截圖並推送</button>
+            </div>
         </div>
     </div>
     <!-- 🏆 戰情室三圖聯動量化儀表板 -->
