@@ -87,7 +87,36 @@
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
-            //{ cat: " ", title: " ", sql: `  ` },
+
+            {
+                cat: "回測勝率報酬在自股個股", title: "每檔個股並列前 20 筆最優策略查詢", sql: `/*資料庫:stockchangedate*/ distinct I.代號, I.股票, I.盤中成交價, I.預估今日總分, I.實戰總分變化, 
+    S_Profit.推薦順位 AS [推薦順位(1~5)], -- 💡 新增：顯示策略推薦順位 [WeeklyMA60Snapshot, Database Architecture]
+    S_Profit.買入分數門檻 AS 最大報酬_買入分數, 
+    S_Profit.持股天數 AS 最大報酬_最優持股天數, 
+    S_Profit.[勝率%] AS 最大報酬_歷史勝率, 
+    S_Profit.區間累計總報酬 AS 最大報酬_歷史總回報, 
+    S_Win.買入分數門檻 AS 最高勝率_買入分數, 
+    S_Win.持股天數 AS 最高勝率_最優持股天數, 
+    S_Win.[勝率%] AS 最高勝率_歷史勝率
+FROM stockchangedate.dbo.IntradayScoreCache AS I 
+-- 💡【核心改動一】：放寬推薦順位限制至 <= 5，以拉出前 5 筆最優天數 [WeeklyMA60Snapshot, Database Architecture]
+LEFT OUTER JOIN stockchangedate.dbo.OptimalStrategySnapshot AS S_Profit 
+    ON I.代號 = S_Profit.股票代號 
+    AND S_Profit.推薦類別 = N'💰 最大累計報酬推薦' 
+    AND S_Profit.推薦順位 <= 20 
+-- 💡【核心改動二】：將最佳勝率策略透過「相同推薦順位」與最大報酬策略橫向對齊
+LEFT OUTER JOIN stockchangedate.dbo.OptimalStrategySnapshot AS S_Win 
+    ON I.代號 = S_Win.股票代號 
+    AND S_Win.推薦類別 = N'🏆 最佳勝率推薦' 
+    AND S_Win.推薦順位 = S_Profit.推薦順位
+WHERE I.代號 IN (2330, 2454, 2317)
+-- 💡【核心改動三】：先依估分高低排序，同檔股票再依推薦順位 (1~5) 依序整齊排列
+ORDER BY I.預估今日總分 DESC, S_Profit.推薦順位 ASC;
+/*
+SELECT [代號] FROM [dbo].[incomechar7] 部份
+SELECT [代號] FROM [dbo].[incomechar22] 預備突破雷達 (量能先行+低分伏兵)
+*/` },
+
             {
                 cat: "因子顯著性檢驗與訊號降維-找出勝率高的關鍵因子", title: "全市場因子效能總覽", sql: ` EXEC dbo.sp_AnalyzeFactorSignificance 
     @TargetFactor = '五日成交價交叉成功',  --obv: 五日交叉成功 五日成交價交叉成功 五日總量交叉成功 五日投信交叉成功 五日外資交叉成功 五日三大法人交叉成功...
@@ -186,6 +215,84 @@ ORDER BY
    1. 法人動能 > 0 (籌碼紅柱擴張)
    2. 實戰總分動能 > 0 (分數藍柱上攻)
    3. 今日成交量 > 1000張*/            `},
+
+
+            {
+                cat: "五合一終極實戰雷達", title: "量、價、籌、分、60M 五合一終極實戰雷達加入預估總分", sql: ` /*資料庫:stockchangedate*/
+    A.代號, 
+    A.名稱, 
+    A.日期 AS [數據日期],
+    A.成交價 AS [當前股價],
+    A.盤中總量 AS [今日總量],
+    
+    -- 👑【核心新增】：引進盤中估分快取大表的「預估今日總分」與「實戰總分變化」 [Database Architecture, Operational Manual]
+    ROUND(ISC.預估今日總分, 2) AS [預估今日總分],
+    ROUND(ISC.實戰總分變化, 2) AS [實戰總分變化],
+    
+    -- 📊 【60M級別指標】：由 Stock60M 即時對齊最新的 60M KD [Database Architecture, Operational Manual]
+    ROUND(K60.K, 2) AS [60M_K],
+    ROUND(K60.D, 2) AS [60M_D],
+    
+    -- 📊 【籌碼面】：三大法人籌碼動能棒 (紅柱) [Database Architecture, Operational Manual]
+    ROUND(A.三大法人_ma5 - A.三大法人_ma20, 2) AS [法人籌碼動能],
+    
+    -- 📊 【實戰分數面】：實時撈出真實的「實戰總分」 ✕ 「實戰總分動能棒 (藍柱)」 [Database Architecture, Operational Manual]
+    ROUND(S.實戰總分, 2) AS [實戰總分],
+    ROUND(S.實戰總分 - S.實戰總分_ma20, 2) AS [實戰總分動能],
+    
+    -- 📊 【量能面】：OBV 量能動能與雙突破狀態 [Database Architecture, Operational Manual]
+    ROUND(A.obv淨額 - A.obv_ma5, 2) AS [OBV量動能],
+    CASE WHEN A.obv淨額 > A.obv_ma5 THEN '是' ELSE '否' END AS [OBV突破5MA],
+    CASE WHEN A.obv淨額 > A.obv_ma34 THEN '是' ELSE '否' END AS [OBV突破34MA],
+    
+    -- 📊 【價格面】：股價均線突破確認 [Database Architecture, Operational Manual]
+    CASE WHEN A.成交價 > A.price_ma5 THEN '是' ELSE '否' END AS [股價突破5MA],
+    CASE WHEN A.成交價 > A.price_ma20 THEN '是' ELSE '否' END AS [股價突破20MA],
+    
+    -- 📊 輔助與風控指標
+    ROUND(A.盤中總量 / NULLIF(A.amount_ma5, 0), 2) AS [量能放大倍數],
+    W.本週中心 AS [週MA60中心],
+    ROUND(A.成交價 / NULLIF(W.本週中心, 0), 2) AS [週抗壓比(限20MA防守)]
+    
+FROM (
+    -- 🛠️ 巢狀子查詢 A：替代 LatestAllcross CTE，抓取過渡表 allcross_live 中每檔股票最新一筆 [Database Architecture, Operational Manual]
+    SELECT * FROM (
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) as rn
+        FROM stockchangedate.dbo.allcross_live
+    ) t1 WHERE rn = 1
+) A
+INNER JOIN (
+    -- 🛠️ 巢狀子查詢 S：替代 LatestScore CTE，抓取 ScoreCrossHistory 中每檔股票最新一筆 [Database Architecture, Operational Manual]
+    SELECT * FROM (
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) as rn
+        FROM stockchangedate.dbo.ScoreCrossHistory
+    ) t2 WHERE rn = 1
+) S ON A.代號 = S.代號
+LEFT JOIN (
+    -- 🛠️ 巢狀子查詢 K60：替代 LatestStock60M CTE，自動跨庫抓取最新一小時 60M KD [Database Architecture, Operational Manual]
+    SELECT * FROM (
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) as rn
+        FROM stockchange.dbo.Stock60M
+    ) t3 WHERE rn = 1
+) K60 ON A.代號 = K60.代號
+-- 🛠️ 跨庫關聯週快照表 [WeeklyMA60Snapshot, Database Architecture]
+LEFT JOIN stockchangedate.dbo.WeeklyMA60Snapshot W ON A.代號 = W.代號
+-- 🛠️ 👑【核心新增】：跨庫關聯盤中實時估分快取大表 [Database Architecture, Operational Manual]
+LEFT JOIN stockchangedate.dbo.IntradayScoreCache ISC ON A.代號 = ISC.代號
+WHERE 
+    -- 籌碼與技術面雙動能大於 0 [Database Architecture, Operational Manual]
+    (A.三大法人_ma5 - A.三大法人_ma20) > 0  
+    AND (S.實戰總分 - S.實戰總分_ma20) > 0   
+    -- 總量大於 1000張
+    AND A.盤中總量 >= 1000                  
+    
+ORDER BY 
+    [實戰總分動能] DESC, 
+    [法人籌碼動能] DESC;
+    /*篩選條件：
+   1. 法人動能 > 0 (籌碼紅柱擴張)
+   2. 實戰總分動能 > 0 (分數藍柱上攻)
+   3. 今日成交量 > 1000張*/`},
 
 
             {
@@ -2485,10 +2592,10 @@ ORDER BY   M.產業分類, M.專家實戰總分 DESC`
                 cat: "回測+回報+勝率", title: "最大報酬💎:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [sp_FindOptimalStrategy_GridSearch1] 2330`
             },
             {
-                cat: "回測+回報+勝率", title: "最大報酬💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,所有訊號都算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate1] 20250101,2330`
+                cat: "回測+回報+勝率", title: "最大報酬💎💎💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,所有訊號都算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate1] 20250101,2330`
             },
             {
-                cat: "回測+回報+勝率", title: "最大報酬💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,訊號須回落才重新起算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate] 20250101,2330`
+                cat: "回測+回報+勝率", title: "最大報酬💎💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,訊號須回落才重新起算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate] 20250101,2330`
             },
             {
                 cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序有勝率統計(不同天數>30 回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal1] 2330,10`
@@ -2511,10 +2618,10 @@ ORDER BY   M.產業分類, M.專家實戰總分 DESC`
             },
 
             {
-                cat: "回測+回報+勝率", title: "💎 結算明細 >10分", sql: `EXEC sp_GetStockBacktest_Universals10date 20250101,2330,10`
+                cat: "回測+回報+勝率", title: "💎💎 結算明細 >10分", sql: `EXEC sp_GetStockBacktest_Universals10date 20250101,2330,10`
             },
             {
-                cat: "回測+回報+勝率", title: "💎 結算明細 >15分", sql: `EXEC sp_GetStockBacktest_Universals15date 20250101,2330,10`
+                cat: "回測+回報+勝率", title: "💎💎 結算明細 >15分", sql: `EXEC sp_GetStockBacktest_Universals15date 20250101,2330,10`
             },
 
             {
