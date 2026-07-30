@@ -25,6 +25,7 @@ https://weizen99.github.io/androidapp/excelsql.html
 12.加入量化回測與共振分析
 
 https://weizen99.github.io/androidapp/excelsql2.html
+android app下載:https://drive.google.com/file/d/1GgsajgsQFvlzUbLzKYVCEOv2geWPXNx2/view?usp=sharing
 1.整合預存程序查詢功能(比較複雜)
 2.提醒要先刪除才能執行(選範本,改資料庫,改日期(改為最新日期,股權為週為單位,原則為週五有放假除外),刪除提醒,最後執行
 3.有些自選股筆數較多,要執行比較久
