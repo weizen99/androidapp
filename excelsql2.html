@@ -78,6 +78,61 @@
             font-weight: bold;
             font-size: 1.1rem;
         }
+
+        /* ========================================================
+   💡 【全新加入】：頂部深藍選單列美化樣式 (懸停青藍色科技感特效) [1.1]
+   ======================================================== */
+        .custom-navbar {
+            background-color: #213c5a !important; /* 完美對齊您 GitHub 盤中的戰情深藍色 [1.1] */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            padding: 8px 24px;
+        }
+
+            .custom-navbar .navbar-brand {
+                font-size: 1.25rem;
+                color: #ffffff !important;
+                letter-spacing: 1px;
+            }
+
+            .custom-navbar .nav-link {
+                color: rgba(255,255,255,0.85) !important;
+                margin-left: 15px;
+                font-size: 0.95rem;
+                transition: all 0.25s ease;
+            }
+
+                .custom-navbar .nav-link:hover {
+                    color: #51e5ff !important; /* 懸停時呈現亮青色（Cyan），大幅提升科技感 [1.1] */
+                    transform: translateY(-1px);
+                }
+
+            .custom-navbar .dropdown-menu {
+                background-color: #213c5a;
+                border: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            }
+
+            .custom-navbar .dropdown-item {
+                color: rgba(255,255,255,0.85) !important;
+                font-size: 0.9rem;
+                transition: all 0.2s ease;
+            }
+
+                .custom-navbar .dropdown-item:hover {
+                    background-color: #172d47 !important;
+                    color: #51e5ff !important;
+                }
+            /* ========================================================
+   💡 【解決選單無法下拉】：純 CSS 懸停（Hover）解鎖機制 [1.1]
+   ======================================================== */
+            .custom-navbar .dropdown:hover .dropdown-menu {
+                display: block !important;
+                opacity: 1;
+                visibility: visible;
+                margin-top: 0;
+            }
+
+
     </style>
     <script>
         // --- 範本資料庫 ---
@@ -136,7 +191,7 @@ SELECT [代號] FROM [dbo].[incomechar22] 預備突破雷達 (量能先行+低�
 
 
             {
-                cat: "價格突破（技術） ✕ 法人建倉（籌碼） ✕ OBV發動（量能）", title: "價格金叉 + OBV金叉 + 法人金叉", sql: `EXEC dbo.sp_GetThreeDimensionalResonanceStocks 
+                cat: "價格突破（技術）+ 法人建倉（籌碼）+ OBV發動（量能）", title: "價格金叉 + OBV金叉 + 法人金叉", sql: `EXEC dbo.sp_GetThreeDimensionalResonanceStocks 
     @IsLive = 0,             -- 盤後歷史模式 (盤中可改為 1)
     @MinResonanceCount = 3;  -- 必須三個金叉全部滿足 (價格=1 且 OBV=1 且 法人=1)
     --股權: 特大戶變動 > 0 THEN 15 ELSE - 10 END) +散戶變動 < 0 THEN 15 ELSE - 10 END) +中實戶變動 > 5 THEN 10 ELSE 0 END)) AS 籌碼健康分
@@ -159,7 +214,7 @@ SELECT [代號] FROM [dbo].[incomechar22] 預備突破雷達 (量能先行+低�
     -- 📊 【籌碼面】：三大法人籌碼動能棒 (紅柱) [Database Architecture, Operational Manual]
     ROUND(A.三大法人_ma5 - A.三大法人_ma20, 2) AS [法人籌碼動能],
     
-    -- 📊 【實戰分數面】：實時撈出真實的「實戰總分」 ✕ 「實戰總分動能棒 (藍柱)」 [Database Architecture, Operational Manual]
+    -- 📊 【實戰分數面】：實時撈出真實的「實戰總分」 + 「實戰總分動能棒 (藍柱)」 [Database Architecture, Operational Manual]
     ROUND(S.實戰總分, 2) AS [實戰總分],
     ROUND(S.實戰總分 - S.實戰總分_ma20, 2) AS [實戰總分動能],
     
@@ -4444,6 +4499,35 @@ FOR JSON PATH` },
                     "scrollCollapse": true,
                 });
             }
+
+            // ========================================================
+            // 💡 【解決手機/縮小版選單打不開】：一體化 jQuery 點擊解鎖機制 [1.1]
+            // ========================================================
+            $(document).ready(function () {
+
+                // 1. 解決手機版「漢堡選單」點擊打不開的問題 [1.1]
+                $(document).on('click', '.navbar-toggler', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $('#navbarContent').toggleClass('show'); // 自動切換展開/縮合狀態 [1.1]
+                });
+
+                // 2. 解決「Dropdown 藝廊系列選單」點擊打不開的問題
+                $(document).on('click', '#galleryDropdown', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $(this).next('.dropdown-menu').toggle();
+                });
+
+                // 3. 點擊網頁任何其他空白處時，自動收起所有展開的選單（對齊原生 App 體驗）
+                $(document).on('click', function (e) {
+                    if (!$(e.target).closest('.navbar').length) {
+                        $('#navbarContent').removeClass('show');
+                        $('.custom-navbar .dropdown-menu').hide();
+                    }
+                });
+            });
+
         });
 
         // 語音報警狀態紀錄：Key = "代號_日期_小時"
@@ -5572,18 +5656,83 @@ FOR JSON PATH` },
     </script>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+        <div class="container-fluid">
+            <!-- 左側品牌名稱 -->
+            <a class="navbar-brand fw-bold" href="#">
+                📊 SQL 數據中心
+            </a>
+
+            <!-- 手機版折疊按鈕 -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- 右側導航連結 (對齊您的 GitHub 盤中功能與自選股) [1.1] -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-bold">
+                    <li class="nav-item">
+                        <!-- 一鍵連結到您的 GitHub 盤中 Web API 彙總頁 [1.1] -->
+                        <a class="nav-link" href="https://weizen99.github.io/androidapp/basicinfotable2.html" target="_blank">
+                            📲 WEB API 彙總
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/mygithub1.html" target="_blank">
+                            📊 數據管理門戶
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/mygithub.html" target="_blank">
+                            📈 AI開發程式碼
+                        </a>
+                    </li>
+                    <!--<li class="nav-item">
+                        <a class="nav-link" href="https://weizen99.github.io/androidapp/index.html" onclick="$('#sqlTemplates').val('回測').change(); return false;">
+                            ⭐ 我的最愛
+                        </a>
+                    </li>-->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="galleryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            🎨 常用應用
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="galleryDropdown">
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/stockmaster.html" target="_blank">股票戰情室</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/showimage/TravelPlanner.html" target="_blank">AI 智旅管家</a></li>
+                            <li><a class="dropdown-item" href="https://weizen99.github.io/androidapp/bookkeeping.html " target="_blank">簡易記帳+SQL查詢+計算機</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/mylink.html" target="_blank">連結管理(手機)</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/messageword01.aspx" target="_blank">我的最愛連結管理</a></li>
+                            <li><a class="dropdown-item" href="https://sachidpdns.zen2965.workers.dev/" target="_blank">導航頁</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/voiceinput1.html" target="_blank">Web語音輸入</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/myword1.html" target="_blank">文字打包</a></li>
+
+                            <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.1)"></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/excelimport2" target="_blank">asp版excelsql</a></li>
+                            <li><a class="dropdown-item" href="http://www.hacker1.somee.com/maptest.aspx" target="_blank">somee區</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fish/index2.htm" target="_blank">上慶外網連結</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/message4.html" target="_blank">與我連絡</a></li>
+                            <li><a class="dropdown-item" href="https://drive.google.com/file/d/1GgsajgsQFvlzUbLzKYVCEOv2geWPXNx2/view?usp=sharing" target="_blank">手機app下載</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+   
     <!--<h1>測試：這是有修改過的新版本 1.1</h1>-->
-    <div class="container-fluid">
+    <!--<div class="container-fluid">
         <ul class="nav nav-tabs xs-3">
-            <li class="nav-item"><a class="nav-link active" href="https://zen2965.duckdns.org:8888/excelimport/excelimport2">Excel SQL 數據中心</a></li>
+            <li class="nav-item"><a class="nav-link active" href="https://zen2965.duckdns.org:8888/excelimport/excelimport2">Excel SQL 數據中心</a></li>-->
             <!--<li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/excelimport2" target="_blank">指令彙總</a></li>
             <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html" target="_blank">WebApi彙總</a></li>
             <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/map.html" target="_blank">地圖定位建檔</a></li>-->
             <!--<li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/fishnew5/favorites2" target="_blank">網站簡介</a></li>-->
             <!--<li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/stockquery/incomeedit1" target="_blank">自選股編輯</a></li>
             <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/mymvc/selfselected1.aspx" target="_blank">自選股內容</a></li>-->
-            <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/message4.html" target="_blank">與我連絡</a></li>
-        </ul>
+            <!--<li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/message4.html" target="_blank">與我連絡</a></li>
+        </ul>-->
 
         <div class="sql-box">
             <!-- 範本載入區 -->
@@ -5626,14 +5775,18 @@ FOR JSON PATH` },
                         <option value="poem1_stock7">poem1_stock7</option>
                     </select>
                 </div>
+                <!-- 💡 【全新加入】：一鍵刷新按鈕 (手機滿版 col-12 / 桌機收縮 col-sm-2)，100% 全時空顯現 [1.1] -->
+                <div class="col-12 col-sm-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-secondary w-100 fw-bold" onclick="window.location.reload();">🔄 重新整理</button>
+                </div>
                 <!--<div class="col-sm-3">
-                    <label class="fw-bold">日期參數：</label>
-                    <input type="text" id="txtDate" class="form-control" placeholder="YYYYMMDD">
-                </div>-->
-                <div class="col-sm-4 d-flex align-items-end">
+        <label class="fw-bold">日期參數：</label>
+        <input type="text" id="txtDate" class="form-control" placeholder="YYYYMMDD">
+    </div>-->
+                <div class="col-sm-3 d-flex align-items-end">
                     <button id="btnQuery" class="btn btn-primary w-100 fw-bold">🚀 執行 Excel 格式查詢</button>
                 </div>
-                <div class="col-sm-3 d-flex align-items-end">
+                <div class="col-sm-2 d-flex align-items-end">
                     <button id="btnQuery1" class="btn btn-primary w-100 fw-bold">🚀 執行預存程序</button>
                 </div>
 
