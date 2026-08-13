@@ -142,6 +142,251 @@
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
+            //{ cat: " ", title: " ", sql: `  ` },
+            {
+                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股！", sql: `/*資料庫:stockchangedate*/ TOP 100
+    M.代號,
+    M.名稱,
+    M.盤中現價 AS [當前股價],
+    M.盤中漲幅 AS [今日漲幅(%)],
+    M.盤中總量 AS [今日總量],
+    M.專家實戰總分 AS [專家實戰總分],
+    
+    -- 🏆 【半年報與營收驗證】
+    R.營收數據月份 AS [最新營收月份],
+    R.最新公告營收年增 AS [營收年增率(%)],
+    R.最新公告營收月增 AS [營收月增率(%)],
+    F.毛利率 AS [最新毛利率(%)],
+    F.營業利益率 AS [最新營益率(%)],
+    F.EPS累計 AS [半年報/累計EPS(元)],
+    
+    -- 🏆 【機構法人估值與本益比評價】
+    FS.最新EPS中位數 AS [FactSet預估全年EPS],
+    FS.預估目標價 AS [法人目標價],
+    ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) AS [目標價潛在空間(%)],
+    SF.本益比 AS [預估/近四季PE(倍)],
+    
+    -- 🏆 【回檔與低位階投資價值診斷】
+    M.價五日乖離 AS [5日乖離率(%)],
+    M.週k9 AS [週K9值],
+    (CASE
+        WHEN M.週k9 < 50 AND M.價五日乖離 BETWEEN -5.0 AND 2.0 THEN N'💎 低基期/回檔黃金買點'
+        WHEN M.價五日乖離 <= -2.0 THEN N'📉 超跌回檔急測洗盤(高R/R)'
+        WHEN M.週k9 >= 75 THEN N'🔥 短線高檔整理'
+        ELSE N'⛅ 穩健打底準備發動'
+    END) AS [位階投資價值診斷],
+    
+    -- 🏆 【週籌碼與股性DNA】
+    WC.診斷狀態 AS [週籌碼狀態],
+    WC.[特大戶變動%] AS [特大戶增減(%)],
+    P15.最高勝率 AS [S15勝率(%)],
+    P15.最高勝率天數 AS [S15最佳持股天數(天)],
+    
+    -- 🏆 【概念題材與產業鏈】
+    M.具體概念,
+    SF.細產業名稱 AS [細分產業地位]
+
+FROM (
+    SELECT 代號, 名稱, 日期, 盤中現價, 盤中漲幅, 盤中總量, 專家實戰總分, 實戰標籤, 具體概念, 價五日乖離, k9, d9, 週k9, 週d9, 集中度5日, 股本億,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+    FROM stockchangedate.dbo.MasterStockAnalysis
+    WHERE 盤中總量 >= 500
+) M
+
+-- 1. 關聯最新營收 (View_Realtime_Revenue)
+LEFT JOIN (
+    SELECT 代號, 最新公告營收年增, 最新公告營收月增, 營收數據月份,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 交易日期 DESC) AS rn
+    FROM stockchangedate.dbo.View_Realtime_Revenue
+) R ON M.代號 = R.代號 AND R.rn = 1
+
+-- 2. 關聯最新半年報/季報 (financesum)
+LEFT JOIN (
+    SELECT 代號, EPS累計, 毛利率, 營業利益率, 稅後純益,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+    FROM stockchangedate.dbo.financesum
+) F ON M.代號 = F.代號 AND F.rn = 1
+
+-- 3. 關聯 FactSet 機構估值 (FactSetEstimates)
+LEFT JOIN (
+    SELECT 代號, 最新EPS中位數, 舊EPS中位數, 預估目標價,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 新聞日期 DESC) AS rn
+    FROM stockchangedate.dbo.FactSetEstimates
+) FS ON M.代號 = FS.代號 AND FS.rn = 1
+
+-- 4. 關聯 基本面評價 (StockFundamental)
+LEFT JOIN (
+    SELECT 代號, 本益比, 股價淨值比, 細產業名稱, 產業地位,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+    FROM stockchangedate.dbo.StockFundamental
+) SF ON M.代號 = SF.代號 AND SF.rn = 1
+
+-- 5. 關聯 週籌碼診斷 (WeeklyChipAudit)
+LEFT JOIN (
+    SELECT 代號, 籌碼健康分, 診斷狀態, [特大戶變動%],
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 更新日期 DESC) AS rn
+    FROM stockchangedate.dbo.WeeklyChipAudit
+) WC ON M.代號 = WC.代號 AND WC.rn = 1
+
+-- 6. 關聯 股性勝率 (StockPersonality_S15)
+LEFT JOIN stockchangedate.dbo.StockPersonality_S15 P15 ON M.代號 = P15.代號
+
+WHERE M.rn = 1
+  -- 🎯 關鍵戰術過濾條款：
+  AND R.最新公告營收年增 >= 15.0                               -- 1. 營收雙位數強勁成長 (年增 >= 15%)
+  AND (FS.預估目標價 > M.盤中現價 * 1.15 OR SF.本益比 <= 25.0)  -- 2. 具備 15% 以上潛在上漲空間，或 PE <= 25 倍合理區
+  AND M.週k9 <= 65.0                                          -- 3. 週KD中低位階（過濾掉暴漲過熱股）
+  AND M.價五日乖離 <= 3.0                                     -- 4. 股價處於拉回均線或打底階段（不追高）
+  AND (
+      M.具體概念 LIKE N'%矽光子%' OR M.具體概念 LIKE N'%CoWoS%' OR
+      M.具體概念 LIKE N'%AI%' OR M.具體概念 LIKE N'%液冷%' OR
+      M.具體概念 LIKE N'%GB200%' OR M.具體概念 LIKE N'%半導體%' OR
+      M.具體概念 LIKE N'%機殼%' OR M.具體概念 LIKE N'%先進封測%' OR
+      M.具體概念 LIKE N'%BBU%'
+  )
+ORDER BY 
+    ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) DESC,
+    R.最新公告營收年增 DESC;
+
+    /*這組標的半年報與 7 月營收爆發，法人預估目標價給極高，但股價最近被大盤拉回錯殺，屬於「下檔有限、上檔空間巨大」的極致風報酬比標的*/`
+            },
+
+            {
+                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股+60M 小時起漲+全維度金叉共振", sql: `/*資料庫:stockchangedate*/ TOP 100
+    M.代號,
+    M.名稱,
+    M.盤中現價 AS [當前股價],
+    M.盤中漲幅 AS [今日漲幅(%)],
+    M.盤中總量 AS [今日總量],
+    M.專家實戰總分 AS [專家實戰總分],
+    
+    -- 🚀【Stock60M 小時線起漲訊號】
+    ROUND(K60.K, 2) AS [60M_K值],
+    ROUND(K60.D, 2) AS [60M_D值],
+    ROUND(K60.OSC, 2) AS [60M_OSC動能],
+    ROUND(K60.DIF, 2) AS [60M_DIF],
+    (CASE 
+        WHEN K60.OSC > 0 AND K60.K > K60.D AND K60.K <= 65 THEN N'🔥 60M低檔金叉+OSC翻正(起漲爆發點)'
+        WHEN K60.OSC > 0 AND K60.K > K60.D THEN N'🟢 60M多頭動能續強'
+        WHEN K60.K > K60.D THEN N'🌤️ 60M KD金叉打底'
+        ELSE N'⛅ 60M整理中'
+    END) AS [60M小時起漲診斷],
+
+    -- 🏆【AllCross_Snapshot 技術與籌碼共振分】
+    AC.成交價黃金交叉次數 AS [均價共振分],
+    AC.obv黃金交叉次數 AS [OBV量共振分],
+    AC.三大法人黃金交叉次數 AS [法人籌碼共振分],
+    (ISNULL(AC.成交價黃金交叉次數, 0) + ISNULL(AC.obv黃金交叉次數, 0) + ISNULL(AC.三大法人黃金交叉次數, 0)) AS [總共振金叉分],
+
+    -- 🏆【半年報與營收驗證】
+    R.營收數據月份 AS [最新營收月份],
+    R.最新公告營收年增 AS [營收年增率(%)],
+    R.最新公告營收月增 AS [營收月增率(%)],
+    F.EPS累計 AS [半年報/累計EPS(元)],
+    
+    -- 🏆【機構估值與本益比】
+    FS.最新EPS中位數 AS [FactSet預估全年EPS],
+    FS.預估目標價 AS [法人目標價],
+    ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) AS [目標價潛在空間(%)],
+    SF.本益比 AS [預估/近四季PE(倍)],
+    
+    -- 🏆【位階與週籌碼】
+    M.價五日乖離 AS [5日乖離率(%)],
+    M.週k9 AS [週K9值],
+    WC.診斷狀態 AS [週籌碼狀態],
+    WC.[特大戶變動%] AS [特大戶增減(%)],
+    P15.最高勝率 AS [S15勝率(%)],
+    P15.最高勝率天數 AS [S15最佳持股天數(天)],
+    
+    -- 🏆【概念與產業】
+    M.具體概念,
+    SF.細產業名稱 AS [細分產業地位]
+
+FROM (
+    SELECT 代號, 名稱, 日期, 盤中現價, 盤中漲幅, 盤中總量, 專家實戰總分, 實戰標籤, 具體概念, 價五日乖離, k9, d9, 週k9, 週d9, 集中度5日, 股本億,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+    FROM stockchangedate.dbo.MasterStockAnalysis
+    WHERE 盤中總量 >= 500
+) M
+
+-- 1. 關聯 Stock60M 小時線最新一根指標 (stockchange.dbo.Stock60M)
+LEFT JOIN (
+    SELECT RTRIM(代號) AS 代號, K, D, OSC, DIF, MACD9, SMA5, SMA20,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn
+    FROM stockchange.dbo.Stock60M
+) K60 ON RTRIM(M.代號) = K60.代號 AND K60.rn = 1
+
+-- 2. 關聯 AllCross_Snapshot 金叉快照表 (stockchange.dbo.AllCross_Snapshot)
+LEFT JOIN (
+    SELECT RTRIM(代號) AS 代號, 成交價黃金交叉次數, obv黃金交叉次數, 三大法人黃金交叉次數, 五日成交價交叉成功, 五日交叉成功,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 更新時間 DESC) AS rn
+    FROM stockchange.dbo.AllCross_Snapshot
+) AC ON RTRIM(M.代號) = AC.代號 AND AC.rn = 1
+
+-- 3. 關聯 最新營收 (View_Realtime_Revenue)
+LEFT JOIN (
+    SELECT RTRIM(代號) AS 代號, 最新公告營收年增, 最新公告營收月增, 營收數據月份,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 交易日期 DESC) AS rn
+    FROM stockchangedate.dbo.View_Realtime_Revenue
+) R ON RTRIM(M.代號) = R.代號 AND R.rn = 1
+
+-- 4. 關聯 半年報/季報 (financesum)
+LEFT JOIN (
+    SELECT RTRIM(代號) AS 代號, EPS累計, 毛利率, 營業利益率, 稅後純益,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+    FROM stockchangedate.dbo.financesum
+) F ON RTRIM(M.代號) = F.代號 AND F.rn = 1
+
+-- 5. 關聯 FactSet 機構估值 (FactSetEstimates)
+LEFT JOIN (
+    SELECT RTRIM(代號) AS 代號, 最新EPS中位數, 舊EPS中位數, 預估目標價,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 新聞日期 DESC) AS rn
+    FROM stockchangedate.dbo.FactSetEstimates
+) FS ON RTRIM(M.代號) = FS.代號 AND FS.rn = 1
+
+-- 6. 關聯 基本面評價 (StockFundamental)
+LEFT JOIN (
+    SELECT RTRIM(代號) AS 代號, 本益比, 股價淨值比, 細產業名稱, 產業地位,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+    FROM stockchangedate.dbo.StockFundamental
+) SF ON RTRIM(M.代號) = SF.代號 AND SF.rn = 1
+
+-- 7. 關聯 週籌碼診斷 (WeeklyChipAudit)
+LEFT JOIN (
+    SELECT RTRIM(代號) AS 代號, 籌碼健康分, 診斷狀態, [特大戶變動%],
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 更新日期 DESC) AS rn
+    FROM stockchangedate.dbo.WeeklyChipAudit
+) WC ON RTRIM(M.代號) = WC.代號 AND WC.rn = 1
+
+-- 8. 關聯 股性勝率 (StockPersonality_S15)
+LEFT JOIN stockchangedate.dbo.StockPersonality_S15 P15 ON RTRIM(M.代號) = RTRIM(P15.代號)
+
+WHERE M.rn = 1
+  -- 🎯 半年報與營收真金白銀：
+  AND R.最新公告營收年增 >= 15.0                               -- 1. 營收雙位數強勁成長 (年增 >= 15%)
+  AND (FS.預估目標價 > M.盤中現價 * 1.15 OR SF.本益比 <= 25.0)  -- 2. 具備 15% 以上目標價空間 或 PE <= 25 倍合理區
+  AND M.週k9 <= 65.0                                          -- 3. 日/週線未過熱，處於低基期打底或回檔區
+  
+  -- 🚀 60M 小時線與 AllCross 起漲過濾：
+  AND K60.OSC > 0                                             -- 4. 60M 動能棒已翻正 (OSC > 0)
+  AND K60.K > K60.D                                           -- 5. 60M 小時 KD 低檔黃金交叉發動
+  AND (ISNULL(AC.成交價黃金交叉次數, 0) >= 1 OR ISNULL(AC.obv黃金交叉次數, 0) >= 1 OR ISNULL(AC.三大法人黃金交叉次數, 0) >= 1) -- 6. 技術/籌碼面具備金叉能量
+
+  -- 🎯 熱門核心概念範疇：
+  AND (
+      M.具體概念 LIKE N'%矽光子%' OR M.具體概念 LIKE N'%CoWoS%' OR
+      M.具體概念 LIKE N'%AI%' OR M.具體概念 LIKE N'%液冷%' OR
+      M.具體概念 LIKE N'%GB200%' OR M.具體概念 LIKE N'%半導體%' OR
+      M.具體概念 LIKE N'%機殼%' OR M.具體概念 LIKE N'%先進封測%' OR
+      M.具體概念 LIKE N'%BBU%' OR M.具體概念 LIKE N'%PCB%' OR
+      M.具體概念 LIKE N'%記憶體%'
+  )
+ORDER BY 
+    K60.OSC DESC,                                             -- 60M 小時動能最強者優先
+    ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) DESC;
+
+    /*1.基本面底子（半年報真金白銀）2. 60M 小時線爆發訊號 3.日線級金叉點火 */` },
+
 
             {
                 cat: "回測勝率報酬在自股個股", title: "每檔個股並列前 20 筆最優策略查詢", sql: `/*資料庫:stockchangedate*/ distinct I.代號, I.股票, I.盤中成交價, I.預估今日總分, I.實戰總分變化, 
@@ -2218,7 +2463,7 @@ FROM (
                 name1, mail1,
                 SUBSTRING(word1, CHARINDEX('(', word1) + 1, LEN(word1) - CHARINDEX('(', word1) - 1) as 提取代號
             FROM fromaccessdatabase.dbo.guestinfowd5
-            WHERE 時間戳記 = (SELECT MAX(時間戳記) FROM fromaccessdatabase.dbo.guestinfowd5)
+            WHERE 時間戳記 = 20260419
 ) G
 -- 第二層：關聯盤中即時表 (basicinfo) 並只取最後一跳
 INNER JOIN stockchange.dbo.basicinfo I ON RTRIM(G.提取代號) = RTRIM(I.代號)
@@ -2240,6 +2485,103 @@ ORDER BY G.name1 ASC
 診斷：該產業目前處於 「系統性空頭」。不論該族群有什麼利多，只要三位大哥都跌破五日線，絕對不能進場攤平。
 4. 🧬 概念標籤的交叉驗證
 觀察 具體概念。如果 「人工智慧產業龍頭 (世芯-KY)」 的標籤包含 CPO，而 「光通訊族群」 今天也集體表態，那世芯的帶動效果會倍增。*/`
+            },
+
+
+            {
+                cat: "盤中操盤", title: "「🚩 by自選股 導航儀：地位、分數與即時風向」", sql: `  /*資料庫:stockchange*/    
+    I_List.名稱 AS [股票],                       -- 💡 股票名稱直接由自選股清單提供，100% 防範 NULL 斷層
+    I_List.代號 AS [代號],
+    I.成交價 AS [盤中價],
+    I.漲幅 AS [漲幅%],
+    -- 偵測即時風向 (1) 或 (-1)
+    (CASE WHEN I.成交價 > A.price_ma5 THEN '(1)☀️' ELSE '(-1)⛈️' END) AS [風向],
+    M.專家實戰總分 AS [專家分],
+    M.實戰標籤,
+    M.具體概念
+FROM (
+    -- 🛠️ 基礎自選名單：從 stockchangedate.dbo.incomechar16 抓取全部 10 檔個股 [Database Architecture, Operational Manual]
+    SELECT DISTINCT 
+        CAST(代號 AS VARCHAR(20)) AS 代號, 
+        RTRIM(名稱) AS 名稱 
+    FROM stockchangedate.dbo.incomechar19  --彈性更改自選股名稱(預設四季紅)
+) I_List
+-- 🛠️ 🚀 左外聯結：關聯龍頭地位表 (guestinfowd5)，不在名單內的個股會被保留並顯示預設名稱
+LEFT JOIN (
+    SELECT name1, mail1,
+        SUBSTRING(word1, CHARINDEX('(', word1) + 1, LEN(word1) - CHARINDEX('(', word1) - 1) AS 提取代號
+    FROM fromaccessdatabase.dbo.guestinfowd5
+    WHERE 時間戳記 = (SELECT MAX(時間戳記) FROM fromaccessdatabase.dbo.guestinfowd5)
+) G ON I_List.代號 = G.提取代號
+-- 第三層：關聯盤中即時表 (basicinfo) 并轉型對齊 [1.1]
+INNER JOIN stockchange.dbo.basicinfo I ON I_List.代號 = CAST(I.代號 AS VARCHAR(20))
+-- 第四層：關聯歷史大寬表與五日線
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON I_List.代號 = RTRIM(M.代號)
+INNER JOIN stockchangedate.dbo.allcross A ON I_List.代號 = RTRIM(A.代號) AND A.日期 = M.日期
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.自動編號 IN (SELECT MAX(自動編號) FROM stockchange.dbo.basicinfo GROUP BY 代號)
+ORDER BY [專家分] DESC, I_List.代號 ASC; -- 依專家分數由高到低排序，更具作戰指引性
+
+/*💡顯示自選股股票內容
+*/`
+            },
+
+
+            {
+                cat: "盤中操盤", title: "「🚩 自選股+基金淨值 導航儀：地位、分數與即時風向」", sql: `/*資料庫:stockchange*/
+    ISNULL(G.name1, N'自選股16') AS [產業地位],  
+    I_List.名稱 AS [股票],                       
+    I_List.代號 AS [代號],
+    I_List.持股比率 AS [持股比率%],               -- 💡【核心新增】：第一金投信前十大持股比率 (來自 equityinfo) [Database Architecture, Operational Manual]
+    I.成交價 AS [盤中價],
+    I.漲幅 AS [個股漲幅%],
+    
+    -- 👑 【個股對淨值之實時貢獻度】：(持股比率 / 100.0) * 個股盤中漲幅 [WeeklyMA60Snapshot, Database Architecture]
+    ROUND((I_List.持股比率 / 100.0) * I.漲幅, 4) AS [個股淨值貢獻%],
+    
+    -- 👑 【基金預估總變動比率】：利用視窗函數 SUM() OVER() 加總前十大持股的實時貢獻度之和 [WeeklyMA60Snapshot, Database Architecture]
+    ROUND(SUM((I_List.持股比率 / 100.0) * I.漲幅) OVER (), 4) AS [前十大預估變動%],
+    
+    -- 👑 【基金預估淨值變動點數】：變動率 * 最新淨值
+    --ROUND((SUM((I_List.持股比率 / 100.0) * I.漲幅) OVER () / 100.0) * @LatestFundNAV, 2) AS [預估淨值變動點數],
+    
+    -- 👑 【最新預估基金淨值】：原淨值 + 變動點數
+    --ROUND(@LatestFundNAV + ((SUM((I_List.持股比率 / 100.0) * I.漲幅) OVER () / 100.0) * @LatestFundNAV), 2) AS [最新預估淨值],
+
+    -- 偵測即時風向
+    (CASE WHEN I.成交價 > A.price_ma5 THEN '(1)☀️' ELSE '(-1)⛈️' END) AS [風向],
+    M.專家實戰總分 AS [專家分],
+    M.實戰標籤,
+    M.具體概念
+FROM (
+    -- 🛠️ 基礎自選名單：從 stockchangedate.dbo.incomechar16 導入持股比率 (equityinfo) 欄位 [Database Architecture, Operational Manual]
+    SELECT DISTINCT 
+        CAST(代號 AS VARCHAR(20)) AS 代號, 
+        RTRIM(名稱) AS 名稱,
+        CAST(equityinfo AS FLOAT) AS 持股比率
+    FROM stockchangedate.dbo.incomechar16
+) I_List
+-- 左外聯結：關聯龍頭地位表
+LEFT JOIN (
+    SELECT name1, mail1,
+        SUBSTRING(word1, CHARINDEX('(', word1) + 1, LEN(word1) - CHARINDEX('(', word1) - 1) AS 提取代號
+    FROM fromaccessdatabase.dbo.guestinfowd5
+    WHERE 時間戳記 = (SELECT MAX(時間戳記) FROM fromaccessdatabase.dbo.guestinfowd5)
+) G ON I_List.代號 = G.提取代號
+-- 關聯盤中即時表 (basicinfo)
+INNER JOIN stockchange.dbo.basicinfo I ON I_List.代號 = CAST(I.代號 AS VARCHAR(20))
+-- 關聯歷史大寬表與五日線
+INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON I_List.代號 = RTRIM(M.代號)
+INNER JOIN stockchangedate.dbo.allcross A ON I_List.代號 = RTRIM(A.代號) AND A.日期 = M.日期
+WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND I.自動編號 IN (SELECT MAX(自動編號) FROM stockchange.dbo.basicinfo GROUP BY 代號)
+-- 💡【核心改動】：依照持股權重 (持股比率) 由大至小排列，完美對齊投信前十大排序！
+ORDER BY I_List.持股比率 DESC;
+
+/*💡 【基金淨值預估參數】：在此設定該基金最新的官方收盤淨值 (最新淨值: 254.73) [WeeklyMA60Snapshot, Database Architecture, Operational Manual]
+--DECLARE @LatestFundNAV FLOAT = 254.73;  254.73*前十大預估變動%=增加的淨值
+--https://www.fsitc.com.tw/FundDetail.aspx?ID=D14#TabLinkdivEditTab3
+*/`
             },
 
 
