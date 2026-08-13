@@ -3,6 +3,7 @@ Ai規劃:
 https://ithelp.ithome.com.tw/m/articles/10383051
 
 https://zen2965.duckdns.org:8888/excelimport/stockmaster.html
+
 股票戰情室 :1.語音輸入(常用話術)=> 兩主題:啟動AI篩選   專家實戰選股 ,  3.使用範本執行SQL指令(參考指令用用語音修改輸入) 2.選擇下方的結果可進行"解盤"或"勝率"(回測240天的數據)3.產業熱力:今日產業焦點,族群的領頭羊
 ,56 萬筆歷史數據，加上 六維度交叉 (`allcross`),這是一個非常高階的「量化回測與共振分析」思維。透過將不同策略的「中獎紀錄」實體化存入一張表，我們可以從「單點選股」進化到「大數據機率選股」。這份數據結果簡直是「量化交易的聖盃」！您成功地將分散在 56 萬筆資料中的精華，透過「符合條件數」轉化成了一個極具參考價值的排行榜。這份數據證明了您的「大寬表 + 獨立統計表」策略是完全正確的。* MasterStockAnalysis 提供深度 (47 個指標)。*   ResonanceHits 提供廣度 (跨策略統計)。您已經完成了一個專業投顧級別的量化平台。
 * 實裝「前端 JS 遞迴式閉環（jQuery Loop）」，自動進行最多 3 次背景自動試錯與零數據、數據膨脹防禦，成功後自動呼叫 API 寫入 AIEngineeringKB 自我進化 [1.1, 2.1]。
@@ -13,6 +14,7 @@ https://zen2965.duckdns.org:8888/excelimport/stockmaster.html
   * CleanSqlResult()：內建「繁簡體對齊清洗（如 专家->專家, 实战->實戰, 标签->標籤, 亿->億, 名称->名稱）」與「常見欄位別名自動糾錯（最新價格->盤中現價, 交易量->盤中總量）」，確保 100% 繁體安全執行。同時註解掉 Replace("[", " ") 以防損毀別名括號 [2.1]。
 
 https://zen2965.duckdns.org:8888/showimage/TravelPlanner.html
+
 AI 智旅管家:語音輸入旅𨘋資訊,由Ai幫你作行程規劃(智彗規劃),製作行程明細,明細 內有導航,也可以選右上圖示開始Google巡航導航,微調可以將目前的行程做增刪,如:如刪除第二天的某個行程或在第三天插入某個行程,資料都好了之後按"微調"修改,如果有文本資料(如ai巳幫你規劃)請貼上,讓AI幫你規劃行程並找座標,最後按"文本轉圖"去執行,按"巡航"的話會在規劃的點,按順序每5秒鐘跳一個景點
 
 一般:
@@ -153,52 +155,90 @@ https://drive.google.com/file/d/1GgsajgsQFvlzUbLzKYVCEOv2geWPXNx2/view?usp=shari
 
 
 https://weizen99.github.io/androidapp/message4.html
+
 1.專業的留言系統
 2.除了可留言,重要提醒或留備註等也都可以
 3.新增 編輯 刪除 分頁(可選分頁筆數) 凍結表頭 搜尋 都有支援
 
+
 https://weizen99.github.io/androidapp/googlesheet.html
+
 讀取Google試算表的內容固定的一些欄位 photo欄放圖片的連結(要按表頭結構,文字或圖片)
 
+
 https://weizen99.github.io/androidapp/map.html
+
 可以將目前定位資料或任一點座標建檔到資料庫中,按同步將座標送到Somee資料庫建檔
+
+
 
 https://weizen99.github.io/androidapp/message5.html
 播放系統:我的電腦檔案mp4檔 nas檔案mp4檔 youtube連結,有撥放清單按序撥放,可新增youtube連結
 
 https://weizen99.github.io/androidapp/message6.html message6s.html
+
 同上電腦版,版面等更好看,目前都會用到本機電腦,關機時便無法使用後置程式碼
 
+
+
 https://weizen99.github.io/androidapp/message6_1.html
+
 youtube連結播放專用
 
+
+
 https://weizen99.github.io/androidapp/tour.html
+
 Ai聊天,可自動切換模型,到 https://aistudio.google.com/app/apikey 申請Api key
 
+
+
 https://weizen99.github.io/androidapp/voiceinput.html  voiceinput1.html 
+
 網頁版語音輸入或自動朗讀,可由Ai潤稿,複製到剪貼簿,任意地方按貼上(省打字)
 
+
+
 https://weizen99.github.io/androidapp/image_api2.html
+
 照片輸播,直接抓取ds215圖片,增加每100張為一組,方便跳轉檔案
 
+
+
 https://zen2965.duckdns.org:8888/gps_by_adb/map.html
+
 gps_iis.py+map_iis.html: 
 在asp.net架構下電腦發送定位座給手機並完成跳轉至定位,手機跟電腦同步會看到藍色定位點移動的軌跡,也有瞬移 走路 繞圈的設定,可以使用adb有線連接或adb無線連接,不需模擬位置跟Root,但開啓寶可夢只能移動無法抓寶,網路執行https://zen2965.duckdns.org:8888/gps_by_adb/map_iis.html
 網頁便能控制手機的定位,但手機要執行gps_iis.py
 
+
+
 https://weizen99.github.io/androidapp/mylink.html
+
 手機大小專用,連結SQLserver可儲存超連結,crud及排序,排序分三種:自訂按輸入權重,按加入順序,按點擊次數,上方有導覽列等等
 
+
+
 [https://zen2965.duckdns.org:8888/androidapp/mygithub.html
+
 左邊是Ai的對話流程,有提問及Ai思考及產生的程式碼
 
+
+
 https://zen2965.duckdns.org:8888/androidapp/mygithub1.html
+
 數據管理門戶,專業設計by Ai
 
+
+
 https://zen2965.duckdns.org:8888/androidapp/mygithub.html
+
 左邊是Ai的對話流程及Ai產生的程式碼)
 
+
+
 https://weizen99.github.io/androidapp/bookkeeping.html
+
 簡易記帳+SQL查詢+計算機
 
 
