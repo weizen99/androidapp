@@ -1,6 +1,10 @@
 Ai規劃:
-申請Gemini API key
+
 https://ithelp.ithome.com.tw/m/articles/10383051
+
+申請Gemini API key
+
+
 
 https://zen2965.duckdns.org:8888/excelimport/stockmaster.html
 
@@ -12,6 +16,8 @@ https://zen2965.duckdns.org:8888/excelimport/stockmaster.html
 - 後端 API [StockAI.aspx.vb] (VB.NET Web Service)
   * LookupKBMatch()：引進 N 前綴安全模糊比對（UserPrompt LIKE N'%' + @speech + N'%'），首輪 0 毫秒直通命中古法，返回 isBypass 旗標，完美避開 AI 翻譯延遲與個股代號幻覺 [2.1]。
   * CleanSqlResult()：內建「繁簡體對齊清洗（如 专家->專家, 实战->實戰, 标签->標籤, 亿->億, 名称->名稱）」與「常見欄位別名自動糾錯（最新價格->盤中現價, 交易量->盤中總量）」，確保 100% 繁體安全執行。同時註解掉 Replace("[", " ") 以防損毀別名括號 [2.1]。
+
+
 
 https://zen2965.duckdns.org:8888/showimage/TravelPlanner.html
 
@@ -31,6 +37,8 @@ https://weizen99.github.io/androidapp/excelsql.html
 10.預存程式功能再另一版
 11.不要顯示欄位可進行程式碼刪除,除了有些特別分群等的不行,尤其是手機畫面比較小更須使用
 12.加入量化回測與共振分析
+
+
 
 
 https://weizen99.github.io/androidapp/excelsql2.html
@@ -173,7 +181,11 @@ https://weizen99.github.io/androidapp/map.html
 
 
 https://weizen99.github.io/androidapp/message5.html
+
+
 播放系統:我的電腦檔案mp4檔 nas檔案mp4檔 youtube連結,有撥放清單按序撥放,可新增youtube連結
+
+
 
 https://weizen99.github.io/androidapp/message6.html message6s.html
 
