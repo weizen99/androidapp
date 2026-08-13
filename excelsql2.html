@@ -5733,28 +5733,51 @@ FOR JSON PATH` },
             };
 
             // ---- 圖三配置：三大法人籌碼與實戰均分共振 ----
+            // ---- 圖三配置：三大法人籌碼與實戰均分共振 (雙 Y 軸專業升級版) ----
             var optionScore = {
-                title: { text: resData.stockName + ' 三大法人籌碼與實戰均分共振', textStyle: { color: '#38bdf8', fontSize: 16 } },
+                title: { text: resData.stockName + ' 三大法人籌碼與實戰總分共振', textStyle: { color: '#38bdf8', fontSize: 16 } },
                 backgroundColor: '#0c1827',
                 tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
                 legend: { data: ['法人5MA', '法人20MA', '法人動能棒', '實戰總分', '5日均分', '20日均分', '分數動能棒'], textStyle: { color: '#cbd5e1' } },
                 grid: gridConfig,
                 axisPointer: axisPointerConfig,
                 xAxis: { type: 'category', data: dates, axisLine: { lineStyle: { color: '#1b2a3f' } } },
-                yAxis: { scale: true, splitLine: { lineStyle: { color: '#1b2a3f', type: 'dashed' } } },
+
+                // 🛠️【核心升級】：配置獨立雙 Y 軸！
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '法人籌碼(張)',
+                        scale: true,
+                        splitLine: { lineStyle: { color: '#1b2a3f', type: 'dashed' } },
+                        axisLine: { lineStyle: { color: '#22c55e' } },
+                        axisLabel: { color: '#22c55e' }
+                    },
+                    {
+                        type: 'value',
+                        name: '實戰總分(分)',
+                        scale: true,
+                        splitLine: { show: false }, // 隱藏右軸網格線，避免畫面雜亂
+                        axisLine: { lineStyle: { color: '#00f2fe' } },
+                        axisLabel: { color: '#00f2fe', formatter: '{value} 分' }
+                    }
+                ],
                 dataZoom: [
                     { type: 'inside', xAxisIndex: [0], filterMode: 'filter' },
                     { type: 'slider', xAxisIndex: [0], filterMode: 'filter', textStyle: { color: '#94a3b8' } }
                 ],
                 series: [
-                    { name: '法人5MA', type: 'line', data: instMa5, lineStyle: { color: '#22c55e', width: 1.5 } },
-                    { name: '法人20MA', type: 'line', data: instMa20, lineStyle: { color: '#ec4899', width: 1.5 } },
-                    { name: '法人動能棒', type: 'bar', data: instDiff, itemStyle: { color: '#f43f5e' } },
-                    { name: '實戰總分', type: 'line', data: scores, lineStyle: { color: '#00f2fe', width: 2.5, shadowBlur: 3, shadowColor: '#00f2fe' } },
-                    { name: '5日均分', type: 'line', data: scoreMa5, lineStyle: { color: '#10b981', width: 1.5 } },
-                    { name: '20日均分', type: 'line', data: scoreMa20, lineStyle: { color: '#eab308', width: 1.5 } },
-                    { name: '分數動能棒', type: 'bar', data: scoreDiff, itemStyle: { color: '#3b82f6' } },
-                    { name: '5日標記', type: 'scatter', symbol: 'triangle', symbolSize: 12, data: instMarker5, itemStyle: { color: '#22c55e' } }
+                    // 🔹 左 Y 軸系列 (yAxisIndex: 0) -> 三大法人籌碼 (張數)
+                    { name: '法人5MA', type: 'line', yAxisIndex: 0, data: instMa5, lineStyle: { color: '#22c55e', width: 1.5 } },
+                    { name: '法人20MA', type: 'line', yAxisIndex: 0, data: instMa20, lineStyle: { color: '#ec4899', width: 1.5 } },
+                    { name: '法人動能棒', type: 'bar', yAxisIndex: 0, data: instDiff, itemStyle: { color: '#f43f5e' } },
+
+                    // 🔹 右 Y 軸系列 (yAxisIndex: 1) -> 實戰總分 (分數，獨立放大呈現！)
+                    { name: '實戰總分', type: 'line', yAxisIndex: 1, data: scores, lineStyle: { color: '#00f2fe', width: 2.5, shadowBlur: 4, shadowColor: '#00f2fe' } },
+                    { name: '5日均分', type: 'line', yAxisIndex: 1, data: scoreMa5, lineStyle: { color: '#10b981', width: 1.5 } },
+                    { name: '20日均分', type: 'line', yAxisIndex: 1, data: scoreMa20, lineStyle: { color: '#eab308', width: 1.5 } },
+                    { name: '分數動能棒', type: 'bar', yAxisIndex: 1, data: scoreDiff, itemStyle: { color: '#3b82f6' } },
+                    { name: '5日標記', type: 'scatter', yAxisIndex: 0, symbol: 'triangle', symbolSize: 12, data: instMarker5, itemStyle: { color: '#22c55e' } }
                 ]
             };
 
@@ -5793,7 +5816,9 @@ FOR JSON PATH` },
             btn.disabled = true;
 
             // 直接使用 NGROK 公共 HTTPS 安全通道
-            const ngrokUrl = `https://smokiness-supremacy-agonizing.ngrok-free.dev/api/screenshot?stock=${stockCode}&start=${startDate}`;
+            //const ngrokUrl = `https://smokiness-supremacy-agonizing.ngrok-free.dev/api/screenshot?stock=${stockCode}&start=${startDate}`;
+            // ⭕ 新版：加上 &_t=${Date.now()} 強制每次截圖拉取最新版網頁
+            const ngrokUrl = `https://smokiness-supremacy-agonizing.ngrok-free.dev/api/screenshot?stock=${stockCode}&start=${startDate}&_t=${Date.now()}`;
 
             console.log("📲 正在透過 ngrok 安全通道發送截圖指令...");
 
