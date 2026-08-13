@@ -32,6 +32,7 @@ https://weizen99.github.io/androidapp/excelsql.html
 
 
 https://weizen99.github.io/androidapp/excelsql2.html
+
 excelsql2.html+stockmaster.html android app 下載
 https://drive.google.com/file/d/1GgsajgsQFvlzUbLzKYVCEOv2geWPXNx2/view?usp=sharing
 1.整合預存程序查詢功能(比較複雜)
