@@ -143,7 +143,7 @@
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
             {
-                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股！", sql: `/*資料庫:stockchangedate*/ TOP 100
+                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股！+financesum1新公佈季", sql: `/*資料庫:stockchangedate*/ TOP 100
         M.代號,
         M.名稱,
         M.盤中現價 AS [當前股價],
@@ -203,7 +203,7 @@ LEFT JOIN (
 LEFT JOIN (
         SELECT 代號, EPS累計, 毛利率, 營業利益率, 稅後純益,
                ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
-        FROM stockchangedate.dbo.financesum
+        FROM stockchangedate.dbo.financesum1    --最新公告季度
 ) F ON M.代號 = F.代號 AND F.rn = 1
 
 -- 3. 關聯 FactSet 機構估值 (FactSetEstimates)
@@ -247,11 +247,12 @@ ORDER BY
         ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) DESC,
         R.最新公告營收年增 DESC;
 
-        /*這組標的半年報與 7 月營收爆發，法人預估目標價給極高，但股價最近被大盤拉回錯殺，屬於「下檔有限、上檔空間巨大」的極致風報酬比標的*/`
+        /*financesum1最新公佈季但可能不齊全  financesum:齊全但不包含新公告
+        這組標的半年報與 7 月營收爆發，法人預估目標價給極高，但股價最近被大盤拉回錯殺，屬於「下檔有限、上檔空間巨大」的極致風報酬比標的*/`
             },
 
             {
-                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股+60M 小時起漲+全維度金叉共振", sql: `/*資料庫:stockchangedate*/ TOP 100
+                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股+60M 小時起漲+全維度金叉共振+financesum1新公佈季", sql: `/*資料庫:stockchangedate*/ TOP 100
         M.代號,
         M.名稱,
         M.盤中現價 AS [當前股價],
@@ -333,7 +334,7 @@ LEFT JOIN (
 LEFT JOIN (
         SELECT RTRIM(代號) AS 代號, EPS累計, 毛利率, 營業利益率, 稅後純益,
                ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
-        FROM stockchangedate.dbo.financesum
+        FROM stockchangedate.dbo.financesum1  --最新公告季度
 ) F ON RTRIM(M.代號) = F.代號 AND F.rn = 1
 
 -- 5. 關聯 FactSet 機構估值 (FactSetEstimates)
@@ -384,7 +385,265 @@ ORDER BY
         K60.OSC DESC,                                             -- 60M 小時動能最強者優先
         ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) DESC;
 
-        /*1.基本面底子（半年報真金白銀）2. 60M 小時線爆發訊號 3.日線級金叉點火 */` },
+        /*1.financesum1最新公佈季但可能不齊全  financesum:齊全但不包含新公告
+        2.基本面底子（半年報真金白銀）2. 60M 小時線爆發訊號 3.日線級金叉點火 */` },
+
+
+
+
+
+
+            {
+                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股！+financesum齊全", sql: `/*資料庫:stockchangedate*/ TOP 100
+        M.代號,
+        M.名稱,
+        M.盤中現價 AS [當前股價],
+        M.盤中漲幅 AS [今日漲幅(%)],
+        M.盤中總量 AS [今日總量],
+        M.專家實戰總分 AS [專家實戰總分],
+
+        -- 🏆 【半年報與營收驗證】
+        R.營收數據月份 AS [最新營收月份],
+        R.最新公告營收年增 AS [營收年增率(%)],
+        R.最新公告營收月增 AS [營收月增率(%)],
+        F.毛利率 AS [最新毛利率(%)],
+        F.營業利益率 AS [最新營益率(%)],
+        F.EPS累計 AS [半年報/累計EPS(元)],
+
+        -- 🏆 【機構法人估值與本益比評價】
+        FS.最新EPS中位數 AS [FactSet預估全年EPS],
+        FS.預估目標價 AS [法人目標價],
+        ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) AS [目標價潛在空間(%)],
+        SF.本益比 AS [預估/近四季PE(倍)],
+
+        -- 🏆 【回檔與低位階投資價值診斷】
+        M.價五日乖離 AS [5日乖離率(%)],
+        M.週k9 AS [週K9值],
+        (CASE
+            WHEN M.週k9 < 50 AND M.價五日乖離 BETWEEN -5.0 AND 2.0 THEN N'💎 低基期/回檔黃金買點'
+            WHEN M.價五日乖離 <= -2.0 THEN N'📉 超跌回檔急測洗盤(高R/R)'
+            WHEN M.週k9 >= 75 THEN N'🔥 短線高檔整理'
+            ELSE N'⛅ 穩健打底準備發動'
+        END) AS [位階投資價值診斷],
+
+        -- 🏆 【週籌碼與股性DNA】
+        WC.診斷狀態 AS [週籌碼狀態],
+        WC.[特大戶變動%] AS [特大戶增減(%)],
+        P15.最高勝率 AS [S15勝率(%)],
+        P15.最高勝率天數 AS [S15最佳持股天數(天)],
+
+        -- 🏆 【概念題材與產業鏈】
+        M.具體概念,
+        SF.細產業名稱 AS [細分產業地位]
+
+FROM (
+        SELECT 代號, 名稱, 日期, 盤中現價, 盤中漲幅, 盤中總量, 專家實戰總分, 實戰標籤, 具體概念, 價五日乖離, k9, d9, 週k9, 週d9, 集中度5日, 股本億,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.MasterStockAnalysis
+        WHERE 盤中總量 >= 500
+) M
+
+-- 1. 關聯最新營收 (View_Realtime_Revenue)
+LEFT JOIN (
+        SELECT 代號, 最新公告營收年增, 最新公告營收月增, 營收數據月份,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 交易日期 DESC) AS rn
+        FROM stockchangedate.dbo.View_Realtime_Revenue
+) R ON M.代號 = R.代號 AND R.rn = 1
+
+-- 2. 關聯最新半年報/季報 (financesum)
+LEFT JOIN (
+        SELECT 代號, EPS累計, 毛利率, 營業利益率, 稅後純益,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.financesum    --齊全的公告季度
+) F ON M.代號 = F.代號 AND F.rn = 1
+
+-- 3. 關聯 FactSet 機構估值 (FactSetEstimates)
+LEFT JOIN (
+        SELECT 代號, 最新EPS中位數, 舊EPS中位數, 預估目標價,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 新聞日期 DESC) AS rn
+        FROM stockchangedate.dbo.FactSetEstimates
+) FS ON M.代號 = FS.代號 AND FS.rn = 1
+
+-- 4. 關聯 基本面評價 (StockFundamental)
+LEFT JOIN (
+        SELECT 代號, 本益比, 股價淨值比, 細產業名稱, 產業地位,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.StockFundamental
+) SF ON M.代號 = SF.代號 AND SF.rn = 1
+
+-- 5. 關聯 週籌碼診斷 (WeeklyChipAudit)
+LEFT JOIN (
+        SELECT 代號, 籌碼健康分, 診斷狀態, [特大戶變動%],
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 更新日期 DESC) AS rn
+        FROM stockchangedate.dbo.WeeklyChipAudit
+) WC ON M.代號 = WC.代號 AND WC.rn = 1
+
+-- 6. 關聯 股性勝率 (StockPersonality_S15)
+LEFT JOIN stockchangedate.dbo.StockPersonality_S15 P15 ON M.代號 = P15.代號
+
+WHERE M.rn = 1
+      -- 🎯 關鍵戰術過濾條款：
+      AND R.最新公告營收年增 >= 15.0                               -- 1. 營收雙位數強勁成長 (年增 >= 15%)
+      AND (FS.預估目標價 > M.盤中現價 * 1.15 OR SF.本益比 <= 25.0)  -- 2. 具備 15% 以上潛在上漲空間，或 PE <= 25 倍合理區
+      AND M.週k9 <= 65.0                                          -- 3. 週KD中低位階（過濾掉暴漲過熱股）
+      AND M.價五日乖離 <= 3.0                                     -- 4. 股價處於拉回均線或打底階段（不追高）
+      AND (
+          M.具體概念 LIKE N'%矽光子%' OR M.具體概念 LIKE N'%CoWoS%' OR
+          M.具體概念 LIKE N'%AI%' OR M.具體概念 LIKE N'%液冷%' OR
+          M.具體概念 LIKE N'%GB200%' OR M.具體概念 LIKE N'%半導體%' OR
+          M.具體概念 LIKE N'%機殼%' OR M.具體概念 LIKE N'%先進封測%' OR
+          M.具體概念 LIKE N'%BBU%'
+      )
+ORDER BY
+        ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) DESC,
+        R.最新公告營收年增 DESC;
+
+        /*financesum1最新公佈季但可能不齊全  financesum:齊全但不包含新公告
+        這組標的半年報與 7 月營收爆發，法人預估目標價給極高，但股價最近被大盤拉回錯殺，屬於「下檔有限、上檔空間巨大」的極致風報酬比標的*/`
+            },
+
+            {
+                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股+60M 小時起漲+全維度金叉共振+financesum齊全", sql: `/*資料庫:stockchangedate*/ TOP 100
+        M.代號,
+        M.名稱,
+        M.盤中現價 AS [當前股價],
+        M.盤中漲幅 AS [今日漲幅(%)],
+        M.盤中總量 AS [今日總量],
+        M.專家實戰總分 AS [專家實戰總分],
+
+        -- 🚀【Stock60M 小時線起漲訊號】
+        ROUND(K60.K, 2) AS [60M_K值],
+        ROUND(K60.D, 2) AS [60M_D值],
+        ROUND(K60.OSC, 2) AS [60M_OSC動能],
+        ROUND(K60.DIF, 2) AS [60M_DIF],
+        (CASE
+            WHEN K60.OSC > 0 AND K60.K > K60.D AND K60.K <= 65 THEN N'🔥 60M低檔金叉+OSC翻正(起漲爆發點)'
+            WHEN K60.OSC > 0 AND K60.K > K60.D THEN N'🟢 60M多頭動能續強'
+            WHEN K60.K > K60.D THEN N'🌤️ 60M KD金叉打底'
+            ELSE N'⛅ 60M整理中'
+        END) AS [60M小時起漲診斷],
+
+        -- 🏆【AllCross_Snapshot 技術與籌碼共振分】
+        AC.成交價黃金交叉次數 AS [均價共振分],
+        AC.obv黃金交叉次數 AS [OBV量共振分],
+        AC.三大法人黃金交叉次數 AS [法人籌碼共振分],
+        (ISNULL(AC.成交價黃金交叉次數, 0) + ISNULL(AC.obv黃金交叉次數, 0) + ISNULL(AC.三大法人黃金交叉次數, 0)) AS [總共振金叉分],
+
+        -- 🏆【半年報與營收驗證】
+        R.營收數據月份 AS [最新營收月份],
+        R.最新公告營收年增 AS [營收年增率(%)],
+        R.最新公告營收月增 AS [營收月增率(%)],
+        F.EPS累計 AS [半年報/累計EPS(元)],
+
+        -- 🏆【機構估值與本益比】
+        FS.最新EPS中位數 AS [FactSet預估全年EPS],
+        FS.預估目標價 AS [法人目標價],
+        ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) AS [目標價潛在空間(%)],
+        SF.本益比 AS [預估/近四季PE(倍)],
+
+        -- 🏆【位階與週籌碼】
+        M.價五日乖離 AS [5日乖離率(%)],
+        M.週k9 AS [週K9值],
+        WC.診斷狀態 AS [週籌碼狀態],
+        WC.[特大戶變動%] AS [特大戶增減(%)],
+        P15.最高勝率 AS [S15勝率(%)],
+        P15.最高勝率天數 AS [S15最佳持股天數(天)],
+
+        -- 🏆【概念與產業】
+        M.具體概念,
+        SF.細產業名稱 AS [細分產業地位]
+
+FROM (
+        SELECT 代號, 名稱, 日期, 盤中現價, 盤中漲幅, 盤中總量, 專家實戰總分, 實戰標籤, 具體概念, 價五日乖離, k9, d9, 週k9, 週d9, 集中度5日, 股本億,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.MasterStockAnalysis
+        WHERE 盤中總量 >= 500
+) M
+
+-- 1. 關聯 Stock60M 小時線最新一根指標 (stockchange.dbo.Stock60M)
+LEFT JOIN (
+        SELECT RTRIM(代號) AS 代號, K, D, OSC, DIF, MACD9, SMA5, SMA20,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn
+        FROM stockchange.dbo.Stock60M
+) K60 ON RTRIM(M.代號) = K60.代號 AND K60.rn = 1
+
+-- 2. 關聯 AllCross_Snapshot 金叉快照表 (stockchange.dbo.AllCross_Snapshot)
+LEFT JOIN (
+        SELECT RTRIM(代號) AS 代號, 成交價黃金交叉次數, obv黃金交叉次數, 三大法人黃金交叉次數, 五日成交價交叉成功, 五日交叉成功,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 更新時間 DESC) AS rn
+        FROM stockchange.dbo.AllCross_Snapshot
+) AC ON RTRIM(M.代號) = AC.代號 AND AC.rn = 1
+
+-- 3. 關聯 最新營收 (View_Realtime_Revenue)
+LEFT JOIN (
+        SELECT RTRIM(代號) AS 代號, 最新公告營收年增, 最新公告營收月增, 營收數據月份,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 交易日期 DESC) AS rn
+        FROM stockchangedate.dbo.View_Realtime_Revenue
+) R ON RTRIM(M.代號) = R.代號 AND R.rn = 1
+
+-- 4. 關聯 半年報/季報 (financesum)
+LEFT JOIN (
+        SELECT RTRIM(代號) AS 代號, EPS累計, 毛利率, 營業利益率, 稅後純益,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.financesum  --齊全的公告季度
+) F ON RTRIM(M.代號) = F.代號 AND F.rn = 1
+
+-- 5. 關聯 FactSet 機構估值 (FactSetEstimates)
+LEFT JOIN (
+        SELECT RTRIM(代號) AS 代號, 最新EPS中位數, 舊EPS中位數, 預估目標價,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 新聞日期 DESC) AS rn
+        FROM stockchangedate.dbo.FactSetEstimates
+) FS ON RTRIM(M.代號) = FS.代號 AND FS.rn = 1
+
+-- 6. 關聯 基本面評價 (StockFundamental)
+LEFT JOIN (
+        SELECT RTRIM(代號) AS 代號, 本益比, 股價淨值比, 細產業名稱, 產業地位,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.StockFundamental
+) SF ON RTRIM(M.代號) = SF.代號 AND SF.rn = 1
+
+-- 7. 關聯 週籌碼診斷 (WeeklyChipAudit)
+LEFT JOIN (
+        SELECT RTRIM(代號) AS 代號, 籌碼健康分, 診斷狀態, [特大戶變動%],
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 更新日期 DESC) AS rn
+        FROM stockchangedate.dbo.WeeklyChipAudit
+) WC ON RTRIM(M.代號) = WC.代號 AND WC.rn = 1
+
+-- 8. 關聯 股性勝率 (StockPersonality_S15)
+LEFT JOIN stockchangedate.dbo.StockPersonality_S15 P15 ON RTRIM(M.代號) = RTRIM(P15.代號)
+
+WHERE M.rn = 1
+      -- 🎯 半年報與營收真金白銀：
+      AND R.最新公告營收年增 >= 15.0                               -- 1. 營收雙位數強勁成長 (年增 >= 15%)
+      AND (FS.預估目標價 > M.盤中現價 * 1.15 OR SF.本益比 <= 25.0)  -- 2. 具備 15% 以上目標價空間 或 PE <= 25 倍合理區
+      AND M.週k9 <= 65.0                                          -- 3. 日/週線未過熱，處於低基期打底或回檔區
+
+      -- 🚀 60M 小時線與 AllCross 起漲過濾：
+      AND K60.OSC > 0                                             -- 4. 60M 動能棒已翻正 (OSC > 0)
+      AND K60.K > K60.D                                           -- 5. 60M 小時 KD 低檔黃金交叉發動
+      AND (ISNULL(AC.成交價黃金交叉次數, 0) >= 1 OR ISNULL(AC.obv黃金交叉次數, 0) >= 1 OR ISNULL(AC.三大法人黃金交叉次數, 0) >= 1) -- 6. 技術/籌碼面具備金叉能量
+
+      -- 🎯 熱門核心概念範疇：
+      AND (
+          M.具體概念 LIKE N'%矽光子%' OR M.具體概念 LIKE N'%CoWoS%' OR
+          M.具體概念 LIKE N'%AI%' OR M.具體概念 LIKE N'%液冷%' OR
+          M.具體概念 LIKE N'%GB200%' OR M.具體概念 LIKE N'%半導體%' OR
+          M.具體概念 LIKE N'%機殼%' OR M.具體概念 LIKE N'%先進封測%' OR
+          M.具體概念 LIKE N'%BBU%' OR M.具體概念 LIKE N'%PCB%' OR
+          M.具體概念 LIKE N'%記憶體%'
+      )
+ORDER BY
+        K60.OSC DESC,                                             -- 60M 小時動能最強者優先
+        ROUND(((FS.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) DESC;
+
+        /*1.financesum1最新公佈季但可能不齊全  financesum:齊全但不包含新公告
+        2.基本面底子（半年報真金白銀）2. 60M 小時線爆發訊號 3.日線級金叉點火 */` },
+
+
+
+
+
+
 
 
             {
