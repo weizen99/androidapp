@@ -141,7 +141,28 @@
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
-            //{ cat: " ", title: " ", sql: `  ` },
+            {
+                cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 20 60ma),勝率及報酬期望值by資料表+實戰總分", sql: ` /*資料庫:stockchangedate*/ M.名稱, M.代號, M.產業分類, M.股本億, M.日期, M.盤中現價, M.盤中漲幅, M.盤中總量, M.專家實戰總分, 
+                            S.完成交易次數, S.WinRate_5MA AS [5MA離場_勝率%], S.Return_5MA AS [5MA離場_期望值%], 
+                            S.WinRate_10MA AS [10MA離場_勝率%], S.Return_10MA AS [10MA離場_期望值%], 
+                            S.WinRate_20MA AS [20MA離場_勝率%], S.Return_20MA AS [20MA離場_期望值%], S.OptimalExit, S.更新日期
+FROM              MasterStockAnalysis AS M INNER JOIN
+                            StockPersonality_3Exits AS S ON M.代號 = S.代號
+WHERE          (M.日期 =
+                                (SELECT          MAX(日期) AS Expr1
+                                  FROM               MasterStockAnalysis))
+ORDER BY   M.專家實戰總分 DESC
+
+/*執行資料表*/` },
+
+            {
+                cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 20 60ma),勝率及報酬期望值by預存程序", sql: ` EXEC dbo.sp_Compare_MA5_Entry_3Exits 
+    @StartDate = 20250401,    --起日 止日 最少樣本數
+    @EndDate = 20260817, 
+    @MinTrades = 5;
+
+    /*執行預存程式*/` },
+
             {
                 cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股！+financesum1新公佈季", sql: `/*資料庫:stockchangedate*/ TOP 100
         M.代號,
