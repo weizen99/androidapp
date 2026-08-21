@@ -132,6 +132,41 @@
                      visibility: visible;
                      margin-top: 0;
                  }
+
+
+        /* 🛠️【核心修復】：徹底解決 DataTables 選取/懸停列「黑吃黑看不清」死穴 */
+
+        /* 1. 滑鼠懸停 (Hover) 時的整列顏色：深皇家藍背景 + 純白粗體字 */
+        .table-dark-custom tbody tr:hover,
+        .table-dark-custom tbody tr:hover td,
+        table.dataTable tbody tr:hover,
+        table.dataTable tbody tr:hover td {
+            background-color: #1a365d !important; /* 深皇家藍背景 */
+            color: #ffffff !important; /* 強制文字純白 */
+            font-weight: bold !important;
+        }
+
+        /* 2. 單擊/點選 (Selected / Active) 時的整列高亮：鮮艷天藍背景 + 粗體亮白字 */
+        .table-dark-custom tbody tr.selected,
+        .table-dark-custom tbody tr.selected td,
+        table.dataTable tbody tr.selected,
+        table.dataTable tbody tr.selected td,
+        table.dataTable tbody tr.active,
+        table.dataTable tbody tr.active td {
+            background-color: #0284c7 !important; /* 鮮艷天藍高亮 */
+            color: #ffffff !important; /* 強制文字純白 */
+            font-weight: bold !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9); /* 加深字體陰影，大幅提升可讀性 */
+        }
+
+            /* 3. 點選列內部的超連結文字高亮 */
+            table.dataTable tbody tr.selected a,
+            table.dataTable tbody tr:hover a {
+                color: #00f2fe !important;
+            }
+
+
+
     </style>
     <script>
         // --- 範本資料庫 ---
