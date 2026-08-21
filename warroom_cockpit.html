@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen AI 終極量化戰情看板 Pro</title>
+    <!-- Bootstrap 5 + DataTables CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <style>
+        body {
+            background-color: #080f1a;
+            color: #cbd5e1;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            padding: 10px;
+        }
+
+        /* 👑【核心修復】：強制非選中頁籤完全隱藏，絕不讓四大頁籤擠在同一個頁面！ */
+        .tab-content > .tab-pane {
+            display: none !important;
+        }
+
+            .tab-content > .tab-pane.active {
+                display: block !important;
+            }
+
+        /* 頂部科技感選單 */
+        .custom-navbar {
+            background-color: #111d2e !important;
+            border-bottom: 2px solid #1e2e42;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #1e2e42;
+        }
+
+            .nav-tabs .nav-link {
+                color: #94a3b8;
+                font-weight: bold;
+                border: 1px solid transparent;
+                padding: 10px 20px;
+                font-size: 0.95rem;
+                border-radius: 8px 8px 0 0;
+                transition: all 0.2s ease;
+            }
+
+                .nav-tabs .nav-link.active {
+                    background-color: #111d2e !important;
+                    color: #00f2fe !important;
+                    border-color: #1e2e42 #1e2e42 #111d2e !important;
+                    border-top: 3px solid #00f2fe !important;
+                }
+
+                .nav-tabs .nav-link:hover {
+                    color: #51e5ff;
+                }
+
+        .cockpit-card {
+            background: #111d2e;
+            border: 1px solid #1e2e42;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            margin-bottom: 15px;
+        }
+
+        .table-dark-custom {
+            color: #cbd5e1;
+            background-color: #0c1827;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+        <div class="container-fluid">
+            <!-- 左側品牌名稱 -->
+            <a class="navbar-brand fw-bold" href="#">
+                📊 SQL 數據中心
+            </a>
+
+            <!-- 手機版折疊按鈕 -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- 右側導航連結 (對齊您的 GitHub 盤中功能與自選股) [1.1] -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-bold">
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/excelsql2.html" target="_blank">
+                            📲 ExcelSQL2
+                        </a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/mygithub1.html" target="_blank">
+                            📊 數據管理門戶
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/mygithub.html" target="_blank">
+                            📈 AI開發程式碼
+                        </a>
+                    </li>
+                    <!--<li class="nav-item">
+                        <a class="nav-link" href="https://weizen99.github.io/androidapp/index.html" onclick="$('#sqlTemplates').val('回測').change(); return false;">
+                            ⭐ 我的最愛
+                        </a>
+                    </li>-->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="galleryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            🎨 常用應用
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="galleryDropdown">
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/stockmaster.html" target="_blank">股票戰情室</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/showimage/TravelPlanner.html" target="_blank">AI 智旅管家</a></li>
+                            <li><a class="dropdown-item" href="https://weizen99.github.io/androidapp/bookkeeping.html " target="_blank">簡易記帳+SQL查詢+計算機</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/mylink.html" target="_blank">連結管理(手機)</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/messageword01.aspx" target="_blank">我的最愛連結管理</a></li>
+                            <li><a class="dropdown-item" href="https://sachidpdns.zen2965.workers.dev/" target="_blank">導航頁</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/voiceinput1.html" target="_blank">Web語音輸入</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/myword1.html" target="_blank">文字打包</a></li>
+                            <li><a class="dropdown-item" href="https://weizen99.github.io/androidapp/basicinfotable2.html" target="_blank">📲 WEB API 彙總</a></li>
+
+                            <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.1)"></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/excelimport2" target="_blank">asp版excelsql</a></li>
+                            <li><a class="dropdown-item" href="http://www.hacker1.somee.com/maptest.aspx" target="_blank">somee區</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fish/index2.htm" target="_blank">上慶外網連結</a></li>
+                            <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/message4.html" target="_blank">與我連絡</a></li>
+                            <li><a class="dropdown-item" href="https://drive.google.com/file/d/1GgsajgsQFvlzUbLzKYVCEOv2geWPXNx2/view?usp=sharing" target="_blank">手機app下載</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- 頂部主控台 Nav 標頭 -->
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-info fs-4" href="#">🧠 Zen AI 終極量化戰情看板 Pro</a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-dark text-info fs-6">系統狀態: 🟢 全核心正常運作</span>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="location.reload();">🔄 一鍵刷看板</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 🏆 多頁籤 (Multi-Tab) 頁面導覽 -->
+    <ul class="nav nav-tabs mb-3" id="cockpitTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="radar-tab" data-bs-toggle="tab" data-bs-target="#tab-radar" type="button" role="tab">🌐 盤中雷達與全景</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="charts-tab" data-bs-toggle="tab" data-bs-target="#tab-charts" type="button" role="tab">📊 四大聯動圖表中心</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="dna-tab" data-bs-toggle="tab" data-bs-target="#tab-dna" type="button" role="tab">💎 股性基因與財報估值</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="macro-tab" data-bs-toggle="tab" data-bs-target="#tab-macro" type="button" role="tab">📅 全球總經與央行日曆</button>
+        </li>
+    </ul>
+
+    <!-- 頁籤內容區 (Tab Content) -->
+    <div class="tab-content" id="cockpitTabContent">
+
+        <!-- 頁籤 1：🌐【盤中雷達與全景】 -->
+        <div class="tab-pane fade show active" id="tab-radar" role="tabpanel">
+            <div class="row g-3">
+                <div class="col-md-7">
+                    <div class="cockpit-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-info fw-bold mb-0">🚀 盤中估分暴增 ✕ 60M 伏兵轉折雷達</h5>
+                            <button type="button" class="btn btn-sm btn-outline-info" onclick="loadIntradayRadar();">🔄 刷新</button>
+                        </div>
+                        <table id="tblIntradayRadar" class="table table-bordered table-dark-custom table-hover table-sm w-100"></table>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="cockpit-card">
+                        <h5 class="text-warning fw-bold mb-3">⭐ AI 金牌基因與波段伏兵 (自選股28/29)</h5>
+                        <table id="tblWatchlist2829" class="table table-bordered table-dark-custom table-hover table-sm w-100"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 頁籤 2：📊【四大聯動圖表中心】 (開啟 view=charts 極致內嵌模式，圖表直接上移最頂端！) -->
+        <div class="tab-pane fade" id="tab-charts" role="tabpanel">
+            <iframe id="iframe-charts" src="https://zen2965.duckdns.org:8888/excelimport/excelsql2.html?view=charts" style="width: 100%; height: 88vh; border: none; border-radius: 12px;"></iframe>
+        </div>
+
+        <!-- 頁籤 3：💎【股性基因與財報估值】 -->
+        <div class="tab-pane fade" id="tab-dna" role="tabpanel">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="cockpit-card">
+                        <h5 class="text-success fw-bold mb-3">🏆 個股 3-Way 離場勝率與期望值快照 (StockPersonality_3Exits)</h5>
+                        <table id="tbl3Exits" class="table table-bordered table-dark-custom table-hover table-sm w-100"></table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="cockpit-card">
+                        <h5 class="text-info fw-bold mb-3">💰 半年報 EPS 暴增 ✕ FactSet 法人目標價空間榜</h5>
+                        <table id="tblFundamentalGems" class="table table-bordered table-dark-custom table-hover table-sm w-100"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 頁籤 4：📅【全球總經與央行日曆】 -->
+        <div class="tab-pane fade" id="tab-macro" role="tabpanel">
+            <div class="cockpit-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-danger fw-bold mb-0">📅 全球重大總經數據與央行會議日曆 (MacroEconomicCalendar)</h5>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="loadMacroCalendar();">🔄 刷新日曆</button>
+                </div>
+                <table id="tblMacroCalendar" class="table table-bordered table-dark-custom table-hover table-sm w-100"></table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_SQL_URL = "DataService2.aspx/ExecuteSQL";
+
+        $(document).ready(function () {
+            // 切換頁籤事件
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                const targetTab = $(e.target).attr('data-bs-target');
+                if (targetTab === '#tab-radar') loadIntradayRadar();
+                if (targetTab === '#tab-dna') loadDNAndFundamentals();
+                if (targetTab === '#tab-macro') loadMacroCalendar();
+
+                // 👑【精準對焦】：因為頂部面板已隱藏，將 iframe 強制鎖定在最頂端 Y=0px，絕不沖過頭！
+                if (targetTab === '#tab-charts') {
+                    const iframe = document.getElementById('iframe-charts');
+                    if (iframe && iframe.contentWindow) {
+                        try {
+                            iframe.contentWindow.scrollTo(0, 0); // 鎖定在 Y=0 最頂端
+                        } catch (e) { }
+                    }
+                }
+            });
+
+            // 初始化載入頁籤 1
+            loadIntradayRadar();
+        });
+
+        // 🌐 頁籤 1
+        function loadIntradayRadar() {
+            const sqlRadar = `SELECT TOP 30
+                        C.[代號], C.[股票] AS [名稱], C.[盤中成交價] AS [現價], C.[漲幅_百分比] AS [漲幅%], C.[盤中總量] AS [總量],
+                        ROUND(C.[預估今日總分], 2) AS [預估總分], C.[細產業名稱] AS [產業]
+                    FROM stockchangedate.dbo.IntradayScoreCache C
+                    WHERE C.[盤中總量] >= 500
+                    ORDER BY C.[預估今日總分] DESC;`;
+
+            execQueryToTable(sqlRadar, "stockchangedate", "#tblIntradayRadar");
+
+            const sql2829 = `SELECT TOP 30
+                        分組, 代號, 名稱, ROUND([60M動能(OSC)], 2) AS [60M_OSC], 短線氣象
+                    FROM stockchangedate.dbo.View_AI_Elite_Radar
+                    WHERE 分組 IN (N'自選股28', N'自選股29')
+                    ORDER BY 分組 DESC, [60M動能(OSC)] DESC;`;
+
+            execQueryToTable(sql2829, "stockchangedate", "#tblWatchlist2829");
+        }
+
+        // 💎 頁籤 3 (已修復 FactSet 股票重複 10 次的 Bug)
+        // 💎 頁籤 3：股性基因與財報估值 (100% 出資料、絕不留白與重複！)
+        function loadDNAndFundamentals() {
+            // A. 3-Way 離場勝率快照
+            const sql3Exits = `SELECT TOP 50
+                [代號], [名稱], [完成交易次數],
+                [Return_5MA] AS [5MA期望值%], [Return_10MA] AS [10MA期望值%], [Return_20MA] AS [20MA期望值%],
+                [OptimalExit] AS [最適建議]
+            FROM stockchangedate.dbo.StockPersonality_3Exits
+            ORDER BY [Return_20MA] DESC;`;
+
+            execQueryToTable(sql3Exits, "stockchangedate", "#tbl3Exits");
+
+            // B. 財報估值榜 (改為直連 FactSetEstimates 主表，100% 秒抓 50 筆，絕不留白！)
+            const sqlGems = `SELECT TOP 50
+                RTRIM(F.代號) AS [代號],
+                M.名稱,
+                M.盤中現價 AS [現價],
+                ISNULL(R.最新公告營收年增, 0) AS [營收年增%],
+                ISNULL(FN.EPS累計, 0) AS [半年報EPS],
+                F.預估目標價 AS [FactSet目標價],
+                ROUND(((F.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) AS [潛在空間%]
+            FROM stockchangedate.dbo.FactSetEstimates F
+            INNER JOIN stockchangedate.dbo.MasterStockAnalysis M
+                    ON RTRIM(F.代號) = RTRIM(M.代號)
+                   AND M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+            LEFT JOIN (
+                SELECT 代號, 最新公告營收年增, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 交易日期 DESC) AS rn
+                FROM stockchangedate.dbo.View_Realtime_Revenue
+            ) R ON RTRIM(F.代號) = RTRIM(R.代號) AND R.rn = 1
+            LEFT JOIN (
+                SELECT 代號, EPS累計, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+                FROM stockchangedate.dbo.financesum
+            ) FN ON RTRIM(F.代號) = RTRIM(FN.代號) AND FN.rn = 1
+            WHERE F.預估目標價 > M.盤中現價
+            ORDER BY ROUND(((F.預估目標價 - M.盤中現價) / NULLIF(M.盤中現價, 0)) * 100, 1) DESC;`;
+
+            execQueryToTable(sqlGems, "stockchangedate", "#tblFundamentalGems");
+        }
+
+        // 📅 頁籤 4
+        function loadMacroCalendar() {
+            const sqlMacro = `SELECT TOP 50
+                        [公布日期], [公布時間] AS [時間], [國家區域], [指標類別], [指標名稱], [重要性], [前值], [預測值], ISNULL([實際值], N'⏳ 待公布') AS [實際值], [影響解讀]
+                    FROM stockchangedate.dbo.MacroEconomicCalendar
+                    WHERE [公布日期] >= 20260101
+                    ORDER BY [公布日期] ASC, [公布時間] ASC;`;
+
+            execQueryToTable(sqlMacro, "stockchangedate", "#tblMacroCalendar");
+        }
+
+        // 通用 AJAX 與 DataTables 引擎
+        function execQueryToTable(sql, db, tableSelector) {
+            $.ajax({
+                type: "POST",
+                url: API_SQL_URL,
+                data: JSON.stringify({ sql: sql, db: db, pwd: "2157" }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                timeout: 300000,
+                success: function (res) {
+                    try {
+                        let dataStr = res.d;
+                        if (!dataStr) return;
+
+                        if (dataStr.startsWith("錯誤：")) {
+                            $(tableSelector).html(`<tbody><tr><td class="text-danger p-3">❌ SQL 錯誤: ${dataStr}</td></tr></tbody>`);
+                            return;
+                        }
+
+                        const cleanedJson = dataStr.replace(/[\u0000-\u001F\u007F-\u009F]/g, function (ch) {
+                            if (ch === '\n') return '\\n';
+                            if (ch === '\r') return '\\r';
+                            if (ch === '\t') return '\\t';
+                            return '';
+                        });
+
+                        const data = JSON.parse(cleanedJson);
+                        if (!data || data.length === 0) {
+                            $(tableSelector).html(`<tbody><tr><td class="text-warning p-3">✅ 暫無符合條件數據。</td></tr></tbody>`);
+                            return;
+                        }
+
+                        renderDataTable(data, tableSelector);
+                    } catch (e) {
+                        $(tableSelector).html(`<tbody><tr><td class="text-danger p-3">❌ JSON 解析失敗: ${e.message}</td></tr></tbody>`);
+                    }
+                },
+                error: function () {
+                    $(tableSelector).html(`<tbody><tr><td class="text-danger p-3">❌ 連線 DataService2.aspx 失敗！</td></tr></tbody>`);
+                }
+            });
+        }
+
+        function renderDataTable(data, tableSelector) {
+            if (!data || data.length === 0) return;
+
+            if ($.fn.DataTable.isDataTable(tableSelector)) {
+                $(tableSelector).DataTable().clear().destroy();
+            }
+
+            $(tableSelector).empty();
+
+            let keys = Object.keys(data[0]);
+            let thead = "<thead><tr>" + keys.map(k => `<th>${k}</th>`).join('') + "</tr></thead>";
+            let tbody = "<tbody>";
+            data.forEach(row => {
+                tbody += "<tr>";
+                keys.forEach(k => {
+                    let val = (row[k] !== null && row[k] !== undefined) ? row[k] : '';
+                    tbody += `<td>${val}</td>`;
+                });
+                tbody += "</tr>";
+            });
+            tbody += "</tbody>";
+
+            $(tableSelector).html(thead + tbody);
+
+            $(tableSelector).DataTable({
+                "language": { "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" },
+                "pageLength": 10,
+                "order": [],
+                "scrollCollapse": true,
+                "destroy": true
+            });
+        }
+    </script>
+</body>
+</html>
