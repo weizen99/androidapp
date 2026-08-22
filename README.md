@@ -41,11 +41,14 @@ https://weizen99.github.io/androidapp/excelsql.html
 
 https://zen2965.duckdns.org:8888/excelimport/warroom_cockpit.html
 
-終極量化戰情室看板
-頁籤 1 🌐【盤中雷達與全景】：左右雙卡片佈局，準備隨時串流盤中估分暴增與自選股 28/29 短線氣象。
-頁籤 2 📊【四大聯動圖表中心】：以無縫 iframe 完美內嵌我們今天大功告成的 excelsql2.html，保留全部 日 K 棒、三級金星、5色彩虹堆疊、雙 Y 軸、一屏縮放與 Telegram 截圖推播 功能！
-頁籤 3 💎【股性基因與財報估值】：卡片精確對接 StockPersonality_3Exits（3-Way 離場勝率 PK）與 FactSet 法人估值黑馬榜。
-頁籤 4 📅【全球總經與央行日曆】：卡片對接 MacroEconomicCalendar 表，欄位結構一目了然。
+🏛️【Zen AI 終極量化戰情看板 Pro V9.20】完工勝利紀念碑
+🧠 Zen AI 終極量化戰情看板 Pro (warroom_cockpit.html)
+├── 頁籤 1 🎯【全市場多維共振】 ➔ 0ms 雙動能翻正 ✕ 4維全共振黑馬極速雷達
+├── 頁籤 2 🌐【盤中雷達與全景】 ➔ 盤中估分暴增榜 ✕ 自選股 28/29 (代號/名稱對齊)
+├── 頁籤 3 📊【四大聯動圖表中心】➔ 日K棒/三級金星 ✕ 5色彩虹堆疊 ✕ OBV金星 ✕ 雙Y軸籌碼總分
+├── 頁籤 4 💎【股性基因與財報估值】➔ 3-Way 離場勝率PK (5MA/10MA/20MA) ✕ FactSet 估值榜
+└── 頁籤 5 📅【全球總經與央行日曆】➔ 美歐日台近期 🔴極重要 數據日曆 (每日 21:00 自動維護)
+
 
 
 https://weizen99.github.io/androidapp/excelsql2.html
@@ -245,7 +248,34 @@ Ollama 背景服務：加載 qwen2.5:1.5b [Operational Manual]。
 line額度200次一下就用完了,加入Telegram次數無限制來檔主力(推播解盤至LINE+推播解盤至TG及 數據卡片至LINE+數據卡片至 TG)
 excelsql2.html+stockmaster.html android app 下載
 https://drive.google.com/file/d/1GgsajgsQFvlzUbLzKYVCEOv2geWPXNx2/view?usp=sharing
+請讀取【Zen AI 股票戰情室 Pro V9.00】終極架構與默契備忘錄，開始本輪實戰分析與系統開發。
+請以「資深台股量化操盤總監與系統架構專家」的專業、謙遜、客觀語氣（繁體中文），無縫接管後續任務：
 
+=======================================================
+📌 模組一：系統檔案清單與網頁架構 (System Architecture & Files)
+=======================================================
+1. [warroom_cockpit.html] (Zen AI 終極量化戰情看板 Pro V9.00 - 4-Tab 操盤主控台)
+   * 頁籤 1 🌐【盤中雷達全景】：IntradayScoreCache 盤中估分暴增榜 ✕ Stock60M (K/D/OSC 轉折點) ✕ View_AI_Elite_Radar (自選股28/29氣象)。
+   * 頁籤 2 📊【四大聯動圖表中心】：無縫內嵌 excelsql2.html?view=charts，0 留白頂部對焦，內建 ➕/➖/85% 畫面縱向高度縮放控制列。
+   * 頁籤 3 💎【股性基因與財報估值】：StockPersonality_3Exits 離場勝率對照 ✕ financesum 半年報 EPS ✕ FactSetEstimates 目標價空間榜 (去重修復)。
+   * 頁籤 4 📅【全球總經與央行日曆】：MacroEconomicCalendar 美歐日台近期 🔴極重要 數據日曆 (倒數計時 ✕ 前值 ✕ 預測值 ✕ 實際值)。
+2. [excelsql2.html] (四大聯動圖表繪圖引擎)
+   * ?view=charts 內嵌模式：自動隱藏頂部 SQL 框，四大圖表直達 Y=0px 最頂端，背景對齊 #080f1a 深藍。
+   * 統計起算日 (起2)：getOneYearAgoDateString() 自動動態計算並填入一年前的今天 (例如今日 20260821 ➔ 自動填 20250821)。
+   * 圖一：日 K 棒 (陽紅 #ff1744 陰綠 #22c55e，barWidth 65%) ＋ 5/20/60/120/240MA 均線 ＋ ⭐黃星 (突破5MA) / 🌟橘星 (突破月線20MA) / ✨紫光大金星 (突破三線 5MA+20MA+60MA) ＋ 扣抵三角形。
+   * 圖 1.5：獨立 200px 五色彩虹金叉共振堆疊圖 (價格#38bdf8 + OBV#eab308 + 總量#22c55e + 投信#ec4899 + 外資#f43f5e)。
+   * 圖二：OBV 量能分析 ＋ 動能初星/巨量金星。
+   * 圖三：三大法人籌碼 (左 Y 軸張數) ✕ 實戰總分 (右側亮青色獨立雙 Y 軸 -60~+60分)。
+3. [myword1.html] / [myword1.aspx.vb] (文字打包系統 - TextShares1)
+   * 新增 txtTitle 專屬編輯框，下拉選單呈現 [ID 83] 說明摘要。
+   * 雙模式儲存：btnSave (更新當前 ID) ✕ btnNew (新增為新 ID，自動 Scope_Identity)。
+4. [chart_screenshot.py] & [chart_explain.py] (V8.60 多模態 AI 解盤與雙通道推送)
+   * Telegram 推送目標：100% 鎖定【Zen AI 量化戰情室】群組 (Chat ID: -1003926900701)。
+   * 防快取網址：?stock={code}&start={start}&_v={timestamp} ＋ Cache-Control: no-cache 標頭，撕碎舊圖快取。
+   * Qwen-7B 語意防衛：預處理買賣超與正負分字串，五大段落最後一段強制注入【📊 該股歷史離場戰術實測 PK 樹狀卡片】。
+5. [import_financesum.py] (V2.2 財報 Excel 位置對應無痛增量匯入腳本)
+   * 採 df.iloc[:, index] 位置索引，徹底無視 2602/202602 動態年份表頭。
+   * clean_float() 自動清洗 '--', '-', '未公佈' 為 SQL NULL，呼叫 sp_UpsertFinanceSum 執行 MERGE 增量覆蓋。
 
 
 https://weizen99.github.io/androidapp/message4.html
