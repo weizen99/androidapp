@@ -113,11 +113,14 @@
         </div>
     </nav>
 
-    <!-- 🏆 5 大頁籤 (Multi-Tab) 頁面導覽 -->
+    <!-- 🏆 6 大頁籤 (Multi-Tab) 頁面導覽 -->
     <ul class="nav nav-tabs mb-3" id="cockpitTab" role="tablist">
-        <!-- 全新第一頁：🎯 全市場多維共振 -->
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="multi-tab" data-bs-toggle="tab" data-bs-target="#tab-multi" type="button" role="tab">🎯 全市場多維共振</button>
+        </li>
+        <!-- 👑 新增專屬頁籤：☀️ 60M 伏兵轉強雷達 -->
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="strong-tab" data-bs-toggle="tab" data-bs-target="#tab-strong" type="button" role="tab">☀️ 60M 伏兵轉強雷達</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="radar-tab" data-bs-toggle="tab" data-bs-target="#tab-radar" type="button" role="tab">🌐 盤中雷達與全景</button>
@@ -133,11 +136,11 @@
         </li>
     </ul>
 
-    <!-- 5 大頁籤內容區 (Tab Content) -->
+    <!-- 6 大頁籤內容區 (Tab Content) -->
     <div class="tab-content" id="cockpitTabContent">
 
         <!-- ================================================================= -->
-        <!-- 👑 頁籤 1 (全新獨立第一頁)：🎯【全市場多維共振】 -->
+        <!-- 頁籤 1：🎯【全市場多維共振】 -->
         <!-- ================================================================= -->
         <div class="tab-pane fade show active" id="tab-multi" role="tabpanel">
             <div class="cockpit-card">
@@ -161,13 +164,38 @@
                         <button type="button" class="btn btn-sm btn-outline-warning" onclick="refreshResonanceSnapshot();">🔄 刷新快照</button>
                     </div>
                 </div>
-                <!-- 多維共振結果表格 (點擊任何個股，自動跳轉頁籤 3 開圖！) -->
                 <table id="tblMultiResonance" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
             </div>
         </div>
 
         <!-- ================================================================= -->
-        <!-- 頁籤 2：🌐【盤中雷達與全景】 -->
+        <!-- 👑 頁籤 2 (新增專屬頁籤)：☀️【60M 伏兵轉強雷達】 -->
+        <!-- ================================================================= -->
+        <div class="tab-pane fade" id="tab-strong" role="tabpanel">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="cockpit-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-warning fw-bold mb-0">🚀 自選股 29 波段伏兵 ✕ 60M 已轉強發動榜</h5>
+                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="loadTurningStrong();">🔄 刷新</button>
+                        </div>
+                        <table id="tblTurningStrong29" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="cockpit-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-info fw-bold mb-0">☀️ 全市場 60M 短線氣象轉強精銳榜</h5>
+                            <button type="button" class="btn btn-sm btn-outline-info" onclick="loadTurningStrong();">🔄 刷新</button>
+                        </div>
+                        <table id="tblTurningStrongAll" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- 頁籤 3：🌐【盤中雷達與全景】 -->
         <!-- ================================================================= -->
         <div class="tab-pane fade" id="tab-radar" role="tabpanel">
             <div class="row g-3">
@@ -180,9 +208,10 @@
                         <table id="tblIntradayRadar" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
                     </div>
                 </div>
+                <!-- 下右：2026 核心供應鏈 ✕ AI 精銳戰情雷達 (已升級涵蓋 自選股 10~19 ＋ 22~29) -->
                 <div class="col-md-5">
                     <div class="cockpit-card">
-                        <h5 class="text-warning fw-bold mb-3">⭐ AI 金牌基因與波段伏兵 (自選股28/29)</h5>
+                        <h5 class="text-warning fw-bold mb-3">⭐ 2026 核心供應鏈 ✕ AI 精銳戰情雷達</h5>
                         <table id="tblWatchlist2829" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
                     </div>
                 </div>
@@ -190,14 +219,15 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- 頁籤 3：📊【四大聯動圖表中心】 (view=charts 內嵌對焦) -->
+        <!-- 頁籤 4：📊【四大聯動圖表中心】 -->
         <!-- ================================================================= -->
+        <!-- 頁籤 3：📊【四大聯動圖表中心】 (改為相對路徑，解鎖跨網域 CORS 阻擋！) -->
         <div class="tab-pane fade" id="tab-charts" role="tabpanel">
-            <iframe id="iframe-charts" src="https://zen2965.duckdns.org:8888/excelimport/excelsql2.html?view=charts" style="width: 100%; height: 88vh; border: none; border-radius: 12px;"></iframe>
+            <iframe id="iframe-charts" src="excelsql2.html?view=charts" style="width: 100%; height: 88vh; border: none; border-radius: 12px;"></iframe>
         </div>
 
         <!-- ================================================================= -->
-        <!-- 頁籤 4：💎【股性基因與財報估值】 -->
+        <!-- 頁籤 5：💎【股性基因與財報估值】 -->
         <!-- ================================================================= -->
         <div class="tab-pane fade" id="tab-dna" role="tabpanel">
             <div class="row g-3">
@@ -217,7 +247,7 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- 頁籤 5：📅【全球總經與央行日曆】 -->
+        <!-- 頁籤 6：📅【全球總經與央行日曆】 -->
         <!-- ================================================================= -->
         <div class="tab-pane fade" id="tab-macro" role="tabpanel">
             <div class="cockpit-card">
@@ -232,17 +262,20 @@
     </div>
 
     <script>
+        // 🛠️【核心修正 1】：使用相對路徑，徹底打通本機 (localhost) 與外網 (duckdns) 的跨網域限制！
         const API_SQL_URL = "DataService2.aspx/ExecuteSQL";
 
         $(document).ready(function () {
-            // 1. 切換頁籤事件 (5 個頁籤對齊)
+            // 1. 切換頁籤事件
             $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
                 const targetTab = $(e.target).attr('data-bs-target');
                 if (targetTab === '#tab-multi') searchMultiResonance();
+                if (targetTab === '#tab-strong') loadTurningStrong();
                 if (targetTab === '#tab-radar') loadIntradayRadar();
                 if (targetTab === '#tab-dna') loadDNAndFundamentals();
                 if (targetTab === '#tab-macro') loadMacroCalendar();
 
+                // 對焦四大圖表最頂端 (Y=0px)
                 if (targetTab === '#tab-charts') {
                     setTimeout(function () {
                         const iframe = document.getElementById('iframe-charts');
@@ -253,29 +286,27 @@
                 }
             });
 
-            // 2. 預設進入第一頁：🎯 全市場多維共振
+            // 2. 預設載入第一頁
             searchMultiResonance();
 
-            // 3. 👑【Magic Click 智慧萬用版】：自動掃描整列所有欄位，只要有 4 位數股號 100% 自動跳轉與開圖！
+            // 👑【Magic Click 雙模式雙保險連動】：點擊全看板任何表格股票列 ➔ 100% 跳轉開圖！
             $(document).on('click', 'table tbody tr', function (e) {
-                // A. 防誤觸：點擊按鈕、連結、輸入框或表頭 (thead) 時不觸發跳轉
                 if ($(e.target).is('button, a, input, select, th') || $(this).parents('thead').length > 0) return;
 
-                // B. 智慧掃描：遍歷該列的所有 td，自動尋找 4 位數股票代號 (如 2615, 3034, 2330)
                 let stockCode = "";
                 $(this).find('td').each(function () {
                     const txt = $(this).text().trim();
-                    if (txt.match(/^\d{4}$/)) {
+                    // 🛠️【核心修正 2】：放寬正則匹配，相容 4~6 位數股號與 DR 股 (如 2330, 910322)
+                    if (txt.match(/^[0-9A-Za-z]{4,6}$/)) {
                         stockCode = txt;
-                        return false; // 找到代號立即中斷搜尋
+                        return false;
                     }
                 });
 
-                // C. 找到股號 ➔ 執行跳轉與繪圖
                 if (stockCode) {
-                    console.log("🎯 點擊股票代號: " + stockCode + " ➔ 正在切換圖表中心並發動【盤後聯動查詢】...");
+                    console.log("🎯 點擊股票: " + stockCode + " ➔ 正在跳轉四大圖表中心...");
 
-                    // 切換至「頁籤 3 (四大聯動圖表中心)」
+                    // 切換至「四大聯動圖表中心」頁籤 (#tab-charts)
                     const chartTabBtn = document.getElementById('charts-tab');
                     if (chartTabBtn) {
                         var tabInst = new bootstrap.Tab(chartTabBtn);
@@ -284,39 +315,41 @@
                         $('#charts-tab').tab('show');
                     }
 
-                    // 高穩定度輪詢對焦：定位 iframe 填入代號並點擊「盤後聯動 (歷史)」
+                    // 雙模式連動發動 (DOM 直改 ＋ URL 備援)
                     let attempts = 0;
                     const checkIframeAndRun = setInterval(function () {
                         attempts++;
                         const iframe = document.getElementById('iframe-charts');
 
-                        if (iframe && iframe.contentWindow && iframe.contentWindow.document) {
-                            const stockInput = iframe.contentWindow.document.getElementById('keyword');
-                            const btnPost = iframe.contentWindow.document.getElementById('btn_query_post');
+                        if (iframe && iframe.contentWindow) {
+                            try {
+                                const stockInput = iframe.contentWindow.document.getElementById('keyword');
+                                const btnPost = iframe.contentWindow.document.getElementById('btn_query_post');
 
-                            if (stockInput && btnPost) {
-                                clearInterval(checkIframeAndRun); // 成功定位，停止輪詢
-
-                                stockInput.value = stockCode;
-                                console.log("✅ 已自動更新圖表輸入框代號為: " + stockCode);
-
-                                btnPost.click(); // 自動觸發盤後聯動查詢！
-
-                                try {
-                                    iframe.contentWindow.scrollTo({ top: 0, behavior: 'smooth' });
-                                } catch (err) { }
+                                if (stockInput && btnPost) {
+                                    clearInterval(checkIframeAndRun);
+                                    stockInput.value = stockCode; // 寫入股號
+                                    btnPost.click();              // 按下盤後聯動查詢！
+                                    console.log("✅ [DOM模式] 成功發動圖表聯動: " + stockCode);
+                                    return;
+                                }
+                            } catch (err) {
+                                console.warn("⚠️ DOM 存取受限，啟動 URL 備援連動模式...");
                             }
                         }
 
-                        if (attempts >= 10) {
+                        // 備援模式：若 3 秒內 DOM 抓不到，直接重載 iframe URL
+                        if (attempts >= 8 && iframe) {
                             clearInterval(checkIframeAndRun);
+                            iframe.src = "excelsql2.html?stock=" + stockCode + "&view=charts#main-dashboard-wrapper";
+                            console.log("✅ [URL備援模式] 成功發動圖表聯動: " + stockCode);
                         }
                     }, 300);
                 }
             });
         });
 
-        // 🎯 頁籤 1 數據：0ms 多維共振極速掃描
+        // 🎯 0ms 多維共振極速掃描
         function searchMultiResonance() {
             const hitCount = $("#selHitCount").val() || 3;
             const momentumMode = $("#selMomentumMode").val() || 2;
@@ -333,12 +366,28 @@
             execQueryToTable(sql, "stockchangedate", "#tblMultiResonance");
         }
 
-        // 🔄 手動刷新快照程序
-        function refreshResonanceSnapshot() {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ title: '⏳ 正在重構全市場多維共振快照...', text: '約需 1 秒，請稍候', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-            }
+        // ☀️ 60M 伏兵轉強雷達
+        function loadTurningStrong() {
+            const sql29Strong = `SELECT TOP 50
+                代號, 名稱, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, AI診斷筆記
+            FROM stockchangedate.dbo.View_AI_Elite_Radar
+            WHERE 分組 = N'自選股29' AND [短線氣象] LIKE N'%轉強%'
+            ORDER BY [60M動能(OSC)] DESC;`;
 
+            execQueryToTable(sql29Strong, "stockchangedate", "#tblTurningStrong29");
+
+            const sqlAllStrong = `SELECT TOP 50
+                代號, 名稱, 分組, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, 具體概念
+            FROM stockchangedate.dbo.View_AI_Elite_Radar
+            WHERE [短線氣象] LIKE N'%轉強%'
+            ORDER BY [60M動能(OSC)] DESC, [日線分] DESC;`;
+
+            execQueryToTable(sqlAllStrong, "stockchangedate", "#tblTurningStrongAll");
+        }
+
+        // 🔄 刷新快照
+        function refreshResonanceSnapshot() {
+            if (typeof Swal !== 'undefined') Swal.fire({ title: '⏳ 正在重構全市場多維共振快照...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
             $.ajax({
                 type: "POST",
                 url: API_SQL_URL,
@@ -346,36 +395,36 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function () {
-                    if (typeof Swal !== 'undefined') Swal.fire('成功', '全市場多維共振快照已重構完成！', 'success');
+                    if (typeof Swal !== 'undefined') Swal.fire('成功', '快照重構完成！', 'success');
                     searchMultiResonance();
                 }
             });
         }
 
-        // 🌐 頁籤 2 數據：盤中雷達 ✕ 自選股 28/29 (已將代號調至第一欄)
+        // 🌐 頁籤 3 數據：盤中雷達 ✕ 2026 核心供應鏈 (View_AI_Elite_Radar 涵蓋自選股 10~19 + 22~29)
         function loadIntradayRadar() {
-            const sqlRadar = `SELECT TOP 30
-                C.[代號], C.[股票] AS [名稱], C.[盤中成交價] AS [現價], C.[漲幅_百分比] AS [漲幅%], C.[盤中總量] AS [總量],
-                ROUND(C.[預估今日總分], 2) AS [預估總分], C.[細產業名稱] AS [產業]
-            FROM stockchangedate.dbo.IntradayScoreCache C
-            WHERE C.[盤中總量] >= 500
-            ORDER BY C.[預估今日總分] DESC;`;
+            // 1. 左卡片：盤中估分暴增全表
+            const sqlRadar = `SELECT M.代號, M.名稱, C.盤中成交價 AS 現價, C.漲幅_百分比 AS [漲幅%], C.盤中總量 AS 總量, ROUND(C.預估今日總分, 2) AS 盤中預估總分, ROUND(M.專家實戰總分,2) AS 舊實戰總分, C.新搬運_60分K, C.細產業名稱 AS 產業, C.股本億
+FROM IntradayScoreCache AS C 
+RIGHT OUTER JOIN MasterStockAnalysis AS M ON C.代號 = M.代號
+WHERE (M.日期 = (SELECT MAX(日期) AS mydate FROM MasterStockAnalysis AS MasterStockAnalysis_1))
+ORDER BY C.預估今日總分 DESC;`;
 
             execQueryToTable(sqlRadar, "stockchangedate", "#tblIntradayRadar");
 
-            // 🛠️ 欄位順序對齊：代號, 名稱 放前兩欄
-            const sql2829 = `SELECT TOP 30
-                代號, 名稱, 分組, ROUND([60M動能(OSC)], 2) AS [60M_OSC], 短線氣象
-            FROM stockchangedate.dbo.View_AI_Elite_Radar
-            WHERE 分組 IN (N'自選股28', N'自選股29')
-            ORDER BY 分組 DESC, [60M動能(OSC)] DESC;`;
+            // 2. 右卡片：全面改抓 View_AI_Elite_Radar (包含 2026 AI伺服器/TPU/GB200/液冷/CPO/類EMIB 10大供應鏈)
+            // 依 60M動能(OSC) 由大到小排序，最先抓出 60M 剛發動轉強的黃金黑馬！
+            const sqlEliteRadar = `SELECT TOP 300
+            代號, 名稱, 分組, 策略靈魂, ROUND([60M動能(OSC)], 2) AS [60M_OSC], 短線氣象
+        FROM stockchangedate.dbo.View_AI_Elite_Radar
+        ORDER BY [60M動能(OSC)] DESC, 日線分 DESC;`;
 
-            execQueryToTable(sql2829, "stockchangedate", "#tblWatchlist2829");
+            execQueryToTable(sqlEliteRadar, "stockchangedate", "#tblWatchlist2829");
         }
 
-        // 💎 頁籤 4 數據：3-Way 離場勝率快照 ✕ FactSet 法人目標價
+        // 💎 頁籤 4 數據 (套用長官優化後的全表 3-Way 勝率對照)
         function loadDNAndFundamentals() {
-            const sql3Exits = `SELECT TOP 50
+            const sql3Exits = `SELECT
                 [代號], [名稱], [完成交易次數],
                 [Return_5MA] AS [5MA期望值%], [Return_10MA] AS [10MA期望值%], [Return_20MA] AS [20MA期望值%],
                 [OptimalExit] AS [最適建議]
@@ -412,7 +461,7 @@
             execQueryToTable(sqlGems, "stockchangedate", "#tblFundamentalGems");
         }
 
-        // 📅 頁籤 5 數據：全球重大總經日曆
+        // 📅 頁籤 5 數據：全球總經日曆
         function loadMacroCalendar() {
             const sqlMacro = `SELECT TOP 50
                 [公布日期], [公布時間] AS [時間], [國家區域], [指標類別], [指標名稱], [重要性], [前值], [預測值], ISNULL([實際值], N'⏳ 待公布') AS [實際值], [影響解讀]
@@ -423,7 +472,7 @@
             execQueryToTable(sqlMacro, "stockchangedate", "#tblMacroCalendar");
         }
 
-        // 🛠️ 通用數據連線與 DataTables 安全引擎
+        // 通用 AJAX 數據連線
         function execQueryToTable(sql, db, tableSelector) {
             console.log("📡 正在執行 AJAX 查詢 [" + tableSelector + "]...");
             $.ajax({
