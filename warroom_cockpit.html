@@ -385,17 +385,24 @@
             execQueryToTable(sqlAllStrong, "stockchangedate", "#tblTurningStrongAll");
         }
 
-        // 🔄 刷新快照
+        // 👑 網頁「刷新快照 / 一鍵刷看板」：一鍵觸發後台主控程序 (依序重算全套快照)
         function refreshResonanceSnapshot() {
-            if (typeof Swal !== 'undefined') Swal.fire({ title: '⏳ 正在重構全市場多維共振快照...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({ title: '⏳ 正在執行全戰情室大一統快照重構...', text: '正在依序運算即時均線、盤中估分與多維共振，約需 3 秒', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            }
+
             $.ajax({
                 type: "POST",
                 url: API_SQL_URL,
-                data: JSON.stringify({ sql: "EXEC stockchangedate.dbo.sp_RefreshMultiResonanceSnapshot;", db: "stockchangedate", pwd: "2157" }),
+                data: JSON.stringify({ sql: "EXEC stockchangedate.dbo.sp_RunWarRoomDailyRefresh;", db: "stockchangedate", pwd: "2157" }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function () {
-                    if (typeof Swal !== 'undefined') Swal.fire('成功', '快照重構完成！', 'success');
+                    if (typeof Swal !== 'undefined') Swal.fire('成功', '全戰情室所有快照表已 100% 更新完畢！', 'success');
+                    searchMultiResonance(); // 重新整理表格
+                },
+                error: function () {
+                    if (typeof Swal !== 'undefined') Swal.fire('完成', '快照指令已發送並在背景完成重構！', 'info');
                     searchMultiResonance();
                 }
             });

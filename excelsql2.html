@@ -196,7 +196,7 @@ ORDER BY [公布日期] ASC, [公布時間] ASC;`
             },
            
             {
-                cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 20 60ma),勝率及報酬期望值by資料表+實戰總分", sql: ` /*資料庫:stockchangedate*/ M.名稱, M.代號, M.產業分類, M.股本億, M.日期, M.盤中現價, M.盤中漲幅, M.盤中總量, M.專家實戰總分, 
+                cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 10 20ma),勝率及報酬期望值by資料表+實戰總分", sql: ` /*資料庫:stockchangedate*/ M.名稱, M.代號, M.產業分類, M.股本億, M.日期, M.盤中現價, M.盤中漲幅, M.盤中總量, M.專家實戰總分, 
                             S.完成交易次數, S.WinRate_5MA AS [5MA離場_勝率%], S.Return_5MA AS [5MA離場_期望值%], 
                             S.WinRate_10MA AS [10MA離場_勝率%], S.Return_10MA AS [10MA離場_期望值%], 
                             S.WinRate_20MA AS [20MA離場_勝率%], S.Return_20MA AS [20MA離場_期望值%], S.OptimalExit, S.更新日期
@@ -210,7 +210,7 @@ ORDER BY   M.專家實戰總分 DESC
 /*執行資料表*/` },
 
             {
-                cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 20 60ma),勝率及報酬期望值by預存程序", sql: ` EXEC dbo.sp_Compare_MA5_Entry_3Exits 
+                cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 10 20ma),勝率及報酬期望值by預存程序", sql: ` EXEC dbo.sp_Compare_MA5_Entry_3Exits 
     @StartDate = 20250401,    --起日 止日 最少樣本數
     @EndDate = 20260817, 
     @MinTrades = 5;
@@ -2887,7 +2887,7 @@ ORDER BY [專家分] DESC, I_List.代號 ASC; -- 依專家分數由高到低排�
         M.實戰標籤,
         M.具體概念
 FROM (
-        -- 🛠️ 基礎自選名單：從 stockchangedate.dbo.incomechar16 導入持股比率 (equityinfo) 欄位 [Database Architecture, Operational Manual]
+        -- 🛠️ 基礎自選名單：從 stockchangedate.dbo.incomechar7 導入持股比率 (equityinfo) 欄位 [Database Architecture, Operational Manual]
         SELECT DISTINCT
             CAST(代號 AS VARCHAR(20)) AS 代號,
             RTRIM(名稱) AS 名稱,
