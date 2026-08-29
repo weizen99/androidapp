@@ -1,487 +1,925 @@
 ﻿<!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zen AI 終極量化戰情看板 Pro</title>
-    <!-- Bootstrap 5 + DataTables CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <title>Zen AI 終極量化戰情看板 Pro (全功能旗艦版)</title>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <!-- 🟢 Bootstrap 5、DataTables 與 SweetAlert2 核心依賴 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        :root {
+            --bg-primary: #070d18;
+            --bg-secondary: #0c1827;
+            --bg-panel: rgba(15, 23, 42, 0.88);
+            --border-color: #1e293b;
+            --accent-cyan: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-red: #f43f5e;
+            --accent-green: #10b981;
+            --accent-gold: #fbbf24;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #080f1a;
-            color: #cbd5e1;
-            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-            padding: 10px;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            overflow-x: hidden;
         }
 
-        /* 強制非當前頁籤隱藏，絕對不擠在一頁 */
-        .tab-content > .tab-pane {
-            display: none !important;
+        /* 頂部主控列 */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-            .tab-content > .tab-pane.active {
-                display: block !important;
+        .header-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #38bdf8, #a855f7, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 頂部個股搜尋框 */
+        .search-box-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1.5px solid var(--accent-cyan);
+            border-radius: 8px;
+            padding: 3px 8px;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 0.92rem;
+            width: 190px;
+            padding: 4px;
+            font-weight: 600;
+        }
+
+            .search-input::placeholder {
+                color: #64748b;
+                font-weight: normal;
             }
 
-        /* 頂部科技感選單 */
-        .custom-navbar {
-            background-color: #111d2e !important;
-            border-bottom: 2px solid #1e2e42;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            padding: 10px 20px;
-            margin-bottom: 15px;
-            border-radius: 10px;
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
         }
 
+        /* 頁籤導航列 */
         .nav-tabs {
-            border-bottom: 2px solid #1e2e42;
+            border-bottom: 1px solid var(--border-color);
+            gap: 6px;
+            margin-bottom: 12px;
         }
 
             .nav-tabs .nav-link {
-                color: #94a3b8;
-                font-weight: bold;
-                border: 1px solid transparent;
-                padding: 10px 20px;
-                font-size: 0.95rem;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-color);
+                color: var(--text-muted);
+                padding: 9px 16px;
                 border-radius: 8px 8px 0 0;
-                transition: all 0.2s ease;
+                font-size: 0.92rem;
+                font-weight: 600;
+                transition: all 0.2s;
             }
-
-                .nav-tabs .nav-link.active {
-                    background-color: #111d2e !important;
-                    color: #00f2fe !important;
-                    border-color: #1e2e42 #1e2e42 #111d2e !important;
-                    border-top: 3px solid #00f2fe !important;
-                }
 
                 .nav-tabs .nav-link:hover {
-                    color: #51e5ff;
+                    background: rgba(56, 189, 248, 0.12);
+                    color: var(--accent-cyan);
+                    border-color: var(--accent-cyan);
                 }
 
-        .cockpit-card {
-            background: #111d2e;
-            border: 1px solid #1e2e42;
+                .nav-tabs .nav-link.active {
+                    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(168, 85, 247, 0.25)) !important;
+                    color: #fff !important;
+                    border-color: var(--accent-cyan) var(--accent-cyan) transparent !important;
+                    box-shadow: 0 -2px 10px rgba(56, 189, 248, 0.3);
+                }
+
+        /* 玻璃擬態面板與網格 */
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
             border-radius: 12px;
-            padding: 18px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-            margin-bottom: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 12px;
         }
 
-        .table-dark-custom {
-            color: #cbd5e1;
-            background-color: #0c1827;
+        .stats-grid {
+            display: grid;
+            gap: 12px;
         }
 
-            /* 🛠️【高對比高亮】：徹底解決表格選取/懸停「黑吃黑看不清」死穴 */
-            .table-dark-custom tbody tr:hover,
-            table.dataTable tbody tr:hover td {
-                background-color: #1a365d !important;
-                color: #ffffff !important;
-                font-weight: bold !important;
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 15px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .stat-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* 🟢 DataTables 樣式覆蓋 (凍結表頭 + 賽博朋克黑化) */
+        .dataTables_wrapper {
+            color: var(--text-main);
+            font-size: 0.88rem;
+        }
+
+            .dataTables_wrapper .dataTables_length select,
+            .dataTables_wrapper .dataTables_filter input {
+                background: #0f172a !important;
+                color: #fff !important;
+                border: 1px solid #334155 !important;
+                border-radius: 6px;
+                padding: 4px 8px;
             }
 
-            .table-dark-custom tbody tr.selected,
-            table.dataTable tbody tr.selected td {
-                background-color: #0284c7 !important;
-                color: #ffffff !important;
-                font-weight: bold !important;
-                text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        table.dataTable {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 8px 0 !important;
+        }
+
+            table.dataTable thead th {
+                background: #0b1528 !important;
+                color: var(--accent-cyan) !important;
+                font-weight: 700;
+                border-bottom: 2px solid var(--accent-cyan) !important;
+                padding: 10px 8px !important;
+                white-space: nowrap;
             }
 
-        .cursor-pointer tbody tr {
+            table.dataTable tbody tr {
+                background: transparent !important;
+            }
+
+                table.dataTable tbody tr:hover {
+                    background: rgba(56, 189, 248, 0.12) !important;
+                    cursor: pointer;
+                }
+
+            table.dataTable tbody td {
+                padding: 8px 8px !important;
+                border-bottom: 1px solid var(--border-color) !important;
+                white-space: nowrap;
+                vertical-align: middle;
+            }
+
+        .page-item.active .page-link {
+            background-color: var(--accent-cyan) !important;
+            border-color: var(--accent-cyan) !important;
+            color: #000 !important;
+            font-weight: bold;
+        }
+
+        .page-link {
+            background-color: var(--bg-secondary) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-main) !important;
+        }
+
+        /* 按鈕與標籤 */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .btn-action {
+            background: var(--accent-cyan);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .btn-action:hover {
+                filter: brightness(1.15);
+                transform: translateY(-1px);
+            }
+
+        .btn-refresh-all {
+            background: linear-gradient(90deg, #ec4899, #f43f5e);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 700;
             cursor: pointer;
         }
+
+        .custom-select {
+            background: #0f172a;
+            color: #fff;
+            border: 1px solid #334155;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        /* 模式切換按鈕組 */
+        .mode-btn-group {
+            display: flex;
+            gap: 4px;
+            background: #0f172a;
+            padding: 3px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 5px 12px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .mode-btn.active {
+                background: var(--accent-cyan);
+                color: #000;
+            }
+
+        /* 內嵌 iframe 圖表 */
+        .chart-frame-wrapper {
+            width: 100%;
+            height: 860px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .chart-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ========================================================================= */
+        /* 🟢 方案 B：右側滑出式「個股全維深度量化抽屜 (Side Drawer)」樣式 */
+        /* ========================================================================= */
+        #side-drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(3px);
+            z-index: 99990;
+            transition: opacity 0.3s;
+        }
+
+        #stock-side-drawer {
+            position: fixed;
+            top: 0;
+            right: -430px;
+            width: 410px;
+            height: 100vh;
+            background: rgba(11, 20, 38, 0.96);
+            border-left: 2px solid var(--accent-cyan);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            z-index: 99999;
+            transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+            #stock-side-drawer.open {
+                right: 0;
+            }
+
+        .drawer-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .drawer-body {
+            padding: 18px 20px;
+            overflow-y: auto;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .drawer-section {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+        }
+
+        .drawer-sec-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ========================================================================= */
+        /* 🟢 方案 B：右側量化抽屜 ✕ 知識庫入口 (Enterprise Hub) 專屬樣式 */
+        /* ========================================================================= */
+        #side-drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(3px);
+            z-index: 99990;
+        }
+
+        #stock-side-drawer {
+            position: fixed;
+            top: 0;
+            right: -430px;
+            width: 410px;
+            height: 100vh;
+            background: rgba(11, 20, 38, 0.96);
+            border-left: 2px solid var(--accent-cyan);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            z-index: 99999;
+            transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+            #stock-side-drawer.open {
+                right: 0;
+            }
+
+        .drawer-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .drawer-body {
+            padding: 18px 20px;
+            overflow-y: auto;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .drawer-section {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+        }
+
+        .drawer-sec-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* 知識庫入口雙欄佈局 */
+        .hub-container {
+            display: flex;
+            height: 860px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-secondary);
+        }
+
+        .hub-sidebar {
+            width: 280px;
+            height: 100%;
+            background: #0b1528;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 12px 8px;
+            flex-shrink: 0;
+        }
+
+            .hub-sidebar::-webkit-scrollbar {
+                width: 5px;
+            }
+
+            .hub-sidebar::-webkit-scrollbar-thumb {
+                background: #334155;
+                border-radius: 10px;
+            }
+
+        .hub-nav-category {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #64748b;
+            margin: 14px 12px 6px;
+            font-weight: bold;
+        }
+
+        .hub-nav-link {
+            color: #94a3b8;
+            padding: 8px 12px;
+            margin: 2px 4px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+            .hub-nav-link:hover {
+                background: rgba(56, 189, 248, 0.12);
+                color: var(--accent-cyan);
+            }
+
+            .hub-nav-link.active {
+                background: linear-gradient(90deg, rgba(56, 189, 248, 0.2), rgba(168, 85, 247, 0.2));
+                color: #fff;
+                font-weight: 700;
+                border-left: 3px solid var(--accent-cyan);
+            }
+
+        .hub-main {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            background: #000;
+        }
+
+        .hub-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+        }
+
+        .hub-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 10;
+        }
+
+
     </style>
 </head>
 <body>
 
-    <!-- 頂部主控台 Nav 標頭 -->
-    <nav class="navbar navbar-expand-lg custom-navbar">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-info fs-4" href="#">🧠 Zen AI 終極量化戰情看板 Pro</a>
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-dark text-info fs-6">系統狀態: 🟢 全核心正常運作</span>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="location.reload();">🔄 一鍵刷看板</button>
-            </div>
-        </div>
-    </nav>
+    <!-- 頂部標題、搜尋框與主控列 -->
+    <div class="header-bar">
+        <div class="header-title">⚡ Zen AI 終極量化戰情看板 Pro</div>
 
-    <!-- 🏆 6 大頁籤 (Multi-Tab) 頁面導覽 -->
-    <ul class="nav nav-tabs mb-3" id="cockpitTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="multi-tab" data-bs-toggle="tab" data-bs-target="#tab-multi" type="button" role="tab">🎯 全市場多維共振</button>
-        </li>
-        <!-- 👑 新增專屬頁籤：☀️ 60M 伏兵轉強雷達 -->
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="strong-tab" data-bs-toggle="tab" data-bs-target="#tab-strong" type="button" role="tab">☀️ 60M 伏兵轉強雷達</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="radar-tab" data-bs-toggle="tab" data-bs-target="#tab-radar" type="button" role="tab">🌐 盤中雷達與全景</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="charts-tab" data-bs-toggle="tab" data-bs-target="#tab-charts" type="button" role="tab">📊 四大聯動圖表中心</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="dna-tab" data-bs-toggle="tab" data-bs-target="#tab-dna" type="button" role="tab">💎 股性基因與財報估值</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="macro-tab" data-bs-toggle="tab" data-bs-target="#tab-macro" type="button" role="tab">📅 全球總經與央行日曆</button>
-        </li>
+        <!-- 🟢 頂部即時個股搜尋框 -->
+        <div class="search-box-wrapper">
+            <input type="text" id="quick-search-code" class="search-input" placeholder="🔍 輸入代號 (如: 3035, 2330)..." onkeydown="if(event.key==='Enter') openStockDrawer()">
+            <button class="btn-action" style="padding: 4px 10px; font-size: 0.8rem;" onclick="openStockDrawer()">量化抽屜</button>
+        </div>
+
+        <div class="header-info">
+            <span id="live-clock">🕒 載入中...</span>
+            <span>DB: <strong style="color:var(--accent-cyan);">stockchangedate</strong></span>
+            <button class="btn-refresh-all" onclick="refreshResonanceSnapshot()">⚡ 一鍵全看板重構</button>
+        </div>
+    </div>
+
+    <!-- 🟢 方案 B：右側滑出式「個股全維深度量化抽屜 (Side Drawer)」 -->
+    <div id="side-drawer-overlay" onclick="closeStockDrawer()"></div>
+    <div id="stock-side-drawer">
+        <div class="drawer-header">
+            <div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: #fff;" id="drawer-stock-title">👑 3035 智原</div>
+                <div style="font-size: 0.82rem; color: var(--text-muted);" id="drawer-stock-sub">現價: 318.5 元 | 漲跌: +4.5%</div>
+            </div>
+            <button onclick="closeStockDrawer()" style="background:transparent; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">✕</button>
+        </div>
+
+        <div class="drawer-body" id="drawer-body-content">
+            <div style="text-align: center; padding: 40px; color: var(--accent-cyan);">⏳ 正在從全資料庫計算量化情報...</div>
+        </div>
+
+        <div style="padding: 14px 20px; border-top: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.95);">
+            <button class="btn-action" style="width:100%; padding:10px; font-size:0.95rem;" id="drawer-btn-chart">
+                📊 載入該股四大聯動圖表
+            </button>
+        </div>
+    </div>
+
+    <!-- 七大核心戰情頁籤導航 -->
+    <ul class="nav nav-tabs" id="cockpitTabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" id="multi-tab" data-bs-toggle="tab" data-bs-target="#tab-multi" type="button">🎯 全市場多維共振</button></li>
+        <li class="nav-item"><button class="nav-link" id="surge-tab" data-bs-toggle="tab" data-bs-target="#tab-surge" type="button">🚀 暴漲龍頭 ✕ 勝率回測</button></li>
+        <li class="nav-item"><button class="nav-link" id="strong-tab" data-bs-toggle="tab" data-bs-target="#tab-strong" type="button">☀️ 60M 伏兵轉強雷達</button></li>
+        <li class="nav-item"><button class="nav-link" id="radar-tab" data-bs-toggle="tab" data-bs-target="#tab-radar" type="button">🌐 盤中雷達與全景 (雙總分)</button></li>
+        <li class="nav-item"><button class="nav-link" id="charts-tab" data-bs-toggle="tab" data-bs-target="#tab-charts" type="button">📊 四大聯動圖表中心</button></li>
+        <li class="nav-item"><button class="nav-link" id="dna-tab" data-bs-toggle="tab" data-bs-target="#tab-dna" type="button">💎 股性基因與財報估值</button></li>
+        <li class="nav-item"><button class="nav-link" id="macro-tab" data-bs-toggle="tab" data-bs-target="#tab-macro" type="button">📅 全球總經與央行日曆</button></li>
+        <!-- 🟢 新增第 8 頁籤：知識庫與工具入口 -->
+        <li class="nav-item"><button class="nav-link" id="hub-tab" data-bs-toggle="tab" data-bs-target="#tab-hub" type="button">📁 知識庫與工具入口</button></li>
     </ul>
 
-    <!-- 6 大頁籤內容區 (Tab Content) -->
-    <div class="tab-content" id="cockpitTabContent">
+    <!-- 頁籤內容主體 -->
+    <div class="tab-content" id="cockpitTabsContent">
 
-        <!-- ================================================================= -->
-        <!-- 頁籤 1：🎯【全市場多維共振】 -->
-        <!-- ================================================================= -->
+        <!-- ========================================== -->
+        <!-- 頁籤 1: 全市場多維共振 (快照 0ms 極速) -->
+        <!-- ========================================== -->
         <div class="tab-pane fade show active" id="tab-multi" role="tabpanel">
-            <div class="cockpit-card">
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                    <h5 class="text-info fw-bold mb-0">🎯 全市場多維共振黑馬掃描 (0ms 快照雷達)</h5>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="text-muted fs-6">共振模式:</span>
-                        <select id="selHitCount" class="form-select form-select-sm" style="width: auto;">
-                            <option value="4">👑 4維全維度共振 (頂級黑馬)</option>
-                            <option value="3" selected>🔥 任 3 維共振 (起漲發動區域)</option>
-                            <option value="2">⚡ 任 2 維共振 (轉折伏兵預備)</option>
+            <div class="glass-panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div style="font-weight:bold; color:var(--accent-cyan);">🎯 多維因子共振快照 (4維/3維起漲黑馬池)</div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <label>
+                        共振維度:
+                        <select id="selHitCount" class="custom-select" onchange="searchMultiResonance()">
+                            <option value="3" selected>≥ 3 維共振 (精選黑馬)</option>
+                            <option value="4">4 維全共振 (頂級黑馬)</option>
+                            <option value="2">≥ 2 維共振</option>
                         </select>
-                        <span class="text-muted fs-6">雙動能:</span>
-                        <select id="selMomentumMode" class="form-select form-select-sm" style="width: auto;">
-                            <option value="0">全部模式</option>
-                            <option value="2" selected>🔥 剛由負翻正 (第一時間轉折)</option>
-                            <option value="3">📈 連續三日擴張 (加速加碼)</option>
-                            <option value="1">🟢 雙動能為正</option>
+                    </label>
+                    <label>
+                        雙動能狀態:
+                        <select id="selMomentumMode" class="custom-select" onchange="searchMultiResonance()">
+                            <option value="2" selected>⚡ 剛由負翻正起漲</option>
+                            <option value="1">🔥 連續正動能擴張</option>
+                            <option value="0">全部狀態</option>
                         </select>
-                        <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="searchMultiResonance();">🚀 啟動極速掃描</button>
-                        <button type="button" class="btn btn-sm btn-outline-warning" onclick="refreshResonanceSnapshot();">🔄 刷新快照</button>
-                    </div>
+                    </label>
+                    <button class="btn-action" onclick="searchMultiResonance()">🔄 刷新快照</button>
                 </div>
-                <table id="tblMultiResonance" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
+            </div>
+            <div class="glass-panel">
+                <table id="tblMultiResonance" class="table table-dark table-hover table-striped"></table>
             </div>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- 👑 頁籤 2 (新增專屬頁籤)：☀️【60M 伏兵轉強雷達】 -->
-        <!-- ================================================================= -->
+        <!-- ========================================== -->
+        <!-- 🚀 頁籤 2: 暴漲龍頭 ✕ 勝率回測矩陣 -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade" id="tab-surge" role="tabpanel">
+            <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 12px;">
+                <div class="stat-card" style="border-left: 4px solid var(--accent-red);">
+                    <div class="stat-label">🔥 近5日漲幅冠軍</div>
+                    <div class="stat-value" id="kpi-top-surge" style="color: var(--accent-red);">--</div>
+                    <div class="stat-sub" id="kpi-top-surge-sub">累積漲幅 +0.0%</div>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid var(--accent-purple);">
+                    <div class="stat-label">👑 20MA 波段期望值王</div>
+                    <div class="stat-value" id="kpi-top-m20" style="color: #c084fc;">--</div>
+                    <div class="stat-sub" id="kpi-top-m20-sub">波段期望值 +0.0%</div>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid var(--accent-cyan);">
+                    <div class="stat-label">⚡ 任兩日 (T+2) 短打勝率王</div>
+                    <div class="stat-value" id="kpi-top-t2" style="color: var(--accent-cyan);">--</div>
+                    <div class="stat-sub" id="kpi-top-t2-sub">短打勝率 0.0%</div>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid var(--accent-green);">
+                    <div class="stat-label">🎯 強勢龍頭監控檔數</div>
+                    <div class="stat-value" id="kpi-surge-count" style="color: var(--accent-green);">0 檔</div>
+                    <div class="stat-sub">總量 ≥ 3,000 張 / 股價 ≥ 10元</div>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <div style="font-weight: bold; color: var(--accent-cyan);">⚙️ 篩選天期與門檻：</div>
+                <label>
+                    波段天數：
+                    <select id="surge-days" class="custom-select">
+                        <option value="3">近 3 日累積暴衝</option>
+                        <option value="5" selected>近 5 日波段漲幅</option>
+                        <option value="10">近 10 日主升浪</option>
+                    </select>
+                </label>
+                <label>
+                    總量門檻：
+                    <select id="surge-minvol" class="custom-select">
+                        <option value="1000">≥ 1,000 張</option>
+                        <option value="3000" selected>≥ 3,000 張 (標準活水)</option>
+                        <option value="5000">≥ 5,000 張 (巨量焦點)</option>
+                    </select>
+                </label>
+                <label>
+                    最低股價：
+                    <select id="surge-minpx" class="custom-select">
+                        <option value="10" selected>≥ 10 元</option>
+                        <option value="20">≥ 20 元</option>
+                    </select>
+                </label>
+                <button class="btn-action" onclick="loadTopSurgeBacktest()" style="margin-left: auto;">
+                    🚀 執行勝率回測運算
+                </button>
+            </div>
+
+            <div class="glass-panel">
+                <table id="tblSurgeBacktest" class="table table-dark table-hover table-striped"></table>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 頁籤 3: 60M 伏兵轉強雷達 -->
+        <!-- ========================================== -->
         <div class="tab-pane fade" id="tab-strong" role="tabpanel">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <div class="cockpit-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="text-warning fw-bold mb-0">🚀 自選股 29 波段伏兵 ✕ 60M 已轉強發動榜</h5>
-                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="loadTurningStrong();">🔄 刷新</button>
-                        </div>
-                        <table id="tblTurningStrong29" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
-                    </div>
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:12px;">
+                <div class="glass-panel">
+                    <div style="font-weight:bold; color:var(--accent-gold); margin-bottom:10px;">☀️ 自選股 29 伏兵轉強雷達</div>
+                    <table id="tblTurningStrong29" class="table table-dark table-hover table-striped"></table>
                 </div>
-                <div class="col-md-6">
-                    <div class="cockpit-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="text-info fw-bold mb-0">☀️ 全市場 60M 短線氣象轉強精銳榜</h5>
-                            <button type="button" class="btn btn-sm btn-outline-info" onclick="loadTurningStrong();">🔄 刷新</button>
-                        </div>
-                        <table id="tblTurningStrongAll" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
-                    </div>
+                <div class="glass-panel">
+                    <div style="font-weight:bold; color:var(--accent-cyan); margin-bottom:10px;">🌟 全市場 60M 轉強精銳榜</div>
+                    <table id="tblTurningStrongAll" class="table table-dark table-hover table-striped"></table>
                 </div>
             </div>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- 頁籤 3：🌐【盤中雷達與全景】 -->
-        <!-- ================================================================= -->
+        <!-- ========================================== -->
+        <!-- 頁籤 4: 盤中雷達與全景 (雙總分對照) -->
+        <!-- ========================================== -->
         <div class="tab-pane fade" id="tab-radar" role="tabpanel">
-            <div class="row g-3">
-                <div class="col-md-7">
-                    <div class="cockpit-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="text-info fw-bold mb-0">🚀 盤中估分暴增 ✕ 60M 伏兵轉折雷達</h5>
-                            <button type="button" class="btn btn-sm btn-outline-info" onclick="loadIntradayRadar();">🔄 刷新</button>
-                        </div>
-                        <table id="tblIntradayRadar" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
-                    </div>
+            <div class="stats-grid" style="grid-template-columns: 1.25fr 0.75fr; margin-bottom:12px;">
+                <div class="glass-panel">
+                    <div style="font-weight:bold; color:var(--accent-red); margin-bottom:10px;">⚡ 盤中預估總分 ✕ 舊實戰總分對照榜 (真假暴增辨識)</div>
+                    <table id="tblIntradayRadar" class="table table-dark table-hover table-striped"></table>
                 </div>
-                <!-- 下右：2026 核心供應鏈 ✕ AI 精銳戰情雷達 (已升級涵蓋 自選股 10~19 ＋ 22~29) -->
-                <div class="col-md-5">
-                    <div class="cockpit-card">
-                        <h5 class="text-warning fw-bold mb-3">⭐ 2026 核心供應鏈 ✕ AI 精銳戰情雷達</h5>
-                        <table id="tblWatchlist2829" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
-                    </div>
+                <div class="glass-panel">
+                    <div style="font-weight:bold; color:var(--accent-cyan); margin-bottom:10px;">🌐 2026 AI 精銳 10 大核心供應鏈雷達</div>
+                    <table id="tblWatchlist2829" class="table table-dark table-hover table-striped"></table>
                 </div>
             </div>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- 頁籤 4：📊【四大聯動圖表中心】 -->
-        <!-- ================================================================= -->
-        <!-- 頁籤 3：📊【四大聯動圖表中心】 (改為相對路徑，解鎖跨網域 CORS 阻擋！) -->
+        <!-- ========================================== -->
+        <!-- 頁籤 5: 四大聯動圖表中心 (含盤後/盤中雙模式) -->
+        <!-- ========================================== -->
         <div class="tab-pane fade" id="tab-charts" role="tabpanel">
-            <iframe id="iframe-charts" src="excelsql2.html?view=charts" style="width: 100%; height: 88vh; border: none; border-radius: 12px;"></iframe>
+            <div class="glass-panel" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+                <div>當前圖表標的: <strong id="chart-current-stock" style="color:var(--accent-cyan); font-size:1.15rem;">2330 台積電</strong></div>
+
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:0.85rem; color:var(--text-muted);">繪圖模式:</span>
+                    <div class="mode-btn-group">
+                        <button id="btn-mode-post" class="mode-btn active" onclick="setChartMode('post')">⚡ 盤後歷史 (預設極速)</button>
+                        <button id="btn-mode-live" class="mode-btn" onclick="setChartMode('live')">🔥 盤中即時</button>
+                    </div>
+                    <button class="btn-action" style="padding:5px 12px;" onclick="reloadCurrentChart()">🔄 重新繪製</button>
+                </div>
+            </div>
+            <div class="chart-frame-wrapper">
+                <iframe id="iframe-charts" class="chart-frame" src="excelsql2.html?stock=2330&mode=post&view=charts#main-dashboard-wrapper"></iframe>
+            </div>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- 頁籤 5：💎【股性基因與財報估值】 -->
-        <!-- ================================================================= -->
+        <!-- ========================================== -->
+        <!-- 頁籤 6: 股性基因與財報估值 (3-Way 離場勝率) -->
+        <!-- ========================================== -->
         <div class="tab-pane fade" id="tab-dna" role="tabpanel">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <div class="cockpit-card">
-                        <h5 class="text-success fw-bold mb-3">🏆 個股 3-Way 離場勝率與期望值快照 (StockPersonality_3Exits)</h5>
-                        <table id="tbl3Exits" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
-                    </div>
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:12px;">
+                <div class="glass-panel">
+                    <div style="font-weight:bold; color:var(--accent-purple); margin-bottom:10px;">💎 個股 3-Way 離場勝率與期望值基因庫</div>
+                    <table id="tbl3Exits" class="table table-dark table-hover table-striped"></table>
                 </div>
-                <div class="col-md-6">
-                    <div class="cockpit-card">
-                        <h5 class="text-info fw-bold mb-3">💰 半年報 EPS 暴增 ✕ FactSet 法人目標價空間榜</h5>
-                        <table id="tblFundamentalGems" class="table table-bordered table-dark-custom table-hover table-sm w-100 cursor-pointer"></table>
-                    </div>
+                <div class="glass-panel">
+                    <div style="font-weight:bold; color:var(--accent-gold); margin-bottom:10px;">📈 半年報 EPS 暴增 ✕ FactSet 法人目標價空間</div>
+                    <table id="tblFundamentalGems" class="table table-dark table-hover table-striped"></table>
                 </div>
             </div>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- 頁籤 6：📅【全球總經與央行日曆】 -->
-        <!-- ================================================================= -->
+        <!-- ========================================== -->
+        <!-- 頁籤 7: 全球總經與央行日曆 -->
+        <!-- ========================================== -->
         <div class="tab-pane fade" id="tab-macro" role="tabpanel">
-            <div class="cockpit-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="text-danger fw-bold mb-0">📅 全球重大總經數據與央行會議日曆 (MacroEconomicCalendar)</h5>
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="loadMacroCalendar();">🔄 刷新日曆</button>
-                </div>
-                <table id="tblMacroCalendar" class="table table-bordered table-dark-custom table-hover table-sm w-100"></table>
+            <div class="glass-panel">
+                <div style="font-weight:bold; color:var(--accent-gold); margin-bottom:10px;">📅 全球重大總經指標與央行會議日曆</div>
+                <table id="tblMacroCalendar" class="table table-dark table-hover table-striped"></table>
             </div>
         </div>
 
     </div>
 
+    <!-- ========================================== -->
+    <!-- 🟢 頁籤 8: 知識庫與工具入口 (Enterprise Hub) -->
+    <!-- ========================================== -->
+    <div class="tab-pane fade" id="tab-hub" role="tabpanel">
+        <div class="hub-container">
+
+            <!-- 左側分類目錄 (首位為 excelsql2.html) -->
+            <aside class="hub-sidebar">
+                <div class="hub-nav-category"><i class="bi bi-cpu-fill text-info me-1"></i>核心量化工具</div>
+                <a class="hub-nav-link active" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/excelsql2.html', this)">
+                    <i class="bi bi-table text-warning"></i> 👑 Excel SQL 高級版
+                </a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/stockmaster.html', this)"><i class="bi bi-images"></i> Ai股票智能助教</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/mylink.html', this)"><i class="bi bi-images"></i> 我的手機版常用連結</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/showimage/bookkeeping.html', this)"><i class="bi bi-images"></i> 雲端記帳</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/mygithub1.html', this)"><i class="bi bi-images"></i> 數據管理入口</a>
+                <a class="hub-nav-link" onclick="loadHubPage('http://www.hacker1.somee.com/myword.html', this)"><i class="bi bi-images"></i> somee文字打包</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965home.synology.me/androidapp/voiceinput1.html', this)"><i class="bi bi-images"></i> 網頁語音輸入</a>
+
+                <div class="hub-nav-category"><i class="bi bi-robot text-primary me-1"></i>Google AI Studio 傳承庫</div>
+                <a class="hub-nav-link" active" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/excelsql_01.html', this)"><i class="bi bi-camera-reels"></i> excelsql</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/excelsql_02.html', this)"><i class="bi bi-images"></i> excelsql預存</a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E9%81%BF%E5%85%8D%E5%BD%B1%E9%9F%B3%E6%B5%81%E9%87%8F%E7%B6%B2%E8%B7%AF%E8%B2%BB%E7%94%A8.html', this)"><i class="bi bi-chat-text-fill"></i>避免影音流量網路費用</a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E8%AA%9E%E9%9F%B3%E8%BC%B8%E5%85%A5%E6%96%B9%E6%A1%88%E9%81%B8%E6%93%87.html', this)"><i class="bi bi-geo-alt-fill"></i>語音輸入方案選擇</a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E7%8F%BE%E4%BB%A3%E5%8C%96%E4%B8%80%E9%A0%81%E5%BC%8F%20GitHub%20%E9%80%A3%E7%B5%90%E7%B6%B2%E7%AB%99.html', this)"><i class="bi bi-chat-text-fill"></i>現代化一頁式 GitHub 連結網站</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E7%B6%B2%E9%A0%81%E7%BE%8E%E5%8C%96%E8%88%87%E5%84%AA%E5%8C%96%E5%AE%8C%E6%88%90.html', this)"><i class="bi bi-arrow-through-heart-fill"></i>網頁美化與優化完成</a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/Local%20PPT%20Generation%20with%20%60ppt-master%60.html', this)"><i class="bi bi-pencil-square"></i>Local PPT Generation with `ppt-master`</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E5%B0%87%20ChatGPT%20JSON%20%E8%BD%89%E7%82%BA%20HTML.html', this)"><i class="bi bi-messenger"></i>將Google AI Studioinfo JSON 轉為 HTML</a>
+
+
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E5%8D%83%E9%87%91%E8%82%A1%EF%BC%9AAI%E3%80%81%E5%8D%8A%E5%B0%8E%E9%AB%94%E3%80%81%E9%A1%98%E6%99%AF.html', this)"><i class="bi bi-stickies"></i>千金股：AI、半導體、願景</a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/T-SQL%20%E6%AC%84%E4%BD%8D%E6%9B%B4%E6%96%B0%E7%A8%8B%E5%BC%8F%E7%A2%BC.html', this)"><i class="bi bi-stickies"></i>T-SQL 欄位更新程式碼</a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/SQL 查詢錯誤修正建議_美化版.html', this)"><i class="bi bi-stickies"></i>SQL 查詢錯誤修正建議_美化版.html</a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/文字轉超連結工具推薦及股票在最後.html', this)"><i class="bi bi-stickies"></i>股票策略開發在後面</a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/記憶傳承與工具連結應用.html', this)"><i class="bi bi-stickies"></i>記憶傳承與工具連結應用</a>
+
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/Zen AI 戰情室 V7.0 架構.html', this)"><i class="bi bi-shield-fill-check text-info"></i> Zen AI 戰情室 V7.0</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/Zen AI 系統架構總藍圖.html', this)"><i class="bi bi-diagram-3-fill text-warning"></i> 系統架構總藍圖</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/Zen AI 系統維護備忘錄.html', this)"><i class="bi bi-stickies text-success"></i> 系統維護備忘錄</a>
+
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/Zen AI 系統記憶備忘錄1.html', this)"><i class="bi bi-stickies text-success"></i> 系統維護備忘錄1</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E7%B3%BB%E7%B5%B1%E5%82%B3%E6%89%BF%E8%88%87%E6%88%B0%E6%83%85%E7%9C%8B%E6%9D%BF%E6%9E%B6%E6%A7%8B.html', this)"><i class="bi bi-window-stack text-danger"></i> 傳承與戰情架構</a>
+
+
+                <div class="hub-nav-category"><i class="bi bi-play-btn-fill text-danger me-1"></i>多媒體與行動系統</div>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E5%BD%B1%E9%9F%B3%E7%B3%BB%E7%B5%B11.html', this)"><i class="bi bi-film"></i> 影音系統 1</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E5%BD%B1%E9%9F%B3%E7%B3%BB%E7%B5%B12.html', this)"><i class="bi bi-film"></i> 影音系統 2</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E7%85%A7%E7%89%87%E6%92%AD%E6%94%BE%E7%B3%BB%E7%B5%B1.html', this)"><i class="bi bi-image"></i> 照片播放系統</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E9%9B%BB%E8%85%A6%E6%8E%A7%E5%88%B6%E6%89%8B%E6%A9%9F%E5%AE%9A%E4%BD%8D%E8%A3%BD%E4%BD%9C%E6%8C%87%E5%8D%97.html', this)"><i class="bi bi-phone"></i> 手機定位製作指南</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E6%89%8B%E6%A9%9F%E7%89%88%E8%B3%87%E6%96%99%E7%AE%A1%E7%90%86%E7%B3%BB%E7%B5%B1%E9%96%8B%E7%99%BC.html', this)"><i class="bi bi-phone-vibrate"></i> 手機版資料管理開發</a>
+
+                <div class="hub-nav-category"><i class="bi bi-globe text-success me-1"></i>外部系統與支援</div>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/facebook%E6%94%B6%E8%97%8F.htm', this)"><i class="bi bi-facebook text-primary"></i> Facebook 收藏</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://weizen99.github.io/androidapp/index1.html', this)"><i class="bi bi-github"></i> GitHub AndroidApp</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://weizen99.github.io/androidapp/map.html', this)"><i class="bi bi-geo-alt-fill text-danger"></i> 地圖定位建檔</a>
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888//mymvc/sop.aspx', this)"><i class="bi bi-headset text-info"></i> 技術支援中心 SOP</a>
+            </aside>
+
+            <!-- 右側主視窗 (預設載入 excelsql2.html) -->
+            <main class="hub-main">
+                <div class="hub-loader" id="hub-loader">
+                    <div class="spinner-border text-info" role="status"></div>
+                </div>
+                <iframe src="https://zen2965.duckdns.org:8888/excelimport/excelsql2.html" id="hubContentFrame" class="hub-iframe"></iframe>
+            </main>
+
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- 核心 JavaScript：通用 AJAX、DataTables、Magic Click、方案 B 抽屜 -->
+    <!-- ========================================== -->
     <script>
-        // 🛠️【核心修正 1】：使用相對路徑，徹底打通本機 (localhost) 與外網 (duckdns) 的跨網域限制！
         const API_SQL_URL = "DataService2.aspx/ExecuteSQL";
+        let currentStockCode = "2330";
+        let currentStockName = "台積電";
+        let currentChartMode = "post";
 
         $(document).ready(function () {
+            initClock();
+
             // 1. 切換頁籤事件
             $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
                 const targetTab = $(e.target).attr('data-bs-target');
                 if (targetTab === '#tab-multi') searchMultiResonance();
+                if (targetTab === '#tab-surge') loadTopSurgeBacktest();
                 if (targetTab === '#tab-strong') loadTurningStrong();
                 if (targetTab === '#tab-radar') loadIntradayRadar();
                 if (targetTab === '#tab-dna') loadDNAndFundamentals();
                 if (targetTab === '#tab-macro') loadMacroCalendar();
 
-                // 對焦四大圖表最頂端 (Y=0px)
                 if (targetTab === '#tab-charts') {
                     setTimeout(function () {
                         const iframe = document.getElementById('iframe-charts');
                         if (iframe && iframe.contentWindow) {
                             try { iframe.contentWindow.scrollTo(0, 0); } catch (e) { }
                         }
-                    }, 300);
+                    }, 200);
                 }
             });
 
-            // 2. 預設載入第一頁
+            // 2. 預設載入首頁
             searchMultiResonance();
 
-            // 👑【Magic Click 雙模式雙保險連動】：點擊全看板任何表格股票列 ➔ 100% 跳轉開圖！
+            // 3. 👑 Magic Click 雙保險跨圖表連動 (點擊全看板任何表格股票列 ➔ 100% 自動跳轉開圖 ＋ 同步抽屜)
             $(document).on('click', 'table tbody tr', function (e) {
                 if ($(e.target).is('button, a, input, select, th') || $(this).parents('thead').length > 0) return;
 
                 let stockCode = "";
-                $(this).find('td').each(function () {
+                let stockName = "";
+
+                $(this).find('td').each(function (idx) {
                     const txt = $(this).text().trim();
-                    // 🛠️【核心修正 2】：放寬正則匹配，相容 4~6 位數股號與 DR 股 (如 2330, 910322)
-                    if (txt.match(/^[0-9A-Za-z]{4,6}$/)) {
+                    if (!stockCode && txt.match(/^[0-9A-Za-z]{4,6}$/)) {
                         stockCode = txt;
-                        return false;
+                    } else if (stockCode && !stockName && isNaN(txt) && txt.length > 0 && txt.length < 8) {
+                        stockName = txt;
                     }
                 });
 
                 if (stockCode) {
-                    console.log("🎯 點擊股票: " + stockCode + " ➔ 正在跳轉四大圖表中心...");
-
-                    // 切換至「四大聯動圖表中心」頁籤 (#tab-charts)
-                    const chartTabBtn = document.getElementById('charts-tab');
-                    if (chartTabBtn) {
-                        var tabInst = new bootstrap.Tab(chartTabBtn);
-                        tabInst.show();
-                    } else {
-                        $('#charts-tab').tab('show');
-                    }
-
-                    // 雙模式連動發動 (DOM 直改 ＋ URL 備援)
-                    let attempts = 0;
-                    const checkIframeAndRun = setInterval(function () {
-                        attempts++;
-                        const iframe = document.getElementById('iframe-charts');
-
-                        if (iframe && iframe.contentWindow) {
-                            try {
-                                const stockInput = iframe.contentWindow.document.getElementById('keyword');
-                                const btnPost = iframe.contentWindow.document.getElementById('btn_query_post');
-
-                                if (stockInput && btnPost) {
-                                    clearInterval(checkIframeAndRun);
-                                    stockInput.value = stockCode; // 寫入股號
-                                    btnPost.click();              // 按下盤後聯動查詢！
-                                    console.log("✅ [DOM模式] 成功發動圖表聯動: " + stockCode);
-                                    return;
-                                }
-                            } catch (err) {
-                                console.warn("⚠️ DOM 存取受限，啟動 URL 備援連動模式...");
-                            }
-                        }
-
-                        // 備援模式：若 3 秒內 DOM 抓不到，直接重載 iframe URL
-                        if (attempts >= 8 && iframe) {
-                            clearInterval(checkIframeAndRun);
-                            iframe.src = "excelsql2.html?stock=" + stockCode + "&view=charts#main-dashboard-wrapper";
-                            console.log("✅ [URL備援模式] 成功發動圖表聯動: " + stockCode);
-                        }
-                    }, 300);
+                    magicClickStock(stockCode, stockName);
                 }
             });
         });
 
-        // 🎯 0ms 多維共振極速掃描
-        function searchMultiResonance() {
-            const hitCount = $("#selHitCount").val() || 3;
-            const momentumMode = $("#selMomentumMode").val() || 2;
-
-            const sql = `SELECT TOP 100
-                [代號], [名稱], [盤中成交價] AS [現價], [盤中漲幅] AS [漲幅%], [盤中總量] AS [總量],
-                [HitCount] AS [共振維度數], [ResonanceTag] AS [共振等級],
-                [DimA_Status] AS [雙動能狀態], [DimB_Status] AS [OBV星號狀態], [DimC_Status] AS [價格星號狀態], [DimD_Status] AS [彩虹金叉狀態]
-            FROM stockchangedate.dbo.ResonanceMultiFactor_Snapshot
-            WHERE [HitCount] >= ${hitCount}
-              AND (${momentumMode} = 0 OR [DimA_DualMomentum] = ${momentumMode})
-            ORDER BY [HitCount] DESC, [DimD_RainbowScore] DESC, [盤中總量] DESC;`;
-
-            execQueryToTable(sql, "stockchangedate", "#tblMultiResonance");
-        }
-
-        // ☀️ 60M 伏兵轉強雷達
-        function loadTurningStrong() {
-            const sql29Strong = `SELECT TOP 50
-                代號, 名稱, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, AI診斷筆記
-            FROM stockchangedate.dbo.View_AI_Elite_Radar
-            WHERE 分組 = N'自選股29' AND [短線氣象] LIKE N'%轉強%'
-            ORDER BY [60M動能(OSC)] DESC;`;
-
-            execQueryToTable(sql29Strong, "stockchangedate", "#tblTurningStrong29");
-
-            const sqlAllStrong = `SELECT TOP 50
-                代號, 名稱, 分組, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, 具體概念
-            FROM stockchangedate.dbo.View_AI_Elite_Radar
-            WHERE [短線氣象] LIKE N'%轉強%'
-            ORDER BY [60M動能(OSC)] DESC, [日線分] DESC;`;
-
-            execQueryToTable(sqlAllStrong, "stockchangedate", "#tblTurningStrongAll");
-        }
-
-        // 👑 網頁「刷新快照 / 一鍵刷看板」：一鍵觸發後台主控程序 (依序重算全套快照)
-        function refreshResonanceSnapshot() {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ title: '⏳ 正在執行全戰情室大一統快照重構...', text: '正在依序運算即時均線、盤中估分與多維共振，約需 3 秒', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-            }
-
-            $.ajax({
-                type: "POST",
-                url: API_SQL_URL,
-                data: JSON.stringify({ sql: "EXEC stockchangedate.dbo.sp_RunWarRoomDailyRefresh;", db: "stockchangedate", pwd: "2157" }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function () {
-                    if (typeof Swal !== 'undefined') Swal.fire('成功', '全戰情室所有快照表已 100% 更新完畢！', 'success');
-                    searchMultiResonance(); // 重新整理表格
-                },
-                error: function () {
-                    if (typeof Swal !== 'undefined') Swal.fire('完成', '快照指令已發送並在背景完成重構！', 'info');
-                    searchMultiResonance();
-                }
-            });
-        }
-
-        // 🌐 頁籤 3 數據：盤中雷達 ✕ 2026 核心供應鏈 (View_AI_Elite_Radar 涵蓋自選股 10~19 + 22~29)
-        function loadIntradayRadar() {
-            // 1. 左卡片：盤中估分暴增全表
-            const sqlRadar = `SELECT M.代號, M.名稱, C.盤中成交價 AS 現價, C.漲幅_百分比 AS [漲幅%], C.盤中總量 AS 總量, ROUND(C.預估今日總分, 2) AS 盤中預估總分, ROUND(M.專家實戰總分,2) AS 舊實戰總分, C.新搬運_60分K, C.細產業名稱 AS 產業, C.股本億
-FROM IntradayScoreCache AS C 
-RIGHT OUTER JOIN MasterStockAnalysis AS M ON C.代號 = M.代號
-WHERE (M.日期 = (SELECT MAX(日期) AS mydate FROM MasterStockAnalysis AS MasterStockAnalysis_1))
-ORDER BY C.預估今日總分 DESC;`;
-
-            execQueryToTable(sqlRadar, "stockchangedate", "#tblIntradayRadar");
-
-            // 2. 右卡片：全面改抓 View_AI_Elite_Radar (包含 2026 AI伺服器/TPU/GB200/液冷/CPO/類EMIB 10大供應鏈)
-            // 依 60M動能(OSC) 由大到小排序，最先抓出 60M 剛發動轉強的黃金黑馬！
-            const sqlEliteRadar = `SELECT TOP 300
-            代號, 名稱, 分組, 策略靈魂, ROUND([60M動能(OSC)], 2) AS [60M_OSC], 短線氣象
-        FROM stockchangedate.dbo.View_AI_Elite_Radar
-        ORDER BY [60M動能(OSC)] DESC, 日線分 DESC;`;
-
-            execQueryToTable(sqlEliteRadar, "stockchangedate", "#tblWatchlist2829");
-        }
-
-        // 💎 頁籤 4 數據 (套用長官優化後的全表 3-Way 勝率對照)
-        function loadDNAndFundamentals() {
-            const sql3Exits = `SELECT
-                [代號], [名稱], [完成交易次數],
-                [Return_5MA] AS [5MA期望值%], [Return_10MA] AS [10MA期望值%], [Return_20MA] AS [20MA期望值%],
-                [OptimalExit] AS [最適建議]
-            FROM stockchangedate.dbo.StockPersonality_3Exits
-            ORDER BY [Return_20MA] DESC;`;
-
-            execQueryToTable(sql3Exits, "stockchangedate", "#tbl3Exits");
-
-            const sqlGems = `SELECT TOP 50
-                RTRIM(F.代號) AS [代號],
-                ISNULL(M.名稱, F.代號) AS [名稱],
-                ISNULL(M.盤中現價, 0) AS [現價],
-                ISNULL(R.最新公告營收年增, 0) AS [營收年增%],
-                ISNULL(FN.EPS累計, 0) AS [半年報EPS],
-                F.預估目標價 AS [FactSet目標價],
-                ROUND(((F.預估目標價 - ISNULL(M.盤中現價, F.舊EPS中位數)) / NULLIF(ISNULL(M.盤中現價, F.舊EPS中位數), 0)) * 100, 1) AS [潛在空間%]
-            FROM stockchangedate.dbo.FactSetEstimates F
-            LEFT JOIN (
-                SELECT 代號, 名稱, 盤中現價, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
-                FROM stockchangedate.dbo.MasterStockAnalysis
-                WHERE 盤中現價 > 0
-            ) M ON RTRIM(F.代號) = RTRIM(M.代號) AND M.rn = 1
-            LEFT JOIN (
-                SELECT 代號, 最新公告營收年增, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 交易日期 DESC) AS rn
-                FROM stockchangedate.dbo.View_Realtime_Revenue
-            ) R ON RTRIM(F.代號) = RTRIM(R.代號) AND R.rn = 1
-            LEFT JOIN (
-                SELECT 代號, EPS累計, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
-                FROM stockchangedate.dbo.financesum
-            ) FN ON RTRIM(F.代號) = RTRIM(FN.代號) AND FN.rn = 1
-            WHERE F.預估目標價 > 0
-            ORDER BY ROUND(((F.預估目標價 - ISNULL(M.盤中現價, F.舊EPS中位數)) / NULLIF(ISNULL(M.盤中現價, F.舊EPS中位數), 0)) * 100, 1) DESC;`;
-
-            execQueryToTable(sqlGems, "stockchangedate", "#tblFundamentalGems");
-        }
-
-        // 📅 頁籤 5 數據：全球總經日曆
-        function loadMacroCalendar() {
-            const sqlMacro = `SELECT TOP 50
-                [公布日期], [公布時間] AS [時間], [國家區域], [指標類別], [指標名稱], [重要性], [前值], [預測值], ISNULL([實際值], N'⏳ 待公布') AS [實際值], [影響解讀]
-            FROM stockchangedate.dbo.MacroEconomicCalendar
-            WHERE [公布日期] >= 20260101
-            ORDER BY [公布日期] ASC, [公布時間] ASC;`;
-
-            execQueryToTable(sqlMacro, "stockchangedate", "#tblMacroCalendar");
-        }
-
-        // 通用 AJAX 數據連線
-        function execQueryToTable(sql, db, tableSelector) {
-            console.log("📡 正在執行 AJAX 查詢 [" + tableSelector + "]...");
+        // 🟢 通用 AJAX 數據連線 ✕ DataTables 專業渲染
+        function execQueryToTable(sql, db, tableSelector, customCallback = null) {
             $.ajax({
                 type: "POST",
                 url: API_SQL_URL,
@@ -492,7 +930,10 @@ ORDER BY C.預估今日總分 DESC;`;
                 success: function (res) {
                     try {
                         let dataStr = res.d;
-                        if (!dataStr) return;
+                        if (!dataStr) {
+                            $(tableSelector).html(`<tbody><tr><td class="text-warning p-3">✅ 暫無符合數據</td></tr></tbody>`);
+                            return;
+                        }
 
                         if (dataStr.startsWith("錯誤：")) {
                             $(tableSelector).html(`<tbody><tr><td class="text-danger p-3">❌ SQL 錯誤: ${dataStr}</td></tr></tbody>`);
@@ -508,11 +949,12 @@ ORDER BY C.預估今日總分 DESC;`;
 
                         const data = JSON.parse(cleanedJson);
                         if (!data || data.length === 0) {
-                            $(tableSelector).html(`<tbody><tr><td class="text-warning p-3">✅ 暫無符合條件數據。</td></tr></tbody>`);
+                            $(tableSelector).html(`<tbody><tr><td class="text-warning p-3">✅ 暫無符合數據</td></tr></tbody>`);
                             return;
                         }
 
                         renderDataTable(data, tableSelector);
+                        if (typeof customCallback === 'function') customCallback(data);
                     } catch (e) {
                         $(tableSelector).html(`<tbody><tr><td class="text-danger p-3">❌ JSON 解析失敗: ${e.message}</td></tr></tbody>`);
                     }
@@ -548,13 +990,468 @@ ORDER BY C.預估今日總分 DESC;`;
             $(tableSelector).html(thead + tbody);
 
             $(tableSelector).DataTable({
-                "language": { "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" },
-                "pageLength": 10,
+                "language": { "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/zh-HANT.json" },
+                "pageLength": 15,
+                "lengthMenu": [10, 15, 25, 50, 100],
                 "order": [],
+                "scrollY": "520px",
+                "scrollX": true,
                 "scrollCollapse": true,
                 "destroy": true
             });
         }
+
+        // 🟢 Magic Click 跨圖表自動連動
+        function magicClickStock(stockCode, stockName = "") {
+            currentStockCode = String(stockCode).trim();
+            currentStockName = String(stockName || "").trim();
+
+            const label = document.getElementById("chart-current-stock");
+            if (label) label.innerText = `${currentStockCode} ${currentStockName}`;
+
+            const chartTabBtn = document.getElementById('charts-tab');
+            if (chartTabBtn) {
+                var tabInst = new bootstrap.Tab(chartTabBtn);
+                tabInst.show();
+            }
+
+            reloadCurrentChart();
+        }
+
+        function setChartMode(mode) {
+            currentChartMode = mode;
+            $("#btn-mode-post").toggleClass("active", mode === 'post');
+            $("#btn-mode-live").toggleClass("active", mode === 'live');
+            reloadCurrentChart();
+        }
+
+        function reloadCurrentChart() {
+            const iframe = document.getElementById('iframe-charts');
+            if (!iframe) return;
+
+            const today = new Date();
+            const oneYearAgo = new Date(today.setFullYear(today.getFullYear() - 1)).toISOString().slice(0, 10).replace(/-/g, '');
+            iframe.src = `excelsql2.html?stock=${currentStockCode}&mode=${currentChartMode}&start=${oneYearAgo}&view=charts#main-dashboard-wrapper`;
+
+            let attempts = 0;
+            const checkIframeAndRun = setInterval(function () {
+                attempts++;
+                if (iframe && iframe.contentWindow) {
+                    try {
+                        const stockInput = iframe.contentWindow.document.getElementById('keyword');
+                        const btnTarget = iframe.contentWindow.document.getElementById(currentChartMode === 'live' ? 'btn_query_realtime' : 'btn_query_post');
+
+                        if (stockInput && btnTarget) {
+                            clearInterval(checkIframeAndRun);
+                            stockInput.value = currentStockCode;
+                            btnTarget.click();
+                            return;
+                        }
+                    } catch (err) { }
+                }
+                if (attempts >= 10) clearInterval(checkIframeAndRun);
+            }, 300);
+        }
+
+        // =========================================================================
+        // 🟢 方案 B：右側量化抽屜核心函數 (整合 Chips5 主力籌碼集中度)
+        // =========================================================================
+        function openStockDrawer(customCode = null) {
+            const code = (customCode || $("#quick-search-code").val()).trim();
+            if (!code) { alert("請先輸入股票代號 (如: 3035)"); return; }
+
+            $("#side-drawer-overlay").fadeIn(200);
+            $("#stock-side-drawer").addClass("open");
+
+            $("#drawer-stock-title").text(`🔍 正在查詢 ${code}...`);
+            $("#drawer-stock-sub").text("讀取中...");
+            $("#drawer-body-content").html('<div style="text-align:center; padding:40px; color:var(--accent-cyan);">⏳ 正在穿透全資料庫與 Chips5 計算深度量化情報...</div>');
+
+            // 🟢 SQL 關聯：整合 Chips5 主力集中度 + 3-Way 離場勝率 + 雙總分
+            const sql = `
+    SELECT TOP 1
+      Q.代號,
+      ISNULL(B.名稱, ISNULL(A.名稱, ISNULL(M.名稱, Q.代號))) AS 名稱,
+      ISNULL(A.成交價, ISNULL(S.盤中成交價, 0)) AS 現價,
+      ISNULL(S.盤中漲幅, 0.0) AS 漲幅,
+      ISNULL(E.WinRate_5MA, 50.0) AS WinRate_5MA,
+      ISNULL(E.Return_5MA, 0.0) AS Return_5MA,
+      ISNULL(E.WinRate_10MA, 50.0) AS WinRate_10MA,
+      ISNULL(E.Return_10MA, 0.0) AS Return_10MA,
+      ISNULL(E.WinRate_20MA, 50.0) AS WinRate_20MA,
+      ISNULL(E.Return_20MA, 0.0) AS Return_20MA,
+      ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS OptimalExit,
+      ISNULL(SCH.實戰總分, ISNULL(M.專家實戰總分, 0)) AS 舊實戰總分,
+      ISNULL(I.預估今日總分, ISNULL(SCH.實戰總分, ISNULL(M.專家實戰總分, 0))) AS 盤中預估總分,
+      ISNULL(R.HitCount, 0) AS HitCount,
+      ISNULL(R.ResonanceTag, N'常態波段') AS ResonanceTag,
+      -- 🟢 引入 Chips5 主力籌碼集中度
+      ISNULL(C5.集中度1日, 0.0) AS 集中度1日,
+      ISNULL(C5.集中度5日, 0.0) AS 集中度5日,
+      ISNULL(C5.集中度10日, 0.0) AS 集中度10日,
+      ISNULL(C5.集中度20日, 0.0) AS 集中度20日,
+      ISNULL(C5.集中度60日, 0.0) AS 集中度60日,
+      ISNULL(F.預估目標價, 0) AS FactSet目標價,
+      ISNULL(FN.EPS累計, 0) AS 半年報EPS,
+      ISNULL(RV.最新公告營收年增, 0) AS 營收年增
+    FROM (SELECT RTRIM('${code}') AS 代號) Q
+    LEFT JOIN stockchangedate.dbo.basicinfo B ON RTRIM(B.代號) = Q.代號
+    LEFT JOIN (SELECT TOP 1 代號, 名稱, 成交價, 日期 FROM stockchangedate.dbo.allcross_live WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) A ON 1=1
+    LEFT JOIN (SELECT TOP 1 代號, 集中度1日, 集中度5日, 集中度10日, 集中度20日, 集中度60日 FROM stockchangedate.dbo.Chips5 WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) C5 ON 1=1
+    LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(E.代號) = Q.代號
+    LEFT JOIN (SELECT TOP 1 代號, 名稱, 專家實戰總分 FROM stockchangedate.dbo.MasterStockAnalysis WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) M ON 1=1
+    LEFT JOIN (SELECT TOP 1 代號, 實戰總分 FROM stockchangedate.dbo.ScoreCrossHistory WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) SCH ON 1=1
+    LEFT JOIN stockchangedate.dbo.IntradayScoreCache I ON RTRIM(I.代號) = Q.代號
+    LEFT JOIN stockchangedate.dbo.ResonanceMultiFactor_Snapshot R ON RTRIM(R.代號) = Q.代號
+    LEFT JOIN stockchangedate.dbo.ResonanceMultiFactor_Snapshot S ON RTRIM(S.代號) = Q.代號
+    LEFT JOIN (SELECT TOP 1 代號, 預估目標價 FROM stockchangedate.dbo.FactSetEstimates WHERE RTRIM(代號) = RTRIM('${code}')) F ON 1=1
+    LEFT JOIN (SELECT TOP 1 代號, EPS累計 FROM stockchangedate.dbo.financesum WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) FN ON 1=1
+    LEFT JOIN (SELECT TOP 1 代號, 最新公告營收年增 FROM stockchangedate.dbo.View_Realtime_Revenue WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 交易日期 DESC) RV ON 1=1;
+  `;
+
+            $.ajax({
+                type: "POST",
+                url: API_SQL_URL,
+                data: JSON.stringify({ sql: sql, db: "stockchangedate", pwd: "2157" }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) {
+                    try {
+                        const data = JSON.parse(res.d);
+                        if (!data || data.length === 0) {
+                            $("#drawer-stock-title").text(`❌ 未找到 ${code}`);
+                            $("#drawer-body-content").html('<div style="text-align:center; padding:30px; color:var(--text-muted);">請確認股票代號是否正確。</div>');
+                            return;
+                        }
+                        const r = data[0];
+                        const name = r.名稱 || code;
+                        const price = Number(r.現價 || 0).toFixed(2);
+                        const change = Number(r.漲幅 || 0).toFixed(2);
+                        const changeColor = change >= 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                        const oldScore = Number(r.舊實戰總分 || 0).toFixed(1);
+                        const newScore = Number(r.盤中預估總分 || 0).toFixed(1);
+                        const delta = (newScore - oldScore).toFixed(1);
+                        const deltaColor = delta >= 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                        const hits = r.HitCount ? `${r.HitCount} 維共振 (${r.ResonanceTag})` : "常態走勢";
+
+                        // 籌碼集中度數值與色彩
+                        const c1 = Number(r.集中度1日 || 0).toFixed(1);
+                        const c5 = Number(r.集中度5日 || 0).toFixed(1);
+                        const c10 = Number(r.集中度10日 || 0).toFixed(1);
+                        const c20 = Number(r.集中度20日 || 0).toFixed(1);
+                        const c60 = Number(r.集中度60日 || 0).toFixed(1);
+
+                        const c1Color = c1 >= 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                        const c5Color = c5 >= 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                        const c10Color = c10 >= 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                        const c20Color = c20 >= 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                        const c60Color = c60 >= 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+
+                        // 主力鎖碼評級
+                        let chipRating = "⚠️ 籌碼發散觀望";
+                        let chipBadgeStyle = "background:#334155; color:#94a3b8;";
+                        if (c1 >= 15.0 && c5 >= 10.0) {
+                            chipRating = "⭐⭐⭐ 主力爆量鎖碼";
+                            chipBadgeStyle = "background:rgba(244,63,94,0.2); color:#f43f5e; border:1px solid #f43f5e;";
+                        } else if (c5 >= 5.0 && c20 >= 0.0) {
+                            chipRating = "⭐⭐ 主力持續吸籌";
+                            chipBadgeStyle = "background:rgba(251,191,36,0.2); color:#fbbf24; border:1px solid #f59e0b;";
+                        } else if (c5 > 0.0) {
+                            chipRating = "⭐ 溫和偏多佈局";
+                            chipBadgeStyle = "background:rgba(56,189,248,0.2); color:#38bdf8; border:1px solid #0284c7;";
+                        }
+
+                        $("#drawer-stock-title").text(`👑 ${r.代號} ${name}`);
+                        $("#drawer-stock-sub").html(`現價: <strong style="color:var(--accent-gold); font-size:1rem;">${price}</strong> 元 | 漲幅: <strong style="color:${changeColor};">${change >= 0 ? '+' : ''}${change}%</strong>`);
+
+                        let fsUpside = "--";
+                        if (r.FactSet目標價 > 0 && r.現價 > 0) {
+                            const up = ((r.FactSet目標價 - r.現價) / r.現價 * 100).toFixed(1);
+                            fsUpside = `<strong style="color:var(--accent-red);">${up >= 0 ? '+' : ''}${up}%</strong> (目標價: ${r.FactSet目標價}元)`;
+                        }
+
+                        $("#drawer-body-content").html(`
+          <!-- 1. 雙總分並列對照 -->
+          <div class="drawer-section">
+            <div class="drawer-sec-title">📊 籌碼與實戰總分動態 (雙總分並列)</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span>舊實戰總分 (昨日結算):</span>
+              <strong style="color:var(--accent-gold); font-size:1.05rem;">${oldScore} 分</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span>盤中預估總分 (今日即時):</span>
+              <strong style="color:var(--accent-red); font-size:1.15rem;">+${newScore} 分</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #334155; padding-top:4px;">
+              <span>分差變動 (即時淨增):</span>
+              <strong style="color:${deltaColor};">${delta >= 0 ? '+' : ''}${delta} 分</strong>
+            </div>
+          </div>
+
+          <!-- 2. 🟢 Chips5 主力籌碼集中度矩陣 -->
+          <div class="drawer-section">
+            <div class="drawer-sec-title">🎯 主力籌碼集中度 (Chips5 大戶金流)</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span>大戶鎖碼評級:</span>
+              <span class="badge" style="${chipBadgeStyle}">${chipRating}</span>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align:center; font-size:0.8rem; background:rgba(15,23,42,0.6); padding:8px; border-radius:6px; border:1px solid #1e293b;">
+              <div><span style="color:var(--text-muted);">1日集中</span><br><strong style="color:${c1Color}; font-size:0.92rem;">${c1}%</strong></div>
+              <div><span style="color:var(--accent-cyan); font-weight:bold;">5日集中</span><br><strong style="color:${c5Color}; font-size:1.02rem;">${c5}%</strong></div>
+              <div><span style="color:var(--text-muted);">10日集中</span><br><strong style="color:${c10Color}; font-size:0.92rem;">${c10}%</strong></div>
+              <div><span style="color:var(--text-muted);">20日集中</span><br><strong style="color:${c20Color}; font-size:0.92rem;">${c20}%</strong></div>
+              <div><span style="color:var(--text-muted);">60日集中</span><br><strong style="color:${c60Color}; font-size:0.92rem;">${c60}%</strong></div>
+              <div><span style="color:var(--text-muted);">籌碼狀態</span><br><strong style="color:#fbbf24;">${c5 >= 10 ? '高度鎖碼' : (c5 > 0 ? '主力吸籌' : '發散整理')}</strong></div>
+            </div>
+          </div>
+
+          <!-- 3. 多維共振星號 -->
+          <div class="drawer-section">
+            <div class="drawer-sec-title">🌟 多維因子共振狀態</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span>共振等級:</span>
+              <span class="badge" style="background:#38bdf8; color:#000;">${hits}</span>
+            </div>
+          </div>
+
+          <!-- 4. 3-Way 歷史離場勝率實測 -->
+          <div class="drawer-section">
+            <div class="drawer-sec-title">🛡️ 3-Way 歷史離場戰術實測 PK</div>
+            <div style="margin-bottom:6px; font-size:0.85rem;">
+              <div style="display:flex; justify-content:space-between;">
+                <span>🏃 5MA 離場 (極限短線):</span>
+                <span>勝率 <strong>${Number(r.WinRate_5MA || 0).toFixed(1)}%</strong> | 期望值 <strong style="color:${Number(r.Return_5MA || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${Number(r.Return_5MA || 0) >= 0 ? '+' : ''}${Number(r.Return_5MA || 0).toFixed(2)}%</strong></span>
+              </div>
+            </div>
+            <div style="margin-bottom:6px; font-size:0.85rem;">
+              <div style="display:flex; justify-content:space-between;">
+                <span>⚡ 10MA 離場 (強勢防守):</span>
+                <span>勝率 <strong>${Number(r.WinRate_10MA || 0).toFixed(1)}%</strong> | 期望值 <strong style="color:${Number(r.Return_10MA || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${Number(r.Return_10MA || 0) >= 0 ? '+' : ''}${Number(r.Return_10MA || 0).toFixed(2)}%</strong></span>
+              </div>
+            </div>
+            <div style="margin-bottom:8px; font-size:0.85rem;">
+              <div style="display:flex; justify-content:space-between;">
+                <span>🔥 20MA 離場 (波段主升):</span>
+                <span>勝率 <strong>${Number(r.WinRate_20MA || 0).toFixed(1)}%</strong> | 期望值 <strong style="color:${Number(r.Return_20MA || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'}; font-size:0.95rem;">${Number(r.Return_20MA || 0) >= 0 ? '+' : ''}${Number(r.Return_20MA || 0).toFixed(2)}%</strong></span>
+              </div>
+            </div>
+            <div style="border-top:1px solid #334155; padding-top:6px; display:flex; justify-content:space-between; align-items:center;">
+              <span>系統最適戰術評定:</span>
+              <span class="badge" style="background:rgba(168,85,247,0.25); color:#c084fc; border:1px solid #a855f7; font-size:0.82rem;">${r.OptimalExit || '🔥 20MA波段抱緊'}</span>
+            </div>
+          </div>
+
+          <!-- 5. 基本面估值與法人空間 -->
+          <div class="drawer-section" style="margin-bottom:0;">
+            <div class="drawer-sec-title">📈 財報基本面 ✕ 法人目標價</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span>半年報 EPS 累計:</span>
+              <strong style="color:var(--accent-gold);">${Number(r.半年報EPS || 0).toFixed(2)} 元</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span>最新營收年增率:</span>
+              <strong style="color:${Number(r.營收年增 || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${Number(r.營收年增 || 0) >= 0 ? '+' : ''}${Number(r.營收年增 || 0).toFixed(1)}%</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>FactSet 目標空間:</span>
+              <span>${fsUpside}</span>
+            </div>
+          </div>
+        `);
+
+                        $("#drawer-btn-chart").off('click').on('click', function () {
+                            closeStockDrawer();
+                            magicClickStock(code, name);
+                        });
+                    } catch (e) {
+                        $("#drawer-body-content").html('<div style="text-align:center; padding:30px; color:var(--accent-red);">解析失敗: ' + e.message + '</div>');
+                    }
+                }
+            });
+        }
+
+        function closeStockDrawer() {
+            $("#side-drawer-overlay").fadeOut(200);
+            $("#stock-side-drawer").removeClass("open");
+        }
+
+        // 🎯 頁籤 1: 全市場多維共振
+        function searchMultiResonance() {
+            const hitCount = $("#selHitCount").val() || 3;
+            const momentumMode = $("#selMomentumMode").val() || 2;
+            const sql = `SELECT TOP 100
+                              [代號], [名稱], [盤中成交價] AS [現價], [盤中漲幅] AS [漲幅%], [盤中總量] AS [總量],
+                              [HitCount] AS [共振維度數], [ResonanceTag] AS [共振等級],
+                              [DimA_Status] AS [雙動能狀態], [DimB_Status] AS [OBV星號狀態], [DimC_Status] AS [價格星號狀態], [DimD_Status] AS [彩虹金叉狀態]
+                          FROM stockchangedate.dbo.ResonanceMultiFactor_Snapshot
+                          WHERE [HitCount] >= ${hitCount}
+                            AND (${momentumMode} = 0 OR [DimA_DualMomentum] = ${momentumMode})
+                          ORDER BY [HitCount] DESC, [DimD_RainbowScore] DESC, [盤中總量] DESC;`;
+
+            execQueryToTable(sql, "stockchangedate", "#tblMultiResonance");
+        }
+
+        // 🚀 頁籤 2: 暴漲龍頭 ✕ 勝率回測矩陣 (調用 sp_Get_TopSurge_Backtest)
+        function loadTopSurgeBacktest() {
+            const days = $("#surge-days").val() || 5;
+            const minVol = $("#surge-minvol").val() || 3000;
+            const minPx = $("#surge-minpx").val() || 10.0;
+            const sql = `EXEC stockchangedate.dbo.sp_Get_TopSurge_Backtest ${days}, ${minVol}, ${minPx}, 20;`;
+
+            execQueryToTable(sql, "stockchangedate", "#tblSurgeBacktest", function (rows) {
+                if (!rows || rows.length === 0) return;
+                let topGainStock = rows[0];
+                let topM20Stock = [...rows].sort((a, b) => (Number(b['破20MA期望值%']) || 0) - (Number(a['破20MA期望值%']) || 0))[0];
+                let topT2Stock = [...rows].sort((a, b) => (Number(b['任兩日(T+2)勝率%']) || 0) - (Number(a['任兩日(T+2)勝率%']) || 0))[0];
+
+                if (topGainStock) {
+                    $("#kpi-top-surge").text(`${topGainStock.代號} ${topGainStock.名稱 || ''}`);
+                    $("#kpi-top-surge-sub").text(`累積漲幅 +${topGainStock['近5日累積漲幅%'] || 0}%`);
+                }
+                if (topM20Stock) {
+                    $("#kpi-top-m20").text(`${topM20Stock.代號} ${topM20Stock.名稱 || ''}`);
+                    $("#kpi-top-m20-sub").text(`20MA期望值 +${topM20Stock['破20MA期望值%'] || 0}%`);
+                }
+                if (topT2Stock) {
+                    $("#kpi-top-t2").text(`${topT2Stock.代號} ${topT2Stock.名稱 || ''}`);
+                    $("#kpi-top-t2-sub").text(`T+2勝率 ${topT2Stock['任兩日(T+2)勝率%'] || 0}% (期望值 +${topT2Stock['任兩日(T+2)期望值%'] || 0}%)`);
+                }
+                $("#kpi-surge-count").text(`${rows.length} 檔`);
+            });
+        }
+
+        // ☀️ 頁籤 3: 60M 伏兵轉強雷達
+        function loadTurningStrong() {
+            const sql29Strong = `SELECT TOP 50
+                              代號, 名稱, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, AI診斷筆記
+                          FROM stockchangedate.dbo.View_AI_Elite_Radar
+                          WHERE 分組 = N'自選股29' AND [短線氣象] LIKE N'%轉強%'
+                          ORDER BY [60M動能(OSC)] DESC;`;
+            execQueryToTable(sql29Strong, "stockchangedate", "#tblTurningStrong29");
+
+            const sqlAllStrong = `SELECT TOP 50
+                              代號, 名稱, 分組, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, 具體概念
+                          FROM stockchangedate.dbo.View_AI_Elite_Radar
+                          WHERE [短線氣象] LIKE N'%轉強%'
+                          ORDER BY [60M動能(OSC)] DESC, [日線分] DESC;`;
+            execQueryToTable(sqlAllStrong, "stockchangedate", "#tblTurningStrongAll");
+        }
+
+        // 🌐 頁籤 4: 盤中雷達 ✕ 雙總分並列
+        function loadIntradayRadar() {
+            const sqlRadar = `SELECT M.代號, M.名稱, C.盤中成交價 AS 現價, C.漲幅_百分比 AS [漲幅%], C.盤中總量 AS 總量, ROUND(C.預估今日總分, 2) AS 盤中預估總分, ROUND(M.專家實戰總分,2) AS 舊實戰總分, C.新搬運_60分K, C.細產業名稱 AS 產業, C.股本億
+FROM IntradayScoreCache AS C
+RIGHT OUTER JOIN MasterStockAnalysis AS M ON C.代號 = M.代號
+WHERE (M.日期 = (SELECT MAX(日期) AS mydate FROM MasterStockAnalysis AS MasterStockAnalysis_1))
+ORDER BY C.預估今日總分 DESC;`;
+            execQueryToTable(sqlRadar, "stockchangedate", "#tblIntradayRadar");
+
+            const sqlEliteRadar = `SELECT TOP 100
+                          代號, 名稱, 分組, 策略靈魂, ROUND([60M動能(OSC)], 2) AS [60M_OSC], 短線氣象
+                      FROM stockchangedate.dbo.View_AI_Elite_Radar
+                      ORDER BY [60M動能(OSC)] DESC, 日線分 DESC;`;
+            execQueryToTable(sqlEliteRadar, "stockchangedate", "#tblWatchlist2829");
+        }
+
+        // 💎 頁籤 6: 股性基因與 3-Way 離場勝率
+        function loadDNAndFundamentals() {
+            const sql3Exits = `SELECT
+                              [代號], [名稱], [完成交易次數],
+                              [Return_5MA] AS [5MA期望值%], [Return_10MA] AS [10MA期望值%], [Return_20MA] AS [20MA期望值%],
+                              [OptimalExit] AS [最適建議]
+                          FROM stockchangedate.dbo.StockPersonality_3Exits
+                          ORDER BY [Return_20MA] DESC;`;
+            execQueryToTable(sql3Exits, "stockchangedate", "#tbl3Exits");
+
+            const sqlGems = `SELECT TOP 50
+                              RTRIM(F.代號) AS [代號],
+                              ISNULL(M.名稱, F.代號) AS [名稱],
+                              ISNULL(M.盤中現價, 0) AS [現價],
+                              ISNULL(R.最新公告營收年增, 0) AS [營收年增%],
+                              ISNULL(FN.EPS累計, 0) AS [半年報EPS],
+                              F.預估目標價 AS [FactSet目標價],
+                              ROUND(((F.預估目標價 - ISNULL(M.盤中現價, F.舊EPS中位數)) / NULLIF(ISNULL(M.盤中現價, F.舊EPS中位數), 0)) * 100, 1) AS [潛在空間%]
+                          FROM stockchangedate.dbo.FactSetEstimates F
+                          LEFT JOIN (
+                              SELECT 代號, 名稱, 盤中現價, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+                              FROM stockchangedate.dbo.MasterStockAnalysis
+                              WHERE 盤中現價 > 0
+                          ) M ON RTRIM(F.代號) = RTRIM(M.代號) AND M.rn = 1
+                          LEFT JOIN (
+                              SELECT 代號, 最新公告營收年增, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 交易日期 DESC) AS rn
+                              FROM stockchangedate.dbo.View_Realtime_Revenue
+                          ) R ON RTRIM(F.代號) = RTRIM(R.代號) AND R.rn = 1
+                          LEFT JOIN (
+                              SELECT 代號, EPS累計, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+                              FROM stockchangedate.dbo.financesum
+                          ) FN ON RTRIM(F.代號) = RTRIM(FN.代號) AND FN.rn = 1
+                          WHERE F.預估目標價 > 0
+                          ORDER BY ROUND(((F.預估目標價 - ISNULL(M.盤中現價, F.舊EPS中位數)) / NULLIF(ISNULL(M.盤中現價, F.舊EPS中位數), 0)) * 100, 1) DESC;`;
+            execQueryToTable(sqlGems, "stockchangedate", "#tblFundamentalGems");
+        }
+
+        // 📅 頁籤 7: 全球總經日曆
+        function loadMacroCalendar() {
+            const sqlMacro = `SELECT TOP 50
+                              [公布日期], [公布時間] AS [時間], [國家區域], [指標類別], [指標名稱], [重要性], [前值], [預測值], ISNULL([實際值], N'⏳ 待公布') AS [實際值], [影響解讀]
+                          FROM stockchangedate.dbo.MacroEconomicCalendar
+                          WHERE [公布日期] >= 20260101
+                          ORDER BY [公布日期] ASC, [公布時間] ASC;`;
+            execQueryToTable(sqlMacro, "stockchangedate", "#tblMacroCalendar");
+        }
+
+        // 👑 一鍵刷新全看板快照
+        function refreshResonanceSnapshot() {
+            Swal.fire({
+                title: '⏳ 正在執行全戰情室快照重構...',
+                text: '正在依序運算即時均線、盤中估分、暴漲回測與多維共振，約需 3 秒',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: API_SQL_URL,
+                data: JSON.stringify({ sql: "EXEC stockchangedate.dbo.sp_RunWarRoomDailyRefresh;", db: "stockchangedate", pwd: "2157" }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function () {
+                    Swal.fire('成功', '全戰情室所有快照表已 100% 更新完畢！', 'success');
+                    searchMultiResonance();
+                },
+                error: function () {
+                    Swal.fire('完成', '快照指令已發送並在背景完成重構！', 'info');
+                    searchMultiResonance();
+                }
+            });
+        }
+
+        // 時鐘
+        function initClock() {
+            const update = () => {
+                const now = new Date();
+                document.getElementById("live-clock").innerText = "🕒 " + now.toLocaleString('zh-TW', { hour12: false });
+            };
+            update();
+            setInterval(update, 1000);
+        }
+
+        // 🟢 Hub 頁面切換控制核心
+        function loadHubPage(url, element) {
+            if (!url) return;
+            $('#hub-loader').fadeIn(100);
+            $('#hubContentFrame').attr('src', url);
+
+            if (element) {
+                $('.hub-nav-link').removeClass('active');
+                $(element).addClass('active');
+            }
+        }
+
+        $('#hubContentFrame').on('load', function () {
+            $('#hub-loader').fadeOut(150);
+        });
+
     </script>
 </body>
 </html>

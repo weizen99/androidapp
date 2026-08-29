@@ -175,6 +175,465 @@
 
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
+            //{ cat: " ", title: " ", sql: `  ` },
+            //{ cat: " ", title: " ", sql: `  ` },
+
+           
+
+          
+
+
+
+            {
+                cat: "基本面-雙料雙冠王",
+                title: "🏆 營收動能與創高雙增王🏆 營收創高雙增 ✕ 半年賺贏去年 ✕ 本業雙升 終極大滿貫",
+                sql: `/*資料庫:stockchangedate*/ 
+    -- 🟢 ① 即時行情、量能、股本與週轉率
+    V.代號,
+    V.名稱,
+    V.盤中現價 AS 現價,
+    V.盤中漲幅 AS [漲幅%],
+    V.盤中總量 AS [總量(張)],
+    V.股本億 AS [股本(億)],
+    -- 週轉率 %
+    ROUND(V.盤中總量 / NULLIF(V.股本億 * 100.0, 0), 2) AS [週轉率%],
+    V.最新營收月份,
+    V.營收年增率 AS [營收年增%],
+    V.營收月增率 AS [營收月增%],
+    V.單月營收億 AS [單月營收(億)],
+    V.累計營收年成長 AS [累計營收年增%],
+    V.專家實戰總分,
+    -- 🟢 營收強勢評級
+    CASE
+        WHEN V.營收年增率 >= 50.0 AND V.營收月增率 > 0 THEN N'🚀 營收暴衝雙增 (年增>50%)'
+        WHEN V.營收年增率 >= 20.0 AND V.營收月增率 > 0 THEN N'📈 營收穩健雙增 (MoM+YoY)'
+        WHEN V.營收年增率 >= 30.0 THEN N'🔥 營收年增強勁 (>30%)'
+        ELSE N'⭐ 營收正成長'
+    END AS 營收強勢評級,
+    V.毛利率,
+    V.營業利益率,
+    V.單季EPS,
+    V.產業分類,
+    V.具體概念,
+    V.產業價值鏈資訊
+FROM stockchangedate.dbo.View_Master_Fundamental V
+WHERE V.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+  AND V.盤中現價 >= 10.0
+  AND V.盤中總量 >= 3000
+  AND V.營收年增率 >= 15.0 -- 篩選年增率 > 15%
+ORDER BY V.營收年增率 DESC, V.營收月增率 DESC;`
+            },
+
+          
+
+            {
+                cat: "基本面-營收動能",
+                title: "🚀 單月營收創高 ✕ 月增年增雙增 ✕ 60M動能與週轉率",
+                sql: `/*資料庫:stockchangedate*/   
+    -- 🟢 ① 即時行情、量能、股本與週轉率
+    B.[代號],
+    B.[名稱],
+    ISNULL(B.[成交價], 0) AS 現價,
+    ISNULL(B.[漲跌], 0) AS 漲跌,
+    ISNULL(B.[漲幅], 0) AS [漲幅%],
+    ISNULL(B.[總量], 0) AS [成交總量(張)],
+    B.[股本億] AS [股本(億)],
+    ROUND(ISNULL(B.[總量], 0) / NULLIF(B.[股本億] * 100.0, 0), 2) AS [週轉率%],
+
+    -- 🟢 ② 60分K短線動能與氣象
+    ROUND(ISNULL(R.[60M_OSC], 0), 2) AS [60M_OSC],
+    ROUND(ISNULL(R.[60M_K], 0), 1)   AS [60M_K值],
+    ISNULL(R.[短線氣象], N'☀️ 轉強') AS [60M短線氣象],
+
+    -- 🟢 ③ 營收真實指標 (來自 incomesum)
+    I.最新營收月份,
+    ROUND(ISNULL(I.年成長, 0), 1) AS [營收年增率%],
+    ROUND(ISNULL(I.月變動, 0), 1) AS [營收月增率%],
+    ROUND(ISNULL(I.累計營收年成長, 0), 1) AS [累計營收年增%],
+    ROUND(ISNULL(I.近12月營收成長, 0), 1) AS [近12月年增%],
+    ISNULL(I.單月營收億, 0) AS [單月營收(億)],
+    ISNULL(I.累計營收億, 0) AS [累計營收(億)],
+
+    -- 🟢 營收動能綜合評級
+    CASE
+        WHEN I.單月營收億 >= I.歷史最高營收億 AND I.單月營收億 > 0
+            THEN N'🌟🌟 單月營收創歷史新高！'
+        WHEN I.年成長 >= 50.0 AND I.月變動 > 0
+            THEN N'🚀 營收暴衝雙增 (年增>50%)'
+        WHEN I.年成長 >= 20.0 AND I.月變動 > 0
+            THEN N'📈 營收穩健雙增 (MoM+YoY)'
+        WHEN I.年成長 >= 30.0
+            THEN N'🔥 營收年增強勁 (>30%)'
+        ELSE N'⭐ 營收正成長'
+    END AS 營收強勢評級,
+
+    -- 🟢 ④ 專家總分 ✕ 外資評價
+    ROUND(ISNULL(MS.專家實戰總分, 0), 1) AS 專家實戰總分,
+    ISNULL(FST.預估目標價, 0) AS [FactSet目標價],
+    CASE
+        WHEN ISNULL(FST.預估目標價, 0) > 0 AND ISNULL(B.[成交價], 0) > 0
+            THEN ROUND(((FST.預估目標價 - B.[成交價]) / B.[成交價]) * 100.0, 1)
+        ELSE NULL
+    END AS [外資潛在空間%],
+
+    -- 🟢 ⑤ 產業分類、具體概念與產業鏈資訊 (放最後方)
+    ISNULL(B.[產業分類], N'一般電子') AS 產業分類,
+    ISNULL(MS.具體概念, ISNULL(R.具體概念, N'AI供應鏈')) AS 具體概念
+    
+
+FROM (
+    SELECT
+        代號, 名稱, 日期 AS 最新營收月份,
+        年成長, 月變動, 累計營收年成長, 近12月營收成長,
+        單月營收億, 累計營收億,
+        MAX(單月營收億) OVER (PARTITION BY 代號) AS 歷史最高營收億,
+        ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+    FROM stockchangedate.dbo.incomesum
+) I
+LEFT JOIN stockchange.dbo.basicinfo B
+    ON RTRIM(I.代號) = RTRIM(B.代號)
+LEFT JOIN (
+    SELECT 代號, 專家實戰總分, 具體概念, 產業價值鏈資訊,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+    FROM stockchangedate.dbo.MasterStockAnalysis
+) MS ON RTRIM(I.代號) = RTRIM(MS.代號) AND MS.rn = 1
+LEFT JOIN (
+    SELECT 代號,
+           MAX([60M動能(OSC)]) AS [60M_OSC],
+           MAX([60M_K值]) AS [60M_K],
+           MAX(短線氣象) AS 短線氣象,
+           MAX(具體概念) AS 具體概念
+    FROM stockchangedate.dbo.View_AI_Elite_Radar
+    GROUP BY 代號
+) R ON RTRIM(I.代號) = RTRIM(R.代號)
+LEFT JOIN (
+    SELECT 代號, MAX(預估目標價) AS 預估目標價
+    FROM stockchangedate.dbo.FactSetEstimates
+    GROUP BY 代號
+) FST ON RTRIM(I.代號) = RTRIM(FST.代號)
+
+WHERE I.rn = 1
+  AND ISNULL(B.[成交價], 10.0) >= 10.0
+  AND ISNULL(I.年成長, 0) > 10.0 -- 篩選年增率 > 10%
+  and b.總量 > 3000
+ORDER BY I.年成長 DESC, I.月變動 DESC;`
+            },
+
+           
+
+            {
+                cat: "基本面-EPS獲利質變", title: "👑 半年報賺贏去年 ✕ 三率雙升 ✕ 60M進場與外資空間", sql: `/*資料庫:stockchangedate*/-- 🟢 ① 即時行情、籌碼與換手動能
+    F.代號,
+    F.名稱,
+    ISNULL(B.[成交價], 0) AS 現價,
+    ISNULL(B.[漲跌], 0) AS 漲跌,
+    ISNULL(B.[漲幅], 0) AS [漲幅%],
+    ISNULL(B.[總量], 0) AS [成交總量(張)],
+    B.[股本億] AS [股本(億)],
+    ROUND(ISNULL(B.[總量], 0) / NULLIF(B.[股本億] * 100.0, 0), 2) AS [週轉率%],
+    
+    -- 🟢 ② 60分K短線動能與進場氣象 (View_AI_Elite_Radar)
+    ROUND(ISNULL(R.[60M_OSC], 0), 2) AS [60M_OSC],
+    ROUND(ISNULL(R.[60M_K], 0), 1)   AS [60M_K值],
+    ISNULL(R.[短線氣象], N'☀️ 轉強') AS [60M短線氣象],
+
+    -- 🟢 ③ 半年報獲利與成長實績 (自動計算單季與雙對決)
+    F.最新財報季別,
+    F.當季單季EPS,
+    F.今年累計EPS,
+    -- 雙對決 1：vs 去年同期
+    F.去年同期累計EPS,
+    ROUND((F.今年累計EPS - F.去年同期累計EPS) / NULLIF(ABS(F.去年同期累計EPS), 0) * 100.0, 1) AS [累計YoY同期成長%],
+    -- 雙對決 2：vs 去年全年 (提早賺贏一整年)
+    F.去年全年總EPS,
+    ROUND((F.今年累計EPS - F.去年全年總EPS) / NULLIF(ABS(F.去年全年總EPS), 0) * 100.0, 1) AS [超越去年全年%],
+    -- 本業毛利與營益率季增
+    F.當季毛利率,
+    ROUND(F.當季毛利率 - F.上季毛利率, 2) AS [毛利季增%],
+    F.當季營益率,
+    ROUND(F.當季營益率 - F.上季營益率, 2) AS [營益季增%],
+    F.財報強勢標籤,
+
+    -- 🟢 ④ 專家評分 ✕ 外資 FactSet 評價空間
+    ROUND(ISNULL(M.專家實戰總分, 0), 1) AS 專家實戰總分,
+    ISNULL(FST.預估目標價, 0) AS [FactSet目標價],
+    CASE 
+        WHEN ISNULL(FST.預估目標價, 0) > 0 AND ISNULL(B.[成交價], 0) > 0 
+            THEN ROUND(((FST.預估目標價 - B.[成交價]) / B.[成交價]) * 100.0, 1)
+        ELSE NULL 
+    END AS [外資潛在空間%],
+
+    -- 🟢 ⑤ 產業分類、核心概念與長文字價值鏈 (收納在最後方)
+    ISNULL(B.[產業分類], N'一般電子') AS 產業分類,
+    ISNULL(M.具體概念, ISNULL(R.具體概念, N'AI概念股')) AS 具體概念   
+
+FROM (
+    SELECT 
+        Cur.代號, Cur.名稱, Cur.日期 AS 最新財報季別,
+        Cur.當季單季EPS,
+        ISNULL(Cur.EPS累計, 0) AS 今年累計EPS,
+        ISNULL(YoY.EPS累計, 0) AS 去年同期累計EPS,
+        ISNULL(FullYear.EPS累計, ISNULL(YoY.EPS累計, 0)) AS 去年全年總EPS,
+        ISNULL(Cur.毛利率, 0) AS 當季毛利率,
+        ISNULL(Cur.毛利率上季, ISNULL(Prev.毛利率, 0)) AS 上季毛利率,
+        ISNULL(Cur.營業利益率, 0) AS 當季營益率,
+        ISNULL(Cur.營業利益率上季, ISNULL(Prev.營業利益率, 0)) AS 上季營益率,
+        ISNULL(Prev.當季單季EPS, 0) AS 上季單季EPS,
+        -- 評等標籤
+        CASE 
+            WHEN Cur.EPS累計 > FullYear.EPS累計 AND FullYear.EPS累計 > 0 AND (Cur.毛利率 > ISNULL(Cur.毛利率上季, Prev.毛利率)) AND (Cur.營業利益率 > ISNULL(Cur.營業利益率上季, Prev.營業利益率)) 
+                THEN N'👑👑 累計賺贏去年 + 本業雙升 (全能王者)'
+            WHEN Cur.EPS累計 > FullYear.EPS累計 AND FullYear.EPS累計 > 0 
+                THEN N'👑 提前賺贏去年整年 (暴衝)'
+            WHEN (Cur.毛利率 > ISNULL(Cur.毛利率上季, Prev.毛利率)) AND (Cur.營業利益率 > ISNULL(Cur.營業利益率上季, Prev.營業利益率)) 
+                THEN N'🔥🔥 本業雙升 (毛利+營益雙暴增)'
+            WHEN ISNULL(Prev.當季單季EPS, 0) <= 0 AND Cur.當季單季EPS > 0 
+                THEN N'⚡ 當季轉虧為盈 (轉機黑馬)'
+            WHEN Cur.EPS累計 > YoY.EPS累計 
+                THEN N'📈 累計獲利超越去年同期'
+            ELSE N'⭐ 獲利常態運行'
+        END AS 財報強勢標籤
+    FROM (
+        SELECT 
+            代號, 名稱, 日期, EPS累計, 毛利率, 毛利率上季, 營業利益率, 營業利益率上季,
+            CAST(LEFT(日期, 4) AS INT) AS 報告年份,
+            CASE 
+                WHEN RIGHT(日期, 2) = '01' THEN ISNULL(EPS累計, 0)
+                ELSE ISNULL(EPS累計, 0) - ISNULL(LAG(EPS累計, 1) OVER (PARTITION BY 代號 ORDER BY 日期), 0)
+            END AS 當季單季EPS,
+            ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.financesum
+    ) Cur
+    LEFT JOIN (
+        SELECT 代號, 毛利率, 營業利益率, 當季單季EPS,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM (
+            SELECT 代號, 日期, 毛利率, 營業利益率,
+                   CASE 
+                       WHEN RIGHT(日期, 2) = '01' THEN ISNULL(EPS累計, 0)
+                       ELSE ISNULL(EPS累計, 0) - ISNULL(LAG(EPS累計, 1) OVER (PARTITION BY 代號 ORDER BY 日期), 0)
+                   END AS 當季單季EPS
+            FROM stockchangedate.dbo.financesum
+        ) P
+    ) Prev ON RTRIM(Cur.代號) = RTRIM(Prev.代號) AND Prev.rn = 2
+    LEFT JOIN (
+        SELECT 代號, EPS累計,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.financesum
+    ) YoY ON RTRIM(Cur.代號) = RTRIM(YoY.代號) AND YoY.rn = 5
+    LEFT JOIN (
+        SELECT 代號, CAST(LEFT(日期, 4) AS INT) AS 年份, EPS累計
+        FROM stockchangedate.dbo.financesum
+        WHERE RIGHT(日期, 2) = '04'
+    ) FullYear ON RTRIM(Cur.代號) = RTRIM(FullYear.代號) AND FullYear.年份 = (Cur.報告年份 - 1)
+    WHERE Cur.rn = 1
+) F
+-- 🟢 1. 關聯 basicinfo 即時價量、股本與週轉率
+LEFT JOIN stockchange.dbo.basicinfo B 
+    ON RTRIM(F.代號) = RTRIM(B.代號)
+-- 🟢 2. 關聯 MasterStockAnalysis (專家實戰總分、具體概念、產業價值鏈資訊)
+LEFT JOIN (
+    SELECT 代號, 專家實戰總分, 具體概念, 產業價值鏈資訊,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+    FROM stockchangedate.dbo.MasterStockAnalysis
+) M ON RTRIM(F.代號) = RTRIM(M.代號) AND M.rn = 1
+-- 🟢 3. 關聯 View_AI_Elite_Radar (60分K動能、K值、短線氣象)
+LEFT JOIN (
+    SELECT 代號, 
+           MAX([60M動能(OSC)]) AS [60M_OSC], 
+           MAX([60M_K值]) AS [60M_K], 
+           MAX(短線氣象) AS 短線氣象,
+           MAX(具體概念) AS 具體概念
+    FROM stockchangedate.dbo.View_AI_Elite_Radar
+    GROUP BY 代號
+) R ON RTRIM(F.代號) = RTRIM(R.代號)
+--- 🟢 4. 關聯 FactSetEstimates (外資預估目標價)
+LEFT JOIN (
+    SELECT 代號, MAX(預估目標價) AS 預估目標價
+    FROM stockchangedate.dbo.FactSetEstimates
+    GROUP BY 代號
+) FST ON RTRIM(F.代號) = RTRIM(FST.代號)
+
+WHERE (
+    (F.今年累計EPS > F.去年全年總EPS AND F.去年全年總EPS > 0)
+    OR (F.當季毛利率 > F.上季毛利率 AND F.當季營益率 > F.上季營益率)
+    OR (F.上季單季EPS <= 0 AND F.當季單季EPS > 0)
+    OR (F.今年累計EPS > F.去年同期累計EPS AND F.去年同期累計EPS > 0)
+) and b.總量 > 3000
+ORDER BY F.今年累計EPS DESC, [超越去年全年%] DESC;` },
+
+
+        {
+            cat: "基本面-EPS獲利質變", title: "👑 半年報賺贏去年 ✕ 三率雙升", sql: `/*資料庫:stockchangedate*/
+F.代號,
+F.名稱,
+-- 🟢 basicinfo 即時行情、量能、股本與週轉率
+ISNULL(B.[成交價], 0) AS 現價,
+ISNULL(B.[漲跌], 0) AS 漲跌,
+ISNULL(B.[漲幅], 0) AS [漲幅%],
+ISNULL(B.[總量], 0) AS [成交總量(張)],
+ISNULL(B.[股本億], 0) AS [股本(億)],
+ROUND(ISNULL(B.[總量], 0) / NULLIF(B.[股本億] * 100.0, 0), 2) AS [週轉率%],
+ISNULL(B.[產業分類], N'一般產業') AS 產業分類,
+
+-- 🟢 財報季別與 EPS (自動計算：當季單季 = 目前累計 - 前期累計)
+F.最新財報季別,
+F.當季單季EPS,
+F.今年累計EPS,
+
+-- 🟢 雙重對決指標 1：vs 去年同期 (看年成長力道)
+F.去年同期累計EPS,
+ROUND((F.今年累計EPS - F.去年同期累計EPS) / NULLIF(ABS(F.去年同期累計EPS), 0) * 100.0, 1) AS [累計YoY同期成長%],
+
+-- 🟢 雙重對決指標 2：vs 去年全年 (看是否提前賺贏一整年)
+F.去年全年總EPS,
+ROUND((F.今年累計EPS - F.去年全年總EPS) / NULLIF(ABS(F.去年全年總EPS), 0) * 100.0, 1) AS [超越去年全年%],
+
+-- 🟢 本業毛利率與營業利益率 QoQ 季增表現
+F.當季毛利率,
+F.上季毛利率,
+ROUND(F.當季毛利率 - F.上季毛利率, 2) AS [毛利季增%],
+F.當季營益率,
+F.上季營益率,
+ROUND(F.當季營益率 - F.上季營益率, 2) AS [營益季增%],
+
+-- 🟢 客觀全維財務強勢標籤 (自動適應 Q1~Q4)
+CASE 
+    WHEN F.今年累計EPS > F.去年全年總EPS AND F.去年全年總EPS > 0 AND (F.當季毛利率 > F.上季毛利率) AND (F.當季營益率 > F.上季營益率) 
+        THEN N'👑👑 累計賺贏去年整年 + 本業雙升 (全能王者)'
+    WHEN F.今年累計EPS > F.去年全年總EPS AND F.去年全年總EPS > 0 
+        THEN N'👑 提前賺贏去年整年 (暴衝)'
+    WHEN (F.當季毛利率 > F.上季毛利率) AND (F.當季營益率 > F.上季營益率) 
+        THEN N'🔥🔥 本業雙升 (毛利+營益雙暴增)'
+    WHEN F.上季單季EPS <= 0 AND F.當季單季EPS > 0 
+        THEN N'⚡ 當季轉虧為盈 (轉機黑馬)'
+    WHEN F.今年累計EPS > F.去年同期累計EPS 
+        THEN N'📈 累計獲利超越去年同期'
+    ELSE N'⭐ 獲利常態運行'
+END AS 財報強勢標籤
+
+FROM (
+    SELECT 
+        Cur.代號, Cur.名稱, Cur.日期 AS 最新財報季別,
+        Cur.當季單季EPS,
+        ISNULL(Cur.EPS累計, 0) AS 今年累計EPS,
+        ISNULL(YoY.EPS累計, 0) AS 去年同期累計EPS,
+        -- 關聯去年全年報 (去年 Q4 累計 EPS)
+        ISNULL(FullYear.EPS累計, ISNULL(YoY.EPS累計, 0)) AS 去年全年總EPS,
+        ISNULL(Cur.毛利率, 0) AS 當季毛利率,
+        ISNULL(Cur.毛利率上季, ISNULL(Prev.毛利率, 0)) AS 上季毛利率,
+        ISNULL(Cur.營業利益率, 0) AS 當季營益率,
+        ISNULL(Cur.營業利益率上季, ISNULL(Prev.營業利益率, 0)) AS 上季營益率,
+        ISNULL(Prev.當季單季EPS, 0) AS 上季單季EPS
+    FROM (
+        -- 1. 基礎表：自動計算「當季單季 EPS = 累計 - 前期累計 (Q1則等於累計)」
+        SELECT 
+            代號, 名稱, 日期, EPS累計, 毛利率, 毛利率上季, 營業利益率, 營業利益率上季,
+            CAST(LEFT(日期, 4) AS INT) AS 報告年份,
+            RIGHT(日期, 2) AS 報告季度,
+            CASE 
+                WHEN RIGHT(日期, 2) = '01' THEN ISNULL(EPS累計, 0)
+                ELSE ISNULL(EPS累計, 0) - ISNULL(LAG(EPS累計, 1) OVER (PARTITION BY 代號 ORDER BY 日期), 0)
+            END AS 當季單季EPS,
+            ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.financesum
+    ) Cur
+    -- 2. 動態關聯上一季 (rn = 2)
+    LEFT JOIN (
+        SELECT 代號, 毛利率, 營業利益率, 當季單季EPS,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM (
+            SELECT 代號, 日期, 毛利率, 營業利益率,
+                   CASE 
+                       WHEN RIGHT(日期, 2) = '01' THEN ISNULL(EPS累計, 0)
+                       ELSE ISNULL(EPS累計, 0) - ISNULL(LAG(EPS累計, 1) OVER (PARTITION BY 代號 ORDER BY 日期), 0)
+                   END AS 當季單季EPS
+            FROM stockchangedate.dbo.financesum
+        ) P
+    ) Prev ON RTRIM(Cur.代號) = RTRIM(Prev.代號) AND Prev.rn = 2
+    -- 3. 動態關聯去年同期 (rn = 5, 即 4 季前)
+    LEFT JOIN (
+        SELECT 代號, EPS累計,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+        FROM stockchangedate.dbo.financesum
+    ) YoY ON RTRIM(Cur.代號) = RTRIM(YoY.代號) AND YoY.rn = 5
+    -- 4. 動態精準關聯去年全年 (去年第 4 季 'YYYY-1' + '04')
+    LEFT JOIN (
+        SELECT 代號, CAST(LEFT(日期, 4) AS INT) AS 年份, EPS累計
+        FROM stockchangedate.dbo.financesum
+        WHERE RIGHT(日期, 2) = '04' -- 鎖定第 4 季年報
+    ) FullYear ON RTRIM(Cur.代號) = RTRIM(FullYear.代號) AND FullYear.年份 = (Cur.報告年份 - 1)
+    
+    WHERE Cur.rn = 1 -- 永遠鎖定最新公布的這一季 (自動支援 Q1~Q4)
+) F
+-- 🟢 關聯 basicinfo 取得即時價量、股本與週轉率
+LEFT JOIN stockchange.dbo.basicinfo B 
+    ON RTRIM(F.代號) = RTRIM(B.代號)
+WHERE (
+    (F.今年累計EPS > F.去年全年總EPS AND F.去年全年總EPS > 0)    -- 條件 1: 累計賺贏去年整年
+    OR (F.當季毛利率 > F.上季毛利率 AND F.當季營益率 > F.上季營益率) -- 條件 2: 本業毛利營益雙升
+    OR (F.上季單季EPS <= 0 AND F.當季單季EPS > 0)             -- 條件 3: 單季轉虧為盈
+    OR (F.今年累計EPS > F.去年同期累計EPS AND F.去年同期累計EPS > 0) -- 條件 4: 年成長顯著
+) and b.總量 > 3000                                                  --加入總量條件
+ 
+ORDER BY [超越去年全年%] DESC, [毛利季增%] DESC;` },
+
+            {
+                cat: "模組目錄", title: "剛才完成的近 N 日暴漲龍頭 ✕ T+2 / 20MA 勝率回測純 SQL。", sql: `EXEC stockchangedate.dbo.sp_Get_TopSurge_Backtest 5,3000,10.0,30
+
+--sp_Get_TopSurge_Backtest 5,3000,10.0,30 (天數,最小量>?,最低股票>= ?元,前30筆)
+                ` },
+
+
+            {
+                cat: "模組目錄", title: "盤中預估爆量比 ✕ 雙動能翻正起漲雷達", sql: `/*資料庫:stockchangedate*/ TOP 30
+    R.[代號], R.[名稱], R.[盤中成交價] AS [現價], R.[盤中漲幅] AS [漲幅%],
+    R.[盤中總量] AS [目前成交量],
+    ROUND(R.[盤中總量] * (270.0 / NULLIF(DATEDIFF(MINUTE, '09:00', CONVERT(TIME, GETDATE())), 0)), 0) AS [預估全天總量],
+    R.[HitCount] AS [共振維度],
+    R.[DimA_Status] AS [雙動能狀態],
+    R.[DimB_Status] AS [OBV狀態]
+FROM stockchangedate.dbo.ResonanceMultiFactor_Snapshot R
+WHERE R.[盤中成交價] >= 10.0
+  AND R.[盤中漲幅] >= 2.0
+  AND R.[DimA_DualMomentum] = 2 -- 雙動能剛由負翻正
+ORDER BY R.[盤中漲幅] DESC, R.[盤中總量] DESC;
+                ` },
+
+            {
+                cat: "模組目錄", title: "凱利公式動態本金配置 ✕ 風控期望值試算", sql: `/*資料庫:stockchangedate*/ TOP 30
+    K.[代號], K.[名稱],
+    K.[勝率%], K.[期望值%],
+    K.[建議配置比例%] AS [建議倉位%],
+    ROUND(1000000.0 * (K.[建議配置比例%] / 100.0), 0) AS [建議投入金額(元)],
+    ROUND(1000000.0 * (K.[建議配置比例%] / 100.0) * (K.[期望值%] / 100.0), 0) AS [預期獲利空間(元)]
+FROM (
+    SELECT 
+        E.[代號], E.[名稱], E.[WinRate_20MA] AS [勝率%], E.[Return_20MA] AS [期望值%],
+        -- 凱利比例 f* = (bp - q) / b (以半凱利 Half-Kelly 作為穩健風控上限)
+        CASE 
+            WHEN E.[Return_20MA] <= 0 OR E.[WinRate_20MA] <= 40 THEN 0.0
+            ELSE ROUND(
+                ((E.[WinRate_20MA]/100.0 * (E.[Return_20MA]/10.0 + 1.0) - (1.0 - E.[WinRate_20MA]/100.0)) 
+                / NULLIF((E.[Return_20MA]/10.0 + 1.0), 0)) * 0.5 * 100.0, 1)
+        END AS [建議配置比例%]
+    FROM stockchangedate.dbo.StockPersonality_3Exits E
+    WHERE E.[Return_20MA] > 5.0
+) AS K
+ORDER BY K.[建議配置比例%] DESC;` },
+
+
+            {
+                cat: "模組目錄", title: "籌碼集中度大於 20% 之主力黑馬清單。", sql: `EXEC stockchangedate.dbo.sp_Get_SmartMoney_Tracker 3000, 5.0, 50
+
+--(參數說明：總量 ≥ 3000 張、5日主力集中度 ≥ 5.0%、取前 50 名)
+--┌──────────────────────────────────────────────────────────────────────────────────────────┐
+--│                      🎯 Zen AI 主力籌碼金流三大戰略分群 (2026/08/26)                     │
+--├──────────────────────────┬────────────────────────────┬──────────────────────────────────┤
+--│ 🚀 陣營一：攻守兼備主升股 │ 🛡️ 陣營二：大戶底部潛伏囤貨 │ 🌊 陣營三：中長線壓低吃貨洗盤族 │
+--│ (量價齊揚 ✕ 20MA波段抱緊) │ (集中度極高 ✕ 5MA短打防守) │ (股價回檔 ✕ 10日/20日集中度狂增) │
+--└──────────────────────────┴────────────────────────────┴──────────────────────────────────┘
+                ` },
 
             {
                 cat: "全球總經日曆",
@@ -2892,7 +3351,7 @@ FROM (
             CAST(代號 AS VARCHAR(20)) AS 代號,
             RTRIM(名稱) AS 名稱,
             CAST(equityinfo AS FLOAT) AS 持股比率
-        FROM stockchangedate.dbo.incomechar16
+        FROM stockchangedate.dbo.incomechar7
 ) I_List
 -- 左外聯結：關聯龍頭地位表
 LEFT JOIN (
@@ -6218,10 +6677,10 @@ FOR JSON PATH` },
 
 
         // ====================================================
-        // C. 三大法人與實戰總分
+        // C. 三大法人與實戰總分 (必須在迴圈大括號內部！)
         // ====================================================
-        var f5 = row.三大法人_ma5 !== null && row.三大法人_ma5 !== undefined ? parseFloat(row.三大法人_ma5) : null;
-        var f20 = row.三大法人_ma20 !== null && row.三大法人_ma20 !== undefined ? parseFloat(row.三大法人_ma20) : null;
+        var f5 = (row && row.三大法人_ma5 != null) ? parseFloat(row.三大法人_ma5) : null;
+        var f20 = (row && row.三大法人_ma20 != null) ? parseFloat(row.三大法人_ma20) : null;
         instMa5.push(f5);
         instMa20.push(f20);
 
@@ -6231,12 +6690,13 @@ FOR JSON PATH` },
             instDiff.push(null);
         }
 
-        // 🛠️【修改處】：圖三的法人扣抵標記，也比照辦理，僅保留最近一組 (距離當下 5 天)
-        if (revIdx === 5 && f5 !== null) instMarker5.push([i, f5]);
+        if (typeof revIdx !== 'undefined' && revIdx === 5 && f5 !== null) {
+            instMarker5.push([i, f5]);
+        }
 
-        var sVal = row.實戰總分 !== null && row.實戰總分 !== undefined ? parseFloat(row.實戰總分) : null;
-        var s5 = row.實戰總分_ma5 !== null && row.實戰總分_ma5 !== undefined ? parseFloat(row.實戰總分_ma5) : null;
-        var s20 = row.實戰總分_ma20 !== null && row.實戰總分_ma20 !== undefined ? parseFloat(row.實戰總分_ma20) : null;
+        var sVal = (row && row.實戰總分 != null) ? parseFloat(row.實戰總分) : null;
+        var s5 = (row && row.實戰總分_ma5 != null) ? parseFloat(row.實戰總分_ma5) : null;
+        var s20 = (row && row.實戰總分_ma20 != null) ? parseFloat(row.實戰總分_ma20) : null;
 
         scores.push(sVal);
         scoreMa5.push(s5);
@@ -6247,6 +6707,8 @@ FOR JSON PATH` },
         } else {
             scoreDiff.push(null);
         }
+
+ // 🟢 迴圈的結尾大括號應該在「C. 三大法人」的下方！
                 
 
         // ==========================================
