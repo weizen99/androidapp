@@ -176,13 +176,197 @@
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
-            //{ cat: " ", title: " ", sql: `  ` },
 
-           
+            {
+                cat: "分價量-主力成本",
+                title: "👑 20日 POC 主力大底成本線 ✕ 剛突破起漲雷達",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    P.代號,
+    P.名稱,
+    P.現價,
+    P.漲幅 AS [漲幅%],
+    P.總量 AS [成交總量(張)],
+    P.股本億 AS [股本(億)],
+    -- 當日週轉率
+    ROUND(P.總量 / NULLIF(P.股本億 * 100.0, 0), 2) AS [週轉率%],
+    
+    -- 🟢 20 日 POC 主力大底核心數據
+    V.POC_20D AS [20日主力POC成本價],
+    V.POC_Volume AS [POC成交總張數],
+    V.POC_Ratio AS [POC成交佔比%],
+    
+    -- 🟢 距主力成本距離 % (正值代表突破主力成本站上，負值代表在主力成本之下)
+    ROUND((P.現價 - V.POC_20D) / NULLIF(V.POC_20D, 0) * 100.0, 2) AS [突破主力成本%],
+    
+    -- 🟢 籌碼防守評級
+    CASE 
+        WHEN P.現價 > V.POC_20D AND (P.現價 - V.POC_20D) / NULLIF(V.POC_20D, 0) * 100.0 BETWEEN 0.1 AND 5.0 AND V.POC_Ratio >= 15.0
+            THEN N'👑👑 剛突破20日主力大底 (黃金起漲點)'
+        WHEN P.現價 > V.POC_20D AND (P.現價 - V.POC_20D) / NULLIF(V.POC_20D, 0) * 100.0 BETWEEN 0.1 AND 8.0 
+            THEN N'🚀 站穩主力成本上方 (多頭進攻)'
+        WHEN P.現價 = V.POC_20D 
+            THEN N'🎯 正好落在主力成本防守線'
+        WHEN P.現價 < V.POC_20D AND (V.POC_20D - P.現價) / NULLIF(V.POC_20D, 0) * 100.0 BETWEEN 0.1 AND 5.0 
+            THEN N'⚡ 逼近主力成本區 (準備突圍)'
+        ELSE N'⚠️ 跌破主力成本 (上檔有解套賣壓)'
+    END AS 籌碼防守評級,
 
-          
+    ISNULL(B.產業分類, N'一般產業') AS 產業分類
+
+FROM (
+    -- 1. 計算近 20 日各價位累積量，並抓出 POC 最大量價位
+    SELECT 
+        代號,
+        成交價 AS POC_20D,
+        累計量 AS POC_Volume,
+        ROUND(CAST(累計量 AS FLOAT) / NULLIF(總量20日, 0) * 100.0, 2) AS POC_Ratio
+    FROM (
+        SELECT 
+            代號, 成交價, SUM(成交張數) AS 累計量,
+            SUM(SUM(成交張數)) OVER (PARTITION BY 代號) AS 總量20日,
+            ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY SUM(成交張數) DESC) AS rank_poc
+        FROM stockchangedate.dbo.StockPriceVolume
+        WHERE 日期 IN (
+            SELECT DISTINCT TOP 20 日期 
+            FROM stockchangedate.dbo.StockPriceVolume 
+            ORDER BY 日期 DESC
+        )
+        GROUP BY 代號, 成交價
+    ) T WHERE T.rank_poc = 1
+) V
+-- 2. 關聯最新即時價量
+JOIN (
+    SELECT 代號, 名稱, 成交價 AS 現價, 漲幅, 總量, 股本億
+    FROM stockchange.dbo.basicinfo
+    WHERE 總量 >= 1000 AND 成交價 >= 10.0
+) P ON RTRIM(V.代號) = RTRIM(P.代號)
+LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(V.代號) = RTRIM(B.代號)
+
+-- 🟢 篩選：現價在主力成本上方 (突破或剛站穩 0% ~ 10%)
+WHERE P.現價 >= V.POC_20D 
+  AND (P.現價 - V.POC_20D) / NULLIF(V.POC_20D, 0) * 100.0 <= 10.0
+ORDER BY [POC成交佔比%] DESC, [週轉率%] DESC;
+
+/*
+戰略意義：
+計算每檔股票過去 20 個交易日**「成交量最大的價位（POC，Point of Control）」**。
+篩選出 「現價剛好在 20 日 POC 主力成本上方 0% ~ 5% 剛發動起漲」 且 「總量 ≥ 3,000 張」 的標的！
+過去 1 個月主力重金建立的鋼鐵防線，下檔風險極小、上檔爆發力極大！
+*/` },
+
+            {
+                cat: "分價量-控盤分析",
+                title: "📊 20日主力 VWAP 成本 ✕ 獲利籌碼比例 (無套牢主升股)",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    P.代號,
+    P.名稱,
+    P.現價,
+    P.漲幅 AS [漲幅%],
+    P.總量 AS [成交總量(張)],
+    
+    -- 🟢 20 日主力成交量加權平均成本 (VWAP)
+    V.主力VWAP成本,
+    ROUND((P.現價 - V.主力VWAP成本) / NULLIF(V.主力VWAP成本, 0) * 100.0, 2) AS [距主力VWAP乖離%],
+    
+    -- 🟢 20 日獲利籌碼比例 % (現價下方累積成交量佔比)
+    V.[20日獲利籌碼比例%],
+    
+    -- 🟢 控盤強度判定
+    CASE 
+        WHEN V.[20日獲利籌碼比例%] >= 85.0 AND P.現價 > V.主力VWAP成本 
+            THEN N'👑👑 極度強勢 (85%以上全數獲利/無套牢賣壓)'
+        WHEN V.[20日獲利籌碼比例%] >= 70.0 AND P.現價 > V.主力VWAP成本 
+            THEN N'🚀 多頭主力完全控盤 (多數獲利)'
+        WHEN V.[20日獲利籌碼比例%] BETWEEN 45.0 AND 70.0 
+            THEN N'⚖️ 多空籌碼勢均力敵 (震盪整理)'
+        ELSE N'⚠️ 上檔套牢賣壓沉重 (多數套牢)'
+    END AS 籌碼獲利結構評級,
+
+    B.產業分類
+
+FROM (
+    -- 1. 計算近 20 日 VWAP 與在現價下方的獲利量佔比
+    SELECT 
+        PV.代號,
+        ROUND(SUM(CAST(PV.成交價 * PV.成交張數 AS FLOAT)) / NULLIF(SUM(PV.成交張數), 0), 2) AS 主力VWAP成本,
+        ROUND(CAST(SUM(CASE WHEN PV.成交價 <= P_Live.現價 THEN PV.成交張數 ELSE 0 END) AS FLOAT) / NULLIF(SUM(PV.成交張數), 0) * 100.0, 1) AS [20日獲利籌碼比例%]
+    FROM stockchangedate.dbo.StockPriceVolume PV
+    JOIN (
+        SELECT 代號, 成交價 AS 現價 FROM stockchange.dbo.basicinfo
+    ) P_Live ON RTRIM(PV.代號) = RTRIM(P_Live.代號)
+    WHERE PV.日期 IN (
+        SELECT DISTINCT TOP 20 日期 FROM stockchangedate.dbo.StockPriceVolume ORDER BY 日期 DESC
+    )
+    GROUP BY PV.代號, P_Live.現價
+) V
+JOIN (
+    SELECT 代號, 名稱, 成交價 AS 現價, 漲幅, 總量 
+    FROM stockchange.dbo.basicinfo 
+    WHERE 總量 >= 1000 AND 成交價 >= 10.0
+) P ON RTRIM(V.代號) = RTRIM(P.代號)
+LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(V.代號) = RTRIM(B.代號)
+
+WHERE V.[20日獲利籌碼比例%] >= 70.0 -- 篩選 70% 以上籌碼皆處於獲利狀態的強勢股
+ORDER BY V.[20日獲利籌碼比例%] DESC, [距主力VWAP乖離%] ASC;
+
+/*
+戰略意義：
+計算近 20 日的 VWAP（成交量加權平均主力成本）。
+計算 「20日獲利籌碼比例（Profit Ratio %）」：目前有多少百分比的籌碼買在現價之下（處於獲利狀態）。
+若 獲利籌碼比例 > 80% 且 現價 > VWAP，代表全市場主力散戶幾乎全數賺錢，沒有上檔套牢賣壓，是標準的主升段控盤黑馬！
+*/` },
 
 
+
+            {
+                cat: "分價量-個股透視",
+                title: "🔍 單股 20 日分價量微結構透視表 (輸入代號查主力防線)",
+                sql: `/*資料庫:stockchangedate*/TOP 50
+    V.代號,
+    V.成交價 AS [成交價位],
+    V.累計20日成交量 AS [20日累計成交量(張)],
+    V.[20日成交佔比%],
+    V.[20日累計佔比%],
+    -- 🟢 自動標註 20 日主力 POC 大底與密集換手區
+    CASE 
+        WHEN V.累計20日成交量 = V.最大量 THEN N'👑👑 20日最大量 POC 主力大底成本線'
+        WHEN V.[20日成交佔比%] >= 12.0 THEN N'⭐⭐ 20日大量換手聚集區'
+        WHEN V.成交價 = P.現價 THEN N'📍 目前收盤現價'
+        ELSE N''
+    END AS [20日籌碼防線標籤]
+FROM (
+    SELECT 
+        PV.代號,
+        PV.成交價,
+        SUM(PV.成交張數) AS 累計20日成交量,
+        ROUND(CAST(SUM(PV.成交張數) AS FLOAT) / NULLIF(SUM(SUM(PV.成交張數)) OVER(PARTITION BY PV.代號), 0) * 100.0, 2) AS [20日成交佔比%],
+        ROUND(SUM(CAST(SUM(PV.成交張數) AS FLOAT)) OVER(PARTITION BY PV.代號 ORDER BY PV.成交價 DESC) / NULLIF(SUM(SUM(PV.成交張數)) OVER(PARTITION BY PV.代號), 0) * 100.0, 2) AS [20日累計佔比%],
+        MAX(SUM(PV.成交張數)) OVER(PARTITION BY PV.代號) AS 最大量
+    FROM stockchangedate.dbo.StockPriceVolume PV
+    WHERE PV.代號 = '2330' -- 🟢 在此隨時更換代號 (例: 2330, 2454, 3017, 8299)
+      AND PV.日期 IN (
+          SELECT DISTINCT TOP 20 日期 
+          FROM stockchangedate.dbo.StockPriceVolume 
+          WHERE 代號 = '2330' 
+          ORDER BY 日期 DESC
+      )
+    GROUP BY PV.代號, PV.成交價
+) V
+LEFT JOIN (
+    SELECT TOP 1 代號, 成交價 AS 現價 
+    FROM stockchange.dbo.basicinfo 
+    WHERE 代號 = '2330'
+) P ON 1=1
+ORDER BY V.成交價 DESC;
+
+/*
+戰略意義：
+計算近 20 日的 VWAP（成交量加權平均主力成本）。
+計算 「20日獲利籌碼比例（Profit Ratio %）」：目前有多少百分比的籌碼買在現價之下（處於獲利狀態）。
+若 獲利籌碼比例 > 80% 且 現價 > VWAP，代表全市場主力散戶幾乎全數賺錢，沒有上檔套牢賣壓，是標準的主升段控盤黑馬！
+*/` },
+
+     
 
             {
                 cat: "基本面-雙料雙冠王",
@@ -6676,37 +6860,37 @@ FOR JSON PATH` },
         }
 
 
-        // ====================================================
-        // C. 三大法人與實戰總分 (必須在迴圈大括號內部！)
-        // ====================================================
-        var f5 = (row && row.三大法人_ma5 != null) ? parseFloat(row.三大法人_ma5) : null;
-        var f20 = (row && row.三大法人_ma20 != null) ? parseFloat(row.三大法人_ma20) : null;
-        instMa5.push(f5);
-        instMa20.push(f20);
+        //// ====================================================
+        //// C. 三大法人與實戰總分 (必須在迴圈大括號內部！)
+        //// ====================================================
+        //var f5 = (row && row.三大法人_ma5 != null) ? parseFloat(row.三大法人_ma5) : null;
+        //var f20 = (row && row.三大法人_ma20 != null) ? parseFloat(row.三大法人_ma20) : null;
+        //instMa5.push(f5);
+        //instMa20.push(f20);
 
-        if (f5 !== null && f20 !== null) {
-            instDiff.push(f5 - f20);
-        } else {
-            instDiff.push(null);
-        }
+        //if (f5 !== null && f20 !== null) {
+        //    instDiff.push(f5 - f20);
+        //} else {
+        //    instDiff.push(null);
+        //}
 
-        if (typeof revIdx !== 'undefined' && revIdx === 5 && f5 !== null) {
-            instMarker5.push([i, f5]);
-        }
+        //if (typeof revIdx !== 'undefined' && revIdx === 5 && f5 !== null) {
+        //    instMarker5.push([i, f5]);
+        //}
 
-        var sVal = (row && row.實戰總分 != null) ? parseFloat(row.實戰總分) : null;
-        var s5 = (row && row.實戰總分_ma5 != null) ? parseFloat(row.實戰總分_ma5) : null;
-        var s20 = (row && row.實戰總分_ma20 != null) ? parseFloat(row.實戰總分_ma20) : null;
+        //var sVal = (row && row.實戰總分 != null) ? parseFloat(row.實戰總分) : null;
+        //var s5 = (row && row.實戰總分_ma5 != null) ? parseFloat(row.實戰總分_ma5) : null;
+        //var s20 = (row && row.實戰總分_ma20 != null) ? parseFloat(row.實戰總分_ma20) : null;
 
-        scores.push(sVal);
-        scoreMa5.push(s5);
-        scoreMa20.push(s20);
+        //scores.push(sVal);
+        //scoreMa5.push(s5);
+        //scoreMa20.push(s20);
 
-        if (sVal !== null && s20 !== null) {
-            scoreDiff.push(sVal - s20);
-        } else {
-            scoreDiff.push(null);
-        }
+        //if (sVal !== null && s20 !== null) {
+        //    scoreDiff.push(sVal - s20);
+        //} else {
+        //    scoreDiff.push(null);
+        //}
 
  // 🟢 迴圈的結尾大括號應該在「C. 三大法人」的下方！
                 

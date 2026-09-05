@@ -792,7 +792,7 @@
                 <a class="hub-nav-link active" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/excelsql2.html', this)">
                     <i class="bi bi-table text-warning"></i> 👑 Excel SQL 高級版
                 </a>
-
+                <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/stockmaster1.html', this)"><i class="bi bi-images"></i> 戰情室智能助教</a>
                 <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/stockmaster.html', this)"><i class="bi bi-images"></i> Ai股票智能助教</a>
                 <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/mylink.html', this)"><i class="bi bi-images"></i> 我的手機版常用連結</a>
                 <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/showimage/bookkeeping.html', this)"><i class="bi bi-images"></i> 雲端記帳</a>
@@ -1279,7 +1279,7 @@
         function searchMultiResonance() {
             const hitCount = $("#selHitCount").val() || 3;
             const momentumMode = $("#selMomentumMode").val() || 2;
-            const sql = `SELECT TOP 100
+            const sql = `SELECT TOP 240
                               [代號], [名稱], [盤中成交價] AS [現價], [盤中漲幅] AS [漲幅%], [盤中總量] AS [總量],
                               [HitCount] AS [共振維度數], [ResonanceTag] AS [共振等級],
                               [DimA_Status] AS [雙動能狀態], [DimB_Status] AS [OBV星號狀態], [DimC_Status] AS [價格星號狀態], [DimD_Status] AS [彩虹金叉狀態]
@@ -1296,7 +1296,7 @@
             const days = $("#surge-days").val() || 5;
             const minVol = $("#surge-minvol").val() || 3000;
             const minPx = $("#surge-minpx").val() || 10.0;
-            const sql = `EXEC stockchangedate.dbo.sp_Get_TopSurge_Backtest ${days}, ${minVol}, ${minPx}, 20;`;
+            const sql = `EXEC stockchangedate.dbo.sp_Get_TopSurge_Backtest ${days}, ${minVol}, ${minPx}, 120;`;
 
             execQueryToTable(sql, "stockchangedate", "#tblSurgeBacktest", function (rows) {
                 if (!rows || rows.length === 0) return;
@@ -1322,14 +1322,14 @@
 
         // ☀️ 頁籤 3: 60M 伏兵轉強雷達
         function loadTurningStrong() {
-            const sql29Strong = `SELECT TOP 50
+            const sql29Strong = `SELECT TOP 200
                               代號, 名稱, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, AI診斷筆記
                           FROM stockchangedate.dbo.View_AI_Elite_Radar
                           WHERE 分組 = N'自選股29' AND [短線氣象] LIKE N'%轉強%'
                           ORDER BY [60M動能(OSC)] DESC;`;
             execQueryToTable(sql29Strong, "stockchangedate", "#tblTurningStrong29");
 
-            const sqlAllStrong = `SELECT TOP 50
+            const sqlAllStrong = `SELECT TOP 200
                               代號, 名稱, 分組, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, 具體概念
                           FROM stockchangedate.dbo.View_AI_Elite_Radar
                           WHERE [短線氣象] LIKE N'%轉強%'
@@ -1346,7 +1346,7 @@ WHERE (M.日期 = (SELECT MAX(日期) AS mydate FROM MasterStockAnalysis AS Mast
 ORDER BY C.預估今日總分 DESC;`;
             execQueryToTable(sqlRadar, "stockchangedate", "#tblIntradayRadar");
 
-            const sqlEliteRadar = `SELECT TOP 100
+            const sqlEliteRadar = `SELECT TOP 150
                           代號, 名稱, 分組, 策略靈魂, ROUND([60M動能(OSC)], 2) AS [60M_OSC], 短線氣象
                       FROM stockchangedate.dbo.View_AI_Elite_Radar
                       ORDER BY [60M動能(OSC)] DESC, 日線分 DESC;`;
@@ -1363,7 +1363,7 @@ ORDER BY C.預估今日總分 DESC;`;
                           ORDER BY [Return_20MA] DESC;`;
             execQueryToTable(sql3Exits, "stockchangedate", "#tbl3Exits");
 
-            const sqlGems = `SELECT TOP 50
+            const sqlGems = `SELECT TOP 120
                               RTRIM(F.代號) AS [代號],
                               ISNULL(M.名稱, F.代號) AS [名稱],
                               ISNULL(M.盤中現價, 0) AS [現價],
@@ -1392,7 +1392,7 @@ ORDER BY C.預估今日總分 DESC;`;
 
         // 📅 頁籤 7: 全球總經日曆
         function loadMacroCalendar() {
-            const sqlMacro = `SELECT TOP 50
+            const sqlMacro = `SELECT TOP 120
                               [公布日期], [公布時間] AS [時間], [國家區域], [指標類別], [指標名稱], [重要性], [前值], [預測值], ISNULL([實際值], N'⏳ 待公布') AS [實際值], [影響解讀]
                           FROM stockchangedate.dbo.MacroEconomicCalendar
                           WHERE [公布日期] >= 20260101
