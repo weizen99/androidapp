@@ -4,7 +4,8 @@ https://ithelp.ithome.com.tw/m/articles/10383051
 
 申請Gemini API key
 
-
+https://zen2965.duckdns.org:8888/excelimport/stockmaster2.html
+由stockmaster.html 升級由ollama:7b 升級至  Pro (OpenRouter 70B~671B)
 
 https://zen2965.duckdns.org:8888/excelimport/stockmaster.html
 
