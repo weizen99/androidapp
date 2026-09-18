@@ -538,6 +538,420 @@
             //{ cat: " ", title: " ", sql: `  ` },
 
             {
+                cat: "幾何形態-雙破共振",
+                title: "👑 雙破共振 (突破下降線 ✕ 頸線回測不破) ✕ 1:1 等距測幅爆發榜",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+   P.代號,
+    P.名稱,
+    P.現價,
+    B.漲幅 AS [今日漲幅%],
+    B.總量 AS [今日總量(張)],
+
+    -- 📐 幾何形態與雙破共振
+    P.形態類型,
+    P.頸線價 AS [突破頸線價],
+    P.形態最低點 AS [波段最低點],
+    P.形態深度 AS [形態高度(元)],
+    P.目標價_1對1 AS [1:1等距目標價],
+    P.潛在上漲空間_百分比 AS [潛在空間%],
+
+    -- 🛡️ 頸線回測防守與風報比
+    P.回測防守均線,
+    P.均線防守價,
+    P.距均線乖離_百分比 AS [距頸線乖離%],
+    P.風報比 AS [風報比(R/R)],
+    P.形態狀態,
+
+    -- 📊 戰術與 3-Way 離場基因
+    ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS [最適離場戰術],
+    ISNULL(B.產業分類, N'一般產業') AS [產業分類]
+
+FROM stockchangedate.dbo.StockPatternAnalysis P
+LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(P.代號) = RTRIM(B.代號)
+LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(P.代號) = RTRIM(E.代號)
+
+ORDER BY
+    CASE
+        WHEN P.形態狀態 LIKE N'%👑%' THEN 1
+        WHEN P.形態狀態 LIKE N'%🔥%' THEN 2
+        ELSE 3
+    END ASC,
+    P.風報比 DESC,
+    P.潛在上漲空間_百分比 DESC;
+
+/*
+戰略意義：
+1. 嚴格鎖定「突破長期下降壓力線 ✕ 突破水平頸線 ✕ 回測頸線不破」之真起漲點。
+2. 支援一階大底 (W底/杯柄) 與 二階中繼起漲 (上升三角旗形)。
+3. 自動計算 1:1 鏡像等距測幅目標價，掌握風報比 >= 2:1 之波段黑馬！
+*/`
+            },
+
+
+            {
+                cat: "幾何形態-等距測幅",
+                title: "👑 經典底部形態 (W底/頭肩底/杯柄) ✕ 均線回測確認 ✕ 1:1 等距測幅爆發榜",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    P.代號,
+    P.名稱,
+    P.現價,
+    P.形態類型,
+    P.頸線價 AS [突破頸線價],
+    P.形態最低點 AS [波段最低點],
+    P.目標價_1對1 AS [1:1等距目標價],
+    P.潛在上漲空間_百分比 AS [潛在空間%],
+    P.回測防守均線,
+    P.均線防守價,
+    P.距均線乖離_百分比 AS [距防守線%],
+    P.風報比 AS [風報比(R/R)],
+    P.形態狀態
+
+FROM stockchangedate.dbo.StockPatternAnalysis P
+
+WHERE
+    -- 1. 嚴格鎖定真回測：距防守均線/頸線在 -1.5% ~ +2.5% 以內 (絕不追高)
+    P.距均線乖離_百分比 BETWEEN -1.5 AND 2.5
+
+    -- 2. 空間必須充足：1:1 等距上漲潛力 >= 15%
+    AND P.潛在上漲空間_百分比 >= 15.0
+
+    -- 3. 風報比 >= 2.0 (賺2塊才冒1塊風險)
+    AND P.風報比 >= 2.0
+
+    -- 4. 鎖定剛突破回測起漲點
+    AND P.形態狀態 LIKE N'%👑%'
+
+ORDER BY P.風報比 DESC, P.潛在上漲空間_百分比 DESC;
+
+/*
+戰略意義：
+1. 嚴格篩選「W底(右腳墊高)、頭肩底、杯柄形態(有柄神燈)」三大強勢底部結構。
+2. 鎖定「剛突破頸線，且拉回在 5MA/20MA/頸線 獲得支撐確認」的黃金切入點。
+3. 自動依「形態深度」計算 1:1 等距測幅目標價，讓您在進場第一秒就掌握停利目標與風報比！
+*/`
+            },
+
+
+            {
+                cat: "策略工廠-生命週期",
+                title: "🏭 量化策略工廠 ✕ 7大核心戰術生命週期與 Alpha 衰退監控塔",
+                sql: `/*資料庫:stockchangedate*/
+    策略名稱,
+    核心邏輯描述,
+    [10日勝率%],
+    [10日期望值%],
+    [20日勝率%],
+    [20日期望值%],
+    [60日基準勝率%],
+    [Alpha動能增益%],
+    生命週期狀態,
+    建議操作權重
+FROM (
+    SELECT 
+        策略名稱,
+        核心邏輯描述,
+        近10日勝率 AS [10日勝率%],
+        近10日期望值 AS [10日期望值%],
+        近20日勝率 AS [20日勝率%],
+        近20日期望值 AS [20日期望值%],
+        近60日勝率 AS [60日基準勝率%],
+        動能增益分 AS [Alpha動能增益%],
+        生命週期狀態,
+        建議操作權重
+    FROM stockchangedate.dbo.StrategyFactory_Monitor
+) S
+ORDER BY [Alpha動能增益%] DESC, [20日勝率%] DESC;
+
+/*
+戰略意義：
+實時監控「五合一雷達、AMT價值區突圍、OBV能量金身、財報雙冠王、60M伏兵、離場守門人」等 7 大戰術的健康度！
+Alpha 動能增益% > 0 代表該策略近期效率大幅上升，是當前盤勢的「黃金主攻戰術」。
+*/`
+            },
+
+            {
+                cat: "拍賣市場-AMT微結構",
+                title: "👑 拍賣市場 AMT ✕ 剛突破 5日價值區上緣 (VAH 主升突圍雷達)",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    P.代號,
+    P.名稱,
+    P.現價,
+    P.漲幅 AS [漲幅%],
+    P.總量 AS [成交總量(張)],
+    P.股本億 AS [股本(億)],
+    ROUND(P.總量 / NULLIF(P.股本億 * 100.0, 0), 2) AS [週轉率%],
+
+    -- 🟢 拍賣市場 5 日微結構核心
+    A.POC AS [5日主力POC成本價],
+    A.VAH AS [5日價值區上緣(VAH)],
+    A.VAL AS [5日價值區下緣(VAL)],
+    ROUND((A.VAH - A.VAL) / NULLIF(A.POC, 0) * 100.0, 2) AS [5日價值區寬度%],
+    ROUND((P.現價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0, 2) AS [突破VAH幅度%],
+
+    -- 🟢 拍賣微結構評級
+    CASE 
+        WHEN P.現價 >= A.VAH AND (P.現價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 BETWEEN 0.1 AND 3.0 
+            THEN N'👑👑 剛突破70%價值區上緣 (最佳主升起跑點)'
+        WHEN P.現價 > A.VAH AND (P.現價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 BETWEEN 3.0 AND 6.0 
+            THEN N'🚀 脫離價值區強勢推升 (多頭失衡暴衝)'
+        ELSE N'⭐ 價值區上方運行'
+    END AS [拍賣微結構評級],
+
+    -- 🟢 60M 動能 ✕ 離場勝率
+    ROUND(ISNULL(RAD.[60M動能(OSC)], 0.0), 2) AS [60M_OSC],
+    ISNULL(RAD.短線氣象, N'☀️ 轉強') AS [60M氣象],
+    ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS [最適離場戰術],
+    ISNULL(B.產業分類, N'一般電子') AS [產業分類]
+
+FROM (
+    SELECT 
+        代號,
+        MAX(CASE WHEN VolRank = 1 THEN 成交價 ELSE NULL END) AS POC,
+        MAX(CASE WHEN InValueArea = 1 THEN 成交價 ELSE NULL END) AS VAH,
+        MIN(CASE WHEN InValueArea = 1 THEN 成交價 ELSE NULL END) AS VAL
+    FROM (
+        SELECT 
+            代號, 成交價, VolRank,
+            CASE WHEN (RunningVol - 價位成交量) < (區間總量 * 0.70) THEN 1 ELSE 0 END AS InValueArea
+        FROM (
+            SELECT 
+                代號, 成交價, 價位成交量, 區間總量,
+                ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC) AS VolRank,
+                SUM(價位成交量) OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS RunningVol
+            FROM (
+                SELECT 
+                    PV.代號, PV.成交價, SUM(PV.成交張數) AS 價位成交量,
+                    SUM(SUM(PV.成交張數)) OVER (PARTITION BY PV.代號) AS 區間總量
+                FROM stockchangedate.dbo.StockPriceVolume PV
+                WHERE PV.日期 IN (
+                    SELECT DISTINCT TOP 5 日期 
+                    FROM stockchangedate.dbo.StockPriceVolume 
+                    ORDER BY 日期 DESC
+                )
+                GROUP BY PV.代號, PV.成交價
+            ) T1
+        ) T2
+    ) T3
+    GROUP BY 代號
+) A
+JOIN (
+    SELECT 代號, 名稱, 成交價 AS 現價, 漲幅, 總量, 股本億
+    FROM stockchange.dbo.basicinfo
+    WHERE 總量 >= 1000 AND 成交價 >= 10.0
+) P ON RTRIM(A.代號) = RTRIM(P.代號)
+LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(A.代號) = RTRIM(B.代號)
+LEFT JOIN stockchangedate.dbo.View_AI_Elite_Radar RAD ON RTRIM(A.代號) = RTRIM(RAD.代號)
+LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(A.代號) = RTRIM(E.代號)
+
+WHERE P.現價 >= A.VAH 
+  AND (P.現價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 BETWEEN 0.0 AND 5.0
+ORDER BY [突破VAH幅度%] ASC, P.總量 DESC;
+
+/*
+戰略意義：
+篩選出「現價剛好突破過去 5 個交易日 70% 價值區上緣 (VAH) 0%~5%」的股票！
+這代表市場大戶與散戶全數在現價之下完成 70% 換手，上方完全無籌碼阻力，是主升段最猛烈的爆發買點。
+*/`
+            },
+
+
+            {
+                cat: "拍賣市場-AMT微結構",
+                title: "🎯 拍賣市場 AMT ✕ 回踩 POC/VAH 鐵底確認 (黃金回檔點火雷達)",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    P.代號,
+    P.名稱,
+    P.現價,
+    P.漲幅 AS [漲幅%],
+    P.總量 AS [成交總量(張)],
+    
+    A.POC AS [5日主力POC核心],
+    A.VAH AS [5日價值區上緣(VAH)],
+    A.VAL AS [5日價值區下緣(VAL)],
+    ROUND((P.現價 - A.POC) / NULLIF(A.POC, 0) * 100.0, 2) AS [距POC距離%],
+
+    CASE 
+        WHEN ABS(P.現價 - A.POC) / NULLIF(A.POC, 0) * 100.0 <= 1.0 
+            THEN N'🎯🎯 精準回踩主力最大量 POC (極限防守買點)'
+        WHEN ABS(P.現價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 <= 1.5 
+            THEN N'💎 回踩 VAH 上緣支撐確認 (強勢回測)'
+        ELSE N'🟢 站穩主力成本上方'
+    END AS [回踩防守評級],
+
+    ROUND(ISNULL(RAD.[60M動能(OSC)], 0.0), 2) AS [60M_OSC],
+    ISNULL(RAD.短線氣象, N'☀️ 轉強') AS [60M氣象],
+    ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS [最適離場戰術],
+    ISNULL(B.產業分類, N'一般產業') AS [產業分類]
+
+FROM (
+    SELECT 
+        代號,
+        MAX(CASE WHEN VolRank = 1 THEN 成交價 ELSE NULL END) AS POC,
+        MAX(CASE WHEN InValueArea = 1 THEN 成交價 ELSE NULL END) AS VAH,
+        MIN(CASE WHEN InValueArea = 1 THEN 成交價 ELSE NULL END) AS VAL
+    FROM (
+        SELECT 
+            代號, 成交價, VolRank,
+            CASE WHEN (RunningVol - 價位成交量) < (區間總量 * 0.70) THEN 1 ELSE 0 END AS InValueArea
+        FROM (
+            SELECT 
+                代號, 成交價, 價位成交量, 區間總量,
+                ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC) AS VolRank,
+                SUM(價位成交量) OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS RunningVol
+            FROM (
+                SELECT 
+                    PV.代號, PV.成交價, SUM(PV.成交張數) AS 價位成交量,
+                    SUM(SUM(PV.成交張數)) OVER (PARTITION BY PV.代號) AS 區間總量
+                FROM stockchangedate.dbo.StockPriceVolume PV
+                WHERE PV.日期 IN (
+                    SELECT DISTINCT TOP 5 日期 
+                    FROM stockchangedate.dbo.StockPriceVolume 
+                    ORDER BY 日期 DESC
+                )
+                GROUP BY PV.代號, PV.成交價
+            ) T1
+        ) T2
+    ) T3
+    GROUP BY 代號
+) A
+JOIN (
+    SELECT 代號, 名稱, 成交價 AS 現價, 漲幅, 總量 
+    FROM stockchange.dbo.basicinfo
+    WHERE 總量 >= 1000 AND 成交價 >= 10.0
+) P ON RTRIM(A.代號) = RTRIM(P.代號)
+LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(A.代號) = RTRIM(B.代號)
+LEFT JOIN stockchangedate.dbo.View_AI_Elite_Radar RAD ON RTRIM(A.代號) = RTRIM(RAD.代號)
+LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(A.代號) = RTRIM(E.代號)
+
+WHERE P.現價 >= A.POC 
+  AND (P.現價 - A.POC) / NULLIF(A.POC, 0) * 100.0 BETWEEN 0.0 AND 2.0 -- 現價正好落在 POC 上方 0%~2%
+  AND ISNULL(RAD.[60M動能(OSC)], 0) >= -0.5                          -- 60M 動能未崩壞
+ORDER BY [距POC距離%] ASC, P.總量 DESC;
+
+/*
+戰略意義：
+專抓大波段強勢股拉回震盪時，**「正好回踩在 5 日 POC 主力大底防線」**的絕佳買點！
+下檔停損極窄（跌破 POC 即走，風險 < 1.5%），上檔獲利空間巨大（高達 10%~25%）。
+*/`
+            },
+
+
+            {
+                cat: "拍賣市場-AMT微結構",
+                title: "🔍 單股拍賣市場微結構全息透視 (輸入代號查 VAH / POC / VAL / 70% 價值區分佈)",
+                sql: `/*資料庫:stockchangedate*/TOP 60
+    T.代號,
+    ISNULL(P.名稱, N'') AS 名稱,
+    P.現價 AS [盤中最新成交價],
+    T.成交價 AS [成交價位],
+    T.價位成交量 AS [5日累積成交量(張)],
+    T.[成交佔比%],
+    T.[累計佔比%],
+    
+    -- 🟢 拍賣微結構身分標籤
+    CASE 
+        WHEN T.VolRank = 1 THEN N'👑👑 POC 主力最大量核心中樞'
+        WHEN T.成交價 = T.VAH THEN N'🔺 VAH 70%價值區上緣 (防守頂)'
+        WHEN T.成交價 = T.VAL THEN N'🔻 VAL 70%價值區下緣 (防守底)'
+        WHEN T.InValueArea = 1 THEN N'🟩 70% 主力價值密集區 (Value Area)'
+        WHEN T.成交價 > T.VAH THEN N'🚀 價值區上方 (強勢拍賣區)'
+        ELSE N'⚠️ 價值區下方 (低價值沉澱區)'
+    END AS [AMT拍賣微結構標籤],
+
+    CASE 
+        WHEN T.成交價 = P.現價 THEN N'📍 當前盤中現價' 
+        WHEN T.成交價 > P.現價 THEN N'🔺 現價之上 (解套賣壓帶)'
+        ELSE N'🔻 現價之下 (主力支撐帶)'
+    END AS [現價相對位置]
+
+FROM (
+    SELECT 
+        代號, 成交價, 價位成交量, 區間總量, VolRank, RunningVol, InValueArea,
+        ROUND(CAST(價位成交量 AS FLOAT) / NULLIF(區間總量, 0) * 100.0, 2) AS [成交佔比%],
+        ROUND(CAST(RunningVol AS FLOAT) / NULLIF(區間總量, 0) * 100.0, 2) AS [累計佔比%],
+        MAX(CASE WHEN VolRank = 1 THEN 成交價 END) OVER(PARTITION BY 代號) AS POC,
+        MAX(CASE WHEN InValueArea = 1 THEN 成交價 END) OVER(PARTITION BY 代號) AS VAH,
+        MIN(CASE WHEN InValueArea = 1 THEN 成交價 END) OVER(PARTITION BY 代號) AS VAL
+    FROM (
+        SELECT 
+            代號, 成交價, 價位成交量, 區間總量, VolRank, RunningVol,
+            CASE WHEN (RunningVol - 價位成交量) < (區間總量 * 0.70) THEN 1 ELSE 0 END AS InValueArea
+        FROM (
+            SELECT 
+                代號, 成交價, 價位成交量, 區間總量,
+                ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC) AS VolRank,
+                SUM(價位成交量) OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS RunningVol
+            FROM (
+                SELECT 
+                    PV.代號, PV.成交價, SUM(PV.成交張數) AS 價位成交量,
+                    SUM(SUM(PV.成交張數)) OVER (PARTITION BY PV.代號) AS 區間總量
+                FROM stockchangedate.dbo.StockPriceVolume PV
+                WHERE PV.代號 = '2330' -- 🟢 在此自由更換代號 (例: 2330, 2454, 2317, 3017)
+                  AND PV.日期 IN (
+                      SELECT DISTINCT TOP 5 日期 
+                      FROM stockchangedate.dbo.StockPriceVolume 
+                      WHERE 代號 = '2330' 
+                      ORDER BY 日期 DESC
+                  )
+                GROUP BY PV.代號, PV.成交價
+            ) T1
+        ) T2
+    ) T3
+) T
+LEFT JOIN (
+    SELECT TOP 1 代號, 名稱, 成交價 AS 現價 
+    FROM stockchange.dbo.basicinfo 
+    WHERE 代號 = '2330'
+) P ON 1=1
+ORDER BY T.成交價 DESC;
+
+/*
+戰略意義：
+單股 5 日全息微結構透視！將價格由高到低排列，並自動標記：
+1. 👑 POC 主力最大量位置
+2. 🔺 VAH (價值區上緣) 與 🔻 VAL (價值區下緣)
+3. 🟩 哪幾個價位構成了 70% 密集換手區間。
+操盤時一眼看出主力的防守鋼鐵線！
+*/`
+            },
+
+            {
+                cat: "離場風控-守門人",
+                title: "🚨 離場守門人 ✕ 全市場專屬最佳均線 (5/10/20MA) 破線警戒榜",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    代號,
+    名稱,
+    現價,
+    [漲幅%],
+    [成交總量(張)],
+    [最適離場戰術],
+    [防守基準均線],
+    [專屬防守均線價],
+    [距防守線乖離%],
+    [60M_OSC],
+    [60M_K值],
+    [守門人狀態],
+    [產業分類]
+FROM stockchangedate.dbo.View_Exit_Sentinel_Live
+WHERE [成交總量(張)] >= 1000
+ORDER BY 
+    CASE 
+        WHEN [守門人狀態] LIKE N'%🚨%' THEN 1
+        WHEN [守門人狀態] LIKE N'%⚠️%' THEN 2
+        WHEN [守門人狀態] LIKE N'%🟡%' THEN 3
+        ELSE 4
+    END ASC,
+    [距防守線乖離%] ASC;
+
+/*
+戰略意義：
+一秒找出手中持股是否已經跌破其歷史勝率最高的「專屬離場均線」！
+優先將 🚨 破位告急股 排在最上方，作為盤中減碼與停利的最高依據。
+*/`
+            },
+
+
+            {
                 cat: "分價量-主力成本",
                 title: "👑 20日 POC 主力大底成本線 ✕ 剛突破起漲雷達",
                 sql: `/*資料庫:stockchangedate*/TOP 100
