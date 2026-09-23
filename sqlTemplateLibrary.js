@@ -1,546 +1,10 @@
-﻿<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zen AI 股票戰情室 Pro</title>
-    <!-- 1. 核心資源 -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- DataTables 核心 -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        /* 1. 核心配色定義 */
-        :root {
-            --bg: #050a15;
-            --card: rgba(15, 23, 42, 0.95);
-            --primary: #00f2fe; /* 雲端模式 - 青色 */
-            --expert: #10b981; /* 專家模式 - 翡翠綠 */
-            --danger: #f85149; /* 錄音模式 - 紅色 */
-            --text: #adbac7;
-            --white: #ffffff;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        /* 2. 佈局容器 */
-        .top-spacer {
-            height: 40px;
-            background: linear-gradient(to bottom, #050a15, #0b0e14);
-        }
-
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 15px;
-            position: relative;
-            top: -15px;
-        }
-
-        /* 3. 玻璃擬態面板 */
-        .glass-panel {
-            background: var(--card);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 32px;
-            padding: 25px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
-        }
-
-        /* 4. 策略標籤 (Pills) */
-        .tip-badge {
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            white-space: nowrap;
-            transition: 0.3s;
-            display: inline-block;
-        }
-
-            .tip-badge:hover {
-                background: var(--accent);
-                color: white;
-                transform: translateY(-2px);
-            }
-
-        .badge-expert {
-            background: rgba(16, 185, 129, 0.15) !important;
-            color: var(--expert) !important;
-            border-color: rgba(16, 185, 129, 0.3) !important;
-        }
-
-        /* 5. 輸入區域 */
-        textarea {
-            width: 100%;
-            height: 100px;
-            background: #020617;
-            color: var(--white);
-            border: 1px solid #1e293b;
-            border-radius: 20px;
-            padding: 18px;
-            outline: none;
-            font-size: 1.15rem;
-            line-height: 1.6;
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
-            transition: 0.3s;
-        }
-
-            textarea:focus {
-                border-color: var(--primary);
-            }
-
-        /* 6. 按鈕系統 */
-        .main-btn {
-            padding: 15px 25px;
-            border-radius: 20px;
-            font-weight: 800;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1rem;
-        }
-
-        .btn-record {
-            background: var(--danger);
-            color: white;
-            min-width: 140px;
-        }
-
-            .btn-record.active {
-                background: #2ea043;
-                animation: pulse 1.5s infinite;
-            }
-
-        .btn-ai {
-            background: linear-gradient(135deg, #00f2fe, #4facfe);
-            color: #000;
-            flex: 1.5;
-            justify-content: center;
-            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.3);
-        }
-
-        .btn-expert {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            flex: 1.5;
-            justify-content: center;
-            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(248, 81, 73, 0.7);
-            }
-
-            70% {
-                box-shadow: 0 0 0 15px rgba(248, 81, 73, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(248, 81, 73, 0);
-            }
-        }
-
-        /* 7. DataTables 終極深色修復 (解決看不清的問題) */
-        .dataTables_wrapper {
-            color: var(--white) !important;
-            padding: 15px;
-        }
-
-        /* 凍結表頭配色 */
-        .dataTables_scrollHead {
-            background-color: #1e293b !important;
-            border-radius: 15px 15px 0 0;
-        }
-
-        table.dataTable thead th {
-            color: var(--primary) !important;
-            font-weight: 900 !important;
-            text-align: center !important;
-            white-space: nowrap !important;
-            border-bottom: 2px solid var(--primary) !important;
-            padding: 12px 15px !important;
-        }
-
-        /* 表格內容列 */
-        table.dataTable tbody tr {
-            background-color: transparent !important;
-            color: #e2e8f0 !important;
-        }
-
-            table.dataTable tbody tr:hover {
-                background-color: rgba(59, 130, 246, 0.1) !important;
-            }
-
-        table.dataTable tbody td {
-            border-bottom: 1px solid #1e293b !important;
-            vertical-align: middle;
-        }
-
-        /* 控制列配色 (顯示幾筆 / 搜尋) */
-        .dataTables_length label, .dataTables_filter label {
-            color: var(--white) !important;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .dataTables_length select, .dataTables_filter input {
-            background: #020617 !important;
-            color: var(--primary) !important;
-            border: 1px solid #334155 !important;
-            border-radius: 10px;
-            padding: 6px 12px;
-        }
-
-        /* 8. 分頁按鈕美化 (強制橫向排列且清晰) */
-        .dataTables_paginate .pagination {
-            display: flex !important;
-            flex-direction: row !important;
-            justify-content: flex-end !important;
-            list-style: none !important;
-            margin-top: 15px !important;
-        }
-
-        .pagination .page-item .page-link {
-            background-color: #1e293b !important;
-            border: 1px solid #334155 !important;
-            color: #adbac7 !important;
-            margin: 0 3px;
-            border-radius: 8px;
-            padding: 8px 16px;
-            font-weight: bold;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--primary) !important;
-            color: #000 !important;
-            border-color: var(--primary) !important;
-        }
-
-        /* 9. 數據看板看板 */
-        .stat-card {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            text-align: center;
-            padding: 10px;
-        }
-
-        .stat-value {
-            font-size: 16px !important;
-            font-weight: bold;
-            color: var(--primary) !important;
-        }
-
-        /* 10. 自訂捲軸 (細部質感) */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #050a15;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 10px;
-        }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: #334155;
-            }
-
-        /* 1. 按鈕移入(Hover)與點擊(Active)效果 */
-        .main-btn {
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-            .main-btn:hover {
-                box-shadow: 0 0 20px var(--primary); /* 外圈光圈 */
-                transform: translateY(-2px);
-                filter: brightness(1.1);
-            }
-
-            .main-btn:active {
-                transform: translateY(1px) scale(0.95); /* 點擊縮小 */
-                filter: brightness(1.3); /* 點擊變亮 */
-                box-shadow: 0 0 5px var(--primary);
-            }
-
-        /* 2. 針對不同顏色的按鈕設定專屬光圈 */
-        .btn-ai:hover {
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
-        }
-
-        .btn-expert:hover {
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
-        }
-
-        .btn-record:hover {
-            box-shadow: 0 0 20px rgba(248, 81, 73, 0.6);
-        }
-
-        /* 3. 超連結 (Hyperlink) 效果 */
-        a {
-            transition: all 0.2s ease;
-            text-decoration: none;
-        }
-
-            a:hover {
-                color: var(--primary) !important;
-                text-shadow: 0 0 10px var(--primary);
-                text-decoration: underline !important;
-            }
-
-            a:active {
-                color: #fff !important;
-                filter: brightness(1.5);
-            }
-
-        /* 表格內的按鈕點擊效果 */
-        #stockTable button:active {
-            background-color: #fff !important;
-            color: #000 !important;
-        }
-
-
-
-
-        /* 1. 按鈕基礎樣式與過渡 */
-        .main-btn {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent !important;
-        }
-
-            /* 2. 移入時：出現外圈光暈 */
-            .main-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 0 15px var(--primary); /* 青色光圈 */
-                border: 2px solid var(--primary) !important;
-                filter: brightness(1.2);
-            }
-
-            /* 3. 點擊時：改變顏色 (變白) 且縮放 */
-            .main-btn:active {
-                transform: scale(0.95);
-                background: #ffffff !important; /* 點擊瞬間變亮白 */
-                color: #000000 !important;
-                box-shadow: 0 0 25px #ffffff;
-            }
-
-        /* 4. 超連結 (Hyperlink) 移入/點擊效果 */
-        #stockTable a {
-            color: #00f2fe;
-            text-decoration: none;
-            transition: 0.2s;
-        }
-
-            #stockTable a:hover {
-                color: #fff !important;
-                text-shadow: 0 0 10px #00f2fe;
-                text-decoration: underline !important;
-            }
-
-            #stockTable a:active {
-                color: #ff0 !important; /* 點擊變黃色 */
-            }
-
-        {
-            title: "具體概念", data: "具體概念", className: "text-left", render: function(data, type, row)
-
-        {
-            if(!data || data === '無特定概念') return '<span class="text-gray-600">--</span>';
-            // 這裡的 title 是 HTML 屬性，用來滑鼠移入時秀出全部標籤 // style 裡面才是 CSS 屬性 return `<div title="${data}" style=" max-width: 200px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #a5f3fc;
-            cursor: help;
-            "> $
-
-        {
-            data
-        }
-
-        </div > `;
-        }
-        }
-
-
-    </style>
-</head>
-<body>
-
-    <div class="top-spacer"></div>
-   
-    <div class="container">
-        <!-- 核心控制面板 -->
-        <div class="glass-panel mb-6">
-
-            <!-- 第一排：標題、常用話術與 API Key -->
-            <div class="flex justify-between items-center mb-5">
-                <h1 class="text-2xl font-black text-white tracking-tighter">
-                    <i class="fas fa-chart-line text-cyan-400 mr-2"></i>AI 股票智能助教
-                </h1>
-                <div class="flex items-center gap-3">
-                    <select id="phraseSelect" class="bg-gray-800 border-0 text-xs text-yellow-400 p-2 rounded-xl outline-none w-40" onchange="injectCmd(this.value)">
-                        <option value="">💬 常用話術</option>
-                        <optgroup label="【專家實戰總分系列】">
-                            <option value="找專家實戰總分大於 35 且今天分數連三升的強勢股">🏆 專家總分連三升</option>
-                            <option value="找專家實戰總分大於 40 且實戰標籤包含量價齊揚的股票">🔥 實戰總分高標股</option>
-                            <option value="找 6月10號 專家實戰總分最高的前 20 名">📅 指定日期回測</option>
-                            <option value="找大戶鎖碼且專家總分大於 25 的中小型股">💎 大戶鎖碼專家股</option>
-                            <option value="幫我尋找代號是2330的所有資料,找出的資料按日期由大到小排列">📊 單股多天</option>
-                            <option value="幫我尋找最新的日期且專家實戰總分大於20的資料,按專家實戰總分由大到小排列">📈 分數>20股票</option>
-                            <option value="幫我尋找最新的日期且實戰標籤是大戶鎖碼,按專家實戰總分由大到小排列">🔒 實戰標籤是大戶鎖碼</option>
-                        </optgroup>
-                        <optgroup label="【一年期歷史回測系列】">
-                            <option value="找過去一年中，台積電(2330)專家實戰總分最高的前 10 名日期">📅 台積電歷史高分日</option>
-                            <option value="找去年 10 月份，專家實戰總分大於 35 且漲幅前 10 名的股票">🍁 去年十月強勢股</option>
-                            <option value="找出過去一年，哪些日期曾出現過『專家實戰總分 > 40』且當天『漲幅 > 8%』">🔥 歷史大爆發偵測</option>
-                        </optgroup>
-
-                        <optgroup label="【籌碼與趨勢連續性】">
-                            <option value="找最近連續三天，專家實戰總分都在上升，且集中度1日都是正數的股票">📈 評分連增+籌碼吸碼</option>
-                            <option value="找今日專家總分大於 30 且 OBV 累積金叉次數大於 10 次的能量噴發股">⚡ OBV長期能量股</option>
-                            <option value="找股本小於 50 億，但三大法人黃金交叉次數大於 5 且總分大於 25 的黑馬">🐎 中小型籌碼黑馬</option>
-                            <option value="找本週以來（日期 > 20260608）一日漲幅大於 5% 且量倍數大於 2 的強勢攻擊股">🚀 本週短線強攻</option>
-                        </optgroup>
-
-                        <optgroup label="【極致選股組合】">
-                            <option value="找專家實戰總分 > 30，且 K9 > D9 且 MACD 紅綠棒值 > 0 的技術共振股">🎯 技術指標三共振</option>
-                            <option value="找產業分類是『電子上游-IC-設計』且今日專家總分排名前 5 名的領頭羊">💻 IC設計領頭羊</option>
-                            <option value="找價五日乖離小於 2 且專家總分大於 28 的潛伏起漲股">🧘 貼線潛伏起漲股</option>
-                        </optgroup>
-                    </select>
-                    <input type="password" id="geminiKey" class="bg-black/50 border border-gray-700 text-[10px] p-2 rounded-lg w-32 text-white" placeholder="Gemini API Key">
-                </div>
-            </div>
-
-            <!-- 第二排：快捷標籤 -->
-            <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
-                <span class="tip-badge" onclick="injectCmd('找今天最強勢的金融股')">🔥 金融強勢</span>
-                <span class="tip-badge" onclick="injectCmd('找大戶正在吸碼的股票')">💎 籌碼集中</span>
-                <span class="tip-badge" onclick="injectCmd('找OBV能量噴發的股票')">⚡ 能量噴發</span>
-                <span class="tip-badge bg-purple-900/40" onclick="runIndustryAI()"><i class="fas fa-layer-group"></i> 產業熱力</span>
-                <span class="tip-badge text-red-400" onclick="injectCmd('清除')">🗑️ 清除</span>
-            </div>
-
-            <!-- 第三排：搜尋、範本、資料庫三合一 -->
-            <div class="flex gap-2 mb-4">
-                <div class="flex-[1.2]">
-                    <input type="text" id="tplSearch" class="bg-gray-900/80 border border-gray-700 text-[11px] p-2 rounded-xl w-full text-white placeholder-gray-500" placeholder="🔍 搜尋範本..." oninput="filterTemplates(this.value)">
-                </div>
-                <div class="flex-[1.5]">
-                    <select id="sqlTemplates" class="bg-gray-900/80 border border-gray-700 text-[11px] p-2 rounded-xl w-full text-cyan-400 outline-none" onchange="injectSql(this.value)">
-                        <option value="">📑 選擇 SQL 範本</option>
-                    </select>
-                </div>
-                <div class="flex-[1.3]">
-                    <select id="dbSelect" class="bg-gray-800 border border-yellow-600/50 text-[11px] p-2 rounded-xl w-full text-yellow-400 outline-none font-bold">
-                        <option value="stockchangedate">stockchangedate</option>
-                        <option value="favor2">favor2 (含圖片)</option>
-                        <option value="poemleg">poemleg</option>
-                        <option value="stockchange">stockchange</option>
-                        <option value="stockprice">stockprice</option>
-                        <option value="stockinfo">stockinfo</option>
-                        <option value="stockchangefour">stockchangefour</option>
-                        <option value="fromaccessdatabase">fromaccessdatabase</option>
-                        <option value="pokopoko">pokopoko</option>
-                        <option value="wordvoice">wordvoice</option>
-                        <option value="favor1">favor1</option>
-                        <option value="favor3">favor3</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 【核心結果區】 這是你紅圈指定的位置，整合了解盤與勝率 -->
-            <div id="unifiedAnalysisBox" class="hidden my-4 p-5 rounded-2xl border-2 border-emerald-500/50 bg-emerald-950/40 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                <div class="flex flex-col md:flex-row justify-between gap-6">
-                    <div class="flex-1">
-                        <div id="boxHeader" class="text-xs font-black text-emerald-400 tracking-widest mb-2 uppercase">── AI 專家即時解盤 ──</div>
-                        <!-- 文字顯示 -->
-                        <div id="mainResultText" class="text-base text-white leading-relaxed font-medium whitespace-pre-wrap" style="min-height: 80px;"></div>
-
-                        <div class="flex gap-4 mt-4">
-                            <button onclick="window.speechSynthesis.cancel()" class="text-[11px] bg-red-900/50 text-red-300 px-3 py-1 rounded-lg hover:bg-red-800">停止語音</button>
-                            <button onclick="$('#unifiedAnalysisBox').fadeOut()" class="text-[11px] bg-gray-800 text-gray-400 px-3 py-1 rounded-lg hover:bg-gray-700">關閉看板</button>
-                        </div>
-                    </div>
-
-                    <!-- 右側圖表/分析圖 -->
-                    <div class="w-full md:w-1/3">
-                        <div class="text-[10px] text-gray-500 mb-2 font-bold text-center">趨勢動能 / 專家指標</div>
-                        <div style="height: 180px;"><canvas id="mainStockChartCanvas"></canvas></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 第四排：文字輸入框 -->
-            <textarea id="userInput" class="mt-2" placeholder="請說出您的選股需求... (口令：清除、逗號、句號)"></textarea>
-
-            <!-- 第五排：功能按鈕 -->
-            <div class="flex gap-4 mt-6">
-                <button id="recordBtn" class="main-btn btn-record" onclick="toggleRecord()">
-                    <i class="fas fa-microphone"></i> 語音輸入
-                </button>
-                <button id="aiBtn" class="main-btn btn-ai flex-1 justify-center" onclick="runStockAI()">
-                    <i class="fas fa-brain"></i> 啟動 AI 篩選
-                </button>
-                <button id="expertBtn" class="main-btn btn-expert flex-1 justify-center" onclick="runStockAI1()">
-                    <i class="fas fa-user-tie"></i> 專家實戰選股
-                </button>
-                <button id="manualBtn" class="main-btn bg-slate-700 text-white flex-1 justify-center" onclick="runManualSQL()">
-                    <i class="fas fa-terminal"></i> 執行 SQL
-                </button>
-            </div>
-
-            <div id="statusInfo" class="text-center text-[10px] text-gray-600 mt-4 italic">Ready | v21.0 Stable</div>
-        </div>
-
-        <!-- 資料表格區 -->
-        <div class="glass-panel p-0 overflow-hidden">
-            <table id="stockTable" class="table table-dark table-hover w-100 m-0"></table>
-        </div>
-    </div>
-
-    <script>
-        // --- 1. SQL 範本資料庫 (您可以自行在次加入更多) ---
-        const sqlLib = [
-
-
-            //{ cat: " ", title: " ", sql: `  ` },
-            //{ cat: " ", title: " ", sql: `  ` },
-            //{ cat: " ", title: " ", sql: `  ` },
-
-            {
-                cat: "資金輪動-大盤風控",
-                title: "🧭 36大類股資金輪動排行榜 (今日吸金主流 vs 失血避險群)",
-                sql: `/*資料庫:stockchangedate*/
+﻿// sql_templates.js
+const sqlTemplateLibrary = [
+
+    {
+        cat: "資金輪動-大盤風控",
+        title: "🧭 36大類股資金輪動排行榜 (今日吸金主流 vs 失血避險群)",
+        sql: `/*資料庫:stockchangedate*/
 EXEC stockchangedate.dbo.sp_Get_Sector_Money_Flow;
 
 /*
@@ -548,11 +12,11 @@ EXEC stockchangedate.dbo.sp_Get_Sector_Money_Flow;
 1. 找出全市場今日「資金增幅最猛烈 (比重暴衝)」的主流族群。
 2. 買股票一定要順著資金流走，只在「吸金增幅 > +2.0%」的強勢板塊中挑選雙破 1:1 飆股！
 */`
-            },
-            {
-                cat: "資金輪動-大盤風控",
-                title: "🌦️ 大盤多空引力風控儀 (TSE/OTC 氣象 ✕ 動態建議持股水位)",
-                sql: `/*資料庫:stockchangedate*/
+    },
+    {
+        cat: "資金輪動-大盤風控",
+        title: "🌦️ 大盤多空引力風控儀 (TSE/OTC 氣象 ✕ 動態建議持股水位)",
+        sql: `/*資料庫:stockchangedate*/
 EXEC stockchangedate.dbo.sp_Get_Market_Gravity_Tower;
 
 /*
@@ -560,15 +24,15 @@ EXEC stockchangedate.dbo.sp_Get_Market_Gravity_Tower;
 1. 一秒看懂大盤是 ☀️晴天、⛅多雲 還是 ⛈️暴雨。
 2. 產出動態持股曝險係數 (0.25 ~ 1.00)，指導整體資產配置比例！
 */`
-            },
+    },
 
 
 
 
-            {
-                cat: "資產曲線-績效複盤",
-                title: "🏆 量化策略歷史績效總表 (Tear Sheet ✕ 夏普值 ✕ MDD ✕ 勝率)",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "資產曲線-績效複盤",
+        title: "🏆 量化策略歷史績效總表 (Tear Sheet ✕ 夏普值 ✕ MDD ✕ 勝率)",
+        sql: `/*資料庫:stockchangedate*/
     策略名稱,
     回測起日,
     回測迄日,
@@ -586,12 +50,12 @@ EXEC stockchangedate.dbo.sp_Get_Market_Gravity_Tower;
     更新時間
 FROM stockchangedate.dbo.Strategy_Backtest_Summary
 ORDER BY 回測編號 DESC;`
-            },
+    },
 
-            {
-                cat: "資產曲線-績效複盤",
-                title: "📈 每日資產淨值曲線數據 (可直接在圖表繪製平滑複利曲線)",
-                sql: `/*資料庫:stockchangedate*/TOP 1000
+    {
+        cat: "資產曲線-績效複盤",
+        title: "📈 每日資產淨值曲線數據 (可直接在圖表繪製平滑複利曲線)",
+        sql: `/*資料庫:stockchangedate*/TOP 1000
     N.日期,
     N.總資產淨值 AS [資產總淨值(元)],
     N.現金部位 AS [可用現金(元)],
@@ -605,12 +69,12 @@ WHERE N.回測編號 = (
     FROM stockchangedate.dbo.Strategy_Backtest_Summary
 )
 ORDER BY N.日期 ASC;`
-            },
+    },
 
-            {
-                cat: "資產曲線-績效複盤",
-                title: "📋 歷史逐筆交易明細表 (進出場價格 ✕ 持有天數 ✕ 淨損益)",
-                sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "資產曲線-績效複盤",
+        title: "📋 歷史逐筆交易明細表 (進出場價格 ✕ 持有天數 ✕ 淨損益)",
+        sql: `/*資料庫:stockchangedate*/TOP 100
     代號,
     名稱,
     進場日期,
@@ -624,13 +88,13 @@ ORDER BY N.日期 ASC;`
 FROM stockchangedate.dbo.Strategy_Backtest_Trades
 WHERE 回測編號 = (SELECT MAX(回測編號) FROM stockchangedate.dbo.Strategy_Backtest_Summary)
 ORDER BY 出場日期 DESC;`
-            },
+    },
 
 
-            {
-                cat: "資產曲線-績效複盤",
-                title: "📋 歷史逐筆交易明細表-多股 (進出場價格 ✕ 持有天數 ✕ 淨損益)",
-                sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "資產曲線-績效複盤",
+        title: "📋 歷史逐筆交易明細表-多股 (進出場價格 ✕ 持有天數 ✕ 淨損益)",
+        sql: `/*資料庫:stockchangedate*/TOP 100
     代號,
     名稱,
     進場日期,
@@ -644,12 +108,12 @@ ORDER BY 出場日期 DESC;`
 FROM stockchangedate.dbo.Strategy_Backtest_Trades
 WHERE 回測編號 = (SELECT MAX(回測編號) FROM stockchangedate.dbo.Strategy_Backtest_Summary) and 代號 in (2303, 2409)
 ORDER BY 代號,出場日期 DESC;`
-            },
+    },
 
-            {
-                cat: "資產曲線-績效複盤",
-                title: "📋 歷史逐筆交易明細表-單股 區間 合計-預存程序 (進出場價格 ✕ 持有天數 ✕ 淨損益)",
-                sql: `EXEC dbo.sp_Get_Backtest_Trade_Detail
+    {
+        cat: "資產曲線-績效複盤",
+        title: "📋 歷史逐筆交易明細表-單股 區間 合計-預存程序 (進出場價格 ✕ 持有天數 ✕ 淨損益)",
+        sql: `EXEC dbo.sp_Get_Backtest_Trade_Detail
     @StockCode = '2303',
     @StartDate = 20260101,
     @EndDate = 20260918;
@@ -660,10 +124,10 @@ ORDER BY 代號,出場日期 DESC;`
     `},
 
 
-            {
-                cat: "資產曲線-績效複盤",
-                title: "🔔 今日準備進場名單 (雙破1:1 ✕ 頸線回踩確認 ✕ 風報比>=2.0)",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "資產曲線-績效複盤",
+        title: "🔔 今日準備進場名單 (雙破1:1 ✕ 頸線回踩確認 ✕ 風報比>=2.0)",
+        sql: `/*資料庫:stockchangedate*/
 EXEC stockchangedate.dbo.sp_Get_Ready_To_Buy_Stocks 
     @MinVolume = 1000, 
     @MinPrice = 10.0, 
@@ -675,14 +139,14 @@ EXEC stockchangedate.dbo.sp_Get_Ready_To_Buy_Stocks
 2. 每檔股票明確標註：【當前現價】、【1:1目標價】、【建議停損價】與【風報比】。
 3. 嚴格鎖定風報比 >= 2:1 且 潛在空間 >= 12% 之高勝率標的。
 */`
-            },
+    },
 
 
 
-            {
-                cat: "幾何形態-雙破共振",
-                title: "👑 雙破共振 (突破下降線 ✕ 頸線回測不破) ✕ 1:1 等距測幅爆發榜",
-                sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "幾何形態-雙破共振",
+        title: "👑 雙破共振 (突破下降線 ✕ 頸線回測不破) ✕ 1:1 等距測幅爆發榜",
+        sql: `/*資料庫:stockchangedate*/TOP 100
    P.代號,
     P.名稱,
     P.現價,
@@ -727,13 +191,13 @@ ORDER BY
 2. 支援一階大底 (W底/杯柄) 與 二階中繼起漲 (上升三角旗形)。
 3. 自動計算 1:1 鏡像等距測幅目標價，掌握風報比 >= 2:1 之波段黑馬！
 */`
-            },
+    },
 
 
-            {
-                cat: "幾何形態-等距測幅",
-                title: "👑 經典底部形態 (W底/頭肩底/杯柄) ✕ 均線回測確認 ✕ 1:1 等距測幅爆發榜",
-                sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "幾何形態-等距測幅",
+        title: "👑 經典底部形態 (W底/頭肩底/杯柄) ✕ 均線回測確認 ✕ 1:1 等距測幅爆發榜",
+        sql: `/*資料庫:stockchangedate*/TOP 100
     P.代號,
     P.名稱,
     P.現價,
@@ -771,13 +235,13 @@ ORDER BY P.風報比 DESC, P.潛在上漲空間_百分比 DESC;
 2. 鎖定「剛突破頸線，且拉回在 5MA/20MA/頸線 獲得支撐確認」的黃金切入點。
 3. 自動依「形態深度」計算 1:1 等距測幅目標價，讓您在進場第一秒就掌握停利目標與風報比！
 */`
-            },
+    },
 
 
-            {
-                cat: "策略工廠-生命週期",
-                title: "🏭 量化策略工廠 ✕ 7大核心戰術生命週期與 Alpha 衰退監控塔",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "策略工廠-生命週期",
+        title: "🏭 量化策略工廠 ✕ 7大核心戰術生命週期與 Alpha 衰退監控塔",
+        sql: `/*資料庫:stockchangedate*/
     策略名稱,
     核心邏輯描述,
     [10日勝率%],
@@ -809,12 +273,12 @@ ORDER BY [Alpha動能增益%] DESC, [20日勝率%] DESC;
 實時監控「五合一雷達、AMT價值區突圍、OBV能量金身、財報雙冠王、60M伏兵、離場守門人」等 7 大戰術的健康度！
 Alpha 動能增益% > 0 代表該策略近期效率大幅上升，是當前盤勢的「黃金主攻戰術」。
 */`
-            },
+    },
 
-            {
-                cat: "拍賣市場-AMT微結構",
-                title: "👑 拍賣市場 AMT ✕ 剛突破 5日價值區上緣 (VAH 主升突圍雷達)",
-                sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "拍賣市場-AMT微結構",
+        title: "👑 拍賣市場 AMT ✕ 剛突破 5日價值區上緣 (VAH 主升突圍雷達)",
+        sql: `/*資料庫:stockchangedate*/TOP 100
     P.代號,
     P.名稱,
     P.現價,
@@ -894,13 +358,13 @@ ORDER BY [突破VAH幅度%] ASC, P.總量 DESC;
 篩選出「現價剛好突破過去 5 個交易日 70% 價值區上緣 (VAH) 0%~5%」的股票！
 這代表市場大戶與散戶全數在現價之下完成 70% 換手，上方完全無籌碼阻力，是主升段最猛烈的爆發買點。
 */`
-            },
+    },
 
 
-            {
-                cat: "拍賣市場-AMT微結構",
-                title: "🎯 拍賣市場 AMT ✕ 回踩 POC/VAH 鐵底確認 (黃金回檔點火雷達)",
-                sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "拍賣市場-AMT微結構",
+        title: "🎯 拍賣市場 AMT ✕ 回踩 POC/VAH 鐵底確認 (黃金回檔點火雷達)",
+        sql: `/*資料庫:stockchangedate*/TOP 100
     P.代號,
     P.名稱,
     P.現價,
@@ -975,13 +439,13 @@ ORDER BY [距POC距離%] ASC, P.總量 DESC;
 專抓大波段強勢股拉回震盪時，**「正好回踩在 5 日 POC 主力大底防線」**的絕佳買點！
 下檔停損極窄（跌破 POC 即走，風險 < 1.5%），上檔獲利空間巨大（高達 10%~25%）。
 */`
-            },
+    },
 
 
-            {
-                cat: "拍賣市場-AMT微結構",
-                title: "🔍 單股拍賣市場微結構全息透視 (輸入代號查 VAH / POC / VAL / 70% 價值區分佈)",
-                sql: `/*資料庫:stockchangedate*/TOP 60
+    {
+        cat: "拍賣市場-AMT微結構",
+        title: "🔍 單股拍賣市場微結構全息透視 (輸入代號查 VAH / POC / VAL / 70% 價值區分佈)",
+        sql: `/*資料庫:stockchangedate*/TOP 60
     T.代號,
     ISNULL(P.名稱, N'') AS 名稱,
     P.現價 AS [盤中最新成交價],
@@ -1055,12 +519,12 @@ ORDER BY T.成交價 DESC;
 3. 🟩 哪幾個價位構成了 70% 密集換手區間。
 操盤時一眼看出主力的防守鋼鐵線！
 */`
-            },
+    },
 
-            {
-                cat: "離場風控-守門人",
-                title: "🚨 離場守門人 ✕ 全市場專屬最佳均線 (5/10/20MA) 破線警戒榜",
-                sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "離場風控-守門人",
+        title: "🚨 離場守門人 ✕ 全市場專屬最佳均線 (5/10/20MA) 破線警戒榜",
+        sql: `/*資料庫:stockchangedate*/TOP 100
     代號,
     名稱,
     現價,
@@ -1090,14 +554,14 @@ ORDER BY
 一秒找出手中持股是否已經跌破其歷史勝率最高的「專屬離場均線」！
 優先將 🚨 破位告急股 排在最上方，作為盤中減碼與停利的最高依據。
 */`
-            },
+    },
 
 
 
-            {
-                cat: "分價量-主力成本",
-                title: "👑 20日 POC 主力大底成本線 ✕ 剛突破起漲雷達",
-                sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "分價量-主力成本",
+        title: "👑 20日 POC 主力大底成本線 ✕ 剛突破起漲雷達",
+        sql: `/*資料庫:stockchangedate*/TOP 100
     P.代號,
     P.名稱,
     P.現價,
@@ -1171,10 +635,10 @@ ORDER BY [POC成交佔比%] DESC, [週轉率%] DESC;
 過去 1 個月主力重金建立的鋼鐵防線，下檔風險極小、上檔爆發力極大！
 */` },
 
-            {
-                cat: "分價量-控盤分析",
-                title: "📊 20日主力 VWAP 成本 ✕ 獲利籌碼比例 (無套牢主升股)",
-                sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "分價量-控盤分析",
+        title: "📊 20日主力 VWAP 成本 ✕ 獲利籌碼比例 (無套牢主升股)",
+        sql: `/*資料庫:stockchangedate*/TOP 100
     P.代號,
     P.名稱,
     P.現價,
@@ -1235,10 +699,10 @@ ORDER BY V.[20日獲利籌碼比例%] DESC, [距主力VWAP乖離%] ASC;
 
 
 
-            {
-                cat: "分價量-個股透視",
-                title: "🔍 單股 20 日分價量微結構透視表 (輸入代號查主力防線)",
-                sql: `/*資料庫:stockchangedate*/TOP 50
+    {
+        cat: "分價量-個股透視",
+        title: "🔍 單股 20 日分價量微結構透視表 (輸入代號查主力防線)",
+        sql: `/*資料庫:stockchangedate*/TOP 50
     V.代號,
     V.成交價 AS [成交價位],
     V.累計20日成交量 AS [20日累計成交量(張)],
@@ -1285,10 +749,10 @@ ORDER BY V.成交價 DESC;
 
 
 
-            {
-                cat: "基本面-雙料雙冠王",
-                title: "🏆 營收動能與創高雙增王🏆 營收創高雙增 ✕ 半年賺贏去年 ✕ 本業雙升 終極大滿貫",
-                sql: `/*資料庫:stockchangedate*/ 
+    {
+        cat: "基本面-雙料雙冠王",
+        title: "🏆 營收動能與創高雙增王🏆 營收創高雙增 ✕ 半年賺贏去年 ✕ 本業雙升 終極大滿貫",
+        sql: `/*資料庫:stockchangedate*/ 
     -- 🟢 ① 即時行情、量能、股本與週轉率
     V.代號,
     V.名稱,
@@ -1323,14 +787,14 @@ WHERE V.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysi
   AND V.盤中總量 >= 3000
   AND V.營收年增率 >= 15.0 -- 篩選年增率 > 15%
 ORDER BY V.營收年增率 DESC, V.營收月增率 DESC;`
-            },
+    },
 
 
 
-            {
-                cat: "基本面-營收動能",
-                title: "🚀 單月營收創高 ✕ 月增年增雙增 ✕ 60M動能與週轉率",
-                sql: `/*資料庫:stockchangedate*/   
+    {
+        cat: "基本面-營收動能",
+        title: "🚀 單月營收創高 ✕ 月增年增雙增 ✕ 60M動能與週轉率",
+        sql: `/*資料庫:stockchangedate*/   
     -- 🟢 ① 即時行情、量能、股本與週轉率
     B.[代號],
     B.[名稱],
@@ -1418,12 +882,12 @@ WHERE I.rn = 1
   AND ISNULL(I.年成長, 0) > 10.0 -- 篩選年增率 > 10%
   and b.總量 > 3000
 ORDER BY I.年成長 DESC, I.月變動 DESC;`
-            },
+    },
 
 
 
-            {
-                cat: "基本面-EPS獲利質變", title: "👑 半年報賺贏去年 ✕ 三率雙升 ✕ 60M進場與外資空間", sql: `/*資料庫:stockchangedate*/-- 🟢 ① 即時行情、籌碼與換手動能
+    {
+        cat: "基本面-EPS獲利質變", title: "👑 半年報賺贏去年 ✕ 三率雙升 ✕ 60M進場與外資空間", sql: `/*資料庫:stockchangedate*/-- 🟢 ① 即時行情、籌碼與換手動能
     F.代號,
     F.名稱,
     ISNULL(B.[成交價], 0) AS 現價,
@@ -1564,8 +1028,8 @@ WHERE (
 ORDER BY F.今年累計EPS DESC, [超越去年全年%] DESC;` },
 
 
-            {
-                cat: "基本面-EPS獲利質變", title: "👑 半年報賺贏去年 ✕ 三率雙升", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "基本面-EPS獲利質變", title: "👑 半年報賺贏去年 ✕ 三率雙升", sql: `/*資料庫:stockchangedate*/
 F.代號,
 F.名稱,
 -- 🟢 basicinfo 即時行情、量能、股本與週轉率
@@ -1679,15 +1143,15 @@ WHERE (
  
 ORDER BY [超越去年全年%] DESC, [毛利季增%] DESC;` },
 
-            {
-                cat: "模組目錄", title: "剛才完成的近 N 日暴漲龍頭 ✕ T+2 / 20MA 勝率回測純 SQL。", sql: `EXEC stockchangedate.dbo.sp_Get_TopSurge_Backtest 5,3000,10.0,30
+    {
+        cat: "模組目錄", title: "剛才完成的近 N 日暴漲龍頭 ✕ T+2 / 20MA 勝率回測純 SQL。", sql: `EXEC stockchangedate.dbo.sp_Get_TopSurge_Backtest 5,3000,10.0,30
 
 --sp_Get_TopSurge_Backtest 5,3000,10.0,30 (天數,最小量>?,最低股票>= ?元,前30筆)
                 ` },
 
 
-            {
-                cat: "模組目錄", title: "盤中預估爆量比 ✕ 雙動能翻正起漲雷達", sql: `/*資料庫:stockchangedate*/ TOP 30
+    {
+        cat: "模組目錄", title: "盤中預估爆量比 ✕ 雙動能翻正起漲雷達", sql: `/*資料庫:stockchangedate*/ TOP 30
     R.[代號], R.[名稱], R.[盤中成交價] AS [現價], R.[盤中漲幅] AS [漲幅%],
     R.[盤中總量] AS [目前成交量],
     ROUND(R.[盤中總量] * (270.0 / NULLIF(DATEDIFF(MINUTE, '09:00', CONVERT(TIME, GETDATE())), 0)), 0) AS [預估全天總量],
@@ -1701,8 +1165,8 @@ WHERE R.[盤中成交價] >= 10.0
 ORDER BY R.[盤中漲幅] DESC, R.[盤中總量] DESC;
                 ` },
 
-            {
-                cat: "模組目錄", title: "凱利公式動態本金配置 ✕ 風控期望值試算", sql: `/*資料庫:stockchangedate*/ TOP 30
+    {
+        cat: "模組目錄", title: "凱利公式動態本金配置 ✕ 風控期望值試算", sql: `/*資料庫:stockchangedate*/ TOP 30
     K.[代號], K.[名稱],
     K.[勝率%], K.[期望值%],
     K.[建議配置比例%] AS [建議倉位%],
@@ -1724,8 +1188,8 @@ FROM (
 ORDER BY K.[建議配置比例%] DESC;` },
 
 
-            {
-                cat: "模組目錄", title: "籌碼集中度大於 20% 之主力黑馬清單。", sql: `EXEC stockchangedate.dbo.sp_Get_SmartMoney_Tracker 3000, 5.0, 50
+    {
+        cat: "模組目錄", title: "籌碼集中度大於 20% 之主力黑馬清單。", sql: `EXEC stockchangedate.dbo.sp_Get_SmartMoney_Tracker 3000, 5.0, 50
 
 --(參數說明：總量 ≥ 3000 張、5日主力集中度 ≥ 5.0%、取前 50 名)
 --┌──────────────────────────────────────────────────────────────────────────────────────────┐
@@ -1736,10 +1200,10 @@ ORDER BY K.[建議配置比例%] DESC;` },
 --└──────────────────────────┴────────────────────────────┴──────────────────────────────────┘
                 ` },
 
-            {
-                cat: "全球總經日曆",
-                title: "未來 30 天美歐日台重大央行與總經數據日曆",
-                sql: `/*資料庫:stockchangedate*/ TOP 50
+    {
+        cat: "全球總經日曆",
+        title: "未來 30 天美歐日台重大央行與總經數據日曆",
+        sql: `/*資料庫:stockchangedate*/ TOP 50
     [公布日期],
     [公布時間],
     [國家區域],
@@ -1753,10 +1217,10 @@ ORDER BY K.[建議配置比例%] DESC;` },
 FROM dbo.MacroEconomicCalendar
 WHERE [公布日期] >= CAST(CONVERT(VARCHAR(8), GETDATE(), 112) AS INT)
 ORDER BY [公布日期] ASC, [公布時間] ASC;`
-            },
+    },
 
-            {
-                cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 10 20ma),勝率及報酬期望值by資料表+實戰總分", sql: ` /*資料庫:stockchangedate*/ M.名稱, M.代號, M.產業分類, M.股本億, M.日期, M.盤中現價, M.盤中漲幅, M.盤中總量, M.專家實戰總分, 
+    {
+        cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 10 20ma),勝率及報酬期望值by資料表+實戰總分", sql: ` /*資料庫:stockchangedate*/ M.名稱, M.代號, M.產業分類, M.股本億, M.日期, M.盤中現價, M.盤中漲幅, M.盤中總量, M.專家實戰總分, 
                             S.完成交易次數, S.WinRate_5MA AS [5MA離場_勝率%], S.Return_5MA AS [5MA離場_期望值%], 
                             S.WinRate_10MA AS [10MA離場_勝率%], S.Return_10MA AS [10MA離場_期望值%], 
                             S.WinRate_20MA AS [20MA離場_勝率%], S.Return_20MA AS [20MA離場_期望值%], S.OptimalExit, S.更新日期
@@ -1769,16 +1233,16 @@ ORDER BY   M.專家實戰總分 DESC
 
 /*執行資料表*/` },
 
-            {
-                cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 10 20ma),勝率及報酬期望值by預存程序", sql: ` EXEC dbo.sp_Compare_MA5_Entry_3Exits 
+    {
+        cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 10 20ma),勝率及報酬期望值by預存程序", sql: ` EXEC dbo.sp_Compare_MA5_Entry_3Exits 
     @StartDate = 20250401,    --起日 止日 最少樣本數
     @EndDate = 20260817, 
     @MinTrades = 5;
 
     /*執行預存程式*/` },
 
-            {
-                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股！+financesum1新公佈季", sql: `/*資料庫:stockchangedate*/ TOP 100
+    {
+        cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股！+financesum1新公佈季", sql: `/*資料庫:stockchangedate*/ TOP 100
         M.代號,
         M.名稱,
         M.盤中現價 AS [當前股價],
@@ -1884,10 +1348,10 @@ ORDER BY
 
         /*financesum1最新公佈季但可能不齊全  financesum:齊全但不包含新公告
         這組標的半年報與 7 月營收爆發，法人預估目標價給極高，但股價最近被大盤拉回錯殺，屬於「下檔有限、上檔空間巨大」的極致風報酬比標的*/`
-            },
+    },
 
-            {
-                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股+60M 小時起漲+全維度金叉共振+financesum1新公佈季", sql: `/*資料庫:stockchangedate*/ TOP 100
+    {
+        cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股+60M 小時起漲+全維度金叉共振+financesum1新公佈季", sql: `/*資料庫:stockchangedate*/ TOP 100
         M.代號,
         M.名稱,
         M.盤中現價 AS [當前股價],
@@ -2028,8 +1492,8 @@ ORDER BY
 
 
 
-            {
-                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股！+financesum齊全", sql: `/*資料庫:stockchangedate*/ TOP 100
+    {
+        cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股！+financesum齊全", sql: `/*資料庫:stockchangedate*/ TOP 100
         M.代號,
         M.名稱,
         M.盤中現價 AS [當前股價],
@@ -2135,10 +1599,10 @@ ORDER BY
 
         /*financesum1最新公佈季但可能不齊全  financesum:齊全但不包含新公告
         這組標的半年報與 7 月營收爆發，法人預估目標價給極高，但股價最近被大盤拉回錯殺，屬於「下檔有限、上檔空間巨大」的極致風報酬比標的*/`
-            },
+    },
 
-            {
-                cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股+60M 小時起漲+全維度金叉共振+financesum齊全", sql: `/*資料庫:stockchangedate*/ TOP 100
+    {
+        cat: "半年報價值黑馬", title: "財報極優但股價被壓在低檔的真寶藏股+60M 小時起漲+全維度金叉共振+financesum齊全", sql: `/*資料庫:stockchangedate*/ TOP 100
         M.代號,
         M.名稱,
         M.盤中現價 AS [當前股價],
@@ -2281,8 +1745,8 @@ ORDER BY
 
 
 
-            {
-                cat: "回測勝率報酬在自股個股", title: "每檔個股並列前 20 筆最優策略查詢", sql: `/*資料庫:stockchangedate*/ distinct I.代號, I.股票, I.盤中成交價, I.預估今日總分, I.實戰總分變化,
+    {
+        cat: "回測勝率報酬在自股個股", title: "每檔個股並列前 20 筆最優策略查詢", sql: `/*資料庫:stockchangedate*/ distinct I.代號, I.股票, I.盤中成交價, I.預估今日總分, I.實戰總分變化,
         S_Profit.推薦順位 AS [推薦順位(1~5)], -- 💡 新增：顯示策略推薦順位 [WeeklyMA60Snapshot, Database Architecture]
         S_Profit.買入分數門檻 AS 最大報酬_買入分數,
         S_Profit.持股天數 AS 最大報酬_最優持股天數,
@@ -2310,8 +1774,8 @@ SELECT [代號] FROM [dbo].[incomechar7] 部份
 SELECT [代號] FROM [dbo].[incomechar22] 預備突破雷達 (量能先行+低分伏兵)
 */` },
 
-            {
-                cat: "因子顯著性檢驗與訊號降維-找出勝率高的關鍵因子", title: "全市場因子效能總覽", sql: ` EXEC dbo.sp_AnalyzeFactorSignificance
+    {
+        cat: "因子顯著性檢驗與訊號降維-找出勝率高的關鍵因子", title: "全市場因子效能總覽", sql: ` EXEC dbo.sp_AnalyzeFactorSignificance
         @TargetFactor = '五日成交價交叉成功',  --obv: 五日交叉成功 五日成交價交叉成功 五日總量交叉成功 五日投信交叉成功 五日外資交叉成功 五日三大法人交叉成功...
         @ForwardDays = 5,    --「價格五日均線交叉」在未來 5 個交易日後的預測力
         @StartDate = 20250401,
@@ -2319,8 +1783,8 @@ SELECT [代號] FROM [dbo].[incomechar22] 預備突破雷達 (量能先行+低�
         @MinSamples = 15; ` },
 
 
-            {
-                cat: "因子顯著性檢驗與訊號降維-找出勝率高的關鍵因子", title: "單股因子顯著性排行榜", sql: ` EXEC dbo.sp_AnalyzeFactorSignificance1
+    {
+        cat: "因子顯著性檢驗與訊號降維-找出勝率高的關鍵因子", title: "單股因子顯著性排行榜", sql: ` EXEC dbo.sp_AnalyzeFactorSignificance1
 @TargetFactor = '五日成交價交叉成功',  --obv: 五日交叉成功 五日成交價交叉成功 五日總量交叉成功 五日投信交叉成功 五日外資交叉成功 五日三大法人交叉成功...
 @ForwardDays = 5,    --「價格五日均線交叉」在未來 5 個交易日後的預測力
 @StartDate = 20250401,
@@ -2328,8 +1792,8 @@ SELECT [代號] FROM [dbo].[incomechar22] 預備突破雷達 (量能先行+低�
 @MinSamples = 15; ` },
 
 
-            {
-                cat: "價格突破（技術）+ 法人建倉（籌碼）+ OBV發動（量能）", title: "價格金叉 + OBV金叉 + 法人金叉", sql: `EXEC dbo.sp_GetThreeDimensionalResonanceStocks
+    {
+        cat: "價格突破（技術）+ 法人建倉（籌碼）+ OBV發動（量能）", title: "價格金叉 + OBV金叉 + 法人金叉", sql: `EXEC dbo.sp_GetThreeDimensionalResonanceStocks
         @IsLive = 0,             -- 盤後歷史模式 (盤中可改為 1)
         @MinResonanceCount = 3;  -- 必須三個金叉全部滿足 (價格=1 且 OBV=1 且 法人=1)
         --股權: 特大戶變動 > 0 THEN 15 ELSE - 10 END) +散戶變動 < 0 THEN 15 ELSE - 10 END) +中實戶變動 > 5 THEN 10 ELSE 0 END)) AS 籌碼健康分
@@ -2338,8 +1802,8 @@ SELECT [代號] FROM [dbo].[incomechar22] 預備突破雷達 (量能先行+低�
         --@IsLive = 0（盤後歷史）：直接讀取 allcross
         ` },
 
-            {
-                cat: "五合一終極實戰雷達", title: "量、價、籌、分、60M 五合一終極實戰雷達", sql: `/*資料庫:stockchangedate*/A.代號,
+    {
+        cat: "五合一終極實戰雷達", title: "量、價、籌、分、60M 五合一終極實戰雷達", sql: `/*資料庫:stockchangedate*/A.代號,
         A.名稱,
         A.日期 AS [數據日期],
         A.成交價 AS [當前股價],
@@ -2410,8 +1874,8 @@ ORDER BY
        3. 今日成交量 > 1000張*/            `},
 
 
-            {
-                cat: "五合一終極實戰雷達", title: "量、價、籌、分、60M 五合一終極實戰雷達加入預估總分", sql: ` /*資料庫:stockchangedate*/
+    {
+        cat: "五合一終極實戰雷達", title: "量、價、籌、分、60M 五合一終極實戰雷達加入預估總分", sql: ` /*資料庫:stockchangedate*/
         A.代號,
         A.名稱,
         A.日期 AS [數據日期],
@@ -2488,8 +1952,8 @@ ORDER BY
        3. 今日成交量 > 1000張*/`},
 
 
-            {
-                cat: "七維共振儀表板", title: "七維共振 ✕ 股權大戶吃貨加權", sql: ` /*資料庫:stockchangedate*/ T.名稱,
+    {
+        cat: "七維共振儀表板", title: "七維共振 ✕ 股權大戶吃貨加權", sql: ` /*資料庫:stockchangedate*/ T.名稱,
                 T.代號,
                 T.盤中成交價,
                 T.盤中漲幅,
@@ -2614,8 +2078,8 @@ LEFT JOIN stockchangedate.dbo.ScoreCrossHistory SCH ON RTRIM(T.代號) = RTRIM(S
 WHERE T.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
 ORDER BY T.盤中總量 DESC;` },
 
-            {
-                cat: "實戰總分系統", title: "實戰分數均線完美多頭共振", sql: `/*資料庫:stockchangedate*/TOP 100
+    {
+        cat: "實戰總分系統", title: "實戰分數均線完美多頭共振", sql: `/*資料庫:stockchangedate*/TOP 100
                 SCH.代號,
                 SCH.名稱,
                 SCH.日期 AS [資料日期],
@@ -2645,8 +2109,8 @@ WHERE SCH.日期 = (SELECT MAX(日期) FROM dbo.ScoreCrossHistory)
 ORDER BY SCH.實戰總分黃金交叉次數 DESC, B.總量 DESC;
 /*戰術四終極全市場版：【七維共振加權 ✕ 股權大戶吃貨 ✕ 500張量能過濾】*/` },
 
-            {
-                cat: "戰術分流", title: "全維度實戰戰情表 ＋ 實戰分數均線共振系統(金牌股性)", sql: `/*資料庫:stockchangedate*/T.名稱,
+    {
+        cat: "戰術分流", title: "全維度實戰戰情表 ＋ 實戰分數均線共振系統(金牌股性)", sql: `/*資料庫:stockchangedate*/T.名稱,
                 T.代號,
                 T.盤中成交價,
                 T.盤中漲幅,
@@ -2761,8 +2225,8 @@ ORDER BY T.盤中總量 DESC;
 與 [長線分數趨勢] [Database Architecture, Operational Manual]：
 */` },
 
-            {
-                cat: "戰術分流", title: "全維度實戰戰情表 ＋ 實戰分數均線共振系統(不限制)", sql: `/*資料庫:stockchangedate*/T.名稱,
+    {
+        cat: "戰術分流", title: "全維度實戰戰情表 ＋ 實戰分數均線共振系統(不限制)", sql: `/*資料庫:stockchangedate*/T.名稱,
                 T.代號,
                 T.盤中成交價,
                 T.盤中漲幅,
@@ -2880,8 +2344,8 @@ ORDER BY T.盤中總量 DESC;
 與 [長線分數趨勢] [Database Architecture, Operational Manual]：
 */` },
 
-            {
-                cat: "戰術分流", title: "全維度實戰戰術分流表", sql: `/*資料庫:stockchangedate*/ T.名稱,
+    {
+        cat: "戰術分流", title: "全維度實戰戰術分流表", sql: `/*資料庫:stockchangedate*/ T.名稱,
                 T.代號,
                 T.盤中成交價,
                 T.盤中漲幅,
@@ -2968,8 +2432,8 @@ ORDER BY T.盤中總量 DESC;
 /*三雄列入觀察
 戰術三終極版：【全維度實戰戰術分流表 (雙維度 DNA 併排 ＋ 60M即時指標 ＋ 全自動操盤戰術指引)】
 */` },
-            {
-                cat: "戰術分流", title: "全維度實戰戰術分流表+前三龍頭", sql: `/*資料庫:stockchangedate*/ T.名稱,
+    {
+        cat: "戰術分流", title: "全維度實戰戰術分流表+前三龍頭", sql: `/*資料庫:stockchangedate*/ T.名稱,
                 T.代號,
                 T.盤中成交價,
                 T.盤中漲幅,
@@ -3057,8 +2521,8 @@ ORDER BY T.盤中總量 DESC;
 戰術三終極版：【全維度實戰戰術分流表 (雙維度 DNA 併排 ＋ 60M即時指標 ＋ 全自動操盤戰術指引)】
 */` },
 
-            {
-                cat: "扣抵值及kd共振", title: "技術 ＋ 籌碼 ＋ 週線 MA60 快照 ＋ FactSet 機構估值", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "扣抵值及kd共振", title: "技術 ＋ 籌碼 ＋ 週線 MA60 快照 ＋ FactSet 機構估值", sql: `/*資料庫:stockchangedate*/
                 T.名稱,
                 T.代號,
                 T.盤中成交價,
@@ -3141,8 +2605,8 @@ CROSS APPLY (
 WHERE T.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
 ORDER BY T.盤中總量 DESC;` },
 
-            {
-                cat: "扣抵值及kd共振", title: "日/週 全維度扣抵窗口雷達 (V4.0)", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "扣抵值及kd共振", title: "日/週 全維度扣抵窗口雷達 (V4.0)", sql: `/*資料庫:stockchangedate*/
 T.名稱,
                 T.代號,
                 T.成交價 AS 盤中成交價,
@@ -3222,8 +2686,8 @@ ORDER BY T.盤中現價 / NULLIF(W.本週中心, 0) DESC;
 週抗壓比:A. 長線趨勢的「助漲力道」均線的斜率是由「現價」與「扣抵價」的差距決定的。B. 徹底「脫離引力」C. 「無人套牢」
              */` },
 
-            {
-                cat: "扣抵值及kd共振", title: "202606營收創新高公司，累計122家(至7/8止)", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "扣抵值及kd共振", title: "202606營收創新高公司，累計122家(至7/8止)", sql: `/*資料庫:stockchangedate*/
 T.名稱, T.代號, T.成交價 as 盤中成交價,T.漲幅 as 盤中漲幅,T.總量 as 盤中總量,T.盤中現價 as 昨成交價,T.專家實戰總分,
 -- --- 日線 MA5 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
              -- --- 日線 MA5 扣抵窗口 (前1 > 現 > 後1 > 後2) ---
@@ -3301,8 +2765,8 @@ ORDER BY T.盤中現價 / NULLIF(T.W_N, 0) DESC
 週抗壓比:A. 長線趨勢的「助漲力道」均線的斜率是由「現價」與「扣抵價」的差距決定的。B. 徹底「脫離引力」C. 「無人套牢」
              */` },
 
-            {
-                cat: "剛突破起漲", title: "全市場偵察營", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "剛突破起漲", title: "全市場偵察營", sql: `/*資料庫:stockchangedate*/
 P1.名稱,
 P1.代號,
 M.專家實戰總分 AS [昨日分],
@@ -3327,8 +2791,8 @@ ORDER BY [量加速度] DESC
 --日線分數還沒過熱（15~27分），但量價已經噴發」** 的黑馬股。
 --不同特性的「狙擊目標」，這完全體現了我們第二套方法的**「領先預判」**價值
 ` },
-            {
-                cat: "剛突破起漲", title: "OBV純日線級別的高頻監控", sql: `W.名稱, W.代號,B.成交價 as 盤中成交價,B.漲幅,B.總量,round(A.obv淨額,0) as obv淨額,round(A.obv_ma5,0) as [obv五日均線],round(A.obv_ma34,0) as [obv34日均線],
+    {
+        cat: "剛突破起漲", title: "OBV純日線級別的高頻監控", sql: `W.名稱, W.代號,B.成交價 as 盤中成交價,B.漲幅,B.總量,round(A.obv淨額,0) as obv淨額,round(A.obv_ma5,0) as [obv五日均線],round(A.obv_ma34,0) as [obv34日均線],
                 M.專家實戰總分 AS [日線分],
                 A.obv黃金交叉次數 AS [OBV金叉],
                 -- 用日線 KD 與 MACD 判定即時氣象
@@ -3356,8 +2820,8 @@ WHERE W.來源標籤 = '自選股23'
 ORDER BY M.專家實戰總分 DESC, A.obv黃金交叉次數 DESC
 ` },
 
-            {
-                cat: "準備抓 V 轉", title: "最近 6 日強勢股慣性統計", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "準備抓 V 轉", title: "最近 6 日強勢股慣性統計", sql: `/*資料庫:stockchangedate*/
 [名稱],
 [代號],
 COUNT(*) AS [出現次數],
@@ -3384,8 +2848,8 @@ ORDER BY [出現次數] DESC, [最後出現日] DESC
 目的：找出誰是「大跌後第一個站穩」的標的，準備抓 V 轉。
 */` },
 
-            {
-                cat: "股權分散表", title: "每週五全市場籌碼大體檢", sql: `TOP (100) WeeklyChipAudit.代號, WeeklyChipAudit.名稱, View_basicinfo.成交價 AS 新盤中價,
+    {
+        cat: "股權分散表", title: "每週五全市場籌碼大體檢", sql: `TOP (100) WeeklyChipAudit.代號, WeeklyChipAudit.名稱, View_basicinfo.成交價 AS 新盤中價,
                                         View_basicinfo.總量 AS 新盤中總量, View_basicinfo.漲跌, MasterStockAnalysis.盤中現價 AS 更新日價格,
                                         MasterStockAnalysis.盤中總量 AS 更新日總量, MasterStockAnalysis_1.專家實戰總分 AS 新總分,
                                         MasterStockAnalysis_1.日期, MasterStockAnalysis.專家實戰總分, WeeklyChipAudit.籌碼健康分,
@@ -3412,11 +2876,11 @@ ELSE N'☁️ 橫盤整理'
 (CASE WHEN P.最高勝率 >= 80 THEN 1 ELSE 0 END) AS 是否為金牌股
 */` },
 
-            { cat: "股權分散表", title: "全市場任兩期籌碼對比工具(by週 預存程序)", sql: `EXEC [sp_CompareChipPeriods] 20260529, 20260703` },
+    { cat: "股權分散表", title: "全市場任兩期籌碼對比工具(by週 預存程序)", sql: `EXEC [sp_CompareChipPeriods] 20260529, 20260703` },
 
 
-            {
-                cat: "體質、動能、基因、與凱利建議", title: "【AI 坦克全功能控制台】", sql: ` /*資料庫:stockchangedate*/ F.名稱, F.代號,
+    {
+        cat: "體質、動能、基因、與凱利建議", title: "【AI 坦克全功能控制台】", sql: ` /*資料庫:stockchangedate*/ F.名稱, F.代號,
                 M.專家實戰總分 AS [昨日分],
                 S.OSC AS [60M動能],
                 F.財務信評,
@@ -3442,8 +2906,8 @@ ORDER BY F.財務信評 ASC, S.OSC DESC
 --選特定自選股  IN (SELECT 代號 FROM  incomechar26)
 ` },
 
-            {
-                cat: "戰略綜合評價", title: "全維度戰情看板", sql: ` /*資料庫:stockchangedate*/  sf.代號, sf.名稱, b.成交價, b.漲幅, b.總量, m.專家實戰總分, m.實戰標籤, sf.財務信評, sf.本益比, sf.股價淨值比,
+    {
+        cat: "戰略綜合評價", title: "全維度戰情看板", sql: ` /*資料庫:stockchangedate*/  sf.代號, sf.名稱, b.成交價, b.漲幅, b.總量, m.專家實戰總分, m.實戰標籤, sf.財務信評, sf.本益比, sf.股價淨值比,
                                         sf.[總市值(億)], sf.[現金股利殖利率(%)], m.具體概念, sf.細產業名稱, sf.經營項目, sf.營業焦點, sf.產業地位
 FROM              StockFundamental AS sf INNER JOIN
                                         View_basicinfo AS b ON sf.代號 = b.代號 INNER JOIN
@@ -3459,8 +2923,8 @@ ORDER BY   m.專家實戰總分 DESC
 ` },
 
 
-            {
-                cat: "主力監控", title: "🚩 AI 精銳雷達 (自選 22-29 綜合看板)", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "主力監控", title: "🚩 AI 精銳雷達 (自選 22-29 綜合看板)", sql: `/*資料庫:stockchangedate*/
 * FROM View_AI_Elite_Radar
 ORDER BY [分組] ASC, [日線分] DESC
 
@@ -3471,8 +2935,8 @@ WHEN S.OSC < 0 AND S.K > S.D THEN N'🟡 ☁️ 止跌'
 ELSE N'🔴 ⛈️ 修正'
 */` },
 
-            {
-                cat: "主力監控", title: "🚩 AI 精銳雷達 (自選 22-29 綜合看板) 最新行情", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "主力監控", title: "🚩 AI 精銳雷達 (自選 22-29 綜合看板) 最新行情", sql: `/*資料庫:stockchangedate*/
 V.[來源標籤],
 V.名稱,
 V.代號,
@@ -3513,8 +2977,8 @@ ORDER BY [來源標籤],[昨日分] DESC
 --先搬運basicinfo後才有最新數據,IN ('自選股24',~,'自選股29')可調整所需要的自選股
 ` },
 
-            {
-                cat: "盤中60M", title: "「🛰️ 三雄全時空導航儀 (60M技術+法人籌碼)」", sql: `/*資料庫:stockchangedate*/S.名稱,
+    {
+        cat: "盤中60M", title: "「🛰️ 三雄全時空導航儀 (60M技術+法人籌碼)」", sql: `/*資料庫:stockchangedate*/S.名稱,
 S.代號,
 S.日期 AS [今日日期],
 S.時間 AS [最後小時],
@@ -3557,8 +3021,8 @@ ORDER BY S.OSC DESC
 */` },
 
 
-            {
-                cat: "盤中60M", title: "「🎭 龍頭陷阱偵測儀 (避開法人誘多盤)」", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "盤中60M", title: "「🎭 龍頭陷阱偵測儀 (避開法人誘多盤)」", sql: `/*資料庫:stockchangedate*/
 S.名稱,
 S.代號,
 S.時間 AS [最後小時],
@@ -3603,8 +3067,8 @@ ORDER BY [外資10日累計張數] ASC
 */` },
 
 
-            {
-                cat: "盤中60M", title: "三雄盤中紅綠燈預警系統", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "盤中60M", title: "🚩三雄盤中紅綠燈預警系統", sql: `/*資料庫:stockchangedate*/
                 S.名稱,
                 S.代號,
                 -- 1. 視覺燈號 (DataTables 顯示用)
@@ -3639,8 +3103,8 @@ INNER JOIN [stockchangedate].[dbo].[threemasternumber] N
 WHERE S.rn = 1 AND S.代號 IN ('2330', '2454', '2317')
 ORDER BY [目前燈號] ASC -- 讓紅燈跟黃燈排在最前面` },
 
-            {
-                cat: "盤中60M", title: "🚩龍頭盤中紅綠燈預警系統", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "盤中60M", title: "🚩龍頭盤中紅綠燈預警系統", sql: `/*資料庫:stockchangedate*/
                 /*資料庫:stockchangedate*/
                 S.名稱,
                 S.代號,
@@ -3680,8 +3144,8 @@ ORDER BY S.代號 ASC
 --60K要有資料
 ` },
 
-            {
-                cat: "盤中60M", title: "【60M 級別】KD 低檔黃金交叉", sql: `/*資料庫:stockchange*/L.代號,
+    {
+        cat: "盤中60M", title: "【60M 級別】KD 低檔黃金交叉", sql: `/*資料庫:stockchange*/L.代號,
                 L.名稱,
                 L.最新日期 AS [最新60M日期],
                 L.最新時間 AS [最新60M時間],
@@ -3732,8 +3196,8 @@ WHERE
                 AND B.總量 >= 500
 ORDER BY B.總量 DESC;` },
 
-            {
-                cat: "盤中60M", title: "強勢股回檔第二波起漲", sql: `/*資料庫:stockchange*/C.代號,
+    {
+        cat: "盤中60M", title: "強勢股回檔第二波起漲", sql: `/*資料庫:stockchange*/C.代號,
                 C.名稱,
                 C.最新日期 AS [日線日期],
                 C.收盤價,
@@ -3781,8 +3245,8 @@ ORDER BY B.總量 DESC;` },
 
 
 
-            {
-                cat: "凱利金流導航儀", title: "「💰 凱利金流導航儀：最佳投入比例與持股期」", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "凱利金流導航儀", title: "「💰 凱利金流導航儀：最佳投入比例與持股期」", sql: `/*資料庫:stockchangedate*/
 M.名稱,
 M.代號,
 M.專家實戰總分 AS [今日得分],
@@ -3816,8 +3280,8 @@ ORDER BY [半凱利建議投組%] DESC
 以下我將凱利公式與您的 StockPersonality（股性基因）與 MasterStockAnalysis（專家分數）結合，為您開發出一套 「凱利金流導航系統」。*/` },
 
 
-            {
-                cat: "盤中操盤", title: "盤中+obv及量能突(跌)破+共振量能總分全部", sql: `/*資料庫:stockchange*/ * FROM (
+    {
+        cat: "盤中操盤", title: "盤中+obv及量能突(跌)破+共振量能總分全部", sql: `/*資料庫:stockchange*/ * FROM (
                 SELECT
                     T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, T2.昨總分,
                     T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
@@ -3907,9 +3371,9 @@ ORDER BY 昨總分 desc,
                 Final.量倍率 DESC;
 
 --盤中全部股票按總分排序`
-            },
-            {
-                cat: "盤中操盤", title: "昨天基因好，今天帶量剛突破，且還沒漲到噴出（乖離不過大）", sql: `/*資料庫:stockchange*/ * FROM (
+    },
+    {
+        cat: "盤中操盤", title: "昨天基因好，今天帶量剛突破，且還沒漲到噴出（乖離不過大）", sql: `/*資料庫:stockchange*/ * FROM (
                 SELECT
                     T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, T2.昨總分,
                     T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
@@ -4004,9 +3468,9 @@ ORDER BY
 
 --1. 嚴選強勢進攻股 (最推薦：高共振 + 剛突破 + 量能爆發)
 --這組條件找的是：昨天基因好，今天帶量剛突破，且還沒漲到噴出（乖離不過大）。`
-            },
-            {
-                cat: "盤中操盤", title: "原本可能在盤整，但今天突然「多維度共振」跳升，且大戶明顯進場。", sql: `/*資料庫:stockchange*/ * FROM (
+    },
+    {
+        cat: "盤中操盤", title: "原本可能在盤整，但今天突然「多維度共振」跳升，且大戶明顯進場。", sql: `/*資料庫:stockchange*/ * FROM (
                 SELECT
                     T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念, T2.昨總分,
                     T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
@@ -4101,10 +3565,10 @@ ORDER BY
 
 --2. 潛力黑馬股 (共振跳升 + 基因厚實)
 --這組條件找的是：原本可能在盤整，但今天突然「多維度共振」跳升，且大戶明顯進場。`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "趨勢已經形成，目前穩穩站在五日線上，且 OBV 持續強勢。", sql: `/*資料庫:stockchange*/ * FROM (
+    {
+        cat: "盤中操盤", title: "趨勢已經形成，目前穩穩站在五日線上，且 OBV 持續強勢。", sql: `/*資料庫:stockchange*/ * FROM (
                 SELECT
                     T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念,
                     T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
@@ -4194,10 +3658,10 @@ ORDER BY
 
 --	3. 穩健多頭股 (適合回檔後續強)
 --這組條件找的是：趨勢已經形成，目前穩穩站在五日線上，且 OBV 持續強勢。`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "一次看到所有好股票（不分強度），可以使用這個綜合條件", sql: `/*資料庫:stockchange*/ * FROM (
+    {
+        cat: "盤中操盤", title: "一次看到所有好股票（不分強度），可以使用這個綜合條件", sql: `/*資料庫:stockchange*/ * FROM (
                 SELECT
                     T2.名稱, T2.代號, T2.盤中價, T2.盤中漲幅, T2.具體概念,
                     T2.昨共振, T2.預估收盤共振, T2.盤中增減項,
@@ -4287,10 +3751,10 @@ ORDER BY
 
 --	💡 專家小提醒：
 --如果您想在 Excel 裡一次看到所有好股票（不分強度），可以使用這個綜合條件：`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "⚡ 盤中預警：權值三雄即時氣象站 (避崩專用)", sql: `/*資料庫:stockchange*/I.名稱 + '(' + I.代號 + ')' AS 股票,
+    {
+        cat: "盤中操盤", title: "⚡ 盤中預警：權值三雄即時氣象站 (避崩專用)", sql: `/*資料庫:stockchange*/I.名稱 + '(' + I.代號 + ')' AS 股票,
 I.成交價 AS 盤中價,
 I.漲幅 AS 盤中漲幅,
 (CASE
@@ -4324,11 +3788,11 @@ WHERE I.自動編號 IN (SELECT MAX(自動編號) FROM dbo.basicinfo WHERE 代�
 --這最精彩！如果您看到台積電是 ⛈️ 暴雨，但聯發科跟鴻海是 ☀️ 晴天。
 --專家觀點：這就是「拉小護大」或「資金轉向」。外資在砍權王，但內資大戶死守另外兩雄。這時候大盤指數會跌，但個股依然有戲。
 --「全體淪陷」⛈️ ⛈️ ⛈️：`
-            },
+    },
 
 
-            {
-                cat: "盤中操盤", title: "「🛰️ 全市場導航儀：上市櫃強度 + 三雄 21 日戰情彙總」", sql: `/*資料庫:stockchangedate*/M.日期,
+    {
+        cat: "盤中操盤", title: "「🛰️ 全市場導航儀：上市櫃強度 + 三雄 21 日戰情彙總」", sql: `/*資料庫:stockchangedate*/M.日期,
 -- 【全市場背景：上市 TSE】
 MAX(CASE WHEN T.股票代號 = 'TSE' THEN
                 (CASE WHEN T.均價黃金交叉次數 >= 6 THEN N'☀️' WHEN T.均價黃金交叉次數 BETWEEN 3 AND 5 THEN N'⛅' ELSE N'⛈️' END)
@@ -4377,12 +3841,12 @@ ORDER BY M.日期 DESC
 代表「今天的收盤價」成功站上（或維持在）其最敏感的短線均線之上。這意味著市場當下的情緒是偏多的，買盤願意在極短線內追價。
 (-1)：多頭警報響起
 代表「今天的收盤價」跌破了其最敏感的短線均線。這意味著市場當下的情緒已經轉弱，或者大戶開始在極短線內撤退。*/`
-            },
+    },
 
 
 
-            {
-                cat: "盤中操盤", title: "「🚩 全產業龍頭導航儀：地位、分數與即時風向」", sql: `/*資料庫:stockchange*/G.name1 AS [產業地位],
+    {
+        cat: "盤中操盤", title: "「🚩 全產業龍頭導航儀：地位、分數與即時風向」", sql: `/*資料庫:stockchange*/G.name1 AS [產業地位],
 G.mail1 AS [股票],G.提取代號 as 代號,
 I.成交價 AS [盤中價],
 I.漲幅 AS [漲幅%],
@@ -4419,11 +3883,11 @@ ORDER BY G.name1 ASC
 診斷：該產業目前處於 「系統性空頭」。不論該族群有什麼利多，只要三位大哥都跌破五日線，絕對不能進場攤平。
 4. 🧬 概念標籤的交叉驗證
 觀察 具體概念。如果 「人工智慧產業龍頭 (世芯-KY)」 的標籤包含 CPO，而 「光通訊族群」 今天也集體表態，那世芯的帶動效果會倍增。*/`
-            },
+    },
 
 
-            {
-                cat: "盤中操盤", title: "「🚩 by自選股 導航儀：地位、分數與即時風向」", sql: `  /*資料庫:stockchange*/
+    {
+        cat: "盤中操盤", title: "「🚩 by自選股 導航儀：地位、分數與即時風向」", sql: `  /*資料庫:stockchange*/
         I_List.名稱 AS [股票],                       -- 💡 股票名稱直接由自選股清單提供，100% 防範 NULL 斷層
         I_List.代號 AS [代號],
         I.成交價 AS [盤中價],
@@ -4458,11 +3922,11 @@ ORDER BY [專家分] DESC, I_List.代號 ASC; -- 依專家分數由高到低排�
 
 /*💡顯示自選股股票內容
 */`
-            },
+    },
 
 
-            {
-                cat: "盤中操盤", title: "「🚩 自選股+基金淨值 導航儀：地位、分數與即時風向」", sql: `/*資料庫:stockchange*/
+    {
+        cat: "盤中操盤", title: "「🚩 自選股+基金淨值 導航儀：地位、分數與即時風向」", sql: `/*資料庫:stockchange*/
         ISNULL(G.name1, N'自選股16') AS [產業地位],
         I_List.名稱 AS [股票],
         I_List.代號 AS [代號],
@@ -4516,13 +3980,13 @@ ORDER BY I_List.持股比率 DESC;
 --DECLARE @LatestFundNAV FLOAT = 254.73;  254.73*前十大預估變動%=增加的淨值
 --https://www.fsitc.com.tw/FundDetail.aspx?ID=D14#TabLinkdivEditTab3
 */`
-            },
+    },
 
 
 
 
-            {
-                cat: "盤中操盤", title: "🏆 三雄戰情儀表板：21日對照 (含名稱、億兆單位、外資共振)", sql: `M.日期,
+    {
+        cat: "盤中操盤", title: "🏆 三雄戰情儀表板：21日對照 (含名稱、億兆單位、外資共振)", sql: `M.日期,
 -- 【台積電 2330】
 MAX(CASE WHEN M.代號 = '2330' THEN (CASE WHEN M.專家實戰總分 > 30 THEN N'☀️' WHEN M.專家實戰總分 BETWEEN 10 AND 30 THEN N'⛅' WHEN M.專家實戰總分 BETWEEN 0 AND 10 THEN N'☁️' ELSE N'⛈️' END) + CAST(CAST(M.專家實戰總分 AS DECIMAL(10,1)) AS VARCHAR) END) AS [台積電2330_氣象分],
 MAX(CASE WHEN M.代號 = '2330' THEN CAST(M.盤中漲幅 AS VARCHAR) + '%' END) AS [台積電2330_漲幅],
@@ -4556,7 +4020,7 @@ ORDER BY M.日期 DESC
 --左邊數字：外資黃金交叉次數（看外資臉色）。
 --右邊數字：四維總共振強度（OBV+價+外資+投信）。
 --專家密技：如果「外資/總共振」出現 6 / 15 這種高比值，代表外資正在瘋狂回補。 `
-            },
+    },
 
 
 
@@ -4564,18 +4028,18 @@ ORDER BY M.日期 DESC
 
 
 
-            {
-                cat: "盤中操盤", title: "盤中起漲黑馬獵人", sql: `/*資料庫:stockchangedate*/名稱, 代號, 盤中價, 盤中漲幅, 盤中OBV, 新OBV五日均線, 昨共振, 預估收盤共振, 昨總分, 盤中狀態
+    {
+        cat: "盤中操盤", title: "盤中起漲黑馬獵人", sql: `/*資料庫:stockchangedate*/名稱, 代號, 盤中價, 盤中漲幅, 盤中OBV, 新OBV五日均線, 昨共振, 預估收盤共振, 昨總分, 盤中狀態
 FROM              View_盤中起漲黑馬獵人
 --預設條件不可更改,盤後更後不會有資料
 --可以抓取共振2可能變成共振3或obv站上其五日均線
 --前端採集：按鍵精靈 (QuickMacro)，每 5 分鐘執行一次。
 --中台搬運：Python (Watchdog + pyodbc)，監控 C:\StockExport，自動清洗理*寶欄位 SQL。
 --核心運算：View_盤中起漲黑馬獵人，實現「歷史 vs 盤中」跨庫比對，計算「新 OBV 五日均線」與「預估共振進化」。`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "🎯 盤中主流族群偵測 (自動對齊版)", sql: `/*資料庫:stockchange*/M.產業分類,
+    {
+        cat: "盤中操盤", title: "🎯 盤中主流族群偵測 (自動對齊版)", sql: `/*資料庫:stockchange*/M.產業分類,
                    COUNT(DISTINCT I.代號) as [起漲股數],
                    ROUND(AVG(CAST(I.漲幅 AS FLOAT)), 2) as [平均漲幅]
 FROM dbo.basicinfo I
@@ -4586,10 +4050,10 @@ WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysi
 GROUP BY M.產業分類
 HAVING COUNT(DISTINCT I.代號) >= 2
 ORDER BY [起漲股數] DESC`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "🔗 族群聯動：尋找同產業補漲標的", sql: `/*資料庫:stockchange*/
+    {
+        cat: "盤中操盤", title: "🔗 族群聯動：尋找同產業補漲標的", sql: `/*資料庫:stockchange*/
              M.名稱, M.代號, M.專家實戰總分, I.漲幅 as 盤中漲幅, M.具體概念, M.產業分類
 FROM stockchangedate.dbo.MasterStockAnalysis M
 INNER JOIN dbo.basicinfo I ON M.代號 = I.代號
@@ -4608,10 +4072,10 @@ WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysi
               )
 ORDER BY M.專家實戰總分 DESC
 /*-- 解讀：當領先股拉開空間，這些「高分低位」的同業極大機率會被資金帶動。*/`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "⚠️ 避險警報：盤中跌破五日線", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅,
+    {
+        cat: "盤中操盤", title: "⚠️ 避險警報：盤中跌破五日線", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅,
                    A.price_ma5 as 五日線, M.專家實戰總分
 FROM dbo.basicinfo I
 INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
@@ -4621,10 +4085,10 @@ WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysi
               AND I.漲幅 < 0
               AND M.專家實戰總分 > 30
 ORDER BY I.漲幅 ASC`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "🛑 獲利了結：高檔回落警示", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅,
+    {
+        cat: "盤中操盤", title: "🛑 獲利了結：高檔回落警示", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅,
                    M.盤中現價 as 昨收價, M.專家實戰總分
 FROM dbo.basicinfo I
 INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
@@ -4633,10 +4097,10 @@ WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysi
               AND M.專家實戰總分 > 40 -- 原本是高分股
               AND I.成交價 < (M.盤中現價 * 1.01) -- 幾乎回到平盤
 ORDER BY M.專家實戰總分 DESC`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "⚡ 急拉獵人：盤中爆量攻擊偵測", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.漲幅,
+    {
+        cat: "盤中操盤", title: "⚡ 急拉獵人：盤中爆量攻擊偵測", sql: `/*資料庫:stockchange*/I.名稱, I.代號, I.漲幅,
                    I.總量 as 盤中量, M.盤中總量 as 昨全天量,
                    ROUND(CAST(I.總量 AS FLOAT) / NULLIF(M.盤中總量, 0), 2) as [今日量能倍數],
                    M.具體概念
@@ -4646,10 +4110,10 @@ WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysi
               AND I.總量 > M.盤中總量
               AND I.漲幅 > 2.0
 ORDER BY [今日量能倍數] DESC`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "🎯 盤中主流：族群強勢表態掃描", sql: `/*資料庫:stockchange*/
+    {
+        cat: "盤中操盤", title: "🎯 盤中主流：族群強勢表態掃描", sql: `/*資料庫:stockchange*/
 M.產業分類, COUNT(DISTINCT I.代號) as [起漲股數], ROUND(AVG(CAST(I.漲幅 AS FLOAT)), 2) as [平均漲幅]
 FROM dbo.basicinfo I
 INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
@@ -4662,10 +4126,10 @@ ORDER BY [起漲股數] DESC
 /*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
 --09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
 --11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "🔗 族群聯動：高分低位補漲獵人", sql: `/*資料庫:stockchange*/
+    {
+        cat: "盤中操盤", title: "🔗 族群聯動：高分低位補漲獵人", sql: `/*資料庫:stockchange*/
 I.名稱, I.代號, M.專家實戰總分, I.漲幅 as 今日漲幅, M.具體概念, M.產業分類
 FROM stockchangedate.dbo.MasterStockAnalysis M
 INNER JOIN dbo.basicinfo I ON RTRIM(M.代號) = RTRIM(I.代號)
@@ -4686,9 +4150,9 @@ ORDER BY M.專家實戰總分 DESC
 /*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
 --09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
 --11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
-            },
-            {
-                cat: "盤中操盤", title: "⚠️ 避險賣點：高分股盤中破線警示", sql: `/*資料庫:stockchange*/
+    },
+    {
+        cat: "盤中操盤", title: "⚠️ 避險賣點：高分股盤中破線警示", sql: `/*資料庫:stockchange*/
 I.名稱, I.代號, I.成交價 as 盤中價, I.漲幅, A.price_ma5 as 五日線, M.專家實戰總分
 FROM dbo.basicinfo I
 INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
@@ -4701,10 +4165,10 @@ ORDER BY I.漲幅 ASC
 /*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
 --09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
 --11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
-            },
+    },
 
-            {
-                cat: "盤中操盤", title: "🛑 風險預警：盤中重挫標的掃描", sql: `/*資料庫:stockchange*/
+    {
+        cat: "盤中操盤", title: "🛑 風險預警：盤中重挫標的掃描", sql: `/*資料庫:stockchange*/
 I.名稱, I.代號, I.漲幅, I.成交價, M.專家實戰總分, M.實戰標籤
 FROM dbo.basicinfo I
 INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號)
@@ -4715,12 +4179,12 @@ ORDER BY I.漲幅 ASC
 /*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。
 --09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。
 --11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`
-            },
+    },
 
 
 
-            {
-                cat: "產業類選股", title: "【核心選股】2026 頂級題材 + 強勢共振", sql: `TOP 10
+    {
+        cat: "產業類選股", title: "【核心選股】2026 頂級題材 + 強勢共振", sql: `TOP 10
                 名稱, 代號, 專家實戰總分, 盤中漲幅, 具體概念, 產業價值鏈資訊
 FROM MasterStockAnalysis
 WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
@@ -4730,8 +4194,8 @@ WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                    OR 具體概念 LIKE '%BBU%')
 ORDER BY 專家實戰總分 DESC` },
 
-            {
-                cat: "產業類選股", title: "【題材疊加王】多重概念 + 高勝率回測", sql: `TOP 100
+    {
+        cat: "產業類選股", title: "【題材疊加王】多重概念 + 高勝率回測", sql: `TOP 100
                 M.名稱, M.代號, M.專家實戰總分, M.具體概念,
                 (LEN(M.具體概念) - LEN(REPLACE(M.具體概念, '|', '')) + 1) as 題材數量
 FROM MasterStockAnalysis M
@@ -4741,8 +4205,8 @@ WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
 ORDER BY 專家實戰總分 DESC` },
 
 
-            {
-                cat: "產業類選股", title: "🔥 產業熱度溫度計", sql: `日期, 產業分類,
+    {
+        cat: "產業類選股", title: "🔥 產業熱度溫度計", sql: `日期, 產業分類,
                    COUNT(*) as [產業強勢股數量],
                    ROUND(AVG(平均專家總分), 2) as [產業平均分],
                    STRING_AGG(CAST(名稱 AS NVARCHAR(MAX)), ' | ') WITHIN GROUP (ORDER BY 平均專家總分 DESC) as [代表股名單]
@@ -4767,8 +4231,8 @@ ORDER BY 日期 DESC, [產業強勢股數量] DESC
 --觀察「代表股」的變化：
 --透過 STRING_AGG 列出的名單，您可以觀察領頭羊是誰。如果領頭羊從「台積電」換成「中小型 IC 股」，代表資金開始往二線擴散。` },
 
-            {
-                cat: "產業類選股", title: "洗盤結束：低位放量起漲點", sql: `TOP 100 * FROM (
+    {
+        cat: "產業類選股", title: "洗盤結束：低位放量起漲點", sql: `TOP 100 * FROM (
                 SELECT
                     代號, 名稱, 專家實戰總分, obv累積金叉次數, 具體概念, 產業價值鏈資訊, 盤中總量,
                     LAG(盤中總量) OVER (PARTITION BY 代號 ORDER BY 日期) as 前一日總量,
@@ -4780,9 +4244,9 @@ WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
               AND 盤中總量 > 前一日總量 AND 前一日總量 < 前二日總量
               AND 專家實戰總分 > 30
 ORDER BY 專家實戰總分 DESC`
-            },
-            {
-                cat: "產業類選股", title: "共振彙總最新日", sql: `ResonanceHits.日期, ResonanceHits.代號, ResonanceHits.名稱, COUNT(*) AS 符合條件數,
+    },
+    {
+        cat: "產業類選股", title: "共振彙總最新日", sql: `ResonanceHits.日期, ResonanceHits.代號, ResonanceHits.名稱, COUNT(*) AS 符合條件數,
                                         STRING_AGG(ResonanceHits.符合類型, ' | ') AS 符合清單, MAX(ResonanceHits.專家總分) AS 專家總分,
                                         MasterStockAnalysis.具體概念, MasterStockAnalysis.產業價值鏈資訊
 FROM              ResonanceHits INNER JOIN
@@ -4794,9 +4258,9 @@ WHERE          (ResonanceHits.日期 =
 GROUP BY   ResonanceHits.日期, ResonanceHits.代號, ResonanceHits.名稱, MasterStockAnalysis.具體概念,
                                         MasterStockAnalysis.產業價值鏈資訊
 ORDER BY   符合條件數 DESC, 專家總分 DESC`
-            },
-            {
-                cat: "產業類選股", title: "六維度共振+專家高分", sql: `TOP (100) M.名稱, M.代號, M.日期, M.專家實戰總分, M.實戰標籤, M.盤中漲幅, A.成交價黃金交叉次數 AS 價金叉,
+    },
+    {
+        cat: "產業類選股", title: "六維度共振+專家高分", sql: `TOP (100) M.名稱, M.代號, M.日期, M.專家實戰總分, M.實戰標籤, M.盤中漲幅, A.成交價黃金交叉次數 AS 價金叉,
                                         A.obv黃金交叉次數 AS OBV金叉, A.總量黃金交叉次數 AS 量金叉, A.外資黃金交叉次數 AS 外資金叉,
                                         A.投信黃金交叉次數 AS 投信金叉, A.三大法人黃金交叉次數 AS 法人金叉,
                                         CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
@@ -4813,9 +4277,9 @@ WHERE          (M.日期 =
                                          + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
                                          0 END >= 5)
 ORDER BY   M.專家實戰總分 DESC`
-            },
-            {
-                cat: "產業類選股", title: "獵鷹行動：內外資聯手鎖碼", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.盤中漲幅, A.外資黃金交叉次數 AS 外資, A.投信黃金交叉次數 AS 投信,
+    },
+    {
+        cat: "產業類選股", title: "獵鷹行動：內外資聯手鎖碼", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.盤中漲幅, A.外資黃金交叉次數 AS 外資, A.投信黃金交叉次數 AS 投信,
                                         M.具體概念, M.產業價值鏈資訊
 FROM              MasterStockAnalysis AS M INNER JOIN
                                         allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -4823,9 +4287,9 @@ WHERE          (M.日期 =
                                             (SELECT          MAX(日期) AS Expr1
                                               FROM               MasterStockAnalysis)) AND (A.外資黃金交叉次數 >= 3) AND (A.投信黃金交叉次數 >= 3)
 ORDER BY   A.外資黃金交叉次數 + A.投信黃金交叉次數 DESC`
-            },
-            {
-                cat: "產業類選股", title: "能量噴發：低位階全共振黑馬", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
+    },
+    {
+        cat: "產業類選股", title: "能量噴發：低位階全共振黑馬", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
                                         CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
                                          + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
                                          + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
@@ -4840,9 +4304,9 @@ WHERE          (M.日期 =
                                          + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
                                          0 END >= 5)
 ORDER BY   M.專家實戰總分 DESC`
-            },
-            {
-                cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
+    },
+    {
+        cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
                                         CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END
                                          + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END
                                          + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
@@ -4857,9 +4321,9 @@ WHERE          (M.日期 =
                                          + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE
                                          0 END >= 5)
 ORDER BY   M.專家實戰總分 DESC`
-            },
-            {
-                cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測預設+select版", sql: `TOP 100 * FROM (
+    },
+    {
+        cat: "產業類選股", title: "勝率診斷：歷史共振噴發點回測預設+select版", sql: `TOP 100 * FROM (
                     SELECT *, LAG(共振數) OVER (PARTITION BY 代號 ORDER BY 日期) as 昨日共振
                     FROM (
                         SELECT M.代號, M.名稱, M.日期, M.專家實戰總分, M.盤中漲幅, M.具體概念, M.產業價值鏈資訊,
@@ -4877,9 +4341,9 @@ WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                   AND 共振數 >= 5
                   AND (昨日共振 <= 2 OR 昨日共振 IS NULL)
 ORDER BY 專家實戰總分 DESC`
-            },
-            {
-                cat: "產業類選股", title: "王者再臨：高分籌碼龍頭股 (穩健版)", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.盤中漲幅, A.obv黃金交叉次數 AS OBV能量,
+    },
+    {
+        cat: "產業類選股", title: "王者再臨：高分籌碼龍頭股 (穩健版)", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.盤中漲幅, A.obv黃金交叉次數 AS OBV能量,
                                         A.三大法人黃金交叉次數 AS 法人力量, M.具體概念, M.產業價值鏈資訊
 FROM              MasterStockAnalysis AS M INNER JOIN
                                         allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -4888,9 +4352,9 @@ WHERE          (M.日期 =
                                               FROM               MasterStockAnalysis)) AND (M.專家實戰總分 > 30) AND (A.obv黃金交叉次數 >= 2) AND
                                         (A.三大法人黃金交叉次數 >= 2)
 ORDER BY   M.專家實戰總分 DESC`
-            },
-            {
-                cat: "產業類選股", title: "王者再臨：多維度戰力排行", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.產業分類,
+    },
+    {
+        cat: "產業類選股", title: "王者再臨：多維度戰力排行", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.產業分類,
                                         A.obv黃金交叉次數 + A.三大法人黃金交叉次數 + A.成交價黃金交叉次數 AS 總戰力值, A.obv黃金交叉次數 AS OBV,
                                         A.三大法人黃金交叉次數 AS 法人, M.具體概念, M.產業價值鏈資訊
 FROM              MasterStockAnalysis AS M INNER JOIN
@@ -4900,9 +4364,9 @@ WHERE          (M.日期 =
                                               FROM               MasterStockAnalysis)) AND (M.專家實戰總分 > 25) AND
                                         (A.obv黃金交叉次數 + A.三大法人黃金交叉次數 >= 4)
 ORDER BY   總戰力值 DESC, M.專家實戰總分 DESC`
-            },
-            {
-                cat: "產業類選股", title: "王者再臨：產業熱門領頭羊", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.股本億, A.obv黃金交叉次數 AS OBV能量,
+    },
+    {
+        cat: "產業類選股", title: "王者再臨：產業熱門領頭羊", sql: `TOP (100) M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.股本億, A.obv黃金交叉次數 AS OBV能量,
                                         A.三大法人黃金交叉次數 AS 法人, M.具體概念, M.產業價值鏈資訊
 FROM              MasterStockAnalysis AS M INNER JOIN
                                         allcross AS A ON M.代號 = A.代號 AND M.日期 = A.日期
@@ -4915,60 +4379,60 @@ WHERE          (M.日期 =
                                               FROM               MasterStockAnalysis AS MasterStockAnalysis_1)) AND (M.專家實戰總分 > 32) AND (M.股本億 > 20)
                                         AND (A.三大法人黃金交叉次數 > 0)
 ORDER BY   M.產業分類, M.專家實戰總分 DESC`
-            },
-            {
-                cat: "回測+回報+勝率", title: "最大勝率:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [sp_FindOptimalStrategy_GridSearch] 2330`
-            },
-            {
-                cat: "回測+回報+勝率", title: "最大報酬💎:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [sp_FindOptimalStrategy_GridSearch1] 2330`
-            },
-            {
-                cat: "回測+回報+勝率", title: "最大報酬💎💎💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,所有訊號都算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate1] 20250101,2330`
-            },
-            {
-                cat: "回測+回報+勝率", title: "最大報酬💎💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,訊號須回落才重新起算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate] 20250101,2330`
-            },
-            {
-                cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序有勝率統計(不同天數>30 回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal1] 2330,10`
-            },
-            {
-                cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序無勝率統計(不同天數>15 回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal15] 2330,10`
-            },
-            {
-                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期,指定起日 >30", sql: `EXEC sp_FindOptimalHoldingPerioddate 20260101,2330`
-            },
-            {
-                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期,指定起日 >15", sql: `EXEC sp_FindOptimalHoldingPeriods15date 20260101,2330`
+    },
+    {
+        cat: "回測+回報+勝率", title: "最大勝率:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [sp_FindOptimalStrategy_GridSearch] 2330`
+    },
+    {
+        cat: "回測+回報+勝率", title: "最大報酬💎:輸入股票代號找出最佳實戰總分5 10 15 20 ~ 40,前100", sql: `EXEC [sp_FindOptimalStrategy_GridSearch1] 2330`
+    },
+    {
+        cat: "回測+回報+勝率", title: "最大報酬💎💎💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,所有訊號都算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate1] 20250101,2330`
+    },
+    {
+        cat: "回測+回報+勝率", title: "最大報酬💎💎:找出最佳實戰總分5 10 15 20 ~ 40,前100,訊號須回落才重新起算,加上起算日期", sql: `EXEC [sp_FindOptimalStrategy_GridSearchdate] 20250101,2330`
+    },
+    {
+        cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序有勝率統計(不同天數>30 回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal1] 2330,10`
+    },
+    {
+        cat: "回測+回報+勝率", title: "輸入股票代號+回測天數 選第二個執行預存程序無勝率統計(不同天數>15 回報率有相當差別)", sql: `exec [sp_GetStockBacktest_Universal15] 2330,10`
+    },
+    {
+        cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期,指定起日 >30", sql: `EXEC sp_FindOptimalHoldingPerioddate 20260101,2330`
+    },
+    {
+        cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期,指定起日 >15", sql: `EXEC sp_FindOptimalHoldingPeriods15date 20260101,2330`
 
-            },
-            {
-                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期 >30", sql: `EXEC sp_FindOptimalHoldingPeriod N'2330'`
-            },
-            {
-                cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期 >15", sql: `EXEC sp_FindOptimalHoldingPeriod15 N'2330'`
-            },
+    },
+    {
+        cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期 >30", sql: `EXEC sp_FindOptimalHoldingPeriod N'2330'`
+    },
+    {
+        cat: "回測+回報+勝率", title: "輸入股票代號執行預存程序💎 尋找該股黃金持股期 >15", sql: `EXEC sp_FindOptimalHoldingPeriod15 N'2330'`
+    },
 
-            {
-                cat: "回測+回報+勝率", title: "💎💎 結算明細 >10分", sql: `EXEC sp_GetStockBacktest_Universals10date 20250101,2330,10`
-            },
-            {
-                cat: "回測+回報+勝率", title: "💎💎 結算明細 >15分", sql: `EXEC sp_GetStockBacktest_Universals15date 20250101,2330,10`
-            },
+    {
+        cat: "回測+回報+勝率", title: "💎💎 結算明細 >10分", sql: `EXEC sp_GetStockBacktest_Universals10date 20250101,2330,10`
+    },
+    {
+        cat: "回測+回報+勝率", title: "💎💎 結算明細 >15分", sql: `EXEC sp_GetStockBacktest_Universals15date 20250101,2330,10`
+    },
 
-            {
-                cat: "回測+回報+勝率", title: "💎 結算明細 >20分", sql: `EXEC sp_GetStockBacktest_Universals20date 20250101,2330,10`
-            },
+    {
+        cat: "回測+回報+勝率", title: "💎 結算明細 >20分", sql: `EXEC sp_GetStockBacktest_Universals20date 20250101,2330,10`
+    },
 
-            {
-                cat: "回測+回報+勝率", title: "💎 結算明細 >25分", sql: `EXEC sp_GetStockBacktest_Universals25date 20250101,2330,10`
-            },
+    {
+        cat: "回測+回報+勝率", title: "💎 結算明細 >25分", sql: `EXEC sp_GetStockBacktest_Universals25date 20250101,2330,10`
+    },
 
-            {
-                cat: "回測+回報+勝率", title: "💎 結算明細 >30分", sql: `EXEC sp_GetStockBacktest_Universaldate 20250101,2330,10`
-            },
+    {
+        cat: "回測+回報+勝率", title: "💎 結算明細 >30分", sql: `EXEC sp_GetStockBacktest_Universaldate 20250101,2330,10`
+    },
 
-            {
-                cat: "回測+回報+勝率", title: "篩選今日專家分 > 30 且歷史勝率 100% 的完美標的", sql: `TOP 50
+    {
+        cat: "回測+回報+勝率", title: "篩選今日專家分 > 30 且歷史勝率 100% 的完美標的", sql: `TOP 50
                         M.名稱, M.代號, M.專家實戰總分, P.最佳天數, P.最高勝率, P.股性標籤
 FROM MasterStockAnalysis M
 INNER JOIN StockPersonality P ON M.代號 = P.代號
@@ -4978,9 +4442,9 @@ WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
 ORDER BY M.專家實戰總分 DESC
 
 --1. 【必殺技】高分共振 + 歷史 100% 勝率` },
-            {
+    {
 
-                cat: "回測+回報+勝率", title: "篩選今日專家分 > 15 ", sql: `p.代號, m.名稱, m.專家實戰總分, p.最高勝率, p.最高勝率天數, p.最大平均報酬, p.最大報酬天數, p.更新時間
+        cat: "回測+回報+勝率", title: "篩選今日專家分 > 15 ", sql: `p.代號, m.名稱, m.專家實戰總分, p.最高勝率, p.最高勝率天數, p.最大平均報酬, p.最大報酬天數, p.更新時間
 FROM              MasterStockAnalysis AS m INNER JOIN
                                         StockPersonality_S15 AS p ON m.代號 = p.代號
 WHERE          (m.日期 =
@@ -4989,8 +4453,8 @@ WHERE          (m.日期 =
 ORDER BY   m.專家實戰總分 DESC
 -->15分模型及其StockPersonality_S15` },
 
-            {
-                cat: "回測+回報+勝率", title: "找股性屬於「快攻型」，且歷史預期報酬最高的股票", sql: `TOP 50
+    {
+        cat: "回測+回報+勝率", title: "找股性屬於「快攻型」，且歷史預期報酬最高的股票", sql: `TOP 50
                 M.名稱, M.代號, M.專家實戰總分, P.最佳天數, M.實戰標籤, P.預期報酬
 FROM MasterStockAnalysis M
 INNER JOIN StockPersonality P ON M.代號 = P.代號
@@ -5003,8 +4467,8 @@ ORDER BY P.預期報酬 DESC
 --用途：捕捉那些「股性活潑」且「歷史期望值最高」的短線股` },
 
 
-            {
-                cat: "回測+回報+勝率", title: "找勝率 > 85% 且 K9 尚在低檔的長線績優股", sql: `TOP 50
+    {
+        cat: "回測+回報+勝率", title: "找勝率 > 85% 且 K9 尚在低檔的長線績優股", sql: `TOP 50
                 M.名稱, M.代號, P.最高勝率, P.最佳天數, M.k9
 FROM MasterStockAnalysis M
 INNER JOIN StockPersonality P ON M.代號 = P.代號
@@ -5016,15 +4480,15 @@ ORDER BY P.最高勝率 DESC
 --3. 【防守反擊】長線保護 + 低位階
 --用途：針對台積電這類股票，找回測勝率高且現在位階還在低檔的。` },
 
-            {
-                cat: "回測+回報+勝率", title: "🔥 找全市場勝率 > 80% 且預期報酬 > 5% 的黃金名單", sql: ` *
+    {
+        cat: "回測+回報+勝率", title: "🔥 找全市場勝率 > 80% 且預期報酬 > 5% 的黃金名單", sql: ` *
 FROM StockPersonality
 WHERE 最高勝率 > 80 AND 預期報酬 > 5
 ORDER BY 預期報酬 DESC;`
-            },
+    },
 
-            {
-                cat: "專家組合", title: "🌡️ 大盤溫度計：成交值+實戰標籤家+具體概念", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "專家組合", title: "🌡️ 大盤溫度計：成交值+實戰標籤家+具體概念", sql: `/*資料庫:stockchangedate*/
 P.時間戳記,
                 MAX(B.上市1上櫃2) AS 上市1上櫃2,
                 LEFT(RTRIM(P.name1), LEN(RTRIM(P.name1)) - 4) AS 股票名稱,
@@ -5047,31 +4511,31 @@ GROUP BY
                 P.時間戳記, P.name1 -- 關鍵：針對日期與股票名稱進行群組，強制合併重複列
 ORDER BY
                 成交金額_百萬 DESC;`
-            },
+    },
 
-            {
-                cat: "專家組合",
-                title: "📈 個股資金與專家分數 (手動換代號)",
-                sql: `TOP 60 P.時間戳記,P.name1 as 名稱代號, P.mail1 AS [個股成交額_百萬], M.專家實戰總分, M.盤中漲幅, P.word1 AS [今日排名動態]
+    {
+        cat: "專家組合",
+        title: "📈 個股資金與專家分數 (手動換代號)",
+        sql: `TOP 60 P.時間戳記,P.name1 as 名稱代號, P.mail1 AS [個股成交額_百萬], M.專家實戰總分, M.盤中漲幅, P.word1 AS [今日排名動態]
 FROM [poem1_stock7].[dbo].[poem] P
 INNER JOIN [stockchangedate].[dbo].[MasterStockAnalysis] M
 ON RIGHT(RTRIM(P.name1), 4) = RTRIM(M.代號) AND P.時間戳記 = M.日期
 WHERE M.代號 = '2330'
 ORDER BY P.時間戳記 DESC`
-            },
-            {
-                cat: "專家組合",
-                title: "📈 個股資金與專家分數最新日",
-                sql: `TOP 60 P.時間戳記,p.name1, P.mail1 AS [個股成交額_百萬], M.專家實戰總分, M.盤中漲幅, P.word1 AS [今日排名動態]
+    },
+    {
+        cat: "專家組合",
+        title: "📈 個股資金與專家分數最新日",
+        sql: `TOP 60 P.時間戳記,p.name1, P.mail1 AS [個股成交額_百萬], M.專家實戰總分, M.盤中漲幅, P.word1 AS [今日排名動態]
 FROM [poem1_stock7].[dbo].[poem] P
 INNER JOIN [stockchangedate].[dbo].[MasterStockAnalysis] M
 ON RIGHT(RTRIM(P.name1), 4) = RTRIM(M.代號) AND P.時間戳記 = M.日期
 WHERE M.日期 = (select max(日期) from [stockchangedate].[dbo].[MasterStockAnalysis])
 ORDER BY P.mail1 DESC`
-            },
+    },
 
-            {
-                cat: "專家組合", title: "🏆 金牌基因：歷史勝率 100% 且今日剛發訊", sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "專家組合", title: "🏆 金牌基因：歷史勝率 100% 且今日剛發訊", sql: `/*資料庫:stockchangedate*/
 M.名稱, M.代號, M.專家實戰總分, P.最佳天數, P.最高勝率, P.預期報酬, P.股性標籤, M.具體概念
 FROM MasterStockAnalysis M
 INNER JOIN StockPersonality P ON M.代號 = P.代號
@@ -5079,12 +4543,12 @@ WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
               AND M.專家實戰總分 > 30
               AND P.最高勝率 = 100
 ORDER BY P.預期報酬 DESC`
-            },
+    },
 
 
 
-            {
-                cat: "專家組合", title: "市場熱度統計 (市場溫度計)", sql: `日期,
+    {
+        cat: "專家組合", title: "市場熱度統計 (市場溫度計)", sql: `日期,
                     COUNT(*) as [符合3項以上強勢股數量],
                     ROUND(AVG(平均專家總分), 2) as [當日強勢股平均分]
 FROM (
@@ -5107,9 +4571,9 @@ ORDER BY 日期 DESC;
 --如果數量處於高檔（例如 >100 檔）一段時間後開始下降，代表動能衰退，要小心回檔。
 --平均分數意義：
 --如果強勢股數量多，且「平均分」同步上升（例如從 30 變 45），代表領漲股力道非常紮實。`
-            },
-            {
-                cat: "專家組合", title: "洗盤結束：低位放量起漲點", sql: `TOP 100 * FROM (
+    },
+    {
+        cat: "專家組合", title: "洗盤結束：低位放量起漲點", sql: `TOP 100 * FROM (
                     SELECT
                         代號, 名稱, 日期, 專家實戰總分, obv累積金叉次數, 盤中總量, 實戰標籤,
                         -- 取得前一天與前兩天的總量來比對洗盤特徵
@@ -5128,13 +4592,13 @@ ORDER BY 專家實戰總分 DESC
 --邏輯：
 --洗盤條件：過去 3 天縮量（成交量遞減）。
 --啟動條件：今天突然出現「專家總分 > 30」且「OBV金叉」。`
-            },
+    },
 
 
-            {
-                cat: "多重金身加持",
-                title: "共振彙總最新日",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "多重金身加持",
+        title: "共振彙總最新日",
+        sql: `/*資料庫:stockchangedate*/
                     日期, 代號, 名稱,
                     COUNT(*) AS 符合條件數,
                     STRING_AGG(符合類型, ' | ') AS 符合清單,
@@ -5143,12 +4607,12 @@ FROM ResonanceHits
 WHERE 日期 = (SELECT MAX(日期) FROM ResonanceHits)
 GROUP BY 日期, 代號, 名稱
 ORDER BY 符合條件數 DESC, 專家總分 DESC;`
-            },
+    },
 
-            {
-                cat: "多重金身加持",
-                title: "共振彙總區間",
-                sql: `ResonanceHits.代號, ResonanceHits.名稱, COUNT(*) AS 這段期間共振次數, COUNT(DISTINCT ResonanceHits.日期)
+    {
+        cat: "多重金身加持",
+        title: "共振彙總區間",
+        sql: `ResonanceHits.代號, ResonanceHits.名稱, COUNT(*) AS 這段期間共振次數, COUNT(DISTINCT ResonanceHits.日期)
                                             AS 出現天數, MasterStockAnalysis.產業分類, MasterStockAnalysis.股本億
 FROM              ResonanceHits INNER JOIN
                                             MasterStockAnalysis ON ResonanceHits.代號 = MasterStockAnalysis.代號
@@ -5161,12 +4625,12 @@ WHERE          (ResonanceHits.日期 >=
                                                                                     ORDER BY    日期 DESC))))
 GROUP BY   ResonanceHits.代號, ResonanceHits.名稱, MasterStockAnalysis.產業分類, MasterStockAnalysis.股本億
 ORDER BY   這段期間共振次數 DESC`
-            },
+    },
 
-            {
-                cat: "多重金身加持",
-                title: "共振彙總區間+股本條件",
-                sql: `ResonanceHits.代號, ResonanceHits.名稱, COUNT(*) AS 這段期間共振次數, COUNT(DISTINCT ResonanceHits.日期)
+    {
+        cat: "多重金身加持",
+        title: "共振彙總區間+股本條件",
+        sql: `ResonanceHits.代號, ResonanceHits.名稱, COUNT(*) AS 這段期間共振次數, COUNT(DISTINCT ResonanceHits.日期)
                                             AS 出現天數, MasterStockAnalysis.產業分類, MasterStockAnalysis.股本億
 FROM              ResonanceHits INNER JOIN
                                             MasterStockAnalysis ON ResonanceHits.代號 = MasterStockAnalysis.代號
@@ -5180,17 +4644,17 @@ WHERE          (ResonanceHits.日期 >=
 GROUP BY   ResonanceHits.代號, ResonanceHits.名稱, MasterStockAnalysis.產業分類, MasterStockAnalysis.股本億
 HAVING           (MasterStockAnalysis.股本億 > 0 AND MasterStockAnalysis.股本億 < 5)/*可調整股本條件*/
 ORDER BY   這段期間共振次數 DESC`
-            },
+    },
 
 
 
 
 
 
-            {
-                cat: "最強組合",
-                title: "六維度共振+專家高分",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "最強組合",
+        title: "六維度共振+專家高分",
+        sql: `/*資料庫:stockchangedate*/
 TOP 100 M.名稱, M.代號, M.日期, M.專家實戰總分, M.實戰標籤, M.盤中漲幅,
                        A.成交價黃金交叉次數 AS 價金叉, A.obv黃金交叉次數 AS OBV金叉, A.總量黃金交叉次數 AS 量金叉,
                        A.外資黃金交叉次數 AS 外資金叉, A.投信黃金交叉次數 AS 投信金叉, A.三大法人黃金交叉次數 AS 法人金叉,
@@ -5200,12 +4664,12 @@ INNER JOIN allcross A ON M.代號 = A.代號 AND M.日期 = A.日期
 WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                   AND (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END) >= 5
 ORDER BY 專家實戰總分 DESC`
-            },
+    },
 
-            {
-                cat: "最強組合",
-                title: "獵鷹行動：內外資聯手鎖碼",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "最強組合",
+        title: "獵鷹行動：內外資聯手鎖碼",
+        sql: `/*資料庫:stockchangedate*/
 TOP 100 M.名稱, M.代號, M.專家實戰總分, M.盤中漲幅,
                        A.外資黃金交叉次數 AS 外資, A.投信黃金交叉次數 AS 投信
 FROM MasterStockAnalysis M
@@ -5213,12 +4677,12 @@ INNER JOIN allcross A ON M.代號 = A.代號 AND M.日期 = A.日期
 WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                   AND A.外資黃金交叉次數 >= 3 AND A.投信黃金交叉次數 >= 3
 ORDER BY (A.外資黃金交叉次數 + A.投信黃金交叉次數) DESC`
-            },
+    },
 
-            {
-                cat: "最強組合",
-                title: "能量噴發：低位階全共振黑馬",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "最強組合",
+        title: "能量噴發：低位階全共振黑馬",
+        sql: `/*資料庫:stockchangedate*/
 TOP 100 M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
                        (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 共振數
 FROM MasterStockAnalysis M
@@ -5227,13 +4691,13 @@ WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                   AND M.k9 < 50  -- 確保還沒漲太高
                   AND (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END) >= 5
 ORDER BY M.專家實戰總分 DESC`
-            },
+    },
 
 
-            {
-                cat: "最強組合",
-                title: "勝率診斷：歷史共振噴發點回測",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "最強組合",
+        title: "勝率診斷：歷史共振噴發點回測",
+        sql: `/*資料庫:stockchangedate*/
 TOP 100 M.名稱, M.代號, M.專家實戰總分, M.k9, M.盤中漲幅,
                        (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END) AS 共振數
 FROM MasterStockAnalysis M
@@ -5242,12 +4706,12 @@ WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                   AND M.k9 < 50  -- 確保還沒漲太高
                   AND (CASE WHEN A.成交價黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.obv黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.總量黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.外資黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.投信黃金交叉次數 > 0 THEN 1 ELSE 0 END + CASE WHEN A.三大法人黃金交叉次數 > 0 THEN 1 ELSE 0 END) >= 5
 ORDER BY M.專家實戰總分 DESC`
-            },
+    },
 
-            {
-                cat: "最強組合",
-                title: "勝率診斷：歷史共振噴發點回測預設+select版",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "最強組合",
+        title: "勝率診斷：歷史共振噴發點回測預設+select版",
+        sql: `/*資料庫:stockchangedate*/
 TOP 100 * FROM (
                     SELECT *, LAG(共振數) OVER (PARTITION BY 代號 ORDER BY 日期) as 昨日共振
                     FROM (
@@ -5266,12 +4730,12 @@ WHERE 日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                   AND 共振數 >= 5
                   AND (昨日共振 <= 2 OR 昨日共振 IS NULL)
 ORDER BY 專家實戰總分 DESC`
-            },
+    },
 
-            {
-                cat: "最強組合",
-                title: "王者再臨：高分籌碼龍頭股 (穩健版)",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "最強組合",
+        title: "王者再臨：高分籌碼龍頭股 (穩健版)",
+        sql: `/*資料庫:stockchangedate*/
 TOP 100 M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.盤中漲幅,
                        A.obv黃金交叉次數 AS OBV能量, A.三大法人黃金交叉次數 AS 法人力量
 FROM MasterStockAnalysis M
@@ -5281,12 +4745,12 @@ WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                   AND A.obv黃金交叉次數 >= 2           -- 有基礎量能支撐
                   AND A.三大法人黃金交叉次數 >= 2      -- 法人有基本進場
 ORDER BY M.專家實戰總分 DESC`
-            },
+    },
 
-            {
-                cat: "最強組合",
-                title: "王者再臨：多維度戰力排行",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "最強組合",
+        title: "王者再臨：多維度戰力排行",
+        sql: `/*資料庫:stockchangedate*/
 TOP 100 M.名稱, M.代號, M.專家實戰總分, M.產業分類,
                        (A.obv黃金交叉次數 + A.三大法人黃金交叉次數 + A.成交價黃金交叉次數) AS 總戰力值,
                        A.obv黃金交叉次數 AS OBV, A.三大法人黃金交叉次數 AS 法人
@@ -5296,13 +4760,13 @@ WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                   AND M.專家實戰總分 > 25
                   AND (A.obv黃金交叉次數 + A.三大法人黃金交叉次數) >= 4 -- 兩者相加超過 4 即可
 ORDER BY 總戰力值 DESC, M.專家實戰總分 DESC`
-            },
+    },
 
 
-            {
-                cat: "最強組合",
-                title: "王者再臨：產業熱門領頭羊",
-                sql: `/*資料庫:stockchangedate*/
+    {
+        cat: "最強組合",
+        title: "王者再臨：產業熱門領頭羊",
+        sql: `/*資料庫:stockchangedate*/
 TOP 100 M.名稱, M.代號, M.專家實戰總分, M.產業分類, M.股本億,
                        A.obv黃金交叉次數 AS OBV能量, A.三大法人黃金交叉次數 AS 法人
 FROM MasterStockAnalysis M
@@ -5312,11 +4776,11 @@ WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
                   AND M.股本億 > 20 -- 既然是「王者」，篩選中大型股
                   AND (A.obv黃金交叉次數 > 0 OR A.三大法人黃金交叉次數 > 0)
 ORDER BY M.產業分類, M.專家實戰總分 DESC`
-            },
+    },
 
 
-            {
-                cat: "盤中操盤", title: "盤中起漲黑馬獵人可修改", sql: `/*資料庫:stockchange*/TOP (100) I.名稱, I.代號, I.成交價 AS 盤中價, I.漲幅 AS 盤中漲幅,
+    {
+        cat: "盤中操盤", title: "盤中起漲黑馬獵人可修改", sql: `/*資料庫:stockchange*/TOP (100) I.名稱, I.代號, I.成交價 AS 盤中價, I.漲幅 AS 盤中漲幅,
                                         Y.昨OBV + (CASE WHEN I.漲跌 > 0 THEN I.總量 WHEN I.漲跌 < 0 THEN - I.總量 ELSE 0 END) AS 盤中OBV,
                                         (Y.前四日OBV總和 + (Y.昨OBV + (CASE WHEN I.漲跌 > 0 THEN I.總量 WHEN I.漲跌 < 0 THEN - I.總量 ELSE 0 END)))
                                         / 5 AS 新OBV五日均線, Y.昨共振,
@@ -5350,12 +4814,12 @@ ORDER BY   預估收盤共振 DESC, Y.昨總分 DESC
 --可以抓取共振2可能變成共振3或obv站上其五日均線--前端採集：按鍵精靈 (QuickMacro)，每 5 分鐘執行一次。
 --中台搬運：Python (Watchdog + pyodbc)，監控 C:\StockExport，自動清洗理*寶欄位並  進 SQL。
 --核心運算：View_盤中起漲黑馬獵人，實現「歷史 vs 盤中」跨庫比對，計算「新 OBV 五日均線」與「預估共振進化」。`
-            },
+    },
 
 
 
-            {
-                cat: "AI選股模型", title: "啟動AI篩選", sql: `名稱, 代號, 產業分類, 股本億, 日期, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分,
+    {
+        cat: "AI選股模型", title: "啟動AI篩選", sql: `名稱, 代號, 產業分類, 股本億, 日期, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分,
                                             技術分, 籌碼分, 量能分, 專家實戰總分, 實戰標籤, 資使用率, 資使用率黃金交叉次數, 券使用率,
                                             券使用率黃金交叉次數, 券資比, 券資比黃金交叉次數, 站均, 均價黃金交叉次數, 均量黃金交叉次數,
                                             三大法人黃金交叉次數, 外資黃金交叉次數, 投信黃金交叉次數, k9, d9, 週k9, 週d9, 月k9, 月d9, macd, 紅綠棒值,
@@ -5364,8 +4828,8 @@ ORDER BY   預估收盤共振 DESC, Y.昨總分 DESC
 FROM              MasterStockAnalysis
 WHERE          (代號 = N'2330')
 ORDER BY   日期 DESC` },
-            {
-                cat: "AI選股模型", title: "專家實戰選股", sql: `名稱, 代號, 產業分類, 股本億, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分, 技術分,
+    {
+        cat: "AI選股模型", title: "專家實戰選股", sql: `名稱, 代號, 產業分類, 股本億, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分, 技術分,
                                             籌碼分, 量能分, 專家實戰總分, 實戰標籤, 日期, 資使用率, 資使用率黃金交叉次數, 券使用率, 券使用率黃金交叉次數,
                                             券資比, 券資比黃金交叉次數, 站均, 均價黃金交叉次數, 均量黃金交叉次數, 三大法人黃金交叉次數,
                                             外資黃金交叉次數, 投信黃金交叉次數, k9, d9, 週k9, 週d9, 月k9, 月d9, macd, 紅綠棒值, 集中度1日, 集中度5日,
@@ -5375,8 +4839,8 @@ WHERE          (代號 = 2330)
 ORDER BY   日期 DESC` },
 
 
-            {
-                cat: "專家選股", title: "盤中追高部份", sql: `TOP (100) PERCENT
+    {
+        cat: "專家選股", title: "盤中追高部份", sql: `TOP (100) PERCENT
                         obv盤中選股.名稱,
                         obv盤中選股.代號,
                         View_stockchange.產業分類,
@@ -5461,8 +4925,8 @@ ORDER BY 專家實戰總分 DESC;
 --🔥量價齊揚:站上成交量均線個數>= 7 AND 盤中漲幅 > 3%
 --💎大戶鎖碼:較長期時間太短可能只是當沖等比較不準 ((集保庫存3週比率-集保庫存6週比率)+ (集保庫存4週比率-集保庫存7週比率))/2 > 2% 用兩個區段來平均比較不會錯過` },
 
-            {
-                cat: "專家選股", title: "盤中追高全部", sql: `TOP (100) PERCENT
+    {
+        cat: "專家選股", title: "盤中追高全部", sql: `TOP (100) PERCENT
                         obv盤中選股.名稱,
                         obv盤中選股.代號,
                         View_stockchange.產業分類,
@@ -5540,8 +5004,8 @@ ORDER BY 專家實戰總分 DESC;
 --🔥量價齊揚:站上成交量均線個數>= 7 AND 盤中漲幅 > 3%
 --💎大戶鎖碼:較長期時間太短可能只是當沖等比較不準 ((集保庫存3週比率-集保庫存6週比率)+ (集保庫存4週比率-集保庫存7週比率))/2 > 2% 用兩個區段來平均比較不會錯過` },
 
-            {
-                cat: "專家選股", title: "盤中全部多欄位", sql: `TOP (100) PERCENT
+    {
+        cat: "專家選股", title: "盤中全部多欄位", sql: `TOP (100) PERCENT
                         obv盤中選股.名稱,
                         obv盤中選股.代號,
                         View_stockchange.產業分類,
@@ -5626,8 +5090,8 @@ ORDER BY   專家實戰總分 DESC
 
 
 
-            {
-                cat: "專家選股", title: "實戰總分連三高", sql: `A.名稱, A.代號, A.專家實戰總分 AS 今日分數, B.專家實戰總分 AS 昨日分數, C.專家實戰總分 AS 前日分數, A.產業分類,
+    {
+        cat: "專家選股", title: "實戰總分連三高", sql: `A.名稱, A.代號, A.專家實戰總分 AS 今日分數, B.專家實戰總分 AS 昨日分數, C.專家實戰總分 AS 前日分數, A.產業分類,
                                                 A.股本億, A.盤中現價, A.盤中漲幅, A.盤中總量, A.價五日乖離, A.量倍數, A.OBV分, A.價均分, A.技術分, A.籌碼分,
                                                 A.量能分, A.專家實戰總分, A.實戰標籤, A.日期, A.均價黃金交叉次數, A.均量黃金交叉次數, A.三大法人黃金交叉次數,
                                                 A.外資黃金交叉次數, A.投信黃金交叉次數, A.站均
@@ -5659,22 +5123,22 @@ WHERE          (A.專家實戰總分 > 25) AND (A.日期 =
                                                       FROM               basicinfo))
 ORDER BY   今日分數 DESC
 --分數連三升且今天已經進入強勢區` },
-            {
-                cat: "專家選股", title: "單股多天實戰總分", sql: `名稱, 代號, 產業分類, 股本億, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分, 技術分,
+    {
+        cat: "專家選股", title: "單股多天實戰總分", sql: `名稱, 代號, 產業分類, 股本億, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分, 技術分,
                                                 籌碼分, 量能分, 專家實戰總分, 實戰標籤, 日期
 FROM              StockScore
 WHERE          (代號 = 2330)
 ORDER BY   日期 DESC` },
 
-            {
-                cat: "專家選股", title: "單股多天實戰總分", sql: `名稱, 代號, 產業分類, 股本億, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分, 技術分,
+    {
+        cat: "專家選股", title: "單股多天實戰總分", sql: `名稱, 代號, 產業分類, 股本億, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分, 技術分,
                                                 籌碼分, 量能分, 專家實戰總分, 實戰標籤, 日期
 FROM              StockScore
 WHERE          (代號 = 2330)
 ORDER BY   日期 DESC` },
 
-            {
-                cat: "專家選股", title: "啟動AI篩選", sql: `名稱, 代號, 產業分類, 股本億, 日期, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分,
+    {
+        cat: "專家選股", title: "啟動AI篩選", sql: `名稱, 代號, 產業分類, 股本億, 日期, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分,
                                             技術分, 籌碼分, 量能分, 專家實戰總分, 實戰標籤, 資使用率, 資使用率黃金交叉次數, 券使用率,
                                             券使用率黃金交叉次數, 券資比, 券資比黃金交叉次數, 站均, 均價黃金交叉次數, 均量黃金交叉次數,
                                             三大法人黃金交叉次數, 外資黃金交叉次數, 投信黃金交叉次數, k9, d9, 週k9, 週d9, 月k9, 月d9, macd, 紅綠棒值,
@@ -5683,8 +5147,8 @@ ORDER BY   日期 DESC` },
 FROM              MasterStockAnalysis
 WHERE          (代號 = N'2330')
 ORDER BY   日期 DESC` },
-            {
-                cat: "專家選股", title: "專家實戰選股", sql: `名稱, 代號, 產業分類, 股本億, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分, 技術分,
+    {
+        cat: "專家選股", title: "專家實戰選股", sql: `名稱, 代號, 產業分類, 股本億, 盤中現價, 盤中漲幅, 盤中總量, 價五日乖離, 量倍數, OBV分, 價均分, 技術分,
                                             籌碼分, 量能分, 專家實戰總分, 實戰標籤, 日期, 資使用率, 資使用率黃金交叉次數, 券使用率, 券使用率黃金交叉次數,
                                             券資比, 券資比黃金交叉次數, 站均, 均價黃金交叉次數, 均量黃金交叉次數, 三大法人黃金交叉次數,
                                             外資黃金交叉次數, 投信黃金交叉次數, k9, d9, 週k9, 週d9, 月k9, 月d9, macd, 紅綠棒值, 集中度1日, 集中度5日,
@@ -5693,18 +5157,18 @@ FROM              StockScore
 WHERE          (代號 = 2330)
 ORDER BY   日期 DESC` },
 
-            {
-                cat: "專家選股", title: "產業龍頭三巨頭", sql: `/*資料庫:fromaccessdatabase*/ name1, mail1, word1, 時間戳記 FROM guestinfowd5 WHERE (時間戳記 = N'20260419') ORDER BY name1`
-            },
+    {
+        cat: "專家選股", title: "產業龍頭三巨頭", sql: `/*資料庫:fromaccessdatabase*/ name1, mail1, word1, 時間戳記 FROM guestinfowd5 WHERE (時間戳記 = N'20260419') ORDER BY name1`
+    },
 
-            {
-                cat: "專家選股", title: "文字打包系統", sql: `[ID] ,[Content],日期  FROM [dbo].[TextShares1] order by 日期 desc`
-            },
+    {
+        cat: "專家選股", title: "文字打包系統", sql: `[ID] ,[Content],日期  FROM [dbo].[TextShares1] order by 日期 desc`
+    },
 
 
 
-            {
-                cat: "專家選股", title: "均線金叉obv查詢", sql: `代號, 名稱, 日期, obv淨額, 成交價, 盤中總量, obv_ma5, obv_ma10, obv_ma20, obv_ma35, obv_ma60, obv_ma120,
+    {
+        cat: "專家選股", title: "均線金叉obv查詢", sql: `代號, 名稱, 日期, obv淨額, 成交價, 盤中總量, obv_ma5, obv_ma10, obv_ma20, obv_ma35, obv_ma60, obv_ma120,
                                             obv_ma200, obv_ma240, obv_ma34, 五日交叉成功, 十日交叉成功, 二十日交叉成功, 三十五日交叉成功,
                                             六十日交叉成功, 一百二十日交叉成功, 二百日交叉成功, 二百四十日交叉成功, obv黃金交叉次數, price_ma5,
                                             price_ma10, price_ma20, price_ma35, price_ma60, price_ma120, price_ma200, price_ma240, price_ma34,
@@ -5728,8 +5192,8 @@ FROM              allcross
 WHERE          (代號 = 2330)
 ORDER BY   日期 DESC` },
 
-            {
-                cat: "漲幅選股", title: "近10期價量漲幅", sql: `priceincrease1.名稱, priceincrease1.代號,
+    {
+        cat: "漲幅選股", title: "近10期價量漲幅", sql: `priceincrease1.名稱, priceincrease1.代號,
                                                                View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量,
                                                                priceincrease1.成交價漲幅百分比 AS 近2期價漲幅,
                                                                priceincrease2.成交價漲幅百分比 AS 近3期價漲幅,
@@ -5764,8 +5228,8 @@ ORDER BY   日期 DESC` },
                                                                  priceincrease10.成交價漲幅百分比, View_stockchange.產業分類,
                                                                  View_stockchange.交易所分類, View_stockchange.股本億
                                                         ORDER BY 近4期價漲幅 DESC` },
-            {
-                cat: "漲幅選股", title: "自選股近10期價量漲幅", sql: `priceincrease1.名稱, priceincrease1.代號,
+    {
+        cat: "漲幅選股", title: "自選股近10期價量漲幅", sql: `priceincrease1.名稱, priceincrease1.代號,
                                                                         ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅,
                                                                         ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2) AS 近3期量增幅,
                                                                         View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量,
@@ -5806,8 +5270,8 @@ GROUP BY priceincrease1.名稱, priceincrease1.代號,
                                                                         View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.股本億, priceincrease1.本日,
                                                                         priceincrease10.前一日
 ORDER BY   近4期價漲幅 DESC` },
-            {
-                cat: "漲幅選股", title: "剛起漲", sql: `priceincrease1.名稱, priceincrease1.代號,ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅,
+    {
+        cat: "漲幅選股", title: "剛起漲", sql: `priceincrease1.名稱, priceincrease1.代號,ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅,
                                                                     ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2) AS 近3期量增幅,
                                                                     View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量,
                                                                     priceincrease1.成交價漲幅百分比 AS 近2期價漲幅, priceincrease2.成交價漲幅百分比 AS 近3期價漲幅,
@@ -5839,8 +5303,8 @@ WHERE  priceincrease1.代號 IN ((SELECT          代號
                                                                     (priceincrease3.成交量漲幅百分比 > 50) and View_stockchange.總量>500
 ORDER BY   近4期價漲幅 DESC` },
 
-            {
-                cat: "漲幅選股", title: "剛起漲-自選股", sql: `priceincrease1.名稱, priceincrease1.代號,
+    {
+        cat: "漲幅選股", title: "剛起漲-自選股", sql: `priceincrease1.名稱, priceincrease1.代號,
                                                                         ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅,
                                                                         ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2) AS 近3期量增幅,
                                                                         View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量,
@@ -5881,8 +5345,8 @@ GROUP BY priceincrease1.名稱, priceincrease1.代號,
                                                                         View_stockchange.產業分類, View_stockchange.交易所分類, View_stockchange.股本億, priceincrease1.本日,
                                                                         priceincrease10.前一日
 ORDER BY   近4期價漲幅 DESC` },
-            {
-                cat: "漲幅選股", title: "盤中剛起漲-自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號,
+    {
+        cat: "漲幅選股", title: "盤中剛起漲-自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號,
                                                                         ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅,
                                                                         ROUND(priceincrease10.成交量漲幅百分比 - priceincrease4.成交量漲幅百分比, 2) AS 近3期量增幅,
                                                                         priceincrease3.成交價漲幅百分比 AS 近4期價漲幅, View_stockchange.成交價, View_stockchange.漲幅,
@@ -5932,8 +5396,8 @@ GROUP BY obv盤中選股.名稱, obv盤中選股.代號,
                                                                         / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2),
                                                                         obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線
 ORDER BY   站上五日平均線張數 DESC` },
-            {
-                cat: "漲幅選股", title: "盤中+OBV+自選股+概念股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅,
+    {
+        cat: "漲幅選股", title: "盤中+OBV+自選股+概念股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅,
                                                                         obv盤中選股.盤中成交價, obv盤中選股.最高, obv盤中選股.最低, obv盤中選股.總量,
                                                                         obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量, obv盤中選股.盤中的單日obv均量,
                                                                         obv盤中選股.盤中的累積obv均量, obv盤中選股.盤中計算出來的最新三十四日平均線,
@@ -5968,28 +5432,28 @@ GROUP BY obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅
                                                                         obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線
 ORDER BY   站上五日平均線張數 DESC` },
 
-            { cat: "漲幅選股", title: "盤中漲幅TOP100", sql: `/*資料庫:stockchange*/top 100 名稱,代號,成交價,漲跌,漲幅,總量,產業分類,交易所分類,上市1上櫃2,	上市櫃年數,股本億,市值億 from basicinfo order by 漲幅 desc` },
-            { cat: "漲幅選股", title: "預存程式前N日至最新日", sql: `https://zen2965.duckdns.org:8888/excelimport/excelimport2 中第29項可查詢` },
-            {
-                cat: "預存程序", title: "兩日間之漲幅", sql: `/*資料庫選:stockchangedate,執行前要把備註刪除,否則會出現錯誤 */
+    { cat: "漲幅選股", title: "盤中漲幅TOP100", sql: `/*資料庫:stockchange*/top 100 名稱,代號,成交價,漲跌,漲幅,總量,產業分類,交易所分類,上市1上櫃2,	上市櫃年數,股本億,市值億 from basicinfo order by 漲幅 desc` },
+    { cat: "漲幅選股", title: "預存程式前N日至最新日", sql: `https://zen2965.duckdns.org:8888/excelimport/excelimport2 中第29項可查詢` },
+    {
+        cat: "預存程序", title: "兩日間之漲幅", sql: `/*資料庫選:stockchangedate,執行前要把備註刪除,否則會出現錯誤 */
                                 exec stockpriceincrease 20260408,20260410` },
-            {
-                cat: "預存程序", title: "兩日間之股權漲幅in自選股", sql: `/*資料庫選:stockprice,自選股0~自選股5:myequityselfselect~myequityselfselect5,日期以週五為原則,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
+    {
+        cat: "預存程序", title: "兩日間之股權漲幅in自選股", sql: `/*資料庫選:stockprice,自選股0~自選股5:myequityselfselect~myequityselfselect5,日期以週五為原則,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
                      exec myequityselfselect 20260327,20260410, N'2330'` },
-            {
-                cat: "預存程序", title: "兩日間之股權漲幅in自選股", sql: `/*資料庫選:stockprice,自選股0~自選股5:myequityselfselect~myequityselfselect5,日期以週五為原則,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
+    {
+        cat: "預存程序", title: "兩日間之股權漲幅in自選股", sql: `/*資料庫選:stockprice,自選股0~自選股5:myequityselfselect~myequityselfselect5,日期以週五為原則,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
                                 exec myequityselfselect2 20260327,20260410, N'2330'` },
-            {
-                cat: "預存程序", title: "兩日間之股權變動1", sql: `/*資料庫選:stockprice,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
+    {
+        cat: "預存程序", title: "兩日間之股權變動1", sql: `/*資料庫選:stockprice,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
 exec myequity1 20260327,20260410, N'2330'` },
-            {
-                cat: "預存程序", title: "兩日間之股權變動2", sql: `/*資料庫選:stockprice,日期以週五為原則,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
+    {
+        cat: "預存程序", title: "兩日間之股權變動2", sql: `/*資料庫選:stockprice,日期以週五為原則,執行前要把備註刪除,否則會出現錯誤,400張以上大戶增加比率(彙總表第29項) */
 exec myequity2 20260327,20260410, N'2330'` },
 
 
-            { cat: "黃金交叉次數", title: "黃金交叉次數選股", sql: `TOP (100) PERCENT dbo.winnewdate.股票名稱, dbo.winnewdate.股票代號, dbo.winnewdate.站均, dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.均量黃金交叉次數, dbo.winnewdate.三大法人黃金交叉次數, dbo.winnewdate.外資黃金交叉次數, dbo.winnewdate.投信黃金交叉次數, dbo.winnewdate.k9, dbo.winnewdate.d9, dbo.winnewdate.週k9, dbo.winnewdate.週d9, dbo.winnewdate.月k9, dbo.winnewdate.月d9, dbo.winnewdate.macd, dbo.winnewdate.資使用率, dbo.winnewdate.資使用率黃金交叉次數, dbo.winnewdate.券使用率, dbo.winnewdate.券使用率黃金交叉次數, dbo.winnewdate.券資比, dbo.winnewdate.券資比黃金交叉次數, dbo.winnewdate.產業分類, dbo.winnewdate.交易所分類, dbo.winnewdate.股本億, dbo.winnewdate.日期 FROM dbo.winnewdate INNER JOIN dbo.View_basicinfo ON dbo.winnewdate.股票代號 = dbo.View_basicinfo.代號 WHERE (dbo.View_basicinfo.總量 > 5000) AND (dbo.winnewdate.日期 = 20260327) AND (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.winnewdate.均量黃金交叉次數 >= 0) AND (dbo.winnewdate.k9 - dbo.winnewdate.d9 >= 0) AND (dbo.winnewdate.macd > 0) ORDER BY dbo.winnewdate.均價黃金交叉次數 DESC, dbo.winnewdate.均量黃金交叉次數 DESC, dbo.winnewdate.三大法人黃金交叉次數 DESC` },
-            {
-                cat: "黃金交叉次數", title: "均價黃金交叉+加權後分數", sql: `TOP (100) PERCENT dbo.winnewdate.股票名稱, dbo.winnewdate.股票代號, dbo.winnewdate.站均, dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.均量黃金交叉次數, dbo.winnewdate.三大法人黃金交叉次數, dbo.winnewdate.外資黃金交叉次數, dbo.winnewdate.投信黃金交叉次數, dbo.winnewdate.k9, dbo.winnewdate.d9, dbo.winnewdate.週k9, dbo.winnewdate.週d9, dbo.winnewdate.月k9, dbo.winnewdate.月d9, dbo.winnewdate.macd, dbo.winnewdate.資使用率, dbo.winnewdate.資使用率黃金交叉次數, dbo.winnewdate.券使用率, dbo.winnewdate.券使用率黃金交叉次數, dbo.winnewdate.券資比, dbo.winnewdate.券資比黃金交叉次數, dbo.winnewdate.產業分類, dbo.winnewdate.交易所分類, dbo.winnewdate.股本億, dbo.winnewdate.日期 FROM dbo.winnewdate INNER JOIN dbo.View_basicinfo ON dbo.winnewdate.股票代號 = dbo.View_basicinfo.代號 WHERE (dbo.View_basicinfo.總量 > 5000) AND (dbo.winnewdate.日期 = 20260327) AND (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.winnewdate.均量黃金交叉次數 >= 0) AND (dbo.winnewdate.k9 - dbo.winnewdate.d9 >= 0) AND (dbo.winnewdate.macd > 0) ORDER BY dbo.winnewdate.均價黃金交叉次數 DESC, dbo.winnewdate.均量黃金交叉次數 DESC, dbo.winnewdate.三大法人黃金交叉次數 DESC,
+    { cat: "黃金交叉次數", title: "黃金交叉次數選股", sql: `TOP (100) PERCENT dbo.winnewdate.股票名稱, dbo.winnewdate.股票代號, dbo.winnewdate.站均, dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.均量黃金交叉次數, dbo.winnewdate.三大法人黃金交叉次數, dbo.winnewdate.外資黃金交叉次數, dbo.winnewdate.投信黃金交叉次數, dbo.winnewdate.k9, dbo.winnewdate.d9, dbo.winnewdate.週k9, dbo.winnewdate.週d9, dbo.winnewdate.月k9, dbo.winnewdate.月d9, dbo.winnewdate.macd, dbo.winnewdate.資使用率, dbo.winnewdate.資使用率黃金交叉次數, dbo.winnewdate.券使用率, dbo.winnewdate.券使用率黃金交叉次數, dbo.winnewdate.券資比, dbo.winnewdate.券資比黃金交叉次數, dbo.winnewdate.產業分類, dbo.winnewdate.交易所分類, dbo.winnewdate.股本億, dbo.winnewdate.日期 FROM dbo.winnewdate INNER JOIN dbo.View_basicinfo ON dbo.winnewdate.股票代號 = dbo.View_basicinfo.代號 WHERE (dbo.View_basicinfo.總量 > 5000) AND (dbo.winnewdate.日期 = 20260327) AND (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.winnewdate.均量黃金交叉次數 >= 0) AND (dbo.winnewdate.k9 - dbo.winnewdate.d9 >= 0) AND (dbo.winnewdate.macd > 0) ORDER BY dbo.winnewdate.均價黃金交叉次數 DESC, dbo.winnewdate.均量黃金交叉次數 DESC, dbo.winnewdate.三大法人黃金交叉次數 DESC` },
+    {
+        cat: "黃金交叉次數", title: "均價黃金交叉+加權後分數", sql: `TOP (100) PERCENT dbo.winnewdate.股票名稱, dbo.winnewdate.股票代號, dbo.winnewdate.站均, dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.均量黃金交叉次數, dbo.winnewdate.三大法人黃金交叉次數, dbo.winnewdate.外資黃金交叉次數, dbo.winnewdate.投信黃金交叉次數, dbo.winnewdate.k9, dbo.winnewdate.d9, dbo.winnewdate.週k9, dbo.winnewdate.週d9, dbo.winnewdate.月k9, dbo.winnewdate.月d9, dbo.winnewdate.macd, dbo.winnewdate.資使用率, dbo.winnewdate.資使用率黃金交叉次數, dbo.winnewdate.券使用率, dbo.winnewdate.券使用率黃金交叉次數, dbo.winnewdate.券資比, dbo.winnewdate.券資比黃金交叉次數, dbo.winnewdate.產業分類, dbo.winnewdate.交易所分類, dbo.winnewdate.股本億, dbo.winnewdate.日期 FROM dbo.winnewdate INNER JOIN dbo.View_basicinfo ON dbo.winnewdate.股票代號 = dbo.View_basicinfo.代號 WHERE (dbo.View_basicinfo.總量 > 5000) AND (dbo.winnewdate.日期 = 20260327) AND (dbo.winnewdate.均價黃金交叉次數 > 0) AND (dbo.winnewdate.均量黃金交叉次數 >= 0) AND (dbo.winnewdate.k9 - dbo.winnewdate.d9 >= 0) AND (dbo.winnewdate.macd > 0) ORDER BY dbo.winnewdate.均價黃金交叉次數 DESC, dbo.winnewdate.均量黃金交叉次數 DESC, dbo.winnewdate.三大法人黃金交叉次數 DESC,
                                                                         dbo.winnewdate.均價黃金交叉次數, dbo.winnewdate.集中度1日, dbo.winnewdate.正負DI百分比,
                                                                         dbo.winnewdate.三週庫存比率 / 100 AS [三週庫存比率/100], dbo.winnewdate.日期,
                                                                         dbo.winnewdate.k9 - dbo.winnewdate.d9 AS 日kd差, dbo.winnewdate.週k9 - dbo.winnewdate.週d9 AS 週kd差,
@@ -6008,9 +5472,9 @@ WHERE          (dbo.winnewdate.k9 - dbo.winnewdate.d9 > 0) AND (dbo.winnewdate.�
 ORDER BY   ROUND((((((((dbo.winnewdate.均價黃金交叉次數 + dbo.winnewdate.k9 / 5) - dbo.winnewdate.d9 / 5)
                                                                         + dbo.winnewdate.週k9 / 5) - dbo.winnewdate.週d9 / 5) + dbo.winnewdate.月k9 / 5) - dbo.winnewdate.月d9 / 5)
                                                                         + dbo.winnewdate.合計十天 / 10) + dbo.winnewdate.三週庫存比率 / 100, 2) DESC`
-            },
-            {
-                cat: "黃金交叉次數", title: "OBV多空淨額(量)+均線交叉情況", sql: `代號, 名稱, 成交價, 總量, 最高, 最低, obv淨額, 五日平均線, 十日平均線, 二十日平均線, 三十四日平均線,
+    },
+    {
+        cat: "黃金交叉次數", title: "OBV多空淨額(量)+均線交叉情況", sql: `代號, 名稱, 成交價, 總量, 最高, 最低, obv淨額, 五日平均線, 十日平均線, 二十日平均線, 三十四日平均線,
                                                                         ROUND((obv淨額 - 五日平均線) / ABS(五日平均線), 2) AS 五日乖離, ROUND((obv淨額 - 十日平均線)
                                                                         / ABS(十日平均線), 2) AS 十日乖離, ROUND((obv淨額 - 二十日平均線) / ABS(二十日平均線), 2) AS 二十日乖離,
                                                                         ROUND((obv淨額 - 三十四日平均線) / ABS(三十四日平均線), 2) AS 三十四日乖離, ROUND((五日平均線 - 十日平均線)
@@ -6020,12 +5484,12 @@ ORDER BY   ROUND((((((((dbo.winnewdate.均價黃金交叉次數 + dbo.winnewdate
 FROM              obvdatea5
 WHERE          (代號 = N'2330') AND (日期 >= 20250101)
 order by 日期 desc`
-            },
-            { cat: "黃金交叉次數", title: "成交價黃金交叉增加最多(列出最近四天)", sql: `TOP 50 股票名稱, 股票代號, 成交價, 漲幅, 總量, 近4期均價合計, 近4期均量合計, 產業分類, 交易所分類, 股本億, 日期, 近1期均價, 近2期均價, 近3期均價, 近4期均價, 近1期均量, 近2期均量, 近3期均量, 近4期均量, ROW_NUMBER() OVER (ORDER BY 近4期均價合計 desc) AS 流水號 FROM winnewdatechange WHERE (總量 >= 1000)  and 日期 = 20260327 ORDER BY 近4期均價合計 DESC,近4期均量合計 DESC` },
-            { cat: "黃金交叉次數", title: "成交量黃金交叉增加最多(列出最近四天)", sql: `TOP 50 股票名稱, 股票代號, 成交價, 漲幅, 總量, 近4期均價合計, 近4期均量合計, 產業分類, 交易所分類, 股本億, 日期, 近1期均價, 近2期均價, 近3期均價, 近4期均價, 近1期均量, 近2期均量, 近3期均量, 近4期均量, ROW_NUMBER() OVER (ORDER BY 近4期均量合計 desc) AS 流水號 FROM winnewdatechange WHERE (總量 >= 5000) ORDER BY 近4期均量合計 DESC,近4期均價合計 DESC` },
-            { cat: "黃金交叉次數", title: "三大法人黃金交叉增加最多(列出最近四天) ", sql: `TOP 50 dbo.View_day1winnew.股票名稱, dbo.View_day1winnew.股票代號, dbo.View_stockchange.成交價, dbo.View_stockchange.漲幅, dbo.View_stockchange.總量, (((dbo.View_day1winnew.三大法人1黃金交叉次數 - dbo.View_day2winnew.三大法人2黃金交叉次數) + (dbo.View_day2winnew.三大法人2黃金交叉次數 - dbo.View_day3winnew.三大法人3黃金交叉次數)) + (dbo.View_day3winnew.三大法人3黃金交叉次數 - dbo.View_day4winnew.三大法人4黃金交叉次數)) + (dbo.View_day4winnew.三大法人4黃金交叉次數 - dbo.View_day5winnew.三大法人5黃金交叉次數) AS 近4期三大法人合計, (((dbo.View_day1winnew.外資1黃金交叉次數 - dbo.View_day2winnew.外資2黃金交叉次數) + (dbo.View_day2winnew.外資2黃金交叉次數 - dbo.View_day3winnew.外資3黃金交叉次數)) + (dbo.View_day3winnew.外資3黃金交叉次數 - dbo.View_day4winnew.外資4黃金交叉次數)) + (dbo.View_day4winnew.外資4黃金交叉次數 - dbo.View_day5winnew.外資5黃金交叉次數) AS 近4期外資合計, (((dbo.View_day1winnew.投信1黃金交叉次數 - dbo.View_day2winnew.投信2黃金交叉次數) + (dbo.View_day2winnew.投信2黃金交叉次數 - dbo.View_day3winnew.投信3黃金交叉次數)) + (dbo.View_day3winnew.投信3黃金交叉次數 - dbo.View_day4winnew.投信4黃金交叉次數)) + (dbo.View_day4winnew.投信4黃金交叉次數 - dbo.View_day5winnew.投信5黃金交叉次數) AS 近4期投信合計, dbo.View_day1winnew.產業分類, dbo.View_day1winnew.交易所分類, dbo.View_day1winnew.股本億, dbo.View_day1winnew.日期, dbo.View_day1winnew.三大法人1黃金交叉次數 - dbo.View_day2winnew.三大法人2黃金交叉次數 AS 近1期三大法人, dbo.View_day2winnew.三大法人2黃金交叉次數 - dbo.View_day3winnew.三大法人3黃金交叉次數 AS 近2期三大法人, dbo.View_day3winnew.三大法人3黃金交叉次數 - dbo.View_day4winnew.三大法人4黃金交叉次數 AS 近3期三大法人, dbo.View_day4winnew.三大法人4黃金交叉次數 - dbo.View_day5winnew.三大法人5黃金交叉次數 AS 近4期三大法人, dbo.View_day1winnew.外資1黃金交叉次數 - dbo.View_day2winnew.外資2黃金交叉次數 AS 近1期外資, dbo.View_day2winnew.外資2黃金交叉次數 - dbo.View_day3winnew.外資3黃金交叉次數 AS 近2期外資, dbo.View_day3winnew.外資3黃金交叉次數 - dbo.View_day4winnew.外資4黃金交叉次數 AS 近3期外資, dbo.View_day4winnew.外資4黃金交叉次數 - dbo.View_day5winnew.外資5黃金交叉次數 AS 近4期外資, dbo.View_day1winnew.投信1黃金交叉次數 - dbo.View_day2winnew.投信2黃金交叉次數 AS 近1期投信, dbo.View_day2winnew.投信2黃金交叉次數 - dbo.View_day3winnew.投信3黃金交叉次數 AS 近2期投信, dbo.View_day3winnew.投信3黃金交叉次數 - dbo.View_day4winnew.投信4黃金交叉次數 AS 近3期投信, dbo.View_day4winnew.投信4黃金交叉次數 - dbo.View_day5winnew.投信5黃金交叉次數 AS 近4期投信 FROM dbo.View_day1winnew INNER JOIN dbo.View_day2winnew ON dbo.View_day1winnew.股票代號 = dbo.View_day2winnew.股票代號 INNER JOIN dbo.View_day3winnew ON dbo.View_day2winnew.股票代號 = dbo.View_day3winnew.股票代號 INNER JOIN dbo.View_day4winnew ON dbo.View_day3winnew.股票代號 = dbo.View_day4winnew.股票代號 INNER JOIN dbo.View_day5winnew ON dbo.View_day4winnew.股票代號 = dbo.View_day5winnew.股票代號 INNER JOIN dbo.View_stockchange ON dbo.View_day1winnew.股票代號 = dbo.View_stockchange.代號 ORDER BY 近4期三大法人合計 DESC, 近4期外資合計 DESC, 近4期投信合計 DESC` },
-            {
-                cat: "黃金交叉次數", title: "自選股+成交價金叉加權分數等", sql: `DISTINCT
+    },
+    { cat: "黃金交叉次數", title: "成交價黃金交叉增加最多(列出最近四天)", sql: `TOP 50 股票名稱, 股票代號, 成交價, 漲幅, 總量, 近4期均價合計, 近4期均量合計, 產業分類, 交易所分類, 股本億, 日期, 近1期均價, 近2期均價, 近3期均價, 近4期均價, 近1期均量, 近2期均量, 近3期均量, 近4期均量, ROW_NUMBER() OVER (ORDER BY 近4期均價合計 desc) AS 流水號 FROM winnewdatechange WHERE (總量 >= 1000)  and 日期 = 20260327 ORDER BY 近4期均價合計 DESC,近4期均量合計 DESC` },
+    { cat: "黃金交叉次數", title: "成交量黃金交叉增加最多(列出最近四天)", sql: `TOP 50 股票名稱, 股票代號, 成交價, 漲幅, 總量, 近4期均價合計, 近4期均量合計, 產業分類, 交易所分類, 股本億, 日期, 近1期均價, 近2期均價, 近3期均價, 近4期均價, 近1期均量, 近2期均量, 近3期均量, 近4期均量, ROW_NUMBER() OVER (ORDER BY 近4期均量合計 desc) AS 流水號 FROM winnewdatechange WHERE (總量 >= 5000) ORDER BY 近4期均量合計 DESC,近4期均價合計 DESC` },
+    { cat: "黃金交叉次數", title: "三大法人黃金交叉增加最多(列出最近四天) ", sql: `TOP 50 dbo.View_day1winnew.股票名稱, dbo.View_day1winnew.股票代號, dbo.View_stockchange.成交價, dbo.View_stockchange.漲幅, dbo.View_stockchange.總量, (((dbo.View_day1winnew.三大法人1黃金交叉次數 - dbo.View_day2winnew.三大法人2黃金交叉次數) + (dbo.View_day2winnew.三大法人2黃金交叉次數 - dbo.View_day3winnew.三大法人3黃金交叉次數)) + (dbo.View_day3winnew.三大法人3黃金交叉次數 - dbo.View_day4winnew.三大法人4黃金交叉次數)) + (dbo.View_day4winnew.三大法人4黃金交叉次數 - dbo.View_day5winnew.三大法人5黃金交叉次數) AS 近4期三大法人合計, (((dbo.View_day1winnew.外資1黃金交叉次數 - dbo.View_day2winnew.外資2黃金交叉次數) + (dbo.View_day2winnew.外資2黃金交叉次數 - dbo.View_day3winnew.外資3黃金交叉次數)) + (dbo.View_day3winnew.外資3黃金交叉次數 - dbo.View_day4winnew.外資4黃金交叉次數)) + (dbo.View_day4winnew.外資4黃金交叉次數 - dbo.View_day5winnew.外資5黃金交叉次數) AS 近4期外資合計, (((dbo.View_day1winnew.投信1黃金交叉次數 - dbo.View_day2winnew.投信2黃金交叉次數) + (dbo.View_day2winnew.投信2黃金交叉次數 - dbo.View_day3winnew.投信3黃金交叉次數)) + (dbo.View_day3winnew.投信3黃金交叉次數 - dbo.View_day4winnew.投信4黃金交叉次數)) + (dbo.View_day4winnew.投信4黃金交叉次數 - dbo.View_day5winnew.投信5黃金交叉次數) AS 近4期投信合計, dbo.View_day1winnew.產業分類, dbo.View_day1winnew.交易所分類, dbo.View_day1winnew.股本億, dbo.View_day1winnew.日期, dbo.View_day1winnew.三大法人1黃金交叉次數 - dbo.View_day2winnew.三大法人2黃金交叉次數 AS 近1期三大法人, dbo.View_day2winnew.三大法人2黃金交叉次數 - dbo.View_day3winnew.三大法人3黃金交叉次數 AS 近2期三大法人, dbo.View_day3winnew.三大法人3黃金交叉次數 - dbo.View_day4winnew.三大法人4黃金交叉次數 AS 近3期三大法人, dbo.View_day4winnew.三大法人4黃金交叉次數 - dbo.View_day5winnew.三大法人5黃金交叉次數 AS 近4期三大法人, dbo.View_day1winnew.外資1黃金交叉次數 - dbo.View_day2winnew.外資2黃金交叉次數 AS 近1期外資, dbo.View_day2winnew.外資2黃金交叉次數 - dbo.View_day3winnew.外資3黃金交叉次數 AS 近2期外資, dbo.View_day3winnew.外資3黃金交叉次數 - dbo.View_day4winnew.外資4黃金交叉次數 AS 近3期外資, dbo.View_day4winnew.外資4黃金交叉次數 - dbo.View_day5winnew.外資5黃金交叉次數 AS 近4期外資, dbo.View_day1winnew.投信1黃金交叉次數 - dbo.View_day2winnew.投信2黃金交叉次數 AS 近1期投信, dbo.View_day2winnew.投信2黃金交叉次數 - dbo.View_day3winnew.投信3黃金交叉次數 AS 近2期投信, dbo.View_day3winnew.投信3黃金交叉次數 - dbo.View_day4winnew.投信4黃金交叉次數 AS 近3期投信, dbo.View_day4winnew.投信4黃金交叉次數 - dbo.View_day5winnew.投信5黃金交叉次數 AS 近4期投信 FROM dbo.View_day1winnew INNER JOIN dbo.View_day2winnew ON dbo.View_day1winnew.股票代號 = dbo.View_day2winnew.股票代號 INNER JOIN dbo.View_day3winnew ON dbo.View_day2winnew.股票代號 = dbo.View_day3winnew.股票代號 INNER JOIN dbo.View_day4winnew ON dbo.View_day3winnew.股票代號 = dbo.View_day4winnew.股票代號 INNER JOIN dbo.View_day5winnew ON dbo.View_day4winnew.股票代號 = dbo.View_day5winnew.股票代號 INNER JOIN dbo.View_stockchange ON dbo.View_day1winnew.股票代號 = dbo.View_stockchange.代號 ORDER BY 近4期三大法人合計 DESC, 近4期外資合計 DESC, 近4期投信合計 DESC` },
+    {
+        cat: "黃金交叉次數", title: "自選股+成交價金叉加權分數等", sql: `DISTINCT
                                                                     TOP (100) PERCENT View_winnewdate1.股票名稱, View_winnewdate1.股票代號, View_winnewdate1.站均,
                                                                     View_winnewdate1.均價黃金交叉次數, View_winnewdate1.集中度1日, View_winnewdate1.集中度5日,
                                                                     View_winnewdate1.集中度10日, View_winnewdate1.集中度20日, View_winnewdate1.集中度60日,
@@ -6046,8 +5510,8 @@ WHERE          (View_winnewdate1.股票代號 IN
                                                                           FROM               incomechar))
 ORDER BY   總分 DESC` },
 
-            {
-                cat: "股權分散表", title: "週變動排序", sql: `/*資料庫:stockprice*/TOP (100) PERCENT View_day1mastersum.名稱, View_day1mastersum.證券代號,
+    {
+        cat: "股權分散表", title: "週變動排序", sql: `/*資料庫:stockprice*/TOP (100) PERCENT View_day1mastersum.名稱, View_day1mastersum.證券代號,
                                                                         View_day1mastersum.主力庫存比率day1加總, View_day2mastersum.主力庫存比率day2加總,
                                                                         View_day3mastersum.主力庫存比率day3加總, View_day4mastersum.主力庫存比率day4加總,
                                                                         View_day5mastersum.主力庫存比率day5加總, View_day6mastersum.主力庫存比率day6加總,
@@ -6077,8 +5541,8 @@ WHERE          (View_day2mastersum.主力庫存比率day2加總 > 0) AND (View_d
                                                                         (View_day6mastersum.主力庫存比率day6加總 > 0) AND (View_day7mastersum.主力庫存比率day7加總 > 0)
                                              ORDER BY  ROUND((View_day1mastersum.主力庫存比率day1加總 - View_day2mastersum.主力庫存比率day2加總)
                                                                         / View_day2mastersum.主力庫存比率day2加總 * 100, 2) desc` },
-            {
-                cat: "股權分散表", title: "400張以上", sql: `/*資料庫:stockprice*/TOP (100) PERCENT dbo.View_selectdatemaster.名稱,
+    {
+        cat: "股權分散表", title: "400張以上", sql: `/*資料庫:stockprice*/TOP (100) PERCENT dbo.View_selectdatemaster.名稱,
                                                                         dbo.View_selectdatemaster.證券代號, ROUND(SUM(dbo.View_selectdatemaster.占集保庫存數比例), 2)
                                                                         AS 占集保庫存數總比例, dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類,
                                                                         dbo.View_stockchangedate.交易所分類, dbo.View_stockchangedate.股本億, dbo.View_stockchangedate.市值億,
@@ -6090,8 +5554,8 @@ GROUP BY   dbo.View_selectdatemaster.名稱, dbo.View_selectdatemaster.證券代
                                                                         dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類, dbo.View_stockchangedate.交易所分類,
                                                                         dbo.View_stockchangedate.股本億, dbo.View_stockchangedate.市值億
 HAVING           (dbo.View_selectdatemaster.名稱 = N'台積電') or (dbo.View_selectdatemaster.證券代號 = '2330') ORDER BY dbo.View_selectdatemaster.資料日期 desc` },
-            {
-                cat: "股權分散表", title: "1,000張以上", sql: `/*資料庫:stockprice*/TOP (100) PERCENT dbo.View_selectdatemaster1.名稱,
+    {
+        cat: "股權分散表", title: "1,000張以上", sql: `/*資料庫:stockprice*/TOP (100) PERCENT dbo.View_selectdatemaster1.名稱,
                                                                         dbo.View_selectdatemaster1.證券代號, ROUND(SUM(dbo.View_selectdatemaster1.占集保庫存數比例), 2)
                                                                         AS 占集保庫存數總比例, dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類,
                                                                         dbo.View_stockchangedate.交易所分類, dbo.View_stockchangedate.股本億, dbo.View_stockchangedate.市值億,
@@ -6103,8 +5567,8 @@ GROUP BY   dbo.View_selectdatemaster1.名稱, dbo.View_selectdatemaster1.證券�
                                                                         dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類, dbo.View_stockchangedate.交易所分類,
                                                                         dbo.View_stockchangedate.股本億, dbo.View_stockchangedate.市值億
 HAVING           (dbo.View_selectdatemaster1.名稱 = N'台積電') or (dbo.View_selectdatemaster1.證券代號 = '2330') ORDER BY dbo.View_selectdatemaster1.資料日期 desc` },
-            {
-                cat: "股權分散表", title: "20張以下", sql: `/*資料庫:stockprice*/TOP (100) PERCENT dbo.View_equity20.名稱, dbo.View_equity20.證券代號,
+    {
+        cat: "股權分散表", title: "20張以下", sql: `/*資料庫:stockprice*/TOP (100) PERCENT dbo.View_equity20.名稱, dbo.View_equity20.證券代號,
                                                                         ROUND(SUM(dbo.View_equity20.占集保庫存數比例), 2) AS 占集保庫存數總比例, dbo.View_stockchangedate.成交價,
                                                                         dbo.View_stockchangedate.產業分類, dbo.View_stockchangedate.交易所分類, dbo.View_stockchangedate.股本億,
                                                                         dbo.View_equity20.資料日期
@@ -6115,13 +5579,13 @@ GROUP BY   dbo.View_equity20.名稱, dbo.View_equity20.證券代號, dbo.View_eq
                                                                         dbo.View_stockchangedate.成交價, dbo.View_stockchangedate.產業分類, dbo.View_stockchangedate.交易所分類,
                                                                         dbo.View_stockchangedate.股本億
 HAVING           (dbo.View_equity20.名稱 = N'台積電') or (dbo.View_equity20.證券代號 = '2330') ORDER BY dbo.View_equity20.資料日期 desc` },
-            /*{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },*/
-            { cat: "資料庫", title: "找出資料庫中所有資料表", sql: `TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME` },
-            { cat: "資料庫", title: "找出該資料表(winnewdate)中的所有欄位", sql: `COLUMN_NAME,ORDINAL_POSITION,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'winnewdate'` },
-            { cat: "資料庫", title: "找出該資料表(chips5)中的主鍵欄位", sql: `COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = 'chips5'` },
-            { cat: "籌碼類", title: "Macd紅綠棒+Kdj的J值選股", sql: `dbo.RSVdate.名稱, dbo.RSVdate.代號, dbo.RSVdate.成交價 as 成交價, dbo.RSVdate.漲幅, dbo.RSVdate.總量, dbo.RSVdate.當日K值, dbo.RSVdate.當日D值, dbo.RSVdate.當日J值 as J值, dbo.macdchartable.macd as macd紅綠值, dbo.RSVdate.產業分類, dbo.RSVdate.交易所分類, dbo.RSVdate.股本億, dbo.RSVdate.日期, ROW_NUMBER() OVER (ORDER BY dbo.RSVdate.日期) AS X軸 FROM dbo.macdchartable INNER JOIN dbo.RSVdate ON dbo.macdchartable.股票代號 = dbo.RSVdate.代號 AND dbo.macdchartable.日期 = dbo.RSVdate.日期 WHERE (總量 >= 500) and ((dbo.macdchartable.macd >= 0) AND (dbo.macdchartable.macd <= 50) AND (dbo.RSVdate.當日J值 >= 0) AND (dbo.RSVdate.當日J值 <= 50) and (dbo.macdchartable.日期 >= (SELECT TOP (1) 日期 FROM dbo.basicinfo WHERE (日期 = (SELECT MIN(日期) AS firstday FROM (SELECT TOP (4560) 日期 FROM dbo.basicinfo AS basicinfo_1 ORDER BY 日期 DESC) AS line5)) ORDER BY 代號 DESC, 日期 DESC)) ) ORDER BY dbo.macdchartable.日期 desc,dbo.macdchartable.macd asc` },
-            {
-                cat: "籌碼類", title: "彙總表再加上macd紅綠棒及kdj的J值", sql: `DISTINCT
+    /*{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },*/
+    { cat: "資料庫", title: "找出資料庫中所有資料表", sql: `TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME` },
+    { cat: "資料庫", title: "找出該資料表(winnewdate)中的所有欄位", sql: `COLUMN_NAME,ORDINAL_POSITION,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'winnewdate'` },
+    { cat: "資料庫", title: "找出該資料表(chips5)中的主鍵欄位", sql: `COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = 'chips5'` },
+    { cat: "籌碼類", title: "Macd紅綠棒+Kdj的J值選股", sql: `dbo.RSVdate.名稱, dbo.RSVdate.代號, dbo.RSVdate.成交價 as 成交價, dbo.RSVdate.漲幅, dbo.RSVdate.總量, dbo.RSVdate.當日K值, dbo.RSVdate.當日D值, dbo.RSVdate.當日J值 as J值, dbo.macdchartable.macd as macd紅綠值, dbo.RSVdate.產業分類, dbo.RSVdate.交易所分類, dbo.RSVdate.股本億, dbo.RSVdate.日期, ROW_NUMBER() OVER (ORDER BY dbo.RSVdate.日期) AS X軸 FROM dbo.macdchartable INNER JOIN dbo.RSVdate ON dbo.macdchartable.股票代號 = dbo.RSVdate.代號 AND dbo.macdchartable.日期 = dbo.RSVdate.日期 WHERE (總量 >= 500) and ((dbo.macdchartable.macd >= 0) AND (dbo.macdchartable.macd <= 50) AND (dbo.RSVdate.當日J值 >= 0) AND (dbo.RSVdate.當日J值 <= 50) and (dbo.macdchartable.日期 >= (SELECT TOP (1) 日期 FROM dbo.basicinfo WHERE (日期 = (SELECT MIN(日期) AS firstday FROM (SELECT TOP (4560) 日期 FROM dbo.basicinfo AS basicinfo_1 ORDER BY 日期 DESC) AS line5)) ORDER BY 代號 DESC, 日期 DESC)) ) ORDER BY dbo.macdchartable.日期 desc,dbo.macdchartable.macd asc` },
+    {
+        cat: "籌碼類", title: "彙總表再加上macd紅綠棒及kdj的J值", sql: `DISTINCT
                                                                         TOP (100) PERCENT View_basicinfo.名稱 AS 股票名稱, View_basicinfo.代號 AS 股票代號, View_basicinfo.成交價,
                                                                          View_basicinfo.漲跌, View_basicinfo.漲幅, View_basicinfo.總量, linedaysort.站均, avggold.均價黃金交叉次數,
                                                                         avggold.均量黃金交叉次數, avggold三大法人.三大法人黃金交叉次數,
@@ -6168,8 +5632,8 @@ FROM              avggold INNER JOIN
                                                                         todaydi ON avggold.股票代號 = todaydi.股票代號 LEFT OUTER JOIN
                                                                         trend ON avggold.股票代號 = trend.代號
 WHERE          (View_basicinfo.總量 >= 500) and ((macdchartable.macd >= -0.05) AND (macdchartable.macd <=  50)) and ((rsvjasc.當日J值一 >= 0) AND (rsvjasc.當日J值一 <=  50))` },
-            {
-                cat: "籌碼類", title: "kdj的J值連三增(macd紅綠棒及J值範圍)", sql: `dbo.RSVdate.名稱, dbo.RSVdate.代號, dbo.RSVdate.成交價 as 成交價, dbo.RSVdate.漲幅,
+    {
+        cat: "籌碼類", title: "kdj的J值連三增(macd紅綠棒及J值範圍)", sql: `dbo.RSVdate.名稱, dbo.RSVdate.代號, dbo.RSVdate.成交價 as 成交價, dbo.RSVdate.漲幅,
                                                                         dbo.RSVdate.總量, dbo.RSVdate.當日K值, dbo.RSVdate.當日D值, dbo.RSVdate.當日J值 as J值, dbo.macdchartable.macd as macd紅綠值,
                                                                         dbo.RSVdate.產業分類, dbo.RSVdate.交易所分類, dbo.RSVdate.股本億, dbo.RSVdate.日期, ROW_NUMBER() OVER (ORDER BY dbo.RSVdate.日期) AS X軸
 FROM              macdchartable INNER JOIN
@@ -6188,8 +5652,8 @@ ORDER BY   代號 DESC, 日期 DESC))
 )  AND (rsvjasc.J值day1 > 0) AND
                                                                         (rsvjasc.J值day2 > 0) AND (rsvjasc.J值day3 > 0)
 ORDER BY   dbo.macdchartable.日期 desc,dbo.macdchartable.macd asc` },
-            {
-                cat: "技術類", title: "接近季線 乖離率%", sql: `TOP (100) PERCENT dbo.basicinfo.名稱 AS 股票名稱, dbo.basicinfo.代號 AS 股票代號, dbo.basicinfo.漲幅,
+    {
+        cat: "技術類", title: "接近季線 乖離率%", sql: `TOP (100) PERCENT dbo.basicinfo.名稱 AS 股票名稱, dbo.basicinfo.代號 AS 股票代號, dbo.basicinfo.漲幅,
                                                                         dbo.basicinfo.成交價, dbo.basicinfo.總量,round((dbo.basicinfo.總量/(dbo.basicinfo.股本億*10000))* 100,2) as [週轉率%], dbo.Chips5.集中度1日, dbo.Chips5.集中度5日, dbo.Chips5.集中度10日,
                                                                         dbo.Chips5.集中度20日, dbo.Chips5.集中度60日,
                                                                         dbo.basicinfo.股本億, dbo.basicinfo.交易所分類, dbo.basicinfo.日期,dbo.linedaytotoldate.今日成交價, dbo.linedaytotoldate.五日均線, dbo.linedaytotoldate.二十日均線,
@@ -6225,8 +5689,8 @@ GROUP BY dbo.basicinfo.名稱, dbo.basicinfo.代號, dbo.basicinfo.漲幅,
                                                                         / dbo.linedaytotoldate.六十日均線 * 100, 2)
 ORDER BY   五日乖離 desc` },
 
-            {
-                cat: "技術類", title: "總量+maxd紅綠棒值+J值", sql: `DISTINCT
+    {
+        cat: "技術類", title: "總量+maxd紅綠棒值+J值", sql: `DISTINCT
                                                                     TOP (100) PERCENT View_basicinfo.名稱 AS 股票名稱, View_basicinfo.代號 AS 股票代號, View_basicinfo.成交價,
                                                                      View_basicinfo.漲跌, View_basicinfo.漲幅, View_basicinfo.總量, linedaysort.站均, avggold.均價黃金交叉次數,
                                                                     avggold.均量黃金交叉次數, avggold三大法人.三大法人黃金交叉次數,
@@ -6274,19 +5738,19 @@ FROM              avggold INNER JOIN
                                                                     trend ON avggold.股票代號 = trend.代號
 WHERE         (View_basicinfo.總量 >= 500) and ((macdchartable.macd >= -0.03) AND (macdchartable.macd <= 50)) and ((rsvjasc.當日J值一 >= 0) AND (rsvjasc.當日J值一 <=  100))` },
 
-            {
-                cat: "obv多空淨額", title: "自選股+盤後+綜合+OBV均線", sql: `a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5)
+    {
+        cat: "obv多空淨額", title: "自選股+盤後+綜合+OBV均線", sql: `a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5)
                                                                         + a.週k9 / 5) - a.週d9 / 5) + a.月k9 / 5) - a.月d9 / 5)
                                                                         + a.合計十天 / 10) + a.三週庫存比率 / 100, 2) AS 加權總分,a.[均量黃金交叉次數],a.[三大法人黃金交叉次數],a.[外資黃金交叉次數] ,a.[投信黃金交叉次數],c.obv淨額,c.三十四日平均線,d.五日平均線,c.obv淨額-d.五日平均線 as 站上五日均線,c.obv淨額-c.三十四日平均線 as 站上三十四日均線,macdpic.DIF減MACD,a.[k9],a.[d9] ,a.[週k9],a.[週d9],a.[月k9] ,a.[月d9],a.[macd],a.[集中度1日] ,a.[集中度5日] ,a.[集中度10日],a.[集中度20日] ,a.[集中度60日],a.[本益比預估] ,a.[本益比近四季],a.[股價淨值比] ,a.[現金殖利率] ,a.[正DI] ,a.[負DI] ,a.[趨向ADX] ,a.[正趨百分比] ,a.[負趨百分比] ,a.[正負DI百分比] ,a.[三大法人佔股本比%一天] ,a.[主力佔股本比%一天],a.[合計一天] ,a.[法人三天],a.[主力三天],a.[合計三天],a.[法人五天],a.[主力五天],a.[合計五天] ,a.[法人十天] ,a.[主力十天],a.[合計十天] ,a.[法人二十天] ,a.[主力二十天],a.[合計二十天] ,a.[法人預設] ,a.[主力預設] ,a.[合計預設] ,a.[一週庫存比率] ,a.[二週庫存比率] ,a.[三週庫存比率],a.[四週庫存比率],a.[五週庫存比率] ,a.[六週庫存比率] ,a.[七週庫存比率] ,a.[近二期增幅] ,a.[近三期增幅] ,a.[近四期增幅] ,a.[近五期增幅] ,a.[近六期增幅],a.[近七期增幅] ,a.[最新週],a.[資使用率] ,a.[資使用率黃金交叉次數] ,a.[券使用率] ,a.[券使用率黃金交叉次數] ,a.[券資比] ,a.[券資比黃金交叉次數] ,a.[產業分類] ,a.[交易所分類] ,a.[股本億] ,a.[日期], b.成交價 as 盤中成交價, b.漲跌, b.漲幅, b.總量 as 盤中總量 from winnewdate as a inner join view_basicinfo as b on a.股票代號 = b.代號 inner join obvdatea3 as c on a.股票代號 = c.代號 and a.日期 = c.日期 inner join obvdatea5 as d on c.代號 =  d.代號 and c.日期 = d.日期 INNER JOIN macdpic on  a.股票代號 = macdpic.股票代號 and a.日期 = macdpic.日期
 where (b.代號 IN (SELECT 代號 FROM  incomechar20)) AND (a.日期 = (SELECT TOP (1) MAX(日期) AS Expr1  FROM basicinfo AS basicinfo_1))` },
-            {
-                cat: "obv多空淨額", title: "單股+obv+winewdate多天", sql: `top 20 a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5)
+    {
+        cat: "obv多空淨額", title: "單股+obv+winewdate多天", sql: `top 20 a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5)
                                                                         + a.週k9 / 5) - a.週d9 / 5) + a.月k9 / 5) - a.月d9 / 5)
                                                                         + a.合計十天 / 10) + a.三週庫存比率 / 100, 2) AS 加權總分 ,a.[均量黃金交叉次數],a.[三大法人黃金交叉次數],a.[外資黃金交叉次數] ,a.[投信黃金交叉次數],c.obv淨額,c.三十四日平均線,d.五日平均線,c.obv淨額-d.五日平均線 As 站上五日均線,c.obv淨額-c.三十四日平均線 As 站上三十四日均線,macdpic.DIF減MACD,a.[k9],a.[d9] ,a.[週k9],a.[週d9],a.[月k9] ,a.[月d9],a.[macd],a.[集中度1日] ,a.[集中度5日] ,a.[集中度10日],a.[集中度20日] ,a.[集中度60日],a.[本益比預估] ,a.[本益比近四季],a.[股價淨值比] ,a.[現金殖利率] ,a.[正DI] ,a.[負DI] ,a.[趨向ADX] ,a.[正趨百分比] ,a.[負趨百分比] ,a.[正負DI百分比] ,a.[三大法人佔股本比%一天] ,a.[主力佔股本比%一天],a.[合計一天] ,a.[法人三天],a.[主力三天],a.[合計三天],a.[法人五天],a.[主力五天],a.[合計五天] ,a.[法人十天] ,a.[主力十天],a.[合計十天] ,a.[法人二十天] ,a.[主力二十天],a.[合計二十天] ,a.[法人預設] ,a.[主力預設] ,a.[合計預設] ,a.[一週庫存比率] ,a.[二週庫存比率] ,a.[三週庫存比率],a.[四週庫存比率],a.[五週庫存比率] ,a.[六週庫存比率] ,a.[七週庫存比率] ,a.[近二期增幅] ,a.[近三期增幅] ,a.[近四期增幅] ,a.[近五期增幅] ,a.[近六期增幅],a.[近七期增幅] ,a.[最新週],a.[資使用率] ,a.[資使用率黃金交叉次數] ,a.[券使用率] ,a.[券使用率黃金交叉次數] ,a.[券資比] ,a.[券資比黃金交叉次數] ,a.[產業分類] ,a.[交易所分類] ,a.[股本億] ,a.[日期], b.成交價 As 盤中成交價, b.漲跌, b.漲幅, b.總量 As 盤中總量  from winnewdate As a inner join view_basicinfo As b On a.股票代號 = b.代號 inner join obvdatea3 As c On a.股票代號 = c.代號 And a.日期 = c.日期 inner join obvdatea5 As d On c.代號 =  d.代號 And c.日期 = d.日期 INNER JOIN macdpic On  a.股票代號 = macdpic.股票代號 And a.日期 = macdpic.日期 where
 (b.代號 = /*輸入股票代號=>*/N'3017') order by 日期 desc` },
 
-            {
-                cat: "基本面", title: "近五年營業額", sql: `TOP (100) PERCENT View_income近一年.名稱 AS 股票名稱, View_income近一年.代號 AS 股票代號,
+    {
+        cat: "基本面", title: "近五年營業額", sql: `TOP (100) PERCENT View_income近一年.名稱 AS 股票名稱, View_income近一年.代號 AS 股票代號,
                                                                         View_income最新年.最新年營收 AS 營收最新年, View_income近一年.近一年營收 AS 營收近一年,
                                                                         View_income近二年.近二年營收 AS 營收近二年, View_income近三年.近三年營收 AS 營收近三年,
                                                                         View_income近四年.近四年營收 AS 營收近四年, View_income近五年.近五年營收 AS 營收近五年,
@@ -6315,8 +5779,8 @@ FROM              View_income近二年 INNER JOIN
                                                                         2) = RIGHT(View_income最新年.日期, 2)
                                                                         WHERE (View_income近一年.代號 = N'2330')
                                                                         ORDER BY  View_income近一年.日期` },
-            {
-                cat: "基本面", title: "近五年EPS", sql: `TOP (100) PERCENT dbo.View_finance最新年.名稱, dbo.View_finance最新年.代號,
+    {
+        cat: "基本面", title: "近五年EPS", sql: `TOP (100) PERCENT dbo.View_finance最新年.名稱, dbo.View_finance最新年.代號,
                                                                         dbo.View_finance最新年.最新年EPS累計, dbo.View_finance近一年.近一年EPS累計,
                                                                         dbo.View_finance近二年.近二年EPS累計, dbo.View_finance近三年.近三年EPS累計,
                                                                         dbo.View_finance近四年.近四年EPS累計, dbo.View_finance最新年.最新年毛利率,
@@ -6340,26 +5804,26 @@ FROM              dbo.View_finance近二年 INNER JOIN
                                                                         WHERE (dbo.View_finance最新年.代號 = N'2330')
                                                                         ORDER BY   dbo.View_finance最新年.代號, dbo.View_finance最新年.日期` },
 
-            { cat: "圖片類", title: "Ai girl", sql: `/*資料庫:fvor2*/ * from stockgod21 where 識別碼>1000 and 識別碼<1050` },
-            { cat: "圖片類", title: "gif檔", sql: `/*資料庫:fvor2*/top 30 * from stockgod28` },
-            { cat: "圖片類", title: "面積 考卷", sql: `/*資料庫:fvor2*/top 20 * from stockgod` },
-            { cat: "圖片類", title: "美腿圖片", sql: `/*資料庫:poemleg*/識別碼,name1 as 名稱,mail1 as 說明,photo,word1 as 日期 from poem where (識別碼 >= 1 and 識別碼 <= 50)` },
-            { cat: "圖片類", title: "圖片藝廊", sql: `/*詳見上排藝廊 https://weizen99.github.io/androidapp/basicinfotable2.html */` },
-            { cat: "文字類", title: "成語", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfo4]` },
-            { cat: "文字類", title: "我的最愛", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfowd1] order by 識別碼 desc` },
-            { cat: "文字類", title: "自建概念股", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfowd5]` },
-            { cat: "文字類", title: "美股", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfowd6]` },
-            { cat: "文字類", title: "excel程式碼", sql: `/*資料庫:pokopoko*/top 100 * from poemexcel` },
-            { cat: "文字類", title: "java程式碼", sql: ` /*資料庫:pokopoko*/top 100 * from poemjava` },
-            { cat: "文字類", title: "visualbasic程式碼", sql: `/*資料庫:pokopoko*/top 100 * from poemvisualbasic` },
-            { cat: "文字類", title: "web程式碼", sql: `/*資料庫:pokopoko*/top 100 * from poemweb` },
-            { cat: "文字類", title: "youbike座標", sql: `/*資料庫:pokopoko*/ * from textmsgyb` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            {
-                cat: "盤中選股", title: "盤中obv+自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
+    { cat: "圖片類", title: "Ai girl", sql: `/*資料庫:fvor2*/ * from stockgod21 where 識別碼>1000 and 識別碼<1050` },
+    { cat: "圖片類", title: "gif檔", sql: `/*資料庫:fvor2*/top 30 * from stockgod28` },
+    { cat: "圖片類", title: "面積 考卷", sql: `/*資料庫:fvor2*/top 20 * from stockgod` },
+    { cat: "圖片類", title: "美腿圖片", sql: `/*資料庫:poemleg*/識別碼,name1 as 名稱,mail1 as 說明,photo,word1 as 日期 from poem where (識別碼 >= 1 and 識別碼 <= 50)` },
+    { cat: "圖片類", title: "圖片藝廊", sql: `/*詳見上排藝廊 https://weizen99.github.io/androidapp/basicinfotable2.html */` },
+    { cat: "文字類", title: "成語", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfo4]` },
+    { cat: "文字類", title: "我的最愛", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfowd1] order by 識別碼 desc` },
+    { cat: "文字類", title: "自建概念股", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfowd5]` },
+    { cat: "文字類", title: "美股", sql: `/*資料庫:fromaccessdatabase*/* FROM [dbo].[guestinfowd6]` },
+    { cat: "文字類", title: "excel程式碼", sql: `/*資料庫:pokopoko*/top 100 * from poemexcel` },
+    { cat: "文字類", title: "java程式碼", sql: ` /*資料庫:pokopoko*/top 100 * from poemjava` },
+    { cat: "文字類", title: "visualbasic程式碼", sql: `/*資料庫:pokopoko*/top 100 * from poemvisualbasic` },
+    { cat: "文字類", title: "web程式碼", sql: `/*資料庫:pokopoko*/top 100 * from poemweb` },
+    { cat: "文字類", title: "youbike座標", sql: `/*資料庫:pokopoko*/ * from textmsgyb` },
+    //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+    //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+    //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+    //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+    {
+        cat: "盤中選股", title: "盤中obv+自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
                                                                     obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量,
                                                                     obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量,
                                                                     obv盤中選股.盤中計算出來的最新三十四日平均線,
@@ -6378,8 +5842,8 @@ WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線
                                                                         (SELECT          TOP (1) MAX(日期) AS Expr1
                                                                           FROM               basicinfo AS basicinfo_1)) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
 ORDER BY   站上五日平均線張數 DESC` },
-            {
-                cat: "盤中選股", title: "盤中站上obv五日均線", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
+    {
+        cat: "盤中選股", title: "盤中站上obv五日均線", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
                                                                     obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量,
                                                                     obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量,
                                                                     obv盤中選股.盤中計算出來的最新三十四日平均線,
@@ -6402,8 +5866,8 @@ WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線
                                                                           FROM               basicinfo AS basicinfo_1)) AND (obv盤中選股.盤中計算出來的最新五日平均線 <> 0) AND
                                                                     (View_day2obvdate3_1.obv淨額 - obv盤中選股.盤中計算出來的最新五日平均線 < 0) and (obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 >0)
 ORDER BY   站上五日平均線張數 DESC` },
-            {
-                cat: "盤中選股", title: "盤中站上obv五日均線+winnewdate+自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
+    {
+        cat: "盤中選股", title: "盤中站上obv五日均線+winnewdate+自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
                                                                     obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量,
                                                                     obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量,
                                                                     obv盤中選股.盤中計算出來的最新三十四日平均線,
@@ -6427,8 +5891,8 @@ WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線
                                                                           FROM               basicinfo AS basicinfo_1)) AND (obv盤中選股.盤中計算出來的最新五日平均線 <> 0) AND
                                                                     (View_day2obvdate3_1.obv淨額 - obv盤中選股.盤中計算出來的最新五日平均線 < 0) and (obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 >0)
 ORDER BY   站上五日平均線張數 DESC` },
-            {
-                cat: "盤中選股", title: "盤中站上obv五日均線全部+條件", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
+    {
+        cat: "盤中選股", title: "盤中站上obv五日均線全部+條件", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
                                                                     obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量,
                                                                     obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量,
                                                                     obv盤中選股.盤中計算出來的最新三十四日平均線,
@@ -6448,8 +5912,8 @@ AND (obv計算黃金交叉次數.日期 = (SELECT          TOP (1) MAX(日期) A
                                                                     / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) >= -10) and (ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線)
                                                                     / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) <= 1000) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
 ORDER BY   站上五日平均線張數 DESC` },
-            {
-                cat: "盤中選股", title: "盤中站上obv五日均線全部+條件+winnewdate", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
+    {
+        cat: "盤中選股", title: "盤中站上obv五日均線全部+條件+winnewdate", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
                                                                     obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量,
                                                                     obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量,
                                                                     obv盤中選股.盤中計算出來的最新三十四日平均線,
@@ -6469,8 +5933,8 @@ AND (obv計算黃金交叉次數.日期 = (SELECT          TOP (1) MAX(日期) A
                                                                     / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) >= -10) and (ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線)
                                                                     / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) <= 1000) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
 ORDER BY   站上五日平均線張數 DESC` },
-            {
-                cat: "盤中選股", title: "盤中站上obv五日均線全部+條件+winnewdate+macd紅綠棒", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
+    {
+        cat: "盤中選股", title: "盤中站上obv五日均線全部+條件+winnewdate+macd紅綠棒", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
                                                                     obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量,
                                                                     obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量,
                                                                     obv盤中選股.盤中計算出來的最新三十四日平均線,
@@ -6496,8 +5960,8 @@ WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線
                                                                     (View_day2obvdate3_1.obv淨額 - obv盤中選股.盤中計算出來的最新五日平均線 < 0) and (obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線 >0)
 and (macdpic.DIF減MACD >0) and (macdpic.DIF減MACD <10)
 ORDER BY   站上五日平均線張數 DESC` },
-            {
-                cat: "盤中選股", title: "盤中站上obv三十四日圴線+自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
+    {
+        cat: "盤中選股", title: "盤中站上obv三十四日圴線+自選股", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
                                                                     obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量,
                                                                     obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量,
                                                                     obv盤中選股.盤中計算出來的最新三十四日平均線,
@@ -6516,8 +5980,8 @@ WHERE          (obv盤中選股.盤中計算出來的最新三十四日平均線
                                                                         (SELECT          TOP (1) MAX(日期) AS Expr1
                                                                           FROM               basicinfo AS basicinfo_1)) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
 ORDER BY   站上34日均線張數 DESC` },
-            {
-                cat: "盤中選股", title: "盤中站上obv三十四日圴線全部+條件", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
+    {
+        cat: "盤中選股", title: "盤中站上obv三十四日圴線全部+條件", sql: `obv盤中選股.名稱, obv盤中選股.代號, View_stockchange.漲幅, obv盤中選股.盤中成交價, obv盤中選股.最高,
                                                                     obv盤中選股.最低, obv盤中選股.總量, obv計算黃金交叉次數.obv黃金交叉次數, obv盤中選股.前一日累積obv成交量,
                                                                     obv盤中選股.盤中的單日obv均量, obv盤中選股.盤中的累積obv均量,
                                                                     obv盤中選股.盤中計算出來的最新三十四日平均線,
@@ -6537,15 +6001,15 @@ AND (obv計算黃金交叉次數.日期 = (SELECT          TOP (1) MAX(日期) A
                                                                     / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) >= -10) and (ROUND((obv盤中選股.盤中的累積obv均量 - obv盤中選股.盤中計算出來的最新五日平均線)
                                                                     / ABS(obv盤中選股.盤中計算出來的最新五日平均線) * 100, 2) <= 1000) and (obv盤中選股.盤中計算出來的最新五日平均線 <> 0)
 ORDER BY   站上34日均線張數 DESC` },
-            {
-                cat: "盤中選股", title: "自選股+盤中+綜合+OBV均線", sql: `a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5)
+    {
+        cat: "盤中選股", title: "自選股+盤中+綜合+OBV均線", sql: `a.[股票名稱],a.[股票代號],a.[站均],a.[均價黃金交叉次數],ROUND((((((((a.均價黃金交叉次數 + a.k9 / 5) - a.d9 / 5)
                                                                     + a.週k9 / 5) - a.週d9 / 5) + a.月k9 / 5) - a.月d9 / 5)
                                                                     + a.合計十天 / 10) + a.三週庫存比率 / 100, 2) AS 加權總分,a.[均量黃金交叉次數],a.[三大法人黃金交叉次數],a.[外資黃金交叉次數] ,a.[投信黃金交叉次數],c.盤中的累積obv均量,c.盤中計算出來的最新三十四日平均線,c.盤中計算出來的最新五日平均線,c.盤中的累積obv均量-c.盤中計算出來的最新五日平均線 as 新站上五日均線,c.盤中的累積obv均量-c.盤中計算出來的最新三十四日平均線 as 新站上三十四日均線,macdpic.DIF減MACD,a.[k9],a.[d9] ,a.[週k9],a.[週d9],a.[月k9] ,a.[月d9],a.[macd],a.[集中度1日] ,a.[集中度5日] ,a.[集中度10日],a.[集中度20日] ,a.[集中度60日],a.[本益比預估] ,a.[本益比近四季],a.[股價淨值比] ,a.[現金殖利率] ,a.[正DI] ,a.[負DI] ,a.[趨向ADX] ,a.[正趨百分比] ,a.[負趨百分比] ,a.[正負DI百分比] ,a.[三大法人佔股本比%一天] ,a.[主力佔股本比%一天],a.[合計一天] ,a.[法人三天],a.[主力三天],a.[合計三天],a.[法人五天],a.[主力五天],a.[合計五天] ,a.[法人十天] ,a.[主力十天],a.[合計十天] ,a.[法人二十天] ,a.[主力二十天],a.[合計二十天] ,a.[法人預設] ,a.[主力預設] ,a.[合計預設] ,a.[一週庫存比率] ,a.[二週庫存比率] ,a.[三週庫存比率],a.[四週庫存比率],a.[五週庫存比率] ,a.[六週庫存比率] ,a.[七週庫存比率] ,a.[近二期增幅] ,a.[近三期增幅] ,a.[近四期增幅] ,a.[近五期增幅] ,a.[近六期增幅],a.[近七期增幅] ,a.[最新週],a.[資使用率] ,a.[資使用率黃金交叉次數] ,a.[券使用率] ,a.[券使用率黃金交叉次數] ,a.[券資比] ,a.[券資比黃金交叉次數] ,a.[產業分類] ,a.[交易所分類] ,a.[股本億] ,a.[日期], b.成交價 as 盤中成交價, b.漲跌, b.漲幅, b.總量 as 盤中總量 from winnewdate as a inner join view_basicinfo as b on a.股票代號 = b.代號 inner join obvdatea5 as d on d.代號 = a.[股票代號] and d.日期 = a.日期 inner join obv盤中選股 as c on d.代號 = c.代號 INNER JOIN macdpic on  a.股票代號 = macdpic.股票代號 and a.日期 = macdpic.日期
 where (b.代號 IN (SELECT 代號 FROM  incomechar20)) AND (a.日期 = (SELECT TOP (1) MAX(日期) AS Expr1  FROM basicinfo AS basicinfo_1))
 order by c.盤中的累積obv均量-c.盤中計算出來的最新五日平均線 desc` },
 
-            {
-                cat: "其他", title: "結果轉成JSON格式", sql: `priceincrease1.名稱, priceincrease1.代號,
+    {
+        cat: "其他", title: "結果轉成JSON格式", sql: `priceincrease1.名稱, priceincrease1.代號,
                                                ROUND(priceincrease10.成交價漲幅百分比 - priceincrease4.成交價漲幅百分比, 2) AS 前8期漲幅,
                                                ROUND(priceincrease3.成交量漲幅百分比, 2) AS 近3期量增幅,
                                                View_stockchange.成交價, View_stockchange.漲幅, View_stockchange.總量,
@@ -6585,772 +6049,11 @@ GROUP BY priceincrease1.名稱, priceincrease1.代號,
                                                  View_stockchange.股本億, priceincrease1.本日, priceincrease10.前一日
 ORDER BY 近4期價漲幅 DESC
 FOR JSON PATH` },
-            { cat: "自選股", title: "四季紅", sql: `* FROM incomechar` },
-            { cat: "自選股", title: "黃金交金叉", sql: `* FROM incomechar19` },
-            { cat: "自選股", title: "所有自選股資訊", sql: ` * from textmsg where 識別碼 >= 21` },
-
-            //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-            //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
-
-
-        ];
-
-
-        // --- 2. 核心變數初始化 ---
-        var stockTable = null;
-        var chartInstance = null;
-        var isRecording = false;
-
-        // 語音辨識初始化 (防呆處理)
-        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        var recognition = null;
-        if (window.SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.lang = 'zh-TW';
-            recognition.onresult = function (e) {
-                $("#userInput").val(e.results[0][0].transcript);
-                toggleRecord();
-            };
-            recognition.onerror = function () { toggleRecord(); };
-        }
-
-        // --- 3. 頁面啟動邏輯 ---
-        $(document).ready(function () {
-            console.log("系統啟動中...");
-            $("#geminiKey").val(localStorage.getItem('gemini_stock_key') || '');
-
-            // 執行初始化，按順序來
-            initTemplateDropdown();
-            loadHistory();
-            console.log("系統就緒");
-        });
-
-        // --- 4. 基礎功能函數 (解決按鈕沒反應) ---
-
-        function loadHistory() { console.log("歷史紀錄已掛載"); }
-
-        function injectCmd(t) {
-            if (!t) return;
-            $("#userInput").val(t === '清除' ? '' : t);
-        }
-
-        function injectSql(sql) {
-            if (!sql) return;
-
-            // 1. 填入輸入框
-            $("#userInput").val(sql);
-
-            // 2. 優化後的正則：支援 /* 資料庫 : xxx */ (容忍空白與大小寫)
-            const dbMatch = sql.match(/\/\*\s*資料庫\s*:\s*(.*?)\s*\*\//i);
-
-            if (dbMatch) {
-                // 抓到標籤，切換到指定庫
-                $("#dbSelect").val(dbMatch[1].trim());
-                console.log("🎯 自動切換至資料庫: " + dbMatch[1].trim());
-            } else {
-                // 沒抓到標籤，自動回到預設主庫
-                $("#dbSelect").val("stockchangedate");
-                console.log("🏠 未偵測到標籤，回歸預設主庫");
-            }
-        }
-
-        function initTemplateDropdown() {
-            const $select = $("#sqlTemplates").empty().append('<option value="">📑 選擇 SQL 範本</option>');
-            let cats = [...new Set(sqlLib.map(t => t.cat))];
-            cats.forEach(c => {
-                let $g = $(`<optgroup label="【${c}】"></optgroup>`).appendTo($select);
-                sqlLib.filter(t => t.cat === c).forEach(t => $g.append(`<option value="${t.sql}">${t.title}</option>`));
-            });
-        }
-
-        function filterTemplates(val) {
-            const filtered = sqlLib.filter(t => t.title.includes(val) || t.cat.includes(val));
-            const $select = $("#sqlTemplates").empty().append('<option value="">📑 選擇 SQL 範本</option>');
-            filtered.forEach(t => $select.append(`<option value="${t.sql}">${t.title}</option>`));
-        }
-
-        function toggleRecord() {
-            if (!recognition) return Swal.fire("錯誤", "瀏覽器不支援語音", "error");
-            if (isRecording) {
-                recognition.stop();
-                $("#recordBtn").removeClass("active").html('<i class="fas fa-microphone"></i> 語音輸入');
-            } else {
-                recognition.start();
-                $("#recordBtn").addClass("active").html('<i class="fas fa-stop"></i> 停止錄音');
-            }
-            isRecording = !isRecording;
-        }
-
-        // --- 5. 數據查詢與 AI 執行 ---
-        function runManualSQL() {
-            let sql = $("#userInput").val().trim();
-            if (!sql) return;
-
-            // 1. 移除註解，取得純淨的指令開頭
-            let pureSql = sql.replace(/\/\*[\s\S]*?\*\//g, '').trim().toUpperCase();
-
-            // 2. 只有在完全沒有 SELECT/WITH/EXEC 時才補
-            if (pureSql !== "" &&
-                !pureSql.startsWith("SELECT") &&
-                !pureSql.startsWith("WITH") &&
-                !pureSql.startsWith("EXEC")) {
-
-                sql = "SELECT " + sql;
-            }
-
-            // 3. 防呆：如果 AI 產出了 "SELECT SELECT"，強行修正
-            sql = sql.replace(/^SELECT\s+SELECT/i, "SELECT");
-
-            fetchStockData(sql, false);
-        }
-
-
-
-
-
-        // ==========================================
-        // 👑【核心優化】：自動糾錯與經驗學習閉環系統 (前端版) [1.1]
-        // ==========================================
-        function runStockAI(attempt = 1, maxAttempts = 3, errorHistory = "") {
-            const text = $("#userInput").val().trim();
-            const key = $("#geminiKey").val().trim();
-            if (!text || !key) return;
-
-            // 💡 若為第二輪以上的嘗試，帶著歷史報錯引導 AI 修正
-            let promptToSend = text;
-            if (attempt > 1) {
-                promptToSend = text + `\n\n【⚠️ 嚴重警告】：你上一輪產生的 SQL 執行失敗，請必須改正！\n【錯誤/警告訊息】：\n${errorHistory}\n【正確欄位限制】：必須使用繁體「專家實戰總分」、「實戰標籤」、「股本億」。[日期]欄位是INT（例如20260717），不可使用DATEADD。請重新思考並只輸出 \`\`\`sql ... \`\`\` 程式碼塊，絕對不要有任何多餘解釋！`;
-            }
-
-            // 🟢 修正後的寫法（對齊實體表欄位）：
-            const enhancedPrompt = promptToSend + ` (規範：1.禁止縮寫欄位。2.必須使用完整名稱：均價黃金交叉次數, obv累積金叉次數。3.嚴禁使用中括號。4.嚴禁在欄位後加別名如 [產業分類]分類。)`;
-
-            // 🟢 修正後的寫法：不再在前端拼接多餘的「(規範：...)」，保持 userSpeech 100% 純淨 [1.1]
-            $.ajax({
-                type: "POST",
-                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/TranslateToSQL",
-                data: JSON.stringify({ userSpeech: promptToSend, userApiKey: key }), // 💡 直接傳送純淨的 promptToSend
-                contentType: "application/json; charset=utf-8",
-                success: (res) => {
-                    if (res.d.success) {
-                        if (res.d.isBypass) {
-                            // 👑【自動回填與一鍵執行】：直接填回文字框，並自動調用前台 SQL 執行程序！ [1.1]
-                            $("#userInput").val(res.d.sql);
-                            Swal.close();
-                            runManualSQL(); // 100% 成功執行
-                        } else {
-                            fetchStockData(res.d.sql, false, text, attempt, maxAttempts, errorHistory);
-                        }
-                    }
-                }
-            });
-        }
-
-
-
-        function runStockAI1(attempt = 1, maxAttempts = 3, errorHistory = "") {
-            const text = $("#userInput").val().trim();
-            if (!text) return Swal.fire("提示", "請輸入專家指令", "info");
-
-            Swal.fire({ title: `專家運算中... (嘗試 ${attempt}/${maxAttempts})`, didOpen: () => Swal.showLoading() });
-
-            // 💡 若為第二輪以上的嘗試，帶著歷史報錯引導 AI 修正
-            let promptToSend = text;
-            if (attempt > 1) {
-                promptToSend = text + `\n\n【⚠️ 嚴重警告】：你上一輪產生的 SQL 執行失敗，請必須改正！\n【錯誤/警告訊息】：\n${errorHistory}\n【正確欄位限制】：必須使用繁體「專家實戰總分」、「實戰標籤」、「股本億」。[日期]欄位是INT（例如20260717），不可使用DATEADD。請重新思考並只輸出 \`\`\`sql ... \`\`\` 程式碼塊，絕對不要有任何多餘解釋！`;
-            }
-
-            const strictText = promptToSend + " (規則：使用 StockScore 表，欄位嚴禁別名，不准用中括號，日期必須過濾 MAX(日期)，僅輸出 SELECT 語句)";
-
-            // 🟢 修正後的寫法：同理，傳送純淨的 promptToSend [1.1]
-            $.ajax({
-                type: "POST",
-                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/TranslateToSQL1",
-                data: JSON.stringify({ userSpeech: promptToSend }), // 💡 直接傳送純淨的 promptToSend
-                contentType: "application/json; charset=utf-8",
-                success: (res) => {
-                    if (res.d.success) {
-                        if (res.d.isBypass) {
-                            // 👑【自動回填與一鍵執行】：直接填回文字框，並自動調用前台 SQL 執行程序！ [1.1]
-                            $("#userInput").val(res.d.sql);
-                            Swal.close();
-                            runManualSQL(); // 100% 成功執行
-                        } else {
-                            console.log(`專家產出 SQL (嘗試 #${attempt}):`, res.d.sql);
-                            fetchStockData(res.d.sql, true, text, attempt, maxAttempts, errorHistory);
-                        }
-                    } else {
-                        Swal.fire("錯誤", res.d.msg, "error");
-                    }
-                }
-            });
-        }
-
-        // 修改後的資料撈取中轉函數 (傳遞閉環變數)
-        function fetchStockData(sql, isExpert, originalPrompt, attempt = 1, maxAttempts = 3, errorHistory = "") {
-            const db = $("#dbSelect").val();
-            const $btns = $(".main-btn");
-
-            $btns.prop("disabled", true).css("opacity", "0.5");
-
-            Swal.fire({
-                title: `<i class="fas fa-sync fa-spin text-cyan-400"></i> 指令執行中 (嘗試 ${attempt}/${maxAttempts})`,
-                html: `
-                        <div class="text-left">
-                            <div class="mb-2 text-xs text-yellow-400">正在查詢資料庫：${db}</div>
-                            <div class="text-[10px] text-gray-500 mb-1">完整的 SQL 指令：</div>
-                            <textarea id="executingSql" class="w-full h-32 text-[10px] p-2 bg-black border border-gray-700 text-cyan-300 rounded font-mono" readonly>${sql}</textarea>
-                            <div class="mt-2 text-center text-xs text-gray-400 anim-pulse">伺服器數據檢索中...</div>
-                        </div>
-                    `,
-                background: '#050a15',
-                color: '#fff',
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                    setTimeout(() => {
-                        executeAjaxCall(sql, db, isExpert, $btns, originalPrompt, attempt, maxAttempts, errorHistory);
-                    }, 50);
-                }
-            });
-        }
-
-        // 核心 AJAX 執行與錯誤攔截引擎
-        function executeAjaxCall(sql, db, isExpert, $btns, originalPrompt, attempt, maxAttempts, errorHistory) {
-            $.ajax({
-                type: "POST",
-                url: "https://zen2965.duckdns.org:8888/excelimport/DataService2.aspx/ExecuteSQL",
-                data: JSON.stringify({ sql: sql, db: db, pwd: "2157" }),
-                contentType: "application/json; charset=utf-8",
-                success: function (res) {
-                    let rawData = res.d;
-
-                    // 1. 語法級別錯誤攔截 ➔ 自動觸發糾錯閉環 [1.1]
-                    if (typeof rawData === "string" && rawData.indexOf("錯誤") !== -1) {
-                        let errorMsg = rawData;
-                        console.warn(`❌ [SQL 執行期報錯]：\n${errorMsg}`);
-
-                        if (attempt < maxAttempts) {
-                            let nextAttempt = attempt + 1;
-                            let packedError = `【失敗的 SQL】:\n${sql}\n\n【錯誤原因】:\n${errorMsg}`;
-                            Swal.close();
-
-                            // 呼叫相應的 AI 函數進行下一輪重試
-                            if (isExpert) {
-                                runStockAI1(nextAttempt, maxAttempts, packedError);
-                            } else {
-                                runStockAI(nextAttempt, maxAttempts, packedError);
-                            }
-                        } else {
-                            Swal.close();
-                            // 超過重試次數，彈出最終錯誤警告
-                            Swal.fire({
-                                title: "SQL 指令錯誤",
-                                html: `
-                                        <div class="text-left">
-                                            <div class="bg-red-100 p-3 rounded text-red-700 text-xs font-bold mb-3 border-l-4 border-red-500">嘗試了 ${maxAttempts} 次仍未能成功收斂。</div>
-                                            <div class="text-[10px] text-gray-500 mb-1">出錯的最後一版指令如下：</div>
-                                            <textarea class="w-full h-40 text-[10px] p-2 bg-gray-100 border text-black font-mono" readonly>${sql}</textarea>
-                                        </div>
-                                    `,
-                                icon: "error",
-                                width: '600px'
-                            });
-                        }
-                        return;
-                    }
-
-                    try {
-                        // ========================================================
-                        // 👑【雙端切片防禦】：精確定位第一個 '[' 與最後一個 ']' [1.1]
-                        // 徹底切除頭部 SQL Server 警告訊息（如 彙總消除 Null 值）與尾部 HTML 雜質！
-                        // ========================================================
-                        let firstIndex = rawData.indexOf('[');
-                        let lastIndex = rawData.lastIndexOf(']');
-
-                        if (firstIndex !== -1 && lastIndex !== -1 && lastIndex > firstIndex) {
-                            rawData = rawData.substring(firstIndex, lastIndex + 1);
-                        }
-
-                        const data = JSON.parse(rawData);
-
-                        // 2. 數據膨脹防禦 (防範忘記限制日期而倒出歷史數據)
-                        if (Array.isArray(data) && data.length > 0) {
-                            if (data.length > 200 && originalPrompt) {
-                                let feedback = `執行成功，但回傳了多達 ${data.length} 筆數據。您可能忘了限制最新日期！請在 WHERE 條件中務必限制日期為最新的一天：日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)，或者使用 TOP 50 限制行數！`;
-                                if (attempt < maxAttempts) {
-                                    Swal.close();
-                                    if (isExpert) runStockAI1(attempt + 1, maxAttempts, feedback);
-                                    else runStockAI(attempt + 1, maxAttempts, feedback);
-                                    return;
-                                }
-                            }
-
-                            // 🎉 🎉 成功渲染！
-                            Swal.close();
-                            renderTable(data, isExpert);
-
-                            // 【自動進化核心】：當執行成功，且是經由 AI 語音生成時，將本輪成功的實戰經驗寫入 AIEngineeringKB 庫中！ [1.1, 2.1]
-                            if (originalPrompt) {
-                                saveExperienceToKB(originalPrompt, sql, errorHistory);
-                            }
-                        } else {
-                            // 3. 零數據防禦 (過濾條件太嚴格)
-                            let feedback = "執行成功，但回傳了 0 筆數據。這代表您的過濾條件可能太嚴格，或者股票名稱有錯。請不要使用等號(=)，改用 模糊查詢（名稱 LIKE N'%關鍵字%'）來尋找！";
-                            if (attempt < maxAttempts && originalPrompt) {
-                                Swal.close();
-                                if (isExpert) runStockAI1(attempt + 1, maxAttempts, feedback);
-                                else runStockAI(attempt + 1, maxAttempts, feedback);
-                            } else {
-                                Swal.close();
-                                Swal.fire("查無資料", "SQL 執行成功，但條件下查無結果。", "info");
-                            }
-                        }
-                    } catch (e) {
-                        Swal.close();
-                        console.error("JSON 解析失敗，原始數據如下：\n", rawData);
-                        Swal.fire("解析失敗", "回傳非 JSON 格式內容", "error");
-                    }
-                },
-                error: () => {
-                    Swal.close();
-                    Swal.fire("連線失敗", "伺服器無回應", "error");
-                },
-                complete: () => {
-                    $btns.prop("disabled", false).css("opacity", "1");
-                }
-            });
-        }
-
-        // 👑【經驗儲存函數】：將成功的 AI 調試結果背景默默寫入 AIEngineeringKB 資料庫 [1.1, 2.1]
-        function saveExperienceToKB(promptText, successfulSql, errors) {
-            // 安全引號轉義，防止 SQL 注入與字串破裂
-            let escapedPrompt = promptText.replace(/'/g, "''");
-            let escapedSql = successfulSql.replace(/'/g, "''");
-            let escapedErrors = errors ? errors.replace(/'/g, "''") : "";
-
-            let sqlCommand = `EXEC stockchangedate.dbo.sp_SaveToAIEngineeringKB
-                        @UserPrompt = N'${escapedPrompt}',
-                        @CorrectSQL = N'${escapedSql}',
-                        @ErrorHistory = N'${escapedErrors}';`;
-
-            // 靜默執行寫入，完全無感
-            $.ajax({
-                type: "POST",
-                url: "DataService2.aspx/ExecuteSQL",
-                data: JSON.stringify({ sql: sqlCommand, db: "stockchangedate", pwd: "2157" }),
-                contentType: "application/json; charset=utf-8",
-                success: function () {
-                    console.log("🚀 [自動進化] 成功！本輪成功的 AI 實戰經驗已安全寫入 AIEngineeringKB 知識庫。");
-                }
-            });
-        }
-
-
-        //
-        //}
-
-        // --- 6. 表格渲染與診斷連動 (修正 ID 對應) ---
-
-        // ========================================================
-        // 💡【核心修正一】：全域暫存資料，防範 HTML 引號衝突導致選單失效 [1]
-        // ========================================================
-        function renderTable(data, isExpert) {
-            // 1. 將今日的資料庫數組存入全域變數中
-            window.activeStockData = data;
-
-            if (stockTable) stockTable.destroy();
-            $("#stockTable").empty();
-
-            // 1. 建立動態欄位定義，並加入數值優化邏輯 (解決小數點過長問題)
-            let cols = Object.keys(data[0]).map(k => ({
-                title: k,
-                data: k,
-                className: "text-center nowrap",
-                render: function (val, type, row) {
-                    if (typeof val === 'number') {
-                        if (Number.isInteger(val)) {
-                            if (k === '日期' || k.includes('代號')) return val;
-                            return val.toLocaleString();
-                        }
-                        return parseFloat(val.toFixed(2));
-                    }
-                    return val;
-                }
-            }));
-
-            // 2. 💡【核心修正二】：在最前面插入「AI 診斷」功能列 (改用 meta.row 傳遞索引) [1]
-            cols.unshift({
-                title: "AI 診斷",
-                data: null,
-                width: "150px",
-                render: (d, t, row, meta) => {
-                    const sId = row["代號"] || row["股票代號"] || "";
-                    const sName = row["名稱"] || row["股票名稱"] || "";
-                    return `
-                        <div class="flex flex-col gap-1">
-                            <div class="flex gap-1">
-                                <!-- 💡 改為傳入整數 meta.row -->
-                                <button class="bg-cyan-600 text-black text-[10px] py-1 px-2 rounded font-bold hover:brightness-125" onclick="startSimpleTutor(${meta.row})">解盤</button>
-                                <button class="bg-yellow-500 text-black text-[10px] py-1 px-2 rounded font-bold hover:brightness-125" onclick="runBacktest('${sId}', '${sName}')">勝率</button>
-                            </div>
-                            <!-- 💡 改為傳入整數 meta.row -->
-                            <select class="bg-gray-800 text-emerald-400 text-[10px] rounded p-1 outline-none border border-emerald-900/50" onchange="runExpertTask(this.value, ${meta.row})">
-                                <option value="">🔬 專家任務...</option>
-                                <optgroup label="A. 綜合診斷">
-                                    <option value="A1">A1 健康檢查</option>
-                                    <option value="A2">A2 標籤深度解析</option>
-                                    <option value="A3">A3 總分強弱拆解</option>
-                                    <option value="A4">A4 短線爆發潛力</option>
-                                </optgroup>
-                                <optgroup label="B. 籌碼大戶">
-                                    <option value="B1">B1 大戶鎖碼追蹤</option>
-                                    <option value="B2">B2 法人資金共識</option>
-                                    <option value="B3">B3 籌碼吸吐深挖</option>
-                                    <option value="B4">B4 資券對抗預警</option>
-                                </optgroup>
-                                <optgroup label="C. 技術趨勢">
-                                    <option value="C1">C1 多週期 KD 分析</option>
-                                    <option value="C2">C2 MACD 動能評估</option>
-                                    <option value="C3">C3 乖離率風險</option>
-                                    <option value="C4">C4 量能突破判定</option>
-                                </optgroup>
-                                <optgroup label="D. 策略建議">
-                                    <option value="D1">D1 進場時機建議</option>
-                                    <option value="D2">D2 止損止盈建議</option>
-                                    <option value="D3">D3 波段持有分析</option>
-                                    <option value="D4">D4 隱藏風險挖掘</option>
-                                </optgroup>
-                                <optgroup label="E. 異常偵測">
-                                    <option value="E1">E1 量價背離偵測</option>
-                                    <option value="E2">E2 潛伏低位偵測</option>
-                                    <option value="E3">E3 過熱出貨警報</option>
-                                    <option value="E4">E4 極速反轉預測</option>
-                                </optgroup>
-                            </select>
-                        </div>`;
-                }
-            });
-
-            // 3. 初始化 DataTable (維持不變)
-            stockTable = $('#stockTable').DataTable({
-                data: data,
-                columns: cols,
-                scrollX: true,
-                scrollY: "500px",
-                scrollCollapse: true,
-                pageLength: 50,
-                destroy: true,
-                language: { url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" },
-                drawCallback: function () {
-                    $('.pagination').addClass('justify-content-end');
-                }
-            });
-        }
-
-        // --- 7. 結果看板控制 (對應新 HTML ID: unifiedAnalysisBox) ---
-
-        function showAnalysisUI(headerText, mainText) {
-            $("#unifiedAnalysisBox").removeClass("hidden").fadeIn();
-            $("#boxHeader").html(headerText);
-            $("#mainResultText").text(mainText);
-
-            // 捲動到看板
-            $('html, body').animate({ scrollTop: $("#unifiedAnalysisBox").offset().top - 150 }, 500);
-
-            // 語音
-            window.speechSynthesis.cancel();
-            const msg = new SpeechSynthesisUtterance(mainText);
-            msg.lang = 'zh-TW';
-            window.speechSynthesis.speak(msg);
-        }
-
-        // ========================================================
-        // 💡【核心修正三】：從全域暫存中提取單股資料，避開 JSON 傳值衝突 [1]
-        // ========================================================
-        function startSimpleTutor(rowIndex) {
-            const rowData = window.activeStockData[rowIndex];
-            if (!rowData) return;
-
-            const sName = rowData["名稱"] || rowData["股票名稱"] || "該股";
-            const sId = rowData["代號"] || rowData["股票代號"] || "";
-
-            showAnalysisUI(`🔍 <span class="text-white">${sName}</span> 即時解盤中...`, "AI 正在讀取數據並產生報告...");
-
-            $.ajax({
-                type: "POST",
-                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/AnalyzeStockData",
-                data: JSON.stringify({ stockDataJson: JSON.stringify(rowData), userApiKey: $("#geminiKey").val() }),
-                contentType: "application/json; charset=utf-8",
-                success: (res) => {
-                    if (res.d.success) {
-                        showAnalysisUI(`🔍 <span class="text-white">${sName}</span> 診斷結果`, res.d.analysis);
-                        if (sId) drawTrendChart(sId);
-                    }
-                }
-            });
-        }
-
-        // 確保繪圖函數指向正確的 Canvas ID
-        function drawTrendChart(sId) {
-            $.ajax({
-                type: "POST", url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/GetStockTrendData",
-                data: JSON.stringify({ stockId: sId }),
-                contentType: "application/json; charset=utf-8",
-                success: function (res) {
-                    if (!res.d.success || !res.d.data.length) return;
-                    // 修正：必須對應到我們新版 HTML 的 ID
-                    const ctx = document.getElementById('mainStockChartCanvas').getContext('2d');
-                    if (chartInstance) chartInstance.destroy();
-                    chartInstance = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: res.d.data.map(h => h.date),
-                            datasets: [{ label: '價', data: res.d.data.map(h => h.price), borderColor: '#00f2fe', borderWidth: 2, tension: 0.3, pointRadius: 1 }]
-                        },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-                    });
-                }
-            });
-        }
-
-
-
-        // ========================================================
-        // 💡【核心修正四】：專家任務也改為讀取全域暫存，100% 復活運算！ [1]
-        // ========================================================
-        function runExpertTask(taskId, rowIndex) {
-            if (!taskId) return;
-
-            const rowData = window.activeStockData[rowIndex];
-            if (!rowData) return;
-
-            // 顯示看板
-            $("#unifiedAnalysisBox").removeClass("hidden").show();
-            $("#boxHeader").html(`<i class='fas fa-microchip'></i> 專家任務 ${taskId} | ${rowData.名稱} (${rowData.代號})`);
-            $("#mainResultText").html("<i class='fas fa-brain fa-spin'></i> 正在對一年份寬表數據進行深度建模分析...");
-
-            $.ajax({
-                type: "POST",
-                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/AnalyzeExpertTask",
-                data: JSON.stringify({
-                    stockDataJson: JSON.stringify(rowData),
-                    taskId: taskId
-                }),
-                contentType: "application/json; charset=utf-8",
-                success: (res) => {
-                    if (res.d.success) {
-                        $("#mainResultText").text(res.d.analysis);
-                        speak(res.d.analysis);
-                    }
-                }
-            });
-        }
-
-        function runBacktest(id, name) {
-            showAnalysisUI(`🎯 勝率回測: ${name} (${id})`, "正在計算該股策略歷史勝率，請稍候...");
-
-            $.ajax({
-                type: "POST",
-                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/GetWinRateAnalysis", // 對接真實後端
-                data: JSON.stringify({ stockId: id, userApiKey: $("#geminiKey").val() }),
-                contentType: "application/json; charset=utf-8",
-                success: (res) => {
-                    if (res.d.success) {
-                        showAnalysisUI(`🎯 ${name}(${id}) 歷史勝率診斷`, res.d.analysis);
-                    }
-                }
-            });
-        }
-
-
-
-        async function runIndustryAI() {
-            const key = $("#geminiKey").val().trim();
-
-            // 顯示載入中看板
-            $("#unifiedAnalysisBox").removeClass("hidden").show();
-            $("#boxHeader").html("<i class='fas fa-fire text-red-500 mr-2'></i> 產業熱力全盤診斷中...");
-            $("#mainResultText").html("<i class='fas fa-sync fa-spin mr-2'></i>正在調用本地 gemma 與 Gemini 聯手運算族群動能...");
-
-            Swal.fire({
-                title: '掃描產業熱力',
-                html: '正在計算各族群強度...',
-                background: '#050a15',
-                color: '#fff',
-                didOpen: () => Swal.showLoading()
-            });
-
-            $.ajax({
-                type: "POST",
-                url: "https://zen2965.duckdns.org:8888/excelimport/StockAI.aspx/GetIndustryAnalysis", // 指向你的後端
-                data: JSON.stringify({ userApiKey: key }),
-                contentType: "application/json; charset=utf-8",
-                success: function (res) {
-                    Swal.close();
-                    if (res.d.success) {
-                        // 1. 填入分析文字
-                        $("#mainResultText").html(res.d.analysis.replace(/\n/g, '<br/>'));
-
-                        // 2. 繪製產業圖表 (傳入後端給的 rawData)
-                        if (res.d.rawData) {
-                            drawIndustryChart(res.d.rawData);
-                        }
-
-                        // 3. 語音朗讀
-                        speak(res.d.analysis);
-
-                        // 4. 捲動到看板
-                        $('html, body').animate({ scrollTop: $("#unifiedAnalysisBox").offset().top - 100 }, 500);
-                    } else {
-                        $("#mainResultText").text("診斷失敗：" + res.d.msg);
-                    }
-                },
-                error: function () {
-                    Swal.close();
-                    Swal.fire("錯誤", "無法連線至 StockAI1.aspx", "error");
-                }
-            });
-        }
-
-        function drawIndustryChart(rawData) {
-            const ctx = document.getElementById('mainStockChartCanvas').getContext('2d');
-            if (chartInstance) { chartInstance.destroy(); }
-
-            let labels = [];
-            let values = [];
-
-            try {
-                const data = (typeof rawData === "string") ? JSON.parse(rawData) : rawData;
-
-                // 自動偵測欄位名稱 (優先找強度、漲幅、或數值型欄位)
-                labels = data.map(item => item.industry || item.名稱 || item.產業 || "未知");
-
-                values = data.map(item => {
-                    // 優先順序：strength > Avg_Change > 漲幅 > 數值
-                    return item.strength || item.Avg_Change || item.avg_change || item.漲幅 || Object.values(item).find(v => typeof v === 'number') || 0;
-                });
-
-                console.log("圖表標籤:", labels);
-                console.log("圖表數值:", values);
-
-            } catch (e) {
-                console.error("數據解析失敗", e);
-                return;
-            }
-
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '族群動能',
-                        data: values,
-                        backgroundColor: values.map(v => v >= 0 ? 'rgba(248, 81, 73, 0.6)' : 'rgba(35, 134, 54, 0.6)'), // 紅漲綠跌
-                        borderColor: values.map(v => v >= 0 ? '#f85149' : '#2ea043'),
-                        borderWidth: 1,
-                        borderRadius: 5
-                    }]
-                },
-                options: {
-                    indexAxis: 'y', // 橫向排列
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#888' }
-                        },
-                        y: {
-                            ticks: { color: '#fff', font: { size: 11, weight: 'bold' } }
-                        }
-                    }
-                }
-            });
-        }
-
-
-        function speak(text) {
-            if (!text) return;
-
-            // 1. 清理文字：移除 Markdown 符號與特殊字元，避免語音引擎當機
-            let cleanText = text.replace(/\*\*|##|---|#|>|`|\[|\]/g, '')
-                .replace(/\(.*\)/g, '') // 移除括號內的原文
-                .trim();
-
-            // 2. 停止當前所有語音
-            window.speechSynthesis.cancel();
-
-            // 3. 延遲一小段時間再播放（解決部分瀏覽器 Bug）
-            setTimeout(() => {
-                const msg = new SpeechSynthesisUtterance(cleanText);
-                msg.lang = 'zh-TW';
-                msg.rate = 1.1;  // 速度稍快一點比較自然
-                msg.pitch = 1.0;
-                msg.volume = 1.0;
-
-                // 監聽錯誤
-                msg.onerror = (e) => console.error("語音播放失敗:", e);
-
-                window.speechSynthesis.speak(msg);
-            }, 100);
-        }
-
-        // 語音報警狀態紀錄：Key = "代號_日期_小時"
-        let voiceAlertHistory = new Set();
-
-        function triggerAIAnalyticsVoice(data) {
-            if (!data || data.length === 0) return;
-
-            let voiceQueue = [];
-            const now = new Date();
-            const timeKey = now.getFullYear() + "" + (now.getMonth() + 1) + "" + now.getDate() + "_" + now.getHours();
-
-            data.forEach(item => {
-                // 1. 檢查是否有語音腳本欄位 (VoiceScript)
-                if (item.VoiceScript && item.VoiceScript.trim() !== "") {
-                    let alertKey = item.代號 + "_" + timeKey;
-
-                    // 2. 防止同一小時內重複報警
-                    if (!voiceAlertHistory.has(alertKey)) {
-                        voiceQueue.push(item.VoiceScript);
-                        voiceAlertHistory.add(alertKey);
-                    }
-                }
-            });
-
-            // 3. 執行語音朗讀 (使用瀏覽器內建 Web Speech API)
-            if (voiceQueue.length > 0) {
-                let fullText = "報告長官，偵測到最新戰情：" + voiceQueue.join(" ");
-
-                const msg = new SpeechSynthesisUtterance(fullText);
-                msg.lang = 'zh-TW';     // 台灣中文
-                msg.rate = 0.9;         // 稍微放慢一點，讓您聽得清楚
-                msg.pitch = 1.1;        // 音調稍微高一點，增加警示感
-
-                window.speechSynthesis.speak(msg);
-
-                // 同時在螢幕右下角彈出 Toast 提示
-                Swal.fire({
-                    title: '📡 AI 戰報',
-                    text: fullText,
-                    icon: 'info',
-                    toast: true,
-                    position: 'top-end',
-                    timer: 8000,
-                    showConfirmButton: false
-                });
-            }
-        }
-
-
-
-
-
-    </script>
-</body>
-</html>
+    { cat: "自選股", title: "四季紅", sql: `* FROM incomechar` },
+    { cat: "自選股", title: "黃金交金叉", sql: `* FROM incomechar19` },
+    { cat: "自選股", title: "所有自選股資訊", sql: ` * from textmsg where 識別碼 >= 21` },
+
+    //{ cat: "類", title: "關", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+    //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+    //{ cat: "搜尋類", title: "關鍵字搜尋我的最愛", sql: `top 100 * FROM favor1 WHERE word1 LIKE '%deepseek%' ORDER BY 時間戳記 DESC` },
+];
