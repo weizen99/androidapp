@@ -175,12 +175,845 @@
 
             //{ cat: " ", title: " ", sql: `  ` },
             //{ cat: " ", title: " ", sql: `  ` },
-            //{ cat: " ", title: " ", sql: `  ` },
+
+
+            // 🟢【V11.0 升級範本：Q4 作帳行情專屬 (土洋合買 ✕ 營收雙增)】
+            {
+                cat: "基本面-營收動能",
+                title: "🎯 Q4 土洋認養 ✕ 營收雙增潛伏雷達 (季底作帳 ✕ 10月營收行情)",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    B.代號,
+    B.名稱,
+    B.成交價 AS [盤中現價],
+    B.漲幅 AS [今日漲幅%],
+    B.總量 AS [成交總量(張)],
+
+    -- 🟢 法人共識 (土洋合買判定)
+    CASE
+        WHEN ISNULL(N.投信10日合計, 0) > 0 AND ISNULL(N.外資10日合計, 0) > 0 THEN N'🎯 土洋齊買 (頂級共識)'
+        WHEN ISNULL(N.投信10日合計, 0) > 0 THEN N'🇹🇼 投信單獨認養'
+        WHEN ISNULL(N.外資10日合計, 0) > 0 THEN N'🌎 外資單獨吃貨'
+        ELSE N'--'
+    END AS [法人共識狀態],
+
+    -- 🟢 投信作帳底牌 (Smart Money)
+    N.投信10日合計 AS [投信10日買超(張)],
+    CASE 
+        WHEN N.投信10日合計 >= 3000 THEN N'👑 投信重倉認養'
+        WHEN N.投信10日合計 >= 1000 THEN N'🔥 投信積極建倉'
+        WHEN N.投信10日合計 > 0 THEN N'⭐ 投信初試啼聲'
+        ELSE N'--'
+    END AS [投信作帳態度],
+
+    -- 🟢 外資認養底牌 (Global Money)
+    N.外資10日合計 AS [外資10日買超(張)],
+    CASE 
+        WHEN N.外資10日合計 >= 5000 THEN N'👑 外資重金掃貨'
+        WHEN N.外資10日合計 >= 1500 THEN N'🔥 外資積極建倉'
+        WHEN N.外資10日合計 > 0 THEN N'⭐ 外資小幅加碼'
+        ELSE N'--'
+    END AS [外資認養態度],
+
+    -- 🟢 基本面營收底氣
+    I.最新營收月份,
+    ROUND(I.年成長, 2) AS [營收年增%],
+    ROUND(I.月變動, 2) AS [營收月增%],
+    CASE 
+        WHEN I.年成長 >= 30.0 AND I.月變動 > 0 THEN N'🚀 營收暴衝雙增'
+        WHEN I.年成長 >= 15.0 THEN N'📈 營收強勢雙位成長'
+        ELSE N'--'
+    END AS [營收動能評級],
+
+    -- 🟢 專家總分與外資空間
+    ROUND(M.專家實戰總分, 2) AS [專家分數],
+    FS.預估目標價 AS [外資共識目標價],
+    CASE
+        WHEN ISNULL(FS.預估目標價, 0) > 0 AND ISNULL(B.成交價, 0) > 0
+        THEN ROUND(((FS.預估目標價 - B.成交價) / B.成交價) * 100.0, 1)
+        ELSE NULL
+    END AS [外資潛在空間%],
+
+    M.具體概念 AS [熱門題材]
+
+FROM stockchange.dbo.basicinfo B
+-- 1. 關聯歷史寬表獲取專家分數與概念
+LEFT JOIN stockchangedate.dbo.MasterStockAnalysis M 
+    ON RTRIM(B.代號) = RTRIM(M.代號) AND M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+-- 2. 關聯最新營收
+LEFT JOIN (
+    SELECT 代號, 日期 AS 最新營收月份, 年成長, 月變動,
+           ROW_NUMBER() OVER(PARTITION BY 代號 ORDER BY 日期 DESC) as rn
+    FROM stockchangedate.dbo.incomesum
+) I ON RTRIM(B.代號) = RTRIM(I.代號) AND I.rn = 1
+-- 3. 關聯三大法人 10 日累計籌碼
+LEFT JOIN stockchangedate.dbo.threemasternumber N 
+    ON RTRIM(B.代號) = RTRIM(N.代號) AND N.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.threemasternumber)
+-- 4. 關聯 FactSet 外資目標價
+LEFT JOIN (
+    SELECT 代號, MAX(預估目標價) AS 預估目標價 FROM stockchangedate.dbo.FactSetEstimates GROUP BY 代號
+) FS ON RTRIM(B.代號) = RTRIM(FS.代號)
+
+WHERE B.總量 >= 1500
+  AND B.成交價 >= 10.0
+  AND M.專家實戰總分 >= 20.0    -- 🔓 戰術放寬：20分即進入防守區，可提前潛伏
+  AND (ISNULL(N.投信10日合計, 0) > 0 OR ISNULL(N.外資10日合計, 0) > 0)  -- 💡 只要土洋有一方正在吃貨即入榜
+  AND ISNULL(I.年成長, 0) >= 15.0    -- 營收具備爆發力
+
+ORDER BY 
+    CASE WHEN ISNULL(N.投信10日合計, 0) > 0 AND ISNULL(N.外資10日合計, 0) > 0 THEN 0 ELSE 1 END ASC, -- 土洋齊買強制排最前
+    (ISNULL(N.投信10日合計, 0) + ISNULL(N.外資10日合計, 0)) DESC, -- 依據總重倉張數排序
+    I.年成長 DESC;
+
+/*
+戰略意義：
+在 10 月初全新的資金佈局期，本雷達幫您抓出「外資與投信正在默默建倉/合買」，並且「營收有雙位數成長保護」的潛力飆股。
+看到【🎯 土洋齊買】標籤，代表內外資看法一致，這種股票往往是 Q4 的最強主升段黑馬！
+*/`
+            },
+
+
+
+            // 🟢【V11.0 新增範本：Q4 作帳行情專屬】
+            {
+                cat: "基本面-營收動能",
+                title: "🎯 Q4 投信認養 ✕ 營收雙增潛伏雷達 (季底作帳 ✕ 10月營收行情)",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    B.代號,
+    B.名稱,
+    B.成交價 AS [盤中現價],
+    B.漲幅 AS [今日漲幅%],
+    B.總量 AS [成交總量(張)],
+
+    -- 🟢 投信作帳底牌 (Smart Money)
+    N.投信10日合計 AS [投信10日買超(張)],
+    CASE 
+        WHEN N.投信10日合計 >= 3000 THEN N'👑 投信重倉認養 (極度看好)'
+        WHEN N.投信10日合計 >= 1000 THEN N'🔥 投信積極建倉'
+        WHEN N.投信10日合計 > 0 THEN N'⭐ 投信初試啼聲'
+        ELSE N'--'
+    END AS [投信作帳態度],
+
+    -- 🟢 基本面營收底氣
+    I.最新營收月份,
+    I.年成長 AS [營收年增%],
+    I.月變動 AS [營收月增%],
+    CASE 
+        WHEN I.年成長 >= 30.0 AND I.月變動 > 0 THEN N'🚀 營收暴衝雙增'
+        WHEN I.年成長 >= 15.0 THEN N'📈 營收強勢雙位數成長'
+        ELSE N'--'
+    END AS [營收動能評級],
+
+    -- 🟢 專家總分與外資空間
+    M.專家實戰總分 AS [專家分數],
+    FS.預估目標價 AS [外資共識目標價],
+    CASE
+        WHEN ISNULL(FS.預估目標價, 0) > 0 AND ISNULL(B.成交價, 0) > 0
+        THEN ROUND(((FS.預估目標價 - B.成交價) / B.成交價) * 100.0, 1)
+        ELSE NULL
+    END AS [外資潛在空間%],
+
+    M.具體概念 AS [熱門題材]
+
+FROM stockchange.dbo.basicinfo B
+-- 1. 關聯歷史寬表獲取專家分數與概念
+LEFT JOIN stockchangedate.dbo.MasterStockAnalysis M 
+    ON RTRIM(B.代號) = RTRIM(M.代號) AND M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+-- 2. 關聯最新營收
+LEFT JOIN (
+    SELECT 代號, 日期 AS 最新營收月份, 年成長, 月變動,
+           ROW_NUMBER() OVER(PARTITION BY 代號 ORDER BY 日期 DESC) as rn
+    FROM stockchangedate.dbo.incomesum
+) I ON RTRIM(B.代號) = RTRIM(I.代號) AND I.rn = 1
+-- 3. 關聯三大法人 10 日累計籌碼
+LEFT JOIN stockchangedate.dbo.threemasternumber N 
+    ON RTRIM(B.代號) = RTRIM(N.代號) AND N.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.threemasternumber)
+-- 4. 關聯 FactSet 外資目標價
+LEFT JOIN (
+    SELECT 代號, MAX(預估目標價) AS 預估目標價 FROM stockchangedate.dbo.FactSetEstimates GROUP BY 代號
+) FS ON RTRIM(B.代號) = RTRIM(FS.代號)
+
+WHERE B.總量 >= 1500
+  AND B.成交價 >= 10.0
+  AND M.專家實戰總分 >= 20.0    -- 底子要好
+  AND ISNULL(N.投信10日合計, 0) > 0  -- 投信必須呈現買超
+  AND ISNULL(I.年成長, 0) >= 15.0    -- 營收具備爆發力
+
+ORDER BY 
+    N.投信10日合計 DESC, 
+    I.年成長 DESC;
+
+/*
+戰略意義：
+在 9/30 季底結帳完畢後，10月份是全新的資金佈局期。
+這支雷達幫您抓出「投信已經在偷偷建倉」，並且「營收有雙位數成長保護」的潛力飆股。
+跟著投信的 Q4 績效作帳列車，享受法人抬轎的快感！
+*/`
+            },
+
+
+
+            // 🟢【V11.0 新增範本：衍生微結構暴衝雷達 (戰鬥放寬版)】
+            {
+                cat: "衍生微結構-CB與個股期",
+                title: "🎯 CB 可轉債 100~115% 發動期 ✕ 股權大戶暴增 ✕ 個股期正價差(戰鬥放寬版)",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    M.[代號],
+    M.[名稱],
+    M.[現價] AS [盤中現價],
+    M.[今日漲跌幅%] AS [今日漲幅%],
+
+    -- 🟢 可轉債 (CB) 發動底牌
+    ISNULL(M.[CB名稱], N'無') AS [可轉債名稱],
+    M.[轉換價],
+    ROUND((M.[現價] / NULLIF(M.[轉換價], 0)) * 100.0, 2) AS [現價對轉換比例%],
+    CASE 
+        WHEN (M.[現價] / NULLIF(M.[轉換價], 0)) >= 1.30 THEN N'⚠️ 達強迫贖回區'
+        WHEN (M.[現價] / NULLIF(M.[轉換價], 0)) >= 1.00 THEN N'🔥 啟動拉抬 (越過轉換價)'
+        ELSE N'⭐ 蓄勢中 (準備突破)'
+    END AS [CB發動狀態],
+    ROUND(M.[距130強迫贖回%], 2) AS [距強迫贖回空間%],
+
+    -- 🟢 期現套利微結構 (SSF)
+    M.[個股期近月價] AS [期貨近月價],
+    M.[期現價差%] AS [期現正逆價差%],
+    CASE 
+        WHEN ISNULL(M.[期現價差%], 0) >= 0.5 THEN N'🚀 猛烈正價差 (大戶極度看多)'
+        WHEN ISNULL(M.[期現價差%], 0) > 0.0 THEN N'📈 正價差 (期貨領先現貨)'
+        WHEN ISNULL(M.[期現價差%], 0) < 0.0 THEN N'🔻 逆價差 (需提防出貨)'
+        ELSE N'--'
+    END AS [期貨主力動能],
+    M.[個股期未平倉口] AS [期貨未平倉(口)],
+
+    -- 🟢 週籌碼大戶鎖碼
+    W.[特大戶變動%] AS [特大戶週增減%],
+    W.[散戶變動%] AS [散戶週增減%]
+
+FROM stockchangedate.dbo.Stock_CB_SSF_Monitor M
+
+-- 衍生子查詢：鎖定最新一期的週籌碼大戶動向
+LEFT JOIN (
+    SELECT 代號, [特大戶變動%], [散戶變動%],
+           ROW_NUMBER() OVER(PARTITION BY 代號 ORDER BY 更新日期 DESC) as rn
+    FROM stockchangedate.dbo.WeeklyChipAudit
+) W ON RTRIM(M.[代號]) = RTRIM(W.[代號]) AND W.rn = 1
+
+WHERE M.[轉換價] > 0
+  -- 🔓 戰術放寬：鎖定現價佔轉換價比例介於 95% ~ 125% 之間 (潛伏期 ~ 衝刺期)
+  AND (M.[現價] / NULLIF(M.[轉換價], 0)) BETWEEN 0.95 AND 1.25 
+
+ORDER BY 
+    -- 優先排列「特大戶增持 ＋ 期貨正價差」的黃金雙認證黑馬
+    CASE WHEN ISNULL(W.[特大戶變動%], 0) > 0 AND ISNULL(M.[期現價差%], 0) > 0 THEN 0 ELSE 1 END ASC,
+    -- 接著依據期貨價差力度排序
+    M.[期現價差%] DESC, 
+    W.[特大戶變動%] DESC;
+
+/*
+戰略意義：
+戰鬥放寬版：即使今天沒有極端的 0.5% 正價差，也能提早監控那些「特大戶正在默默吃貨，且股價來到可轉債轉換價附近 (95%~125%)」的潛在飆股！
+*/`
+            },
+
+
+
+            // 🟢【V11.0 新增範本：衍生微結構暴衝雷達 (CB ✕ 股期 ✕ 籌碼)】
+            {
+                cat: "衍生微結構-CB與個股期",
+                title: "🎯 CB 可轉債 100~115% 發動期 ✕ 股權大戶暴增 ✕ 個股期正價差",
+                sql: `/*資料庫:stockchangedate*/TOP 50
+    M.[代號],
+    M.[名稱],
+    M.[現價] AS [盤中現價],
+    M.[今日漲跌幅%] AS [今日漲幅%],
+
+    -- 🟢 可轉債 (CB) 發動底牌
+    ISNULL(M.[CB名稱], N'無') AS [可轉債名稱],
+    M.[轉換價],
+    ROUND((M.[現價] / NULLIF(M.[轉換價], 0)) * 100.0, 2) AS [現價對轉換比例%],
+    CASE 
+        WHEN (M.[現價] / NULLIF(M.[轉換價], 0)) >= 1.0 THEN N'🔥 啟動拉抬 (越過轉換價)'
+        ELSE N'⭐ 蓄勢中'
+    END AS [CB發動狀態],
+    M.[距130強迫贖回%] AS [距強迫贖回空間%],
+
+    -- 🟢 期現套利微結構 (SSF)
+    M.[個股期近月價] AS [期貨近月價],
+    M.[期現價差%] AS [期現正逆價差%],
+    CASE 
+        WHEN M.[期現價差%] >= 1.0 THEN N'🚀 猛烈正價差 (大戶極度看多)'
+        WHEN M.[期現價差%] >= 0.5 THEN N'📈 顯著正價差 (領先現貨)'
+        ELSE N'--'
+    END AS [期貨主力動能],
+    M.[個股期未平倉口] AS [期貨未平倉(口)],
+
+    -- 🟢 週籌碼大戶鎖碼
+    W.[特大戶變動%] AS [特大戶週增減%],
+    W.[散戶變動%] AS [散戶週增減%],
+    ISNULL(W.[診斷狀態], N'☁️ 橫盤整理') AS [週籌碼狀態]
+
+FROM stockchangedate.dbo.Stock_CB_SSF_Monitor M
+
+-- 衍生子查詢：鎖定最新一期的週籌碼大戶動向
+LEFT JOIN (
+    SELECT 代號, [特大戶變動%], [散戶變動%], 診斷狀態,
+           ROW_NUMBER() OVER(PARTITION BY 代號 ORDER BY 更新日期 DESC) as rn
+    FROM stockchangedate.dbo.WeeklyChipAudit
+) W ON RTRIM(M.[代號]) = RTRIM(W.[代號]) AND W.rn = 1
+
+WHERE M.[轉換價] > 0
+  -- 1. 嚴格鎖定現價佔轉換價比例介於 100% ~ 115% 之間 (衝刺發動期)
+  AND (M.[現價] / NULLIF(M.[轉換價], 0)) BETWEEN 1.00 AND 1.15 
+  
+  -- 2. 個股期貨必須領先現貨，呈現大於 0.5% 的正價差
+  AND ISNULL(M.[期現價差%], 0) > 0.5 
+  
+  -- 3. 特大戶(千張大戶)本週必須正在吃貨 (正增加)
+  AND ISNULL(W.[特大戶變動%], 0) > 0 
+
+ORDER BY 
+    M.[期現價差%] DESC, 
+    W.[特大戶變動%] DESC;
+
+/*
+戰略意義：
+完全脫離傳統 K 線，運用衍生性商品的「莊家底牌」來抓飆股！
+這類股票具備「公司派做多意願極高 (推動轉換)」與「期貨大戶已重金押注 (正價差)」的雙重護體。
+一旦發動，往往伴隨著軋空或強迫贖回的連續暴漲急拉行情。
+*/`
+            },
+
+
+
+            // 🟢【V11.0 新增範本：四核極致主升雷達 (戰鬥放寬版 + 60M動能 + 動態風報比)】
+            {
+                cat: "幾何形態-雙破共振",
+                title: "👑 四核極致主升雷達 (幾何突破 ✕ 20日VAH ✕ 60M動能 ✕ 外資)",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    B.代號,
+    B.名稱,
+    B.成交價 AS [盤中現價],
+    B.漲幅 AS [今日漲幅%],
+    B.總量 AS [盤中總量(張)],
+
+    -- 📐 核心一：幾何形態與動態 AMT 測幅防呆
+    ISNULL(P.形態類型, N'AMT價值區突圍') AS [形態類型],
+    ISNULL(P.形態狀態, CASE WHEN B.成交價 >= A.VAH THEN N'🔥 突破價值區' ELSE N'⭐ 蓄勢中' END) AS [形態狀態],
+    ROUND(ISNULL(P.目標價_1對1, A.VAH + (A.VAH - A.VAL)), 2) AS [1:1目標價],
+    ROUND(ISNULL(P.風報比, 
+        CASE 
+            WHEN B.成交價 > A.POC AND (A.VAH + (A.VAH - A.VAL)) > B.成交價 
+            THEN ((A.VAH + (A.VAH - A.VAL)) - B.成交價) / NULLIF((B.成交價 - A.POC), 0)
+            ELSE NULL 
+        END
+    ), 2) AS [風報比(R/R)],
+
+    -- 📊 核心二：拍賣市場 AMT (20日價值區微結構)
+    A.POC AS [20日POC大底],
+    A.VAH AS [20日VAH上緣],
+    ROUND((B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0, 2) AS [距VAH乖離%],
+    CASE
+        WHEN B.成交價 >= A.VAH AND (B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 <= 5.0 THEN N'👑 剛突破價值區 (上方無壓)'
+        WHEN B.成交價 > A.VAH THEN N'🚀 價值區上方 (主升段)'
+        WHEN B.成交價 >= A.POC AND B.成交價 < A.VAH THEN N'⭐ 價值區內 (POC防守)'
+        ELSE N'⚠️ 價值區下方'
+    END AS [AMT微結構評級],
+
+    -- 🚀 核心三：60M 小時線極速動能 (新掛載)
+    ROUND(K60.K, 2) AS [60M_K值],
+    ROUND(K60.OSC, 2) AS [60M_OSC],
+    CASE
+        WHEN K60.OSC > 0 AND K60.K > K60.D AND K60.K <= 65 THEN N'🔥 低檔金叉 (起漲爆發)'
+        WHEN K60.OSC > 0 AND K60.K > K60.D THEN N'🟢 動能續強'
+        WHEN K60.K > K60.D THEN N'🌤️ KD金叉 (蓄勢)'
+        ELSE N'⛅ 整理中 (動能偏弱)'
+    END AS [60M小時氣象],
+
+    -- 🎯 核心四：FactSet 外資評價 (輔助指標)
+    FS.預估目標價 AS [外資目標價],
+    CASE
+        WHEN ISNULL(FS.預估目標價, 0) > 0 AND ISNULL(B.成交價, 0) > 0
+        THEN ROUND(((FS.預估目標價 - B.成交價) / B.成交價) * 100.0, 1)
+        ELSE NULL
+    END AS [外資潛在空間%],
+
+    -- 🛡️ 最佳離場基因
+    ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS [最適離場戰術]
+
+FROM stockchange.dbo.basicinfo B
+LEFT JOIN stockchangedate.dbo.StockPatternAnalysis P ON RTRIM(B.代號) = RTRIM(P.代號)
+-- 衍生子查詢：動態計算 20 日 AMT 價值區
+LEFT JOIN (
+    SELECT
+        代號,
+        MAX(CASE WHEN VolRank = 1 THEN 成交價 END) AS POC,
+        MAX(CASE WHEN InValueArea = 1 THEN 成交價 END) AS VAH,
+        MIN(CASE WHEN InValueArea = 1 THEN 成交價 END) AS VAL
+    FROM (
+        SELECT 代號, 成交價, VolRank, RunningVol,
+               CASE WHEN (RunningVol - 價位成交量) < (區間總量 * 0.70) THEN 1 ELSE 0 END AS InValueArea
+        FROM (
+            SELECT 代號, 成交價, 價位成交量, 區間總量,
+                   ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC) AS VolRank,
+                   SUM(價位成交量) OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS RunningVol
+            FROM (
+                SELECT PV.代號, PV.成交價, SUM(PV.成交張數) AS 價位成交量,
+                       SUM(SUM(PV.成交張數)) OVER (PARTITION BY PV.代號) AS 區間總量
+                FROM stockchangedate.dbo.StockPriceVolume PV
+                WHERE PV.日期 IN (SELECT DISTINCT TOP 20 日期 FROM stockchangedate.dbo.StockPriceVolume ORDER BY 日期 DESC)
+                GROUP BY PV.代號, PV.成交價
+            ) T1
+        ) T2
+    ) T3
+    GROUP BY 代號
+) A ON RTRIM(B.代號) = RTRIM(A.代號)
+-- 60M 小時線最新快照 (新掛載)
+LEFT JOIN (
+    SELECT 代號, K, D, OSC,
+           ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn
+    FROM stockchange.dbo.Stock60M
+) K60 ON RTRIM(B.代號) = RTRIM(K60.代號) AND K60.rn = 1
+-- FactSet 目標價快取
+LEFT JOIN (
+    SELECT 代號, MAX(預估目標價) AS 預估目標價 FROM stockchangedate.dbo.FactSetEstimates GROUP BY 代號
+) FS ON RTRIM(B.代號) = RTRIM(FS.代號)
+-- 離場基因
+LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(B.代號) = RTRIM(E.代號)
+
+WHERE B.總量 >= 1000
+  AND B.成交價 >= 10.0
+  AND (
+      -- 幾何起漲 或 剛突破價值區 5% 內
+      (P.形態狀態 LIKE N'%👑%' OR P.形態狀態 LIKE N'%🔥%' OR P.形態狀態 LIKE N'%💎%')
+      OR 
+      (B.成交價 >= A.VAH AND (B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 <= 5.0)
+  )
+ORDER BY 
+    -- 優先挑選 60M 小時線剛點火 (OSC > 0 且 K > D) 的標的，提高資金效率！
+    CASE WHEN K60.OSC > 0 AND K60.K > K60.D THEN 0 ELSE 1 END ASC,
+    CASE WHEN B.成交價 >= A.VAH AND (B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 <= 5.0 THEN 0 ELSE 1 END ASC,
+    ISNULL(P.風報比, 
+        CASE 
+            WHEN B.成交價 > A.POC AND (A.VAH + (A.VAH - A.VAL)) > B.成交價 
+            THEN ((A.VAH + (A.VAH - A.VAL)) - B.成交價) / NULLIF((B.成交價 - A.POC), 0)
+            ELSE 0 
+        END
+    ) DESC;
+
+/*
+戰略意義：
+加裝「60M 小時線轉折引擎」後，這支雷達能幫您在一群突破價值區的股票中，
+第一秒鎖定那些「這個小時主力剛好點火 (OSC > 0 且 KD 金叉)」的股票。
+減少盤整等待時間，真正實現 T+0 / T+1 的極致效率與暴擊！
+*/`
+            },
+
+
+            // 🟢【V11.0 新增範本：三核極致主升雷達】
+            {
+                cat: "幾何形態-雙破共振",
+                title: "👑 三核極致主升雷達 (幾何突破回測 ✕ 20日VAH突圍 ✕ 外資空間)",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    P.代號,
+    P.名稱,
+    B.成交價 AS [盤中現價],
+    B.漲幅 AS [今日漲幅%],
+    B.總量 AS [盤中總量(張)],
+
+    -- 📐 核心一：幾何形態與真突破回測
+    P.形態類型,
+    P.形態狀態,
+    P.目標價_1對1 AS [1:1目標價],
+    P.風報比 AS [風報比(R/R)],
+
+    -- 📊 核心二：拍賣市場 AMT (20日價值區微結構)
+    A.POC AS [20日POC大底],
+    A.VAH AS [20日VAH上緣],
+    ROUND((B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0, 2) AS [距VAH乖離%],
+    CASE
+        WHEN B.成交價 >= A.VAH AND (B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 <= 4.0 THEN N'👑 剛突破價值區 (上方無壓)'
+        WHEN B.成交價 > A.VAH THEN N'🚀 價值區上方 (主升段)'
+        WHEN B.成交價 >= A.POC AND B.成交價 < A.VAH THEN N'⭐ 價值區內 (POC防守)'
+        ELSE N'⚠️ 價值區下方'
+    END AS [AMT微結構評級],
+
+    -- 🎯 核心三：FactSet 外資評價 (僅顯示，不強迫過濾)
+    FS.預估目標價 AS [外資目標價],
+    CASE
+        WHEN ISNULL(FS.預估目標價, 0) > 0 AND ISNULL(B.成交價, 0) > 0
+        THEN ROUND(((FS.預估目標價 - B.成交價) / B.成交價) * 100.0, 1)
+        ELSE NULL
+    END AS [外資潛在空間%],
+
+    -- 🛡️ 最佳離場基因
+    ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS [最適離場戰術]
+
+FROM stockchangedate.dbo.StockPatternAnalysis P
+INNER JOIN stockchange.dbo.basicinfo B ON RTRIM(P.代號) = RTRIM(B.代號)
+-- 衍生子查詢：動態計算 20 日 AMT 價值區
+LEFT JOIN (
+    SELECT
+        代號,
+        MAX(CASE WHEN VolRank = 1 THEN 成交價 END) AS POC,
+        MAX(CASE WHEN InValueArea = 1 THEN 成交價 END) AS VAH,
+        MIN(CASE WHEN InValueArea = 1 THEN 成交價 END) AS VAL
+    FROM (
+        SELECT 代號, 成交價, VolRank, RunningVol,
+               CASE WHEN (RunningVol - 價位成交量) < (區間總量 * 0.70) THEN 1 ELSE 0 END AS InValueArea
+        FROM (
+            SELECT 代號, 成交價, 價位成交量, 區間總量,
+                   ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC) AS VolRank,
+                   SUM(價位成交量) OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS RunningVol
+            FROM (
+                SELECT PV.代號, PV.成交價, SUM(PV.成交張數) AS 價位成交量,
+                       SUM(SUM(PV.成交張數)) OVER (PARTITION BY PV.代號) AS 區間總量
+                FROM stockchangedate.dbo.StockPriceVolume PV
+                WHERE PV.日期 IN (SELECT DISTINCT TOP 20 日期 FROM stockchangedate.dbo.StockPriceVolume ORDER BY 日期 DESC)
+                GROUP BY PV.代號, PV.成交價
+            ) T1
+        ) T2
+    ) T3
+    GROUP BY 代號
+) A ON RTRIM(P.代號) = RTRIM(A.代號)
+-- FactSet 目標價快取
+LEFT JOIN (
+    SELECT 代號, MAX(預估目標價) AS 預估目標價 FROM stockchangedate.dbo.FactSetEstimates GROUP BY 代號
+) FS ON RTRIM(P.代號) = RTRIM(FS.代號)
+-- 離場基因
+LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(P.代號) = RTRIM(E.代號)
+
+WHERE P.形態狀態 LIKE N'%👑%'  -- 嚴格鎖定幾何突破且回測不破之標的
+  AND B.總量 >= 1000
+ORDER BY P.風報比 DESC, [距VAH乖離%] ASC;
+
+/*
+戰略意義：
+不漏接任何技術派大牛股！
+買在「幾何型態剛回測確認」且「股價剛站上20日主力價值區上緣 (VAH)」的雙重起漲點。
+若右側出現外資目標價 >15%，即可動用凱利公式重倉出擊！
+*/`
+            },
+
+
+            // 🟢【V11.0 新增範本：三核極致主升雷達 (戰鬥放寬版)】
+            {
+                cat: "幾何形態-雙破共振(戰鬥放寬版戰鬥放寬版 + 動態風報比)",
+                title: "👑 三核極致主升雷達 (幾何突破回測 ✕ 20日VAH突圍 ✕ 外資空間)",
+                sql: `/*資料庫:stockchangedate*/TOP 100
+    B.代號,
+    B.名稱,
+    B.成交價 AS [盤中現價],
+    B.漲幅 AS [今日漲幅%],
+    B.總量 AS [盤中總量(張)],
+
+    -- 📐 核心一：幾何形態與動態 AMT 測幅防呆
+    ISNULL(P.形態類型, N'AMT價值區突圍') AS [形態類型],
+    ISNULL(P.形態狀態, CASE WHEN B.成交價 >= A.VAH THEN N'🔥 突破價值區' ELSE N'⭐ 蓄勢中' END) AS [形態狀態],
+    
+    -- 🎯 目標價：優先採用幾何測幅，若無則採用 AMT 價值區高度等距投射 (VAH + 價值區高度)
+    ROUND(ISNULL(P.目標價_1對1, A.VAH + (A.VAH - A.VAL)), 2) AS [1:1目標價],
+    
+    -- ⚖️ 風報比：優先採用幾何風報比，若無則動態計算 [潛在報酬 / 跌破POC之風險]
+    ROUND(ISNULL(P.風報比, 
+        CASE 
+            WHEN B.成交價 > A.POC AND (A.VAH + (A.VAH - A.VAL)) > B.成交價 
+            THEN ((A.VAH + (A.VAH - A.VAL)) - B.成交價) / NULLIF((B.成交價 - A.POC), 0)
+            ELSE NULL 
+        END
+    ), 2) AS [風報比(R/R)],
+
+    -- 📊 核心二：拍賣市場 AMT (20日價值區微結構)
+    A.POC AS [20日POC大底],
+    A.VAH AS [20日VAH上緣],
+    ROUND((B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0, 2) AS [距VAH乖離%],
+    CASE
+        WHEN B.成交價 >= A.VAH AND (B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 <= 5.0 THEN N'👑 剛突破價值區 (上方無壓)'
+        WHEN B.成交價 > A.VAH THEN N'🚀 價值區上方 (主升段)'
+        WHEN B.成交價 >= A.POC AND B.成交價 < A.VAH THEN N'⭐ 價值區內 (POC防守)'
+        ELSE N'⚠️ 價值區下方'
+    END AS [AMT微結構評級],
+
+    -- 🎯 核心三：FactSet 外資評價 (僅顯示，不強迫過濾)
+    FS.預估目標價 AS [外資目標價],
+    CASE
+        WHEN ISNULL(FS.預估目標價, 0) > 0 AND ISNULL(B.成交價, 0) > 0
+        THEN ROUND(((FS.預估目標價 - B.成交價) / B.成交價) * 100.0, 1)
+        ELSE NULL
+    END AS [外資潛在空間%],
+
+    -- 🛡️ 最佳離場基因
+    ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS [最適離場戰術]
+
+FROM stockchange.dbo.basicinfo B
+LEFT JOIN stockchangedate.dbo.StockPatternAnalysis P ON RTRIM(B.代號) = RTRIM(P.代號)
+-- 衍生子查詢：動態計算 20 日 AMT 價值區
+LEFT JOIN (
+    SELECT
+        代號,
+        MAX(CASE WHEN VolRank = 1 THEN 成交價 END) AS POC,
+        MAX(CASE WHEN InValueArea = 1 THEN 成交價 END) AS VAH,
+        MIN(CASE WHEN InValueArea = 1 THEN 成交價 END) AS VAL
+    FROM (
+        SELECT 代號, 成交價, VolRank, RunningVol,
+               CASE WHEN (RunningVol - 價位成交量) < (區間總量 * 0.70) THEN 1 ELSE 0 END AS InValueArea
+        FROM (
+            SELECT 代號, 成交價, 價位成交量, 區間總量,
+                   ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC) AS VolRank,
+                   SUM(價位成交量) OVER (PARTITION BY 代號 ORDER BY 價位成交量 DESC, 成交價 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS RunningVol
+            FROM (
+                SELECT PV.代號, PV.成交價, SUM(PV.成交張數) AS 價位成交量,
+                       SUM(SUM(PV.成交張數)) OVER (PARTITION BY PV.代號) AS 區間總量
+                FROM stockchangedate.dbo.StockPriceVolume PV
+                WHERE PV.日期 IN (SELECT DISTINCT TOP 20 日期 FROM stockchangedate.dbo.StockPriceVolume ORDER BY 日期 DESC)
+                GROUP BY PV.代號, PV.成交價
+            ) T1
+        ) T2
+    ) T3
+    GROUP BY 代號
+) A ON RTRIM(B.代號) = RTRIM(A.代號)
+-- FactSet 目標價快取
+LEFT JOIN (
+    SELECT 代號, MAX(預估目標價) AS 預估目標價 FROM stockchangedate.dbo.FactSetEstimates GROUP BY 代號
+) FS ON RTRIM(B.代號) = RTRIM(FS.代號)
+-- 離場基因
+LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(B.代號) = RTRIM(E.代號)
+
+WHERE B.總量 >= 1000
+  AND B.成交價 >= 10.0
+  AND (
+      -- 條件放寬：只要符合以下任一條件即顯示
+      (P.形態狀態 LIKE N'%👑%' OR P.形態狀態 LIKE N'%🔥%' OR P.形態狀態 LIKE N'%💎%')
+      OR 
+      (B.成交價 >= A.VAH AND (B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 <= 5.0) -- 或剛突破AMT 20日上緣 5% 以內
+  )
+ORDER BY 
+    CASE WHEN B.成交價 >= A.VAH AND (B.成交價 - A.VAH) / NULLIF(A.VAH, 0) * 100.0 <= 5.0 THEN 0 ELSE 1 END ASC,
+    ISNULL(P.風報比, 
+        CASE 
+            WHEN B.成交價 > A.POC AND (A.VAH + (A.VAH - A.VAL)) > B.成交價 
+            THEN ((A.VAH + (A.VAH - A.VAL)) - B.成交價) / NULLIF((B.成交價 - A.POC), 0)
+            ELSE 0 
+        END
+    ) DESC, 
+    [外資潛在空間%] DESC;
+
+/*
+戰略意義：
+不漏接任何技術派大牛股！
+買在「幾何型態剛回測確認」或是「股價剛站上20日主力價值區上緣 (VAH) 5%內」的雙重起漲點。
+若缺乏幾何形態，系統將啟動【AMT價值區動態測幅】，自動算出精準的停利目標與風報比！
+*/`
+            },
 
 
             {
+                cat: "ETF-被動金流", title: "👑 玩股網匯入+最新三大法人買賣超及其期貨", sql: `/*資料庫:stockchangedate*/E.代碼, E.名稱, E.市價, E.漲跌百分比, E.殖利率, L.外資買賣超, L.期貨外資, L.合計買賣超, L.期貨合計, 
+                            CASE WHEN L.[合計買賣超] > 0 AND L.[期貨合計] > 0 THEN N'1👑強勢看漲' WHEN L.[合計買賣超] < 0 AND 
+                            L.[期貨合計] > 0 THEN N'2🔥底部反轉 (靈魂先行)' WHEN L.[合計買賣超] > 0 AND 
+                            L.[期貨合計] < 0 THEN N'3⚠️頂部對沖 (小心風險)' WHEN L.[合計買賣超] < 0 AND 
+                            L.[期貨合計] < 0 THEN N'4❄️弱勢看跌' ELSE '⚪ 中立/無方向' END AS 期貨當日的投資等級, 
+                            CASE WHEN L.[合計買賣超] > 0 AND L.[期貨合計] > 0 THEN N'👑強勢' WHEN L.[合計買賣超] < 0 AND 
+                            L.[期貨合計] > 0 THEN N'🔥反轉' WHEN L.[合計買賣超] > 0 AND 
+                            L.[期貨合計] < 0 THEN N'⚠️對沖' WHEN L.[合計買賣超] < 0 AND 
+                            L.[期貨合計] < 0 THEN N'❄️弱勢' ELSE N'⚪中立' END AS 期貨當日的形態狀態
+FROM              ETF_DailyPriceDate AS E INNER JOIN
+                            stock_threemaster AS L ON E.日期 = TRY_CAST(REPLACE(L.日期, '/', '') AS INT)
+WHERE          (E.殖利率 > '5') AND (E.漲跌百分比 >= '-0.5') 
+ORDER BY   E.殖利率 DESC
+
+/*
+玩股網 https://www.wantgoo.com/stock/institutional-investors/three-trade-for-trading-amount
+*/` },
+
+            // 🟢【新增範本 1：高配息 ETF TOP 20 ✕ 折溢價與除息日程】
+            {
+                cat: "ETF-被動金流",
+                title: "👑 玩股網匯入 Ai建議名單詳備註",
+                sql: `/*資料庫:stockchangedate*/TOP 20
+    代碼, 名稱, 市價, 漲跌百分比, 折溢價百分比, 五日均量, 資產規模億, 殖利率, 年報酬率, 內扣費用, 交易幣別, 受益人數,
+                            更新時間, 日期
+FROM              ETF_DailyPriceDate
+WHERE          (代碼 IN ('00713', '00878', '0050', '006208', '0056', '00903', '00919', '00929', '00939', '00940', '00722', '00877',
+                            '00981A', '00406A', '00403A', '00646', '00678', '00915', '00854', '006214')) and (日期 = (select max(日期) from ETF_DailyPriceDate));
+
+/*
+戰略意義：總共359筆先列出Ai建議部份
+🏆 專家推薦：20 檔 ETF 組合名單 (分級推薦)
+由於我無法看到您完整的 359 筆資料，但我根據您抓取的「玩股網成交量排行榜」以及市場目前最強的數據，將推薦分為三類（請對照您的 ETF_DailyPriceDate 表格尋找對應代碼）：
+
+第一類：【穩健現金流】(核心配置 - 追求低波動，本金最安全)
+這類 ETF 雖然殖利率不是最高，但價格極其穩定，適合放大部分本金。
+
+00713 (元大高股息低波) $\leftarrow$ 強烈推薦，低波之王，最適合怕跌的人。
+00878 (國泰高股息) $\leftarrow$ 規模最大，流動性最強，心裡最踏實。
+0050 (元大台灣50) $\leftarrow$ 雖然殖利率低，但長期資產增值最快。
+006208 (富邦台 50) $\leftarrow$ 0050 的低成本替代品。
+0056 (元大高股息) $\leftarrow$ 經典高股息，雖然波動較大，但歷史數據強。
+00903 (國泰臺灣價值高股息) $\leftarrow$ 追求價值投資與配息平衡。
+第二類：【高殖利率衝刺】(衛星配置 - 縮小本金需求，提高效率)
+這類 ETF 殖利率通常在 $7% \sim 10%$ 之間，能大幅降低您達成 1 萬月收所需的本金。 7. 00919 (群益科技高息) $\leftarrow$ 目前的高殖利率領袖，適合追求高現金流。 8. 00929 (復國泰全球債券) $\leftarrow$ 用於分散風險，月月領息。 9. 00939 (國泰臺灣價值高股息) $\leftarrow$ 針對價值股的篩選，殖利率表現優異。 10. 00940 (元大台灣價值高息) $\leftarrow$ 新興之秀，規模成長極快。 11. 00722 (國泰高股息) $\leftarrow$ 穩定的高殖利率選擇。 12. 00877 (國泰臺灣高股息) $\leftarrow$ 側重於穩定成長。
+
+第三類：【主動管理/特定主題】(您數據中出現的 A 系列，適合分散風險)
+這類 ETF 由基金經理人主動調倉，適合在市場大跌時有專業人士幫您避險。 13. 00981A (主動統一台股增長) $\leftarrow$ 您數據中的亮點，年報酬率極高。 14. 00406A (主動中信台灣收益) $\leftarrow$ 殖利率 4.04%，穩健但增長緩慢。 15. 00403A (主動統一升級50) $\leftarrow$ 適合追求指數升級的投資者。 16. 00646 (元大全球債) $\leftarrow$ 避險用，當股市大跌時，債券是救命稻草。 17. 00678 (國泰全球債) $\leftarrow$ 同上，分散資產類別。 18. 00915 (群益 ESG 投資級債) $\leftarrow$ 兼顧 ESG 與穩定配息。 19. 00854 (國泰高股息) $\leftarrow$ 針對特定產業篩選的高息。 20. 006214 (富邦臺灣高股息) $\leftarrow$ 較小眾但潛力大的選擇。
+
+💰 專家級：本金需求試算表 (以月領 1 萬為目標)
+如果您想知道要投多少錢，請看這個對比表：
+
+策略類型	預估年殖利率	達成每月 1 萬所需本金	風險等級	推薦權重
+極穩健 (如 00713)	$4% \sim 5%$	240 萬 $\sim$ 300 萬	$\text{Low}$	$40%$
+平衡型 (如 00878)	$5% \sim 7%$	171 萬 $\sim$ 240 萬	$\text{Medium}$	$40%$
+激進型 (如 00919)	$8% \sim 10%$	120 萬 $\sim$ 150 萬	$\text{High}$	$20%$
+🚩 達人的最後叮嚀：
+不要全買一檔：建議將本金分散在上述三類中。例如：$100$ 萬買 $00713$，$50$ 萬買 $00919$，$50$ 萬買 $0050$。
+注意「折溢價」：在您的資料表中，折溢價百分比 越低（甚至是負數，即「折價」）越好。千萬不要在溢價很高時買入，那等於是花更多錢買同樣的資產。
+定期檢查：您現在有了 sync_etf_wantgoodate.py，請每週觀察一次 殖利率 是否大幅下滑，如果某檔 ETF 殖利率從 $8%$ 掉到 $4%$，那就是警訊，應考慮換檔。
+祝您早日達成財務自由，領到每月的 1 萬元被動收入！
+*/`},
+
+
+            {
+                cat: "ETF-被動金流",
+                title: "👑 全市場高配息 ETF TOP 20 ✕ 折溢價與被動金流雷達",
+                sql: `/*資料庫:stockchangedate*/TOP 20
+    [代號],
+    [名稱],
+    [現價],
+    [漲跌幅%],
+    [總量] AS [成交張數],
+    [配息頻率],
+    [最近配息元] AS [每股配發(元)],
+    [年化配息率%],
+    [最近除息日],
+    [折溢價%],
+    -- 🟢 折溢價防坑評級
+    CASE 
+        WHEN [折溢價%] > 1.0 THEN N'⚠️ 嚴重溢價 (買貴了/易拉回回測淨值)'
+        WHEN [折溢價%] BETWEEN -0.5 AND 0.5 THEN N'🟢 價格合理 (貼近真實淨值)'
+        WHEN [折溢價%] < -0.8 THEN N'💎 大幅折價 (超值甜甜價)'
+        ELSE N'⭐ 常態區間'
+    END AS [折溢價評級],
+    [基金規模億] AS [ETF規模(億)],
+    [平均填息天] AS [平均填息(天)]
+FROM stockchangedate.dbo.ETF_DividendRank
+WHERE [總量] >= 1000
+ORDER BY [年化配息率%] DESC, [基金規模億] DESC;
+
+/*
+戰略意義：
+1. 鎖定全市場「年化殖利率 8%~13%」最頂級的高息 ETF。
+2. 折溢價防禦：嚴禁買進溢價 > 1.0% 的標的，專挑合理或折價時布局！
+3. 規模破千億的高息 ETF（如 00919、00929、0056、00878）換股時，會帶來巨大的成分股現貨抬轎買盤！
+*/`
+            },
+
+            // 🟢【新增範本 3：每月被動收入 1 萬元 ETF 試算計算機】
+            {
+                cat: "ETF-被動金流",
+                title: "💰 每月被動收入 1 萬元 (年領12萬) ✕ 需買張數與花費現金精算榜",
+                sql: `/*資料庫:stockchangedate*/
+    T.[代號],
+    T.[名稱],
+    T.[現價] AS [目前股價(元)],
+    T.[配息頻率],
+    T.[每股單次配息(元)],
+    T.[年化配息率%],
+    T.[每張每年預估股息(元)],
+    T.[達成月領1萬_需買張數],
+    T.[所需總本金(元)],
+    T.[所需本金(萬元)],
+    T.[預估每年實領股息(元)],
+    T.[預估平均月領(元)],
+    T.[折溢價%],
+    T.[ETF規模(億)]
+FROM (
+    SELECT 
+        E.[代號],
+        E.[名稱],
+        E.[現價],
+        E.[配息頻率],
+        E.[最近配息元] AS [每股單次配息(元)],
+        E.[年化配息率%],
+        E.[折溢價%],
+        E.[基金規模億] AS [ETF規模(億)],
+        ROUND(A.AnnualDivPerShare * 1000.0, 0) AS [每張每年預估股息(元)],
+        -- 計算達到年領 12 萬所需的張數 (無條件進位 CEILING)
+        CAST(CEILING(120000.0 / NULLIF(A.AnnualDivPerShare * 1000.0, 0)) AS INT) AS [達成月領1萬_需買張數],
+        -- 所需總資金 (張數 * 現價 * 1000)
+        CAST(ROUND(CEILING(120000.0 / NULLIF(A.AnnualDivPerShare * 1000.0, 0)) * E.[現價] * 1000.0, 0) AS BIGINT) AS [所需總本金(元)],
+        ROUND((CEILING(120000.0 / NULLIF(A.AnnualDivPerShare * 1000.0, 0)) * E.[現價] * 1000.0) / 10000.0, 1) AS [所需本金(萬元)],
+        -- 實際買進後每年領到的股息
+        CAST(ROUND(CEILING(120000.0 / NULLIF(A.AnnualDivPerShare * 1000.0, 0)) * A.AnnualDivPerShare * 1000.0, 0) AS INT) AS [預估每年實領股息(元)],
+        CAST(ROUND((CEILING(120000.0 / NULLIF(A.AnnualDivPerShare * 1000.0, 0)) * A.AnnualDivPerShare * 1000.0) / 12.0, 0) AS INT) AS [預估平均月領(元)]
+    FROM stockchangedate.dbo.ETF_DividendRank E
+    CROSS APPLY (
+        SELECT 
+            CASE 
+                WHEN E.[配息頻率] = N'月配息' THEN E.[最近配息元] * 12.0
+                WHEN E.[配息頻率] = N'季配息' THEN E.[最近配息元] * 4.0
+                WHEN E.[配息頻率] = N'雙月配' THEN E.[最近配息元] * 6.0
+                WHEN E.[配息頻率] = N'半年配' THEN E.[最近配息元] * 2.0
+                WHEN E.[配息頻率] = N'年配息' THEN E.[最近配息元] * 1.0
+                ELSE E.[最近配息元] * 4.0
+            END AS AnnualDivPerShare
+    ) A
+    WHERE E.[總量] >= 1000 AND E.[最近配息元] > 0
+) T
+-- 依「花費最少本金（資本效率最高）」排序
+ORDER BY T.[所需總本金(元)] ASC;
+
+/*
+戰略意義：
+1. 目標：每月被動收入 10,000 元 = 每年被動收入 120,000 元。
+2. 清楚算出全市場每一檔高息 ETF 需要買「幾張」、準備「多少萬現金」！
+3. 自動依「花費本金由少到多」排序，一眼找出門檻最低、資本效益最高的現金流標的！
+*/`
+            },
+
+
+            // 🟢【新增範本 2：可轉債 CB 130% 衝刺期 ✕ 個股期正逆價差】
+            {
+                cat: "衍生微結構-CB與個股期",
+                title: "🎯 可轉債 (CB) 130% 衝刺期 ✕ 個股期正逆價差套利監控塔",
+                sql: `/*資料庫:stockchangedate*/TOP 50
+    M.[代號],
+    M.[名稱],
+    M.[現價],
+    M.[今日漲跌幅%],
+
+    -- 🟢 可轉債 (CB) 資本底牌
+    ISNULL(M.[CB名稱], N'無CB') AS [CB名稱],
+    M.[轉換價],
+    M.[CB市價],
+    M.[轉換溢價率%],
+    M.[距130強迫贖回%],
+    M.[CB戰略評級],
+
+    -- 🟢 個股期貨 (SSF) 領先風向
+    M.[個股期近月價],
+    M.[期現價差%],
+    M.[期貨主力動態],
+    M.[個股期未平倉口]
+
+FROM stockchangedate.dbo.Stock_CB_SSF_Monitor M
+ORDER BY 
+    CASE 
+        WHEN M.[CB戰略評級] LIKE N'%👑%' THEN 1
+        WHEN M.[CB戰略評級] LIKE N'%🔥%' THEN 2
+        WHEN M.[CB戰略評級] LIKE N'%💎%' THEN 3
+        ELSE 4
+    END ASC,
+    M.[今日漲跌幅%] DESC;
+
+/*
+戰略意義：
+1. 抓取股價剛站上轉換價（100%~125%）的「公司派衝刺期」黑馬股，勝率極高！
+2. 結合個股期「正價差 > 0.5%」，代表期貨大戶搶先市價掃貨，自營商必須在現貨市場買進避險，引爆現貨急拉！
+3. 警惕：當距 130% 達標後，若出現「期貨逆價差 + 轉換溢價過高」，代表 CB 大戶準備換股倒貨，應獲利落袋！
+*/`
+            },
+
+            {
                 cat: "資金輪動-大盤風控",
-                title: "🧭 36大類股資金輪動排行榜 (今日吸金主流 vs 失血避險群)",
+                title: "🧭 36大類股資金輪動排行榜 (今日吸金主流 vs 失血避險群 預存程序版)",
                 sql: `/*資料庫:stockchangedate*/
 EXEC stockchangedate.dbo.sp_Get_Sector_Money_Flow;
 
@@ -190,6 +1023,31 @@ EXEC stockchangedate.dbo.sp_Get_Sector_Money_Flow;
 2. 買股票一定要順著資金流走，只在「吸金增幅 > +2.0%」的強勢板塊中挑選雙破 1:1 飆股！
 */`
             },
+
+
+            {
+                cat: "資金輪動-大盤風控",
+                title: "🧭 36大類股資金輪動排行榜 (今日吸金主流 vs 失血避險群)",
+                sql: `/*資料庫:stockchangedate*/TOP 36
+    商品 AS [36大產業分類],
+    成交 AS [今日成交額],
+    漲跌,
+    [漲幅%] AS [板塊漲跌幅%],
+    成交值 AS [成交量(億)],
+    [成交比重%] AS [資金吸金比重%]
+FROM stockchangedate.dbo.類股比率
+WHERE 日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.類股比率)
+ORDER BY [漲幅%] DESC;
+
+/*
+戰略意義：
+1. 找出全市場今日「資金增幅最猛烈 (比重暴衝)」的主流族群。
+2. 買股票一定要順著資金流走，只在「吸金增幅 > +2.0%」的強勢板塊中挑選雙破 1:1 飆股！
+*/`
+            },
+
+
+
             {
                 cat: "資金輪動-大盤風控",
                 title: "🌦️ 大盤多空引力風控儀 (TSE/OTC 氣象 ✕ 動態建議持股水位)",
@@ -3423,7 +4281,27 @@ ORDER BY B.總量 DESC;` },
 
 
             {
-                cat: "凱利金流導航儀", title: "「💰 凱利金流導航儀：最佳投入比例與持股期」", sql: `/*資料庫:stockchangedate*/
+                cat: "資金輪動-大盤風控",
+                title: "🧭 36大類股資金輪動排行榜 (今日吸金主流 vs 失血避險群)",
+                sql: `/*資料庫:stockchangedate*/TOP 36
+    商品 AS [36大產業分類],
+    成交 AS [今日成交額],
+    漲跌,
+    [漲幅%] AS [板塊漲跌幅%],
+    成交值 AS [成交量(億)],
+    [成交比重%] AS [資金吸金比重%]
+FROM stockchangedate.dbo.類股比率
+WHERE 日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.類股比率)
+ORDER BY [漲幅%] DESC;
+
+/*戰略意義：直接查詢資料表，完美支援自動化 Excel 查詢按鈕*/`
+            },
+
+            // 🟢【替換】凱利金流導航儀 (加上 > 0 的防線，避免算出異常數字)
+            {
+                cat: "凱利金流導航儀",
+                title: "「💰 凱利金流導航儀：最佳投入比例與持股期」",
+                sql: `/*資料庫:stockchangedate*/TOP 100
 M.名稱,
 M.代號,
 M.專家實戰總分 AS [今日得分],
@@ -3432,25 +4310,34 @@ P.最佳天數 AS [建議持有天數],
 P.最高勝率 AS [歷史勝率%],
 P.預期報酬 AS [贏面%],
 
--- 凱利公式計算 (假設 5% 固定停損)
--- F = (B*P - Q) / B
--- B = 預期報酬 / 5, P = 勝率/100, Q = 1 - P
-CAST(
-                (( (P.預期報酬/5.0) * (P.最高勝率/100.0) - (1 - P.最高勝率/100.0) ) / (NULLIF(P.預期報酬/5.0, 0))) * 100
-AS DECIMAL(10,1)) AS [凱利全倉比例%],
+-- 凱利公式計算 (假設 5% 固定停損，限制最高投入不超過 100%)
+CASE 
+    WHEN P.預期報酬 <= 0 THEN 0.0
+    WHEN P.最高勝率 < 50 THEN 0.0
+    ELSE 
+        CAST(
+            (( (P.預期報酬/5.0) * (P.最高勝率/100.0) - (1 - P.最高勝率/100.0) ) / (NULLIF(P.預期報酬/5.0, 0))) * 100
+        AS DECIMAL(10,1))
+END AS [凱利全倉比例%],
 
--- 半凱利建議 (更穩健)
-CAST(
-                (( (P.預期報酬/5.0) * (P.最高勝率/100.0) - (1 - P.最高勝率/100.0) ) / (NULLIF(P.預期報酬/5.0, 0))) * 50
-AS DECIMAL(10,1)) AS [半凱利建議投組%],
+-- 半凱利建議 (更穩健，實戰最推薦)
+CASE 
+    WHEN P.預期報酬 <= 0 THEN 0.0
+    WHEN P.最高勝率 < 50 THEN 0.0
+    ELSE 
+        CAST(
+            (( (P.預期報酬/5.0) * (P.最高勝率/100.0) - (1 - P.最高勝率/100.0) ) / (NULLIF(P.預期報酬/5.0, 0))) * 50
+        AS DECIMAL(10,1))
+END AS [半凱利建議投組%],
 
 M.具體概念
 FROM MasterStockAnalysis M
 INNER JOIN StockPersonality P ON M.代號 = P.代號
 WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
-              AND M.專家實戰總分 > 30 -- 買入時間判定：總分 > 30
-              AND P.最高勝率 > 55    -- 凱利公式前提：勝率必須大於一定門檻才有正期望值
-ORDER BY [半凱利建議投組%] DESC
+  AND M.專家實戰總分 > 30 
+  AND P.預期報酬 > 0   -- 🛡️ 核心防線：期望值必須大於 0 才允許計算
+  AND P.最高勝率 > 55  
+ORDER BY [半凱利建議投組%] DESC;
 
 /*這是一個非常高階的量化交易思維！將「凱利公式（Kelly Criterion）」引入您的「數據坦克」，等於是為您的戰情室裝上了**「自動金流控盤大腦」**。
 在股票實戰中，凱利公式能解決最難的兩個問題：「這檔該買多少？」以及「如何避免一次大賠就畢業？」
@@ -6346,6 +7233,34 @@ FOR JSON PATH` },
             }
             loadTemplates();
             $("#templateSearch").on("input", function () { loadTemplates($(this).val()); });
+            // 🚀 【新增】：自動接單引擎 - 攔截 ?auto 參數，自動選擇範本並執行！
+            const autoTemplate = urlParams.get('auto');
+            if (autoTemplate) {
+                let targetSql = "";
+
+                // 1. 在下拉選單中尋找完全符合的範本名稱
+                $("#sqlTemplates option").each(function () {
+                    if ($(this).text() === autoTemplate) {
+                        targetSql = $(this).val();
+                        return false; // 找到就跳出迴圈
+                    }
+                });
+
+                // 2. 如果找到了，自動切換選單、填入 SQL 並按下執行
+                if (targetSql) {
+                    $("#sqlTemplates").val(targetSql); // 自動切換下拉選單
+                    $("#sqlText").val(targetSql);      // 將 SQL 語法填入文字方塊
+                    console.log("🎯 成功攔截自動載入指令: " + autoTemplate);
+
+                    // 延遲 0.8 秒執行，確保資料庫與畫面已準備就緒
+                    setTimeout(function () {
+                        // 模擬點擊「執行 Excel 格式查詢」按鈕
+                        $("#btnQuery").click();
+                    }, 800);
+                } else {
+                    console.warn("⚠️ 找不到名為 [" + autoTemplate + "] 的範本，請確認下拉選單名稱是否一字不差！");
+                }
+            }
             $("#sqlTemplates").on("change", function () { if ($(this).val()) $("#sqlText").val($(this).val()); });
 
 
@@ -7459,37 +8374,6 @@ FOR JSON PATH` },
         }
 
 
-        //// ====================================================
-        //// C. 三大法人與實戰總分 (必須在迴圈大括號內部！)
-        //// ====================================================
-        //var f5 = (row && row.三大法人_ma5 != null) ? parseFloat(row.三大法人_ma5) : null;
-        //var f20 = (row && row.三大法人_ma20 != null) ? parseFloat(row.三大法人_ma20) : null;
-        //instMa5.push(f5);
-        //instMa20.push(f20);
-
-        //if (f5 !== null && f20 !== null) {
-        //    instDiff.push(f5 - f20);
-        //} else {
-        //    instDiff.push(null);
-        //}
-
-        //if (typeof revIdx !== 'undefined' && revIdx === 5 && f5 !== null) {
-        //    instMarker5.push([i, f5]);
-        //}
-
-        //var sVal = (row && row.實戰總分 != null) ? parseFloat(row.實戰總分) : null;
-        //var s5 = (row && row.實戰總分_ma5 != null) ? parseFloat(row.實戰總分_ma5) : null;
-        //var s20 = (row && row.實戰總分_ma20 != null) ? parseFloat(row.實戰總分_ma20) : null;
-
-        //scores.push(sVal);
-        //scoreMa5.push(s5);
-        //scoreMa20.push(s20);
-
-        //if (sVal !== null && s20 !== null) {
-        //    scoreDiff.push(sVal - s20);
-        //} else {
-        //    scoreDiff.push(null);
-        //}
 
  // 🟢 迴圈的結尾大括號應該在「C. 三大法人」的下方！
                 
@@ -8078,9 +8962,16 @@ FOR JSON PATH` },
                     <li class="nav-item">
 
                         <a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/warroom_cockpit.html" target="_blank">
-                            📲 戰情室看盤
+                            📲 第一戰情室看盤
                         </a>
-                      
+
+                    </li>
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/warroom_cockpit_v2.html" target="_blank">
+                            📲 第二戰情室看盤
+                        </a>
+
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/mygithub1.html" target="_blank">
@@ -8093,10 +8984,10 @@ FOR JSON PATH` },
                         </a>
                     </li>
                     <!--<li class="nav-item">
-                        <a class="nav-link" href="https://weizen99.github.io/androidapp/index.html" onclick="$('#sqlTemplates').val('回測').change(); return false;">
-                            ⭐ 我的最愛
-                        </a>
-                    </li>-->
+        <a class="nav-link" href="https://weizen99.github.io/androidapp/index.html" onclick="$('#sqlTemplates').val('回測').change(); return false;">
+            ⭐ 我的最愛
+        </a>
+    </li>-->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="galleryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             🎨 常用應用

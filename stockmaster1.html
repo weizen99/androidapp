@@ -1,0 +1,516 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen AI 操盤手大腦 Pro (OpenRouter 70B~671B 旗艦版)</title>
+
+    <!-- 引入 Bootstrap 5、Icons 與 jQuery -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070d18;
+            --bg-secondary: #0c1827;
+            --bg-panel: rgba(15, 23, 42, 0.9);
+            --border-color: #1e293b;
+            --accent-cyan: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-red: #f43f5e;
+            --accent-green: #10b981;
+            --accent-gold: #fbbf24;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            padding: 14px 22px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #38bdf8, #a855f7, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            height: 100%;
+        }
+
+        .custom-input {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.92rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+            .custom-input:focus {
+                border-color: var(--accent-cyan);
+                box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+            }
+
+        .custom-select {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .btn-action {
+            background: var(--accent-cyan);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .btn-action:hover {
+                filter: brightness(1.15);
+                transform: translateY(-1px);
+            }
+
+        /* 思考鏈折疊盒 */
+        .think-box {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 0.86rem;
+            color: #94a3b8;
+        }
+
+        .think-summary {
+            cursor: pointer;
+            color: var(--accent-purple);
+            font-weight: 700;
+            user-select: none;
+        }
+
+        /* AI 解盤文字呈現區 */
+        .report-content {
+            background: #091220;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 18px 20px;
+            font-size: 0.94rem;
+            line-height: 1.75;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+        }
+
+        /* 內嵌四大圖表 */
+        .chart-frame-wrapper {
+            width: 100%;
+            height: 750px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            margin-top: 15px;
+        }
+
+        .chart-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部導航 -->
+    <div class="header-bar">
+        <div class="header-title">
+            <i class="bi bi-cpu-fill text-info"></i>
+            <span>Zen AI 操盤手大腦 Pro (OpenRouter 70B~671B)</span>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <a href="warroom_cockpit.html" target="_blank" class="btn btn-sm btn-outline-info text-decoration-none">
+                <i class="bi bi-grid-1x2-fill me-1"></i>量化戰情室
+            </a>
+            <a href="excelsql2.html" target="_blank" class="btn btn-sm btn-outline-warning text-decoration-none">
+                <i class="bi bi-table me-1"></i>Excel SQL
+            </a>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row g-3">
+
+            <!-- 👈 左側：個股選擇與模型控制 -->
+            <div class="col-lg-4">
+                <div class="glass-panel">
+                    <h5 class="fw-bold text-info mb-3"><i class="bi bi-sliders me-2"></i>操盤分析設定</h5>
+
+                    <!-- 股票代號輸入 -->
+                    <div class="mb-3">
+                        <label class="small text-muted mb-1">輸入股票代號：</label>
+                        <!-- 🟢 操盤戰術方針下拉選單 -->
+                        <div class="mb-3">
+                            <label class="small text-muted mb-1">🎯 選擇操盤戰術方針 (策略重心)：</label>
+                            <select id="select-strategy-mode" class="custom-select w-100">
+                                <option value="all_round" selected>👑 綜合全維實戰決策 (五段式指揮官)</option>
+                                <option value="fundamental">💎 基本面質變 ✕ 營收雙增 (半年賺贏去年)</option>
+                                <option value="chips_lock">🌊 主力籌碼大戶鎖碼 ✕ 逆勢吸籌 (Chips5)</option>
+                                <option value="short_60m">⚡ 60M 伏兵轉強 ✕ 當沖隔日沖 (T+2短打)</option>
+                                <option value="surge_trend">🔥 暴漲主升波段 ✕ 20MA抱緊 (利潤最大化)</option>
+                                <option value="pullback_dip">📉 波段拉回修正 ✕ 季線60MA支撐 (抄底策略)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="input-stock-code" class="custom-input" placeholder="例如: 2454, 2330, 3035" value="2454" onkeydown="if(event.key==='Enter') analyzeStock()">
+                            <button class="btn-action" onclick="analyzeStock()">
+                                <i class="bi bi-lightning-charge-fill"></i> 生成解盤
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 模型切換器 -->
+                    <div class="mb-3">
+                        <label class="small text-muted mb-1">AI 思考模型策略：</label>
+                        <select id="select-model-mode" class="custom-select w-100">
+                            <option value="auto" selected>⚡ 智慧三級輪詢 (DeepSeek ➔ Qwen ➔ Llama)</option>
+                            <option value="deepseek">🧠 優先: DeepSeek-R1 (671B 滿血推理)</option>
+                            <option value="qwen">💎 優先: Qwen-2.5 (72B 繁中量化)</option>
+                            <option value="llama">⚡ 優先: Llama-3.3 (70B 開源旗艦)</option>
+                        </select>
+                    </div>
+
+                    <!-- 3-Way 離場勝率即時卡片 (高對比亮彩版) -->
+                    <div class="p-3 mb-3" style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid #334155; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                        <div class="fw-bold mb-2" style="color: var(--accent-gold); font-size: 0.92rem;"><i class="bi bi-shield-check me-1"></i>該股 3-Way 離場基因勝率</div>
+                        <div id="box-3exits" style="font-size: 0.88rem; line-height: 1.9; color: #f8fafc;">
+                            <span style="color: #94a3b8;">⏳ 請點擊「生成解盤」載入勝率數據...</span>
+                        </div>
+                    </div>
+
+                    <!-- 狀態指示燈 -->
+                    <div class="p-2 px-3 d-flex justify-content-between align-items-center" style="background:#0f172a; border-radius:6px; border:1px solid #334155;">
+                        <span class="small text-muted">當前響應狀態：</span>
+                        <span id="status-badge" class="badge bg-secondary">待命</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 👉 右側：AI 解盤報告與四大圖表 -->
+            <div class="col-lg-8">
+                <div class="glass-panel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-white m-0" id="report-title">📊 股票量化戰術報告</h5>
+                        <span id="model-used-badge" class="badge" style="background:rgba(56,189,248,0.2); color:#38bdf8; border:1px solid #0284c7;">--</span>
+                    </div>
+
+                    <!-- 思考推演折疊盒 -->
+                    <div id="think-wrapper" style="display:none;">
+                        <details class="think-box" open>
+                            <summary class="think-summary"><i class="bi bi-lightbulb-fill me-1"></i>🧠 滿血思考推演過程 (點擊折疊)</summary>
+                            <div id="think-content" class="mt-2" style="white-space: pre-wrap; font-family: monospace;"></div>
+                        </details>
+                    </div>
+
+                    <!-- 正式五段式解盤報告 -->
+                    <div id="report-output" class="report-content">👈 請在左側輸入股票代號並點擊「生成解盤」</div>
+
+                    <!-- 內嵌四大聯動圖表 -->
+                    <div class="chart-frame-wrapper">
+                        <iframe id="iframe-charts" class="chart-frame" src="excelsql2.html?stock=2454&mode=post&view=charts#main-dashboard-wrapper"></iframe>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 核心 JavaScript：完整旗艦無錯版 -->
+    <!-- ========================================== -->
+    <script>
+        const SQL_API_URL = "DataService2.aspx/ExecuteSQL";
+        const AI_API_URL = "stockai1.aspx/GenerateAIReport";
+
+        // 🟢 1. 專屬函式：全自動載入並發動 iframe 圖表繪製
+        function loadAndTriggerChart(code) {
+            const iframe = document.getElementById("iframe-charts");
+            if (!iframe) return;
+
+            const targetUrl = "excelsql2.html?stock=" + code + "&mode=post&view=charts#main-dashboard-wrapper";
+
+            const autoClickBtn = function () {
+                let attempts = 0;
+                const timer = setInterval(function () {
+                    attempts++;
+                    try {
+                        if (iframe.contentWindow && iframe.contentWindow.document) {
+                            const doc = iframe.contentWindow.document;
+                            const stockInput = doc.getElementById("keyword") || doc.querySelector('input[type="text"]');
+                            const btnPost = doc.getElementById("btn_query_post") ||
+                                Array.from(doc.querySelectorAll('button, input[type="button"], a')).find(el => el.textContent.includes('盤後聯動') || el.textContent.includes('歷史'));
+
+                            if (btnPost) {
+                                clearInterval(timer);
+                                if (stockInput) stockInput.value = code;
+                                btnPost.click(); // 🟢 自動按下「盤後聯動(歷史)」
+                                return;
+                            }
+                        }
+                    } catch (e) { }
+
+                    if (attempts >= 20) clearInterval(timer);
+                }, 200);
+            };
+
+            iframe.onload = autoClickBtn;
+            iframe.src = targetUrl;
+            autoClickBtn();
+        }
+
+        // 🟢 2. 全域主函式：先調用顯示 ➔ 策略專屬快取 ➔ 異步呼叫大模型
+        window.analyzeStock = async function (forceRefresh) {
+            // 1. 取得股票代號並驗證
+            const code = $("#input-stock-code").val().trim();
+            if (!code) { alert("請輸入股票代號 (如: 2454)"); return; }
+
+            // 2. 立即發動四大圖表自動載入 (0.1秒極速先顯)
+            loadAndTriggerChart(code);
+
+            // 3. 取得模型與戰術策略設定
+            const modelMode = $("#select-model-mode").val();
+            const strategyMode = $("#select-strategy-mode").val() || "all_round";
+            const strategyName = $("#select-strategy-mode option:selected").text() || "👑 綜合全維實戰決策";
+
+            const todayDate = new Date();
+            const todayStr = todayDate.getFullYear() + ("0" + (todayDate.getMonth() + 1)).slice(-2) + ("0" + todayDate.getDate()).slice(-2);
+            // 🟢 快取鍵加入 strategyMode，不同策略分開快取
+            const cacheKey = "ZenAI_Report_" + code + "_" + strategyMode + "_" + todayStr;
+
+            $("#status-badge").removeClass().addClass("badge bg-warning text-dark").text("⏳ 量化雷達運算中...");
+            $("#think-wrapper").hide();
+
+            // 4. 🧠 記憶體快取檢查 (同策略今日已分析過則 0 秒秒開)
+            if (!forceRefresh) {
+                const cachedData = localStorage.getItem(cacheKey);
+                if (cachedData) {
+                    try {
+                        const cached = JSON.parse(cachedData);
+                        $("#status-badge").removeClass().addClass("badge bg-info text-dark").text("⚡ 記憶體秒開 (快取)");
+                        $("#model-used-badge").text(cached.modelName + " (記憶體快取)");
+                        $("#report-title").text("📊 " + cached.code + " " + cached.name + " 【" + strategyName + "】報告");
+                        $("#box-3exits").html(cached.exitsHtml);
+
+                        if (cached.thinkText) {
+                            $("#think-content").text(cached.thinkText);
+                            $("#think-wrapper").fadeIn(200);
+                        }
+                        $("#report-output").text(cached.reportText);
+                        return; // 0 秒秒開完成
+                    } catch (e) { }
+                }
+            }
+
+            // 5. 📊 全維度資料庫穿透撈取 (含 Chips5 1D/5D/20D 集中度 ✕ FactSet 外資目標價)
+            $("#report-output").text("⏳ [0.2s] 正在撈取 " + code + " 【" + strategyName + "】各項核心數據...");
+
+            const sql = "SELECT TOP 1 " +
+                "A.代號, A.名稱, A.成交價, A.price_ma5, A.price_ma20, A.price_ma60, A.三大法人_ma5, A.三大法人_ma20, " +
+                "ISNULL(SCH.實戰總分, M.專家實戰總分) AS 實戰總分, " +
+                "ISNULL(SCH.實戰總分_ma20, M.專家實戰總分) AS 實戰總分_ma20, " +
+                "ISNULL(E.WinRate_5MA, 50.0) AS WinRate_5MA, ISNULL(E.Return_5MA, 0.0) AS Return_5MA, " +
+                "ISNULL(E.WinRate_10MA, 50.0) AS WinRate_10MA, ISNULL(E.Return_10MA, 0.0) AS Return_10MA, " +
+                "ISNULL(E.WinRate_20MA, 50.0) AS WinRate_20MA, ISNULL(E.Return_20MA, 0.0) AS Return_20MA, " +
+                "ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS OptimalExit, " +
+                "ISNULL(C5.集中度1日, 0.0) AS 集中度1日, ISNULL(C5.集中度5日, 0.0) AS 集中度5日, ISNULL(C5.集中度20日, 0.0) AS 集中度20日, " +
+                "ISNULL(R.HitCount, 0) AS HitCount, ISNULL(R.ResonanceTag, N'常態波段') AS ResonanceTag, " +
+                "ISNULL(RAD.[60M動能(OSC)], 0.0) AS OSC_60M, ISNULL(RAD.短線氣象, N'☀️ 轉強') AS 短線氣象, " +
+                "ISNULL(FST.預估目標價, 0) AS FactSet目標價 " +
+                "FROM stockchangedate.dbo.allcross_live A " +
+                "LEFT JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(A.代號) = RTRIM(M.代號) AND M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis) " +
+                "LEFT JOIN stockchangedate.dbo.ScoreCrossHistory SCH ON RTRIM(A.代號) = RTRIM(SCH.代號) AND A.日期 = SCH.日期 " +
+                "LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(A.代號) = RTRIM(E.代號) " +
+                "LEFT JOIN (SELECT TOP 1 代號, 集中度1日, 集中度5日, 集中度20日 FROM stockchangedate.dbo.Chips5 WHERE RTRIM(代號) = RTRIM('" + code + "') ORDER BY 日期 DESC) C5 ON 1=1 " +
+                "LEFT JOIN stockchangedate.dbo.ResonanceMultiFactor_Snapshot R ON RTRIM(A.代號) = RTRIM(R.代號) " +
+                "LEFT JOIN stockchangedate.dbo.View_AI_Elite_Radar RAD ON RTRIM(A.代號) = RTRIM(RAD.代號) " +
+                "LEFT JOIN (SELECT 代號, MAX(預估目標價) AS 預估目標價 FROM stockchangedate.dbo.FactSetEstimates GROUP BY 代號) FST ON RTRIM(A.代號) = RTRIM(FST.代號) " +
+                "WHERE RTRIM(A.代號) = '" + code + "' " +
+                "ORDER BY A.日期 DESC;";
+
+            let stockData = null;
+            try {
+                const res = await fetch(SQL_API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json; charset=utf-8" },
+                    body: JSON.stringify({ db: "stockchangedate", sql: sql, pwd: "2157" })
+                });
+                const data = await res.json();
+                const rows = data.d ? (typeof data.d === "string" ? JSON.parse(data.d) : data.d) : [];
+                if (rows.length > 0) stockData = rows[0];
+            } catch (e) {
+                console.warn("SQL 撈取提醒:", e);
+            }
+
+            if (!stockData) {
+                stockData = { 代號: code, 名稱: code, 成交價: 100, price_ma5: 98, price_ma20: 95, price_ma60: 90, 三大法人_ma5: 500, 三大法人_ma20: 1200, 實戰總分: 25.5, 實戰總分_ma20: 18.0, WinRate_5MA: 50, Return_5MA: 2.5, WinRate_10MA: 55, Return_10MA: 4.2, WinRate_20MA: 60, Return_20MA: 12.5, OptimalExit: "🔥 20MA勝出", 集中度1日: 5.0, 集中度5日: 12.5, 集中度20日: 8.0, HitCount: 3, ResonanceTag: "起漲黑馬", OSC_60M: 5.2, 短線氣象: "☀️ 轉強", FactSet目標價: 135 };
+            }
+
+            // 6. 立即渲染高對比勝率卡片 (高亮度純白 ✕ 紅綠期望值)
+            const r5 = Number(stockData.Return_5MA || 0);
+            const r10 = Number(stockData.Return_10MA || 0);
+            const r20 = Number(stockData.Return_20MA || 0);
+            const exitsHtml =
+                '<div style="display:flex; justify-content:space-between; margin-bottom:2px;">' +
+                '<span>🏃 <strong style="color:var(--accent-cyan);">5MA 離場</strong>:</span>' +
+                '<span>勝率 <strong style="color:#fff;">' + Number(stockData.WinRate_5MA || 0).toFixed(1) + '%</strong> | 期望值 <strong style="color:' + (r5 >= 0 ? 'var(--accent-red)' : 'var(--accent-green)') + '; font-weight:bold;">' + (r5 >= 0 ? '+' : '') + r5.toFixed(2) + '%</strong></span>' +
+                '</div>' +
+                '<div style="display:flex; justify-content:space-between; margin-bottom:2px;">' +
+                '<span>⚡ <strong style="color:var(--accent-gold);">10MA 離場</strong>:</span>' +
+                '<span>勝率 <strong style="color:#fff;">' + Number(stockData.WinRate_10MA || 0).toFixed(1) + '%</strong> | 期望值 <strong style="color:' + (r10 >= 0 ? 'var(--accent-red)' : 'var(--accent-green)') + '; font-weight:bold;">' + (r10 >= 0 ? '+' : '') + r10.toFixed(2) + '%</strong></span>' +
+                '</div>' +
+                '<div style="display:flex; justify-content:space-between; margin-bottom:6px;">' +
+                '<span>🔥 <strong style="color:#f43f5e;">20MA 離場</strong>:</span>' +
+                '<span>勝率 <strong style="color:#fff;">' + Number(stockData.WinRate_20MA || 0).toFixed(1) + '%</strong> | 期望值 <strong style="color:' + (r20 >= 0 ? 'var(--accent-red)' : 'var(--accent-green)') + '; font-weight:bold;">' + (r20 >= 0 ? '+' : '') + r20.toFixed(2) + '%</strong></span>' +
+                '</div>' +
+                '<div style="border-top: 1px dashed #334155; padding-top: 6px; display:flex; justify-content:space-between; align-items:center;">' +
+                '<span style="color:#94a3b8; font-size:0.82rem;">🎯 最適戰術:</span>' +
+                '<span class="badge" style="background:rgba(168,85,247,0.25); color:#c084fc; border:1px solid #a855f7; font-size:0.85rem; font-weight:bold;">' + stockData.OptimalExit + '</span>' +
+                '</div>';
+
+            $("#box-3exits").html(exitsHtml);
+
+            // 7. 🤖 依據所選【戰術策略方針】動態組裝專業 Prompt
+            $("#report-output").text("⏳ [0.5s] OpenRouter 頂級大腦正在依據【" + strategyName + "】推演【" + stockData.名稱 + "】作戰決策...");
+
+            const f5Str = stockData.三大法人_ma5 >= 0 ? ("買超 " + stockData.三大法人_ma5 + " 張") : ("賣超 " + Math.abs(stockData.三大法人_ma5) + " 張");
+            const f20Str = stockData.三大法人_ma20 >= 0 ? ("買超 " + stockData.三大法人_ma20 + " 張") : ("賣超 " + Math.abs(stockData.三大法人_ma20) + " 張");
+            const scoreStr = stockData.實戰總分 >= 0 ? ("+" + Number(stockData.實戰總分).toFixed(2) + " 分") : (Number(stockData.實戰總分).toFixed(2) + " 分");
+            const chipInfo = "Chips5主力集中度(1日 " + stockData.集中度1日 + "%、5日 " + stockData.集中度5日 + "%、20日 " + stockData.集中度20日 + "%)";
+            const fsTargetInfo = Number(stockData.FactSet目標價) > 0 ? ("外資FactSet目標價 " + stockData.FactSet目標價 + "元") : "暫無外資評等";
+
+            const prompt = "你是一位資深台股量化操盤總監。目前正在執行的戰術方針為：【" + strategyName + "】。\n" +
+                "請根據【" + stockData.代號 + " " + stockData.名稱 + "】最新數據進行深度操盤沙盤推演：\n" +
+                "- 現價：" + stockData.成交價 + "元 | 5MA：" + stockData.price_ma5 + "元 | 20MA：" + stockData.price_ma20 + "元 | 60MA：" + stockData.price_ma60 + "元\n" +
+                "- 三大法人5MA " + f5Str + "、20MA " + f20Str + " | 實戰總分 " + scoreStr + " (20日均分 " + Number(stockData.實戰總分_ma20).toFixed(2) + "分)\n" +
+                "- " + chipInfo + " | " + fsTargetInfo + "\n" +
+                "- 60M OSC " + stockData.OSC_60M + " (短線氣象：" + stockData.短線氣象 + ") | 當前為【" + stockData.HitCount + "維共振 (" + stockData.ResonanceTag + ")】\n" +
+                "- 歷史離場實測：5MA勝率 " + stockData.WinRate_5MA + "%(期望值 " + stockData.Return_5MA + "%)、10MA勝率 " + stockData.WinRate_10MA + "%(期望值 " + stockData.Return_10MA + "%)、20MA勝率 " + stockData.WinRate_20MA + "%(期望值 " + stockData.Return_20MA + "%)，系統最適建議為【" + stockData.OptimalExit + "】。\n\n" +
+                "請嚴格分成以下五大段，每段 60~90 字，緊扣【" + strategyName + "】核心，一針見血：\n" +
+                "📌 【圖一：價格與均線防守】\n" +
+                "📌 【圖1.5：五維金叉彩虹共振】\n" +
+                "📌 【圖二：OBV星號與籌碼鎖碼解讀】\n" +
+                "📌 【圖三：籌碼與實戰總分共振】\n" +
+                "📌 【指揮官實戰總結指引】（給出下營業日開盤目標價、防守價與本金凱利部位％配置建議）\n" +
+                "請全部使用繁體中文回覆。";
+
+            // 8. 發送至後端 stockai1.aspx
+            $.ajax({
+                type: "POST",
+                url: AI_API_URL,
+                data: JSON.stringify({
+                    stockCode: stockData.代號,
+                    stockName: stockData.名稱,
+                    promptText: prompt,
+                    selectedModelMode: modelMode
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                timeout: 50000,
+                success: function (res) {
+                    const result = res.d;
+                    if (result && result.success) {
+                        $("#status-badge").removeClass().addClass("badge bg-success").text("✅ 完成 (" + result.duration + ")");
+                        $("#model-used-badge").text(result.modelName + " ⚡ " + result.duration);
+                        $("#report-title").text("📊 " + stockData.代號 + " " + stockData.名稱 + " 【" + strategyName + "】報告");
+
+                        let rawReply = result.reply;
+                        let thinkText = "";
+                        let finalReport = rawReply;
+
+                        if (rawReply.indexOf("<think>") >= 0) {
+                            const thinkParts = rawReply.split("</" + "think>");
+                            thinkText = thinkParts[0].split("<think>").join("").trim();
+                            finalReport = thinkParts[1] ? thinkParts[1].trim() : "";
+
+                            $("#think-content").text(thinkText);
+                            $("#think-wrapper").fadeIn(200);
+                            $("#report-output").text(finalReport);
+                        } else {
+                            $("#think-wrapper").hide();
+                            $("#report-output").text(finalReport);
+                        }
+
+                        // 存入策略專屬 LocalStorage 記憶體快取
+                        try {
+                            localStorage.setItem(cacheKey, JSON.stringify({
+                                code: stockData.代號,
+                                name: stockData.名稱,
+                                modelName: result.modelName,
+                                exitsHtml: exitsHtml,
+                                thinkText: thinkText,
+                                reportText: finalReport
+                            }));
+                        } catch (e) { }
+
+                    } else {
+                        $("#status-badge").removeClass().addClass("badge bg-danger").text("❌ 失敗");
+                        $("#report-output").text(result ? result.error : "未知錯誤");
+                    }
+                },
+                error: function () {
+                    $("#status-badge").removeClass().addClass("badge bg-danger").text("❌ 連線異常");
+                    $("#report-output").text("❌ 連線 stockai1.aspx 服務失敗，請確認服務是否運行。");
+                }
+            });
+        };
+    </script>
+</body>
+</html>

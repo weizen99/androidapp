@@ -1,0 +1,388 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Zen AI 量化戰情看板 Pro V11.0 (第二戰區：策略與衍生大屏)</title>
+    <!-- 引入 Bootstrap, FontAwesome, DataTables, ECharts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #080f1a;
+            --panel-bg: #111b2b;
+            --text-main: #e2e8f0;
+            --accent-blue: #38bdf8;
+            --accent-red: #ff1744;
+            --accent-green: #22c55e;
+            --border-color: #1e293b;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 讓頁籤可以左右滑動，避免擠壓 */
+        .nav-tabs {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+            /* 隱藏捲軸但保留功能 */
+            .nav-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .nav-tabs .nav-link {
+                color: #94a3b8;
+                border-color: transparent;
+                font-weight: 600;
+                padding: 12px 20px;
+            }
+
+                .nav-tabs .nav-link.active {
+                    background-color: var(--panel-bg);
+                    color: var(--accent-blue);
+                    border-color: var(--border-color) var(--border-color) transparent;
+                }
+
+        .card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .card-header {
+            background-color: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        /* iframe 專用樣式 */
+        iframe {
+            width: 100%;
+            height: 75vh;
+            border: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* 🚀 強制將下拉選單的箭頭變成純白色 */
+        .custom-select-arrow {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0 text-info"><i class="fa-solid fa-satellite-dish"></i> Zen AI 戰情室 V11.0 (第二戰區：策略工廠與微結構)</h3>
+            <div>
+                <!-- 一鍵跳轉回第一戰區 -->
+                <a href="warroom_cockpit.html" class="btn btn-outline-info btn-sm"><i class="fa-solid fa-plane"></i> 📲第一戰情室看板</a>
+                <a href="excelsql2.html" class="btn btn-outline-info btn-sm"><i class="fa-solid fa-plane"></i> 📲excelsql2</a>
+
+            </div>
+        </div>
+
+        <!-- 🌟 八大頁籤導航 -->
+        <ul class="nav nav-tabs" id="v2Tab" role="tablist">
+            <li class="nav-item"><button class="nav-link active" id="factory-tab" data-bs-toggle="tab" data-bs-target="#factory" type="button"><i class="fa-solid fa-industry"></i> 策略工廠與淨值曲線</button></li>
+            <li class="nav-item"><button class="nav-link" id="sentinel-tab" data-bs-toggle="tab" data-bs-target="#sentinel" type="button"><i class="fa-solid fa-shield-halved"></i> 離場守門人全景</button></li>
+            <li class="nav-item"><button class="nav-link" id="amt-tab" data-bs-toggle="tab" data-bs-target="#amt" type="button"><i class="fa-solid fa-layer-group"></i> AMT 拍賣與幾何</button></li>
+            <li class="nav-item"><button class="nav-link" id="cb-tab" data-bs-toggle="tab" data-bs-target="#cb" type="button"><i class="fa-solid fa-bolt"></i> CB/股期 套利微結構</button></li>
+            <li class="nav-item"><button class="nav-link" id="sector-tab" data-bs-toggle="tab" data-bs-target="#sector" type="button"><i class="fa-solid fa-water"></i> 36大類股資金輪動</button></li>
+            <li class="nav-item"><button class="nav-link" id="eps-tab" data-bs-toggle="tab" data-bs-target="#eps" type="button"><i class="fa-solid fa-crown"></i> 財報雙冠王者</button></li>
+            <li class="nav-item"><button class="nav-link" id="kelly-tab" data-bs-toggle="tab" data-bs-target="#kelly" type="button"><i class="fa-solid fa-scale-balanced"></i> 凱利金流導航</button></li>
+            <li class="nav-item"><button class="nav-link" id="etf-tab" data-bs-toggle="tab" data-bs-target="#etf" type="button"><i class="fa-solid fa-coins"></i> ETF 被動金流雷達</button></li>
+        </ul>
+
+        <!-- 🌟 內容區塊 -->
+        <div class="tab-content mt-3" id="v2TabContent">
+
+            <!-- 1. 策略工廠與淨值曲線 -->
+            <div class="tab-pane fade show active" id="factory" role="tabpanel">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <span class="mb-1 mb-md-0"><i class="fa-solid fa-chart-line"></i> 投資組合歷史資產淨值曲線 (Portfolio Equity Curve)</span>
+                                <div class="d-flex gap-2">
+                                    <!-- 💡 終極修正：使用實體深色背景(bg-dark)，箭頭變白(data-bs-theme="dark")，確保下拉清單文字清晰可見 -->
+                                    <select id="strategySelect" class="form-select form-select-sm bg-dark text-info border-info shadow-sm custom-select-arrow" style="width: auto; min-width: 280px; font-weight: 600; cursor: pointer;">
+                                        <option value="1" class="text-light">🟢 策略 1：雙破共振 1:1 測幅</option>
+                                        <option value="2" class="text-light">🎯 策略 2：AMT 價值區突圍 (New!)</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-outline-success text-nowrap shadow-sm" onclick="loadEquityCurve()"><i class="fa-solid fa-rotate"></i> 載入</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="equityChart" style="width: 100%; height: 400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header"><i class="fa-solid fa-traffic-light"></i> 7 大量化戰術 Alpha 生命週期評估塔</div>
+                            <div class="card-body p-0">
+                                <iframe id="iframe-factory" src=""></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 離場守門人 -->
+            <div class="tab-pane fade" id="sentinel" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-bell"></i> 全市場專屬最佳均線 (5/10/20MA) 破線警戒榜</div>
+                    <div class="card-body p-0">
+                        <iframe id="iframe-sentinel" src=""></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. AMT 價值區 -->
+            <div class="tab-pane fade" id="amt" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-bullseye"></i> 衍生微結構 ✕ 價值區突破大屏</div>
+                    <div class="card-body p-0">
+                        <iframe id="iframe-amt" src=""></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. CB 與個股期套利 -->
+            <div class="tab-pane fade" id="cb" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-bolt"></i> 可轉債 (CB) 130% 衝刺期 ✕ 個股期正逆價差套利監控塔</div>
+                    <div class="card-body p-0">
+                        <iframe id="iframe-cb" src=""></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. 36大類股資金輪動 -->
+            <div class="tab-pane fade" id="sector" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-water"></i> 36大類股資金輪動排行榜 (今日吸金主流 vs 失血避險群)</div>
+                    <div class="card-body p-0">
+                        <iframe id="iframe-sector" src=""></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. 財報雙增王者 -->
+            <div class="tab-pane fade" id="eps" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-crown"></i> 營收創高雙增 ✕ 半年賺贏去年 ✕ 本業雙升 終極大滿貫</div>
+                    <div class="card-body p-0">
+                        <iframe id="iframe-eps" src=""></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. 凱利金流導航 -->
+            <div class="tab-pane fade" id="kelly" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-scale-balanced"></i> 凱利金流導航儀：最佳投入比例與持股期</div>
+                    <div class="card-body p-0">
+                        <iframe id="iframe-kelly" src=""></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. ETF 被動金流雷達 -->
+            <div class="tab-pane fade" id="etf" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-sack-dollar"></i> 每月被動收入 1 萬元精算台</div>
+                    <div class="card-body p-0">
+                        <iframe id="iframe-etf" src=""></iframe>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 🚀 1. 動態載入下方 8 個 iframe 報表
+        function loadIframesSafely() {
+            const templates = {
+                // 👉 確保名稱與 excelsql2 裡面的 option 完全一致！
+                'iframe-factory': '🏭 量化策略工廠 ✕ 7大核心戰術生命週期與 Alpha 衰退監控塔',
+                'iframe-sentinel': '🚨 離場守門人 ✕ 全市場專屬最佳均線 (5/10/20MA) 破線警戒榜',
+                'iframe-amt': '👑 三核極致主升雷達 (幾何突破回測 ✕ 20日VAH突圍 ✕ 外資空間)',
+                // 👉 請將 iframe-cb 替換為這支新雷達的確切 Title 名稱
+                'iframe-cb': '🎯 CB 可轉債 100~115% 發動期 ✕ 股權大戶暴增 ✕ 個股期正價差(戰鬥放寬版)',
+                'iframe-sector': '🧭 36大類股資金輪動排行榜 (今日吸金主流 vs 失血避險群)',
+                'iframe-eps': '🏆 營收動能與創高雙增王🏆 營收創高雙增 ✕ 半年賺贏去年 ✕ 本業雙升 終極大滿貫',
+                'iframe-kelly': '「💰 凱利金流導航儀：最佳投入比例與持股期」',
+                'iframe-etf': '💰 每月被動收入 1 萬元 (年領12萬) ✕ 需買張數與花費現金精算榜'
+            };
+
+            for (let id in templates) {
+                // 自動為所有存在的 iframe 賦予 src
+                if ($('#' + id).length) {
+                    $('#' + id).attr('src', 'excelsql2.html?auto=' + encodeURIComponent(templates[id]));
+                }
+            }
+        }
+
+        // 🚀 2. ECharts 繪製回測淨值曲線
+        function loadEquityCurve() {
+            var chartDom = document.getElementById('equityChart');
+            if (!chartDom) return;
+            var myChart = echarts.init(chartDom);
+
+            myChart.showLoading({ text: '📡 正在連線 DataService2 讀取淨值...', color: '#38bdf8', textColor: '#fff', maskColor: 'rgba(8,15,26,0.8)' });
+
+            // 讀取下拉選單目前的選擇 (1 或 2)
+            var strategyId = document.getElementById('strategySelect').value;
+            // 動態組裝 SQL
+            var querySql = `SELECT 日期, 總資產淨值, 累積報酬率_百分比 FROM stockchangedate.dbo.Strategy_Backtest_DailyNAV WHERE 回測編號 = ${strategyId} ORDER BY 日期 ASC`;
+
+            $.ajax({
+                url: "https://zen2965.duckdns.org:8888/excelimport/DataService2.aspx/ExecuteSQL",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    sql: querySql,
+                    db: "stockchangedate",
+                    pwd: "2157"
+                }),
+                dataType: "json",
+                success: function (res) {
+                    myChart.hideLoading();
+                    var dataStr = res.d;
+
+                    if (dataStr.startsWith("錯誤：")) {
+                        alert("🚨 SQL 執行發生錯誤:\n" + dataStr);
+                        return;
+                    }
+
+                    var data;
+                    try {
+                        data = JSON.parse(dataStr);
+                    } catch (e) {
+                        alert("⚠️ 系統回傳無法解析的格式");
+                        return;
+                    }
+
+                    if (data.length === 0) return;
+
+                    var dates = [];
+                    var navs = [];
+
+                    data.forEach(function (row) {
+                        let rawDate = row["日期"].toString().trim();
+                        let cleanDate = rawDate;
+                        if (rawDate.length === 8 && !rawDate.includes('-')) {
+                            cleanDate = rawDate.substring(0, 4) + '-' + rawDate.substring(4, 6) + '-' + rawDate.substring(6, 8);
+                        } else if (rawDate.includes('T')) {
+                            cleanDate = rawDate.split('T')[0];
+                        }
+                        dates.push(cleanDate);
+                        navs.push(parseFloat(row["總資產淨值"]));
+                    });
+
+                    var option = {
+                        backgroundColor: '#111b2b',
+                        tooltip: {
+                            trigger: 'axis',
+                            formatter: function (params) {
+                                let val = params[0].value.toLocaleString();
+                                return params[0].name + '<br/>總資產淨值: <b style="color:#38bdf8;">$' + val + '</b>';
+                            }
+                        },
+                        grid: { left: '2%', right: '4%', top: '10%', bottom: '2%', containLabel: true },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: dates,
+                            axisLine: { lineStyle: { color: '#94a3b8' } }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            scale: true,
+                            axisLine: { lineStyle: { color: '#94a3b8' } },
+                            splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } },
+                            axisLabel: {
+                                formatter: function (value) { return (value / 10000) + ' 萬'; }
+                            }
+                        },
+                        dataZoom: [
+                            { type: 'inside', start: 0, end: 100 },
+                            { start: 0, end: 100, height: 15, bottom: 5, textStyle: { color: '#94a3b8' } }
+                        ],
+                        series: [
+                            {
+                                name: '總資產淨值',
+                                type: 'line',
+                                smooth: true,
+                                symbol: 'circle',
+                                symbolSize: 6,
+                                showSymbol: false,
+                                itemStyle: { color: '#38bdf8' },
+                                lineStyle: { width: 3, shadowBlur: 8, shadowColor: 'rgba(56,189,248,0.5)' },
+                                areaStyle: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                        { offset: 0, color: 'rgba(56,189,248,0.6)' },
+                                        { offset: 1, color: 'rgba(56,189,248,0.0)' }
+                                    ])
+                                },
+                                data: navs
+                            }
+                        ]
+                    };
+                    myChart.setOption(option);
+                },
+                error: function (xhr) {
+                    myChart.hideLoading();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            // 清空避免殘留
+            $('iframe').attr('src', '');
+
+            // 執行讀取
+            loadIframesSafely();
+
+            setTimeout(loadEquityCurve, 500);
+
+            window.addEventListener('resize', function () {
+                var chartDom = document.getElementById('equityChart');
+                if (chartDom) {
+                    var myChart = echarts.getInstanceByDom(chartDom);
+                    if (myChart) myChart.resize();
+                }
+            });
+
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var chartDom = document.getElementById('equityChart');
+                if (chartDom) {
+                    var myChart = echarts.getInstanceByDom(chartDom);
+                    if (myChart) myChart.resize();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
