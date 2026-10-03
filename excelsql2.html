@@ -173,8 +173,203 @@
         const sqlTemplateLibrary = [
 
 
-            //{ cat: " ", title: " ", sql: `  ` },
-            //{ cat: " ", title: " ", sql: `  ` },
+            //{ cat: "三大策略任意切換萬用表", title: " ", sql: `  ` },
+            //{ cat: "三大策略任意切換萬用表", title: " ", sql: `  ` },
+            //{ cat: "三大策略任意切換萬用表", title: " ", sql: `  ` },
+
+            // 🟢【V11.0 新增範本：投信連買作帳抱團偵測儀】
+            {
+                cat: "籌碼類",
+                title: "🏦 投信連續認養天數排行榜 (連買天數 ✕ 成本乖離 ✕ 作帳抱團黑馬)",
+                sql: `/*資料庫:stockchangedate*/TOP 50
+    B.代號,
+    B.名稱,
+    B.成交價 AS [盤中現價],
+    B.漲幅 AS [今日漲幅%],
+    B.總量 AS [成交總量(張)],
+
+    -- 🟢 投信連續認養核心指標 (來自 investment)
+    I.連買天 AS [投信連買天數],
+    I.連買張 AS [連買累積張數],
+    I.持股成本 AS [投信平均成本],
+    
+    -- 🟢 成本乖離率：現價與投信成本的距離
+    ROUND((B.成交價 - NULLIF(I.持股成本, 0)) / NULLIF(I.持股成本, 0) * 100.0, 2) AS [距投信成本%],
+
+    -- 🟢 作帳階段戰略評級
+    CASE 
+        WHEN I.連買天 BETWEEN 2 AND 4 AND (B.成交價 - I.持股成本) / NULLIF(I.持股成本, 0) * 100.0 BETWEEN -2.0 AND 4.0 
+            THEN N'👑👑 投信剛起跑抱團 (成本起跑點，極致風報比)'
+        WHEN I.連買天 BETWEEN 2 AND 5 AND (B.成交價 - I.持股成本) / NULLIF(I.持股成本, 0) * 100.0 <= 8.0 
+            THEN N'🔥 主力密集作帳推升期 (搭順風車)'
+        WHEN I.連買天 >= 6 AND (B.成交價 - I.持股成本) / NULLIF(I.持股成本, 0) * 100.0 > 10.0 
+            THEN N'⚠️ 高檔抱團加速 (乖離過大，防季底結帳)'
+        ELSE N'⭐ 投信常態加碼'
+    END AS [投信作帳階段],
+
+    -- 🟢 投信波段實力評估
+    I.持股比率 AS [投信持股比率%],
+    I.買賣超億元5日 AS [投信近5日買超(億)],
+
+    -- 🛡️ 最佳離場基因
+    ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS [最適離場戰術],
+    M.專家實戰總分 AS [專家分數],
+    M.具體概念 AS [熱門題材]
+
+FROM stockchange.dbo.basicinfo B
+-- 1. 關聯投信專屬分析表 (取得連續買超天數與真實持股成本)
+INNER JOIN stockchangedate.dbo.investment I 
+    ON RTRIM(B.代號) = RTRIM(I.代號) 
+    AND I.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.investment)
+-- 2. 關聯離場勝率快照
+LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E 
+    ON RTRIM(B.代號) = RTRIM(E.代號)
+-- 3. 關聯專家分數大表
+LEFT JOIN stockchangedate.dbo.MasterStockAnalysis M 
+    ON RTRIM(B.代號) = RTRIM(M.代號) 
+    AND M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+
+WHERE B.總量 >= 1000
+  AND B.成交價 >= 10.0
+  AND I.連買天 >= 2                     -- 🛡️ 門檻：至少連續買超 2 天以上 (排除一日短打)
+  AND ISNULL(I.持股成本, 0) > 0        -- 必須有明確的投信成本
+
+ORDER BY 
+    -- 優先挑選「連買 2~4 天 且 剛在成本線上 0~5%」的起漲初升段飆股！
+    CASE 
+        WHEN I.連買天 BETWEEN 2 AND 4 AND (B.成交價 - I.持股成本) / NULLIF(I.持股成本, 0) * 100.0 BETWEEN -2.0 AND 5.0 
+        THEN 0 ELSE 1 
+    END ASC,
+    I.連買張 DESC,
+    I.連買天 DESC;
+
+/*
+戰略意義：
+在 Q4 季初，投信經理人會集中銀彈拉抬少數核心股。
+本雷達幫您避開已經漲飛的「抬轎股」，直接鎖定「投信連續買進 2~4 天，且現價剛好在經理人成本附近」的極致初升段黑馬！
+*/`
+            },
+
+            {
+                cat: "三大策略任意切換萬用表", title: "每一筆進出場股票名單、買賣價位、持有天數與賺賠金額", sql: `/*資料庫:stockchangedate*/
+    CASE 
+        WHEN T.回測編號 = 1 THEN N'🟢 策略 1: 雙破共振 1:1'
+        WHEN T.回測編號 = 2 THEN N'🎯 策略 2: AMT 價值區突圍'
+        WHEN T.回測編號 = 3 THEN N'🚀 策略 3: 雙引擎存股流'
+        ELSE N'其他策略'
+    END AS [所屬量化策略],
+    T.代號,
+    T.名稱,
+    T.進場日期,
+    T.進場價格,
+    T.出場日期,
+    T.出場價格,
+    T.持有天數 AS [持有(天)],
+    T.交易報酬率_百分比 AS [獲利%],
+    T.淨獲利金額 AS [淨損益(元)],
+    T.出場原因
+FROM stockchangedate.dbo.Strategy_Backtest_Trades T
+WHERE T.回測編號 IN (1,2,3)                           --再此調整回測範圍
+ORDER BY T.出場日期 DESC, T.回測編號 ASC;
+
+/*
+戰略意義：
+warroom_cockpit_v2.html(戰情二表)的三大圖形回測名細
+回測編號 = 1 ➔ 策略 1（雙破共振 1:1 歷次短線進出明細，如光鼎、全友、友達等）
+回測編號 = 2 ➔ 策略 2（AMT 價值區突圍的逐筆試單與主升段獲利明細）
+                檢視 AMT 價值區突破的真實進出場，驗證大賺小賠的交易紀律
+回測編號 = 3 ➔ 策略 3（雙引擎存股流的 6 大核心王牌持股與複利結算明細）               
+*/
+
+` },
+
+
+
+
+            // 🟢【存股策略 1：小資暴雪流 (最低本金/最高殖利率)】
+            {
+                cat: "存股息策略",
+                title: "💰 策略一：小資暴雪流 (最低本金達成月領一萬 ✕ 嚴禁溢價)",
+                sql: `/*資料庫:stockchangedate*/
+TOP 30
+    T.[代號], T.[名稱], T.[目前股價(元)], T.[年化配息率%], T.[折溢價%],
+    T.[所需總本金(元)], T.[達成月領1萬_需買張數], T.[每股單次配息(元)], T.[ETF規模(億)]
+FROM (
+    SELECT 
+        E.[代號], E.[名稱], E.[現價] AS [目前股價(元)], E.[年化配息率%], E.[折溢價%], E.[基金規模億] AS [ETF規模(億)], E.[最近配息元] AS [每股單次配息(元)],
+        CAST(CEILING(120000.0 / NULLIF(
+            CASE 
+                WHEN E.[配息頻率] = N'月配息' THEN E.[最近配息元] * 12.0
+                WHEN E.[配息頻率] = N'季配息' THEN E.[最近配息元] * 4.0
+                WHEN E.[配息頻率] = N'半年配' THEN E.[最近配息元] * 2.0
+                ELSE E.[最近配息元] * 1.0 END * 1000.0, 0)) AS INT) AS [達成月領1萬_需買張數],
+        CAST(ROUND(CEILING(120000.0 / NULLIF(
+            CASE 
+                WHEN E.[配息頻率] = N'月配息' THEN E.[最近配息元] * 12.0
+                WHEN E.[配息頻率] = N'季配息' THEN E.[最近配息元] * 4.0
+                WHEN E.[配息頻率] = N'半年配' THEN E.[最近配息元] * 2.0
+                ELSE E.[最近配息元] * 1.0 END * 1000.0, 0)) * E.[現價] * 1000.0, 0) AS BIGINT) AS [所需總本金(元)]
+    FROM stockchangedate.dbo.ETF_DividendRank E
+    WHERE E.[總量] >= 2000 AND E.[年化配息率%] >= 8.0 
+      AND E.[折溢價%] <= 0.5  -- 🛡️ 嚴禁買進溢價超過 0.5% 的標的
+) T
+ORDER BY T.[所需總本金(元)] ASC;`
+            },
+
+            // 🟢【存股策略 2：穩健防禦流 (低波抗跌/填息機率高)】
+            {
+                cat: "存股息策略",
+                title: "⛰️ 策略二：穩健防禦流 (千億規模 ✕ 歷史填息勝率高 ✕ 波動低)",
+                sql: `/*資料庫:stockchangedate*/
+TOP 20
+    E.[代號], E.[名稱], E.[現價] AS [盤中現價], 
+    E.[年化配息率%], E.[基金規模億] AS [ETF規模(億)], 
+    E.[平均填息天] AS [歷史平均填息(天)],
+    E.[折溢價%],
+    CASE 
+        WHEN E.[平均填息天] <= 15 THEN N'👑 填息極快 (勝率極高)'
+        WHEN E.[平均填息天] <= 30 THEN N'🔥 填息穩健'
+        ELSE N'⭐ 適合長抱不看盤'
+    END AS [填息與防禦評級],
+    E.[配息頻率]
+FROM stockchangedate.dbo.ETF_DividendRank E
+WHERE E.[基金規模億] >= 500  -- 🛡️ 規模大於 500 億，代表流動性極佳、不易下市
+  AND E.[年化配息率%] BETWEEN 5.0 AND 8.5 -- 殖利率合理不過度榨乾淨值
+ORDER BY E.[平均填息天] ASC, E.[基金規模億] DESC;`
+            },
+
+            // 🟢【存股策略 3：雙引擎總報酬流 (高息護體 + 營收雙位數成長)】
+            {
+                cat: "存股息策略",
+                title: "🚀 策略三：雙引擎總報酬流 (高息 > 5% ✕ 營收年增 > 15% ✕ 低本益比)",
+                sql: `/*資料庫:stockchangedate*/
+TOP 50
+    B.代號, B.名稱, B.成交價 AS [盤中現價], 
+    V.現金殖利率 AS [歷史殖利率%],
+    I.年成長 AS [最新營收年增%],
+    V.本益比近四季 AS [近四季PE(倍)],
+    V.股價淨值比 AS [PB(倍)],
+    CASE 
+        WHEN I.年成長 >= 30.0 AND V.現金殖利率 >= 6.0 THEN N'👑👑 成長與高息極致雙引擎'
+        WHEN I.年成長 >= 15.0 AND V.現金殖利率 >= 5.0 THEN N'🚀 戴維斯雙擊 (股價息收雙賺)'
+        ELSE N'⭐ 價值成長型'
+    END AS [總報酬戰略評級],
+    M.專家實戰總分,
+    M.具體概念
+FROM stockchange.dbo.basicinfo B
+LEFT JOIN stockchangedate.dbo.value V ON RTRIM(B.代號) = RTRIM(V.代號) AND V.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.value)
+LEFT JOIN (
+    SELECT 代號, 年成長, ROW_NUMBER() OVER(PARTITION BY 代號 ORDER BY 日期 DESC) as rn
+    FROM stockchangedate.dbo.incomesum
+) I ON RTRIM(B.代號) = RTRIM(I.代號) AND I.rn = 1
+LEFT JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(B.代號) = RTRIM(M.代號) AND M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)
+WHERE B.總量 >= 1500 AND B.成交價 >= 15.0
+  AND ISNULL(V.現金殖利率, 0) >= 5.0      -- 🛡️ 防禦底線：至少要有 5% 股息保護
+  AND ISNULL(I.年成長, 0) >= 15.0         -- 🚀 攻擊引擎：營收具備 15% 以上高成長
+  AND ISNULL(V.本益比近四季, 99) <= 15.0  -- 💰 估值保護：本益比小於 15 倍，便宜治百病
+ORDER BY V.現金殖利率 DESC, I.年成長 DESC;`
+            },
+
 
 
             // 🟢【V11.0 升級範本：Q4 作帳行情專屬 (土洋合買 ✕ 營收雙增)】
