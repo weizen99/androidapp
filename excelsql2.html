@@ -7842,6 +7842,17 @@ FOR JSON PATH` },
 
                 var stockName = getValByHeader("名稱") || "-";
                 var stockCode = getValByHeader("代號") || "-";
+                // 🚀【三屏聯動發射中樞】：雙擊表格任何一列，三室 TradingView 瞬間秒切換！
+                if (stockCode && stockCode !== "-") {
+                    try {
+                        localStorage.setItem('zen_selected_stock', stockCode.trim());
+                        localStorage.setItem('zen_stock_tick', Date.now().toString());
+                        if (typeof BroadcastChannel !== 'undefined') {
+                            new BroadcastChannel('zen_stock_sync').postMessage({ code: stockCode.trim(), time: Date.now() });
+                        }
+                        console.log("🚀 [表格雙擊] 已向全戰區廣播切換至: " + stockCode);
+                    } catch (e) { }
+                }
 
                 if (stockCode === "-") {
                     alert("⚠️ 未能讀取到個股代號，請確認表格中是否含有『代號』欄位。");
@@ -9165,6 +9176,13 @@ FOR JSON PATH` },
 
                         <a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/warroom_cockpit_v2.html" target="_blank">
                             📲 第二戰情室看盤
+                        </a>
+
+                    </li>
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/warroom_cockpit_v3.html" target="_blank">
+                            📲 第三戰情室看盤
                         </a>
 
                     </li>

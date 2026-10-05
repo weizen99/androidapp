@@ -565,6 +565,10 @@
             <span id="live-clock">🕒 載入中...</span>
             <span>DB: <strong style="color:var(--accent-cyan);">stockchangedate</strong></span>
             <button class="btn-refresh-all" onclick="refreshResonanceSnapshot()">⚡ 一鍵全看板重構</button>
+            <!-- 🛸 直通第三戰區 TradingView 旗艦大屏 -->
+            <a id="btn-v3-link" href="warroom_cockpit_v3.html?2330" target="_blank" class="btn btn-outline-info btn-sm ms-2" style="border-radius: 6px; font-weight: bold;">
+                <i class="fa-solid fa-chart-candlestick"></i> 🛸 第三戰區 (TradingView)
+            </a>
         </div>
     </div>
 
@@ -791,6 +795,7 @@
                 <div class="hub-nav-category"><i class="bi bi-cpu-fill text-info me-1"></i>👑續接戰情室看板:</div>
 
                 <a class="hub-nav-link active" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/warroom_cockpit_v2.html', this)"><i class="bi bi-images"></i> 👑戰情室智第二看板</a>
+                <a class="hub-nav-link active" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/warroom_cockpit_v3.html', this)"><i class="bi bi-images"></i> 👑戰情室智第二看板</a>
                 <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/stockmaster1.html', this)"><i class="bi bi-images"></i> 👑戰情室智能助教</a>
                 <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/stockmaster.html', this)"><i class="bi bi-images"></i> 👑Ai股票智能助教</a>
                 <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/excelimport/excelsql2.html', this)">
@@ -808,7 +813,7 @@
                 <a class="hub-nav-link" active" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/excelsql_01.html', this)"><i class="bi bi-camera-reels"></i> excelsql</a>
                 <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/excelsql_02.html', this)"><i class="bi bi-images"></i> excelsql預存</a>
 
-               
+
                 <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E5%BD%B1%E9%9F%B3%E7%B3%BB%E7%B5%B11.html', this)"><i class="bi bi-images"></i> 影音系統1</a>
 
                 <a class="hub-nav-link" onclick="loadHubPage('https://zen2965.duckdns.org:8888/androidapp/Google%20AI%20Studioinfo/%E5%BD%B1%E9%9F%B3%E7%B3%BB%E7%B5%B12.html', this)"><i class="bi bi-images"></i> 影音系統2</a>
@@ -1133,45 +1138,45 @@
 
             // 🟢 SQL 關聯：整合 Chips5 主力集中度 + 3-Way 離場勝率 + 雙總分
             const sql = `
-    SELECT TOP 1
-      Q.代號,
-      ISNULL(B.名稱, ISNULL(A.名稱, ISNULL(M.名稱, Q.代號))) AS 名稱,
-      ISNULL(A.成交價, ISNULL(S.盤中成交價, 0)) AS 現價,
-      ISNULL(S.盤中漲幅, 0.0) AS 漲幅,
-      ISNULL(E.WinRate_5MA, 50.0) AS WinRate_5MA,
-      ISNULL(E.Return_5MA, 0.0) AS Return_5MA,
-      ISNULL(E.WinRate_10MA, 50.0) AS WinRate_10MA,
-      ISNULL(E.Return_10MA, 0.0) AS Return_10MA,
-      ISNULL(E.WinRate_20MA, 50.0) AS WinRate_20MA,
-      ISNULL(E.Return_20MA, 0.0) AS Return_20MA,
-      ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS OptimalExit,
-      ISNULL(SCH.實戰總分, ISNULL(M.專家實戰總分, 0)) AS 舊實戰總分,
-      ISNULL(I.預估今日總分, ISNULL(SCH.實戰總分, ISNULL(M.專家實戰總分, 0))) AS 盤中預估總分,
-      ISNULL(R.HitCount, 0) AS HitCount,
-      ISNULL(R.ResonanceTag, N'常態波段') AS ResonanceTag,
-      -- 🟢 引入 Chips5 主力籌碼集中度
-      ISNULL(C5.集中度1日, 0.0) AS 集中度1日,
-      ISNULL(C5.集中度5日, 0.0) AS 集中度5日,
-      ISNULL(C5.集中度10日, 0.0) AS 集中度10日,
-      ISNULL(C5.集中度20日, 0.0) AS 集中度20日,
-      ISNULL(C5.集中度60日, 0.0) AS 集中度60日,
-      ISNULL(F.預估目標價, 0) AS FactSet目標價,
-      ISNULL(FN.EPS累計, 0) AS 半年報EPS,
-      ISNULL(RV.最新公告營收年增, 0) AS 營收年增
-    FROM (SELECT RTRIM('${code}') AS 代號) Q
-    LEFT JOIN stockchangedate.dbo.basicinfo B ON RTRIM(B.代號) = Q.代號
-    LEFT JOIN (SELECT TOP 1 代號, 名稱, 成交價, 日期 FROM stockchangedate.dbo.allcross_live WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) A ON 1=1
-    LEFT JOIN (SELECT TOP 1 代號, 集中度1日, 集中度5日, 集中度10日, 集中度20日, 集中度60日 FROM stockchangedate.dbo.Chips5 WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) C5 ON 1=1
-    LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(E.代號) = Q.代號
-    LEFT JOIN (SELECT TOP 1 代號, 名稱, 專家實戰總分 FROM stockchangedate.dbo.MasterStockAnalysis WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) M ON 1=1
-    LEFT JOIN (SELECT TOP 1 代號, 實戰總分 FROM stockchangedate.dbo.ScoreCrossHistory WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) SCH ON 1=1
-    LEFT JOIN stockchangedate.dbo.IntradayScoreCache I ON RTRIM(I.代號) = Q.代號
-    LEFT JOIN stockchangedate.dbo.ResonanceMultiFactor_Snapshot R ON RTRIM(R.代號) = Q.代號
-    LEFT JOIN stockchangedate.dbo.ResonanceMultiFactor_Snapshot S ON RTRIM(S.代號) = Q.代號
-    LEFT JOIN (SELECT TOP 1 代號, 預估目標價 FROM stockchangedate.dbo.FactSetEstimates WHERE RTRIM(代號) = RTRIM('${code}')) F ON 1=1
-    LEFT JOIN (SELECT TOP 1 代號, EPS累計 FROM stockchangedate.dbo.financesum WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) FN ON 1=1
-    LEFT JOIN (SELECT TOP 1 代號, 最新公告營收年增 FROM stockchangedate.dbo.View_Realtime_Revenue WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 交易日期 DESC) RV ON 1=1;
-  `;
+            SELECT TOP 1
+              Q.代號,
+              ISNULL(B.名稱, ISNULL(A.名稱, ISNULL(M.名稱, Q.代號))) AS 名稱,
+              ISNULL(A.成交價, ISNULL(S.盤中成交價, 0)) AS 現價,
+              ISNULL(S.盤中漲幅, 0.0) AS 漲幅,
+              ISNULL(E.WinRate_5MA, 50.0) AS WinRate_5MA,
+              ISNULL(E.Return_5MA, 0.0) AS Return_5MA,
+              ISNULL(E.WinRate_10MA, 50.0) AS WinRate_10MA,
+              ISNULL(E.Return_10MA, 0.0) AS Return_10MA,
+              ISNULL(E.WinRate_20MA, 50.0) AS WinRate_20MA,
+              ISNULL(E.Return_20MA, 0.0) AS Return_20MA,
+              ISNULL(E.OptimalExit, N'🔥 20MA勝出') AS OptimalExit,
+              ISNULL(SCH.實戰總分, ISNULL(M.專家實戰總分, 0)) AS 舊實戰總分,
+              ISNULL(I.預估今日總分, ISNULL(SCH.實戰總分, ISNULL(M.專家實戰總分, 0))) AS 盤中預估總分,
+              ISNULL(R.HitCount, 0) AS HitCount,
+              ISNULL(R.ResonanceTag, N'常態波段') AS ResonanceTag,
+              -- 🟢 引入 Chips5 主力籌碼集中度
+              ISNULL(C5.集中度1日, 0.0) AS 集中度1日,
+              ISNULL(C5.集中度5日, 0.0) AS 集中度5日,
+              ISNULL(C5.集中度10日, 0.0) AS 集中度10日,
+              ISNULL(C5.集中度20日, 0.0) AS 集中度20日,
+              ISNULL(C5.集中度60日, 0.0) AS 集中度60日,
+              ISNULL(F.預估目標價, 0) AS FactSet目標價,
+              ISNULL(FN.EPS累計, 0) AS 半年報EPS,
+              ISNULL(RV.最新公告營收年增, 0) AS 營收年增
+            FROM (SELECT RTRIM('${code}') AS 代號) Q
+            LEFT JOIN stockchangedate.dbo.basicinfo B ON RTRIM(B.代號) = Q.代號
+            LEFT JOIN (SELECT TOP 1 代號, 名稱, 成交價, 日期 FROM stockchangedate.dbo.allcross_live WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) A ON 1=1
+            LEFT JOIN (SELECT TOP 1 代號, 集中度1日, 集中度5日, 集中度10日, 集中度20日, 集中度60日 FROM stockchangedate.dbo.Chips5 WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) C5 ON 1=1
+            LEFT JOIN stockchangedate.dbo.StockPersonality_3Exits E ON RTRIM(E.代號) = Q.代號
+            LEFT JOIN (SELECT TOP 1 代號, 名稱, 專家實戰總分 FROM stockchangedate.dbo.MasterStockAnalysis WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) M ON 1=1
+            LEFT JOIN (SELECT TOP 1 代號, 實戰總分 FROM stockchangedate.dbo.ScoreCrossHistory WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) SCH ON 1=1
+            LEFT JOIN stockchangedate.dbo.IntradayScoreCache I ON RTRIM(I.代號) = Q.代號
+            LEFT JOIN stockchangedate.dbo.ResonanceMultiFactor_Snapshot R ON RTRIM(R.代號) = Q.代號
+            LEFT JOIN stockchangedate.dbo.ResonanceMultiFactor_Snapshot S ON RTRIM(S.代號) = Q.代號
+            LEFT JOIN (SELECT TOP 1 代號, 預估目標價 FROM stockchangedate.dbo.FactSetEstimates WHERE RTRIM(代號) = RTRIM('${code}')) F ON 1=1
+            LEFT JOIN (SELECT TOP 1 代號, EPS累計 FROM stockchangedate.dbo.financesum WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 日期 DESC) FN ON 1=1
+            LEFT JOIN (SELECT TOP 1 代號, 最新公告營收年增 FROM stockchangedate.dbo.View_Realtime_Revenue WHERE RTRIM(代號) = RTRIM('${code}') ORDER BY 交易日期 DESC) RV ON 1=1;
+          `;
 
             $.ajax({
                 type: "POST",
@@ -1235,93 +1240,93 @@
                         }
 
                         $("#drawer-body-content").html(`
-          <!-- 1. 雙總分並列對照 -->
-          <div class="drawer-section">
-            <div class="drawer-sec-title">📊 籌碼與實戰總分動態 (雙總分並列)</div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <span>舊實戰總分 (昨日結算):</span>
-              <strong style="color:var(--accent-gold); font-size:1.05rem;">${oldScore} 分</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <span>盤中預估總分 (今日即時):</span>
-              <strong style="color:var(--accent-red); font-size:1.15rem;">+${newScore} 分</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #334155; padding-top:4px;">
-              <span>分差變動 (即時淨增):</span>
-              <strong style="color:${deltaColor};">${delta >= 0 ? '+' : ''}${delta} 分</strong>
-            </div>
-          </div>
+                  <!-- 1. 雙總分並列對照 -->
+                  <div class="drawer-section">
+                    <div class="drawer-sec-title">📊 籌碼與實戰總分動態 (雙總分並列)</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                      <span>舊實戰總分 (昨日結算):</span>
+                      <strong style="color:var(--accent-gold); font-size:1.05rem;">${oldScore} 分</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                      <span>盤中預估總分 (今日即時):</span>
+                      <strong style="color:var(--accent-red); font-size:1.15rem;">+${newScore} 分</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #334155; padding-top:4px;">
+                      <span>分差變動 (即時淨增):</span>
+                      <strong style="color:${deltaColor};">${delta >= 0 ? '+' : ''}${delta} 分</strong>
+                    </div>
+                  </div>
 
-          <!-- 2. 🟢 Chips5 主力籌碼集中度矩陣 -->
-          <div class="drawer-section">
-            <div class="drawer-sec-title">🎯 主力籌碼集中度 (Chips5 大戶金流)</div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <span>大戶鎖碼評級:</span>
-              <span class="badge" style="${chipBadgeStyle}">${chipRating}</span>
-            </div>
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align:center; font-size:0.8rem; background:rgba(15,23,42,0.6); padding:8px; border-radius:6px; border:1px solid #1e293b;">
-              <div><span style="color:var(--text-muted);">1日集中</span><br><strong style="color:${c1Color}; font-size:0.92rem;">${c1}%</strong></div>
-              <div><span style="color:var(--accent-cyan); font-weight:bold;">5日集中</span><br><strong style="color:${c5Color}; font-size:1.02rem;">${c5}%</strong></div>
-              <div><span style="color:var(--text-muted);">10日集中</span><br><strong style="color:${c10Color}; font-size:0.92rem;">${c10}%</strong></div>
-              <div><span style="color:var(--text-muted);">20日集中</span><br><strong style="color:${c20Color}; font-size:0.92rem;">${c20}%</strong></div>
-              <div><span style="color:var(--text-muted);">60日集中</span><br><strong style="color:${c60Color}; font-size:0.92rem;">${c60}%</strong></div>
-              <div><span style="color:var(--text-muted);">籌碼狀態</span><br><strong style="color:#fbbf24;">${c5 >= 10 ? '高度鎖碼' : (c5 > 0 ? '主力吸籌' : '發散整理')}</strong></div>
-            </div>
-          </div>
+                  <!-- 2. 🟢 Chips5 主力籌碼集中度矩陣 -->
+                  <div class="drawer-section">
+                    <div class="drawer-sec-title">🎯 主力籌碼集中度 (Chips5 大戶金流)</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                      <span>大戶鎖碼評級:</span>
+                      <span class="badge" style="${chipBadgeStyle}">${chipRating}</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align:center; font-size:0.8rem; background:rgba(15,23,42,0.6); padding:8px; border-radius:6px; border:1px solid #1e293b;">
+                      <div><span style="color:var(--text-muted);">1日集中</span><br><strong style="color:${c1Color}; font-size:0.92rem;">${c1}%</strong></div>
+                      <div><span style="color:var(--accent-cyan); font-weight:bold;">5日集中</span><br><strong style="color:${c5Color}; font-size:1.02rem;">${c5}%</strong></div>
+                      <div><span style="color:var(--text-muted);">10日集中</span><br><strong style="color:${c10Color}; font-size:0.92rem;">${c10}%</strong></div>
+                      <div><span style="color:var(--text-muted);">20日集中</span><br><strong style="color:${c20Color}; font-size:0.92rem;">${c20}%</strong></div>
+                      <div><span style="color:var(--text-muted);">60日集中</span><br><strong style="color:${c60Color}; font-size:0.92rem;">${c60}%</strong></div>
+                      <div><span style="color:var(--text-muted);">籌碼狀態</span><br><strong style="color:#fbbf24;">${c5 >= 10 ? '高度鎖碼' : (c5 > 0 ? '主力吸籌' : '發散整理')}</strong></div>
+                    </div>
+                  </div>
 
-          <!-- 3. 多維共振星號 -->
-          <div class="drawer-section">
-            <div class="drawer-sec-title">🌟 多維因子共振狀態</div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span>共振等級:</span>
-              <span class="badge" style="background:#38bdf8; color:#000;">${hits}</span>
-            </div>
-          </div>
+                  <!-- 3. 多維共振星號 -->
+                  <div class="drawer-section">
+                    <div class="drawer-sec-title">🌟 多維因子共振狀態</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span>共振等級:</span>
+                      <span class="badge" style="background:#38bdf8; color:#000;">${hits}</span>
+                    </div>
+                  </div>
 
-          <!-- 4. 3-Way 歷史離場勝率實測 -->
-          <div class="drawer-section">
-            <div class="drawer-sec-title">🛡️ 3-Way 歷史離場戰術實測 PK</div>
-            <div style="margin-bottom:6px; font-size:0.85rem;">
-              <div style="display:flex; justify-content:space-between;">
-                <span>🏃 5MA 離場 (極限短線):</span>
-                <span>勝率 <strong>${Number(r.WinRate_5MA || 0).toFixed(1)}%</strong> | 期望值 <strong style="color:${Number(r.Return_5MA || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${Number(r.Return_5MA || 0) >= 0 ? '+' : ''}${Number(r.Return_5MA || 0).toFixed(2)}%</strong></span>
-              </div>
-            </div>
-            <div style="margin-bottom:6px; font-size:0.85rem;">
-              <div style="display:flex; justify-content:space-between;">
-                <span>⚡ 10MA 離場 (強勢防守):</span>
-                <span>勝率 <strong>${Number(r.WinRate_10MA || 0).toFixed(1)}%</strong> | 期望值 <strong style="color:${Number(r.Return_10MA || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${Number(r.Return_10MA || 0) >= 0 ? '+' : ''}${Number(r.Return_10MA || 0).toFixed(2)}%</strong></span>
-              </div>
-            </div>
-            <div style="margin-bottom:8px; font-size:0.85rem;">
-              <div style="display:flex; justify-content:space-between;">
-                <span>🔥 20MA 離場 (波段主升):</span>
-                <span>勝率 <strong>${Number(r.WinRate_20MA || 0).toFixed(1)}%</strong> | 期望值 <strong style="color:${Number(r.Return_20MA || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'}; font-size:0.95rem;">${Number(r.Return_20MA || 0) >= 0 ? '+' : ''}${Number(r.Return_20MA || 0).toFixed(2)}%</strong></span>
-              </div>
-            </div>
-            <div style="border-top:1px solid #334155; padding-top:6px; display:flex; justify-content:space-between; align-items:center;">
-              <span>系統最適戰術評定:</span>
-              <span class="badge" style="background:rgba(168,85,247,0.25); color:#c084fc; border:1px solid #a855f7; font-size:0.82rem;">${r.OptimalExit || '🔥 20MA波段抱緊'}</span>
-            </div>
-          </div>
+                  <!-- 4. 3-Way 歷史離場勝率實測 -->
+                  <div class="drawer-section">
+                    <div class="drawer-sec-title">🛡️ 3-Way 歷史離場戰術實測 PK</div>
+                    <div style="margin-bottom:6px; font-size:0.85rem;">
+                      <div style="display:flex; justify-content:space-between;">
+                        <span>🏃 5MA 離場 (極限短線):</span>
+                        <span>勝率 <strong>${Number(r.WinRate_5MA || 0).toFixed(1)}%</strong> | 期望值 <strong style="color:${Number(r.Return_5MA || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${Number(r.Return_5MA || 0) >= 0 ? '+' : ''}${Number(r.Return_5MA || 0).toFixed(2)}%</strong></span>
+                      </div>
+                    </div>
+                    <div style="margin-bottom:6px; font-size:0.85rem;">
+                      <div style="display:flex; justify-content:space-between;">
+                        <span>⚡ 10MA 離場 (強勢防守):</span>
+                        <span>勝率 <strong>${Number(r.WinRate_10MA || 0).toFixed(1)}%</strong> | 期望值 <strong style="color:${Number(r.Return_10MA || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${Number(r.Return_10MA || 0) >= 0 ? '+' : ''}${Number(r.Return_10MA || 0).toFixed(2)}%</strong></span>
+                      </div>
+                    </div>
+                    <div style="margin-bottom:8px; font-size:0.85rem;">
+                      <div style="display:flex; justify-content:space-between;">
+                        <span>🔥 20MA 離場 (波段主升):</span>
+                        <span>勝率 <strong>${Number(r.WinRate_20MA || 0).toFixed(1)}%</strong> | 期望值 <strong style="color:${Number(r.Return_20MA || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'}; font-size:0.95rem;">${Number(r.Return_20MA || 0) >= 0 ? '+' : ''}${Number(r.Return_20MA || 0).toFixed(2)}%</strong></span>
+                      </div>
+                    </div>
+                    <div style="border-top:1px solid #334155; padding-top:6px; display:flex; justify-content:space-between; align-items:center;">
+                      <span>系統最適戰術評定:</span>
+                      <span class="badge" style="background:rgba(168,85,247,0.25); color:#c084fc; border:1px solid #a855f7; font-size:0.82rem;">${r.OptimalExit || '🔥 20MA波段抱緊'}</span>
+                    </div>
+                  </div>
 
-          <!-- 5. 基本面估值與法人空間 -->
-          <div class="drawer-section" style="margin-bottom:0;">
-            <div class="drawer-sec-title">📈 財報基本面 ✕ 法人目標價</div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <span>半年報 EPS 累計:</span>
-              <strong style="color:var(--accent-gold);">${Number(r.半年報EPS || 0).toFixed(2)} 元</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <span>最新營收年增率:</span>
-              <strong style="color:${Number(r.營收年增 || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${Number(r.營收年增 || 0) >= 0 ? '+' : ''}${Number(r.營收年增 || 0).toFixed(1)}%</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between;">
-              <span>FactSet 目標空間:</span>
-              <span>${fsUpside}</span>
-            </div>
-          </div>
-        `);
+                  <!-- 5. 基本面估值與法人空間 -->
+                  <div class="drawer-section" style="margin-bottom:0;">
+                    <div class="drawer-sec-title">📈 財報基本面 ✕ 法人目標價</div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                      <span>半年報 EPS 累計:</span>
+                      <strong style="color:var(--accent-gold);">${Number(r.半年報EPS || 0).toFixed(2)} 元</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                      <span>最新營收年增率:</span>
+                      <strong style="color:${Number(r.營收年增 || 0) >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${Number(r.營收年增 || 0) >= 0 ? '+' : ''}${Number(r.營收年增 || 0).toFixed(1)}%</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                      <span>FactSet 目標空間:</span>
+                      <span>${fsUpside}</span>
+                    </div>
+                  </div>
+                `);
 
                         $("#drawer-btn-chart").off('click').on('click', function () {
                             closeStockDrawer();
@@ -1344,13 +1349,13 @@
             const hitCount = $("#selHitCount").val() || 3;
             const momentumMode = $("#selMomentumMode").val() || 2;
             const sql = `SELECT TOP 240
-                              [代號], [名稱], [盤中成交價] AS [現價], [盤中漲幅] AS [漲幅%], [盤中總量] AS [總量],
-                              [HitCount] AS [共振維度數], [ResonanceTag] AS [共振等級],
-                              [DimA_Status] AS [雙動能狀態], [DimB_Status] AS [OBV星號狀態], [DimC_Status] AS [價格星號狀態], [DimD_Status] AS [彩虹金叉狀態]
-                          FROM stockchangedate.dbo.ResonanceMultiFactor_Snapshot
-                          WHERE [HitCount] >= ${hitCount}
-                            AND (${momentumMode} = 0 OR [DimA_DualMomentum] = ${momentumMode})
-                          ORDER BY [HitCount] DESC, [DimD_RainbowScore] DESC, [盤中總量] DESC;`;
+                                      [代號], [名稱], [盤中成交價] AS [現價], [盤中漲幅] AS [漲幅%], [盤中總量] AS [總量],
+                                      [HitCount] AS [共振維度數], [ResonanceTag] AS [共振等級],
+                                      [DimA_Status] AS [雙動能狀態], [DimB_Status] AS [OBV星號狀態], [DimC_Status] AS [價格星號狀態], [DimD_Status] AS [彩虹金叉狀態]
+                                  FROM stockchangedate.dbo.ResonanceMultiFactor_Snapshot
+                                  WHERE [HitCount] >= ${hitCount}
+                                    AND (${momentumMode} = 0 OR [DimA_DualMomentum] = ${momentumMode})
+                                  ORDER BY [HitCount] DESC, [DimD_RainbowScore] DESC, [盤中總量] DESC;`;
 
             execQueryToTable(sql, "stockchangedate", "#tblMultiResonance");
         }
@@ -1387,17 +1392,17 @@
         // ☀️ 頁籤 3: 60M 伏兵轉強雷達
         function loadTurningStrong() {
             const sql29Strong = `SELECT TOP 200
-                              代號, 名稱, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, AI診斷筆記
-                          FROM stockchangedate.dbo.View_AI_Elite_Radar
-                          WHERE 分組 = N'自選股29' AND [短線氣象] LIKE N'%轉強%'
-                          ORDER BY [60M動能(OSC)] DESC;`;
+                                      代號, 名稱, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, AI診斷筆記
+                                  FROM stockchangedate.dbo.View_AI_Elite_Radar
+                                  WHERE 分組 = N'自選股29' AND [短線氣象] LIKE N'%轉強%'
+                                  ORDER BY [60M動能(OSC)] DESC;`;
             execQueryToTable(sql29Strong, "stockchangedate", "#tblTurningStrong29");
 
             const sqlAllStrong = `SELECT TOP 200
-                              代號, 名稱, 分組, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, 具體概念
-                          FROM stockchangedate.dbo.View_AI_Elite_Radar
-                          WHERE [短線氣象] LIKE N'%轉強%'
-                          ORDER BY [60M動能(OSC)] DESC, [日線分] DESC;`;
+                                      代號, 名稱, 分組, ROUND([60M動能(OSC)], 2) AS [60M_OSC], ROUND([60M_K值], 1) AS [60M_K], 日線分, 短線氣象, 具體概念
+                                  FROM stockchangedate.dbo.View_AI_Elite_Radar
+                                  WHERE [短線氣象] LIKE N'%轉強%'
+                                  ORDER BY [60M動能(OSC)] DESC, [日線分] DESC;`;
             execQueryToTable(sqlAllStrong, "stockchangedate", "#tblTurningStrongAll");
         }
 
@@ -1411,56 +1416,56 @@ ORDER BY C.預估今日總分 DESC;`;
             execQueryToTable(sqlRadar, "stockchangedate", "#tblIntradayRadar");
 
             const sqlEliteRadar = `SELECT TOP 150
-                          代號, 名稱, 分組, 策略靈魂, ROUND([60M動能(OSC)], 2) AS [60M_OSC], 短線氣象
-                      FROM stockchangedate.dbo.View_AI_Elite_Radar
-                      ORDER BY [60M動能(OSC)] DESC, 日線分 DESC;`;
+                                  代號, 名稱, 分組, 策略靈魂, ROUND([60M動能(OSC)], 2) AS [60M_OSC], 短線氣象
+                              FROM stockchangedate.dbo.View_AI_Elite_Radar
+                              ORDER BY [60M動能(OSC)] DESC, 日線分 DESC;`;
             execQueryToTable(sqlEliteRadar, "stockchangedate", "#tblWatchlist2829");
         }
 
         // 💎 頁籤 6: 股性基因與 3-Way 離場勝率
         function loadDNAndFundamentals() {
             const sql3Exits = `SELECT
-                              [代號], [名稱], [完成交易次數],
-                              [Return_5MA] AS [5MA期望值%], [Return_10MA] AS [10MA期望值%], [Return_20MA] AS [20MA期望值%],
-                              [OptimalExit] AS [最適建議]
-                          FROM stockchangedate.dbo.StockPersonality_3Exits
-                          ORDER BY [Return_20MA] DESC;`;
+                                      [代號], [名稱], [完成交易次數],
+                                      [Return_5MA] AS [5MA期望值%], [Return_10MA] AS [10MA期望值%], [Return_20MA] AS [20MA期望值%],
+                                      [OptimalExit] AS [最適建議]
+                                  FROM stockchangedate.dbo.StockPersonality_3Exits
+                                  ORDER BY [Return_20MA] DESC;`;
             execQueryToTable(sql3Exits, "stockchangedate", "#tbl3Exits");
 
             const sqlGems = `SELECT TOP 120
-                              RTRIM(F.代號) AS [代號],
-                              ISNULL(M.名稱, F.代號) AS [名稱],
-                              ISNULL(M.盤中現價, 0) AS [現價],
-                              ISNULL(R.最新公告營收年增, 0) AS [營收年增%],
-                              ISNULL(FN.EPS累計, 0) AS [半年報EPS],
-                              F.預估目標價 AS [FactSet目標價],
-                              ROUND(((F.預估目標價 - ISNULL(M.盤中現價, F.舊EPS中位數)) / NULLIF(ISNULL(M.盤中現價, F.舊EPS中位數), 0)) * 100, 1) AS [潛在空間%]
-                          FROM stockchangedate.dbo.FactSetEstimates F
-                          LEFT JOIN (
-                              SELECT 代號, 名稱, 盤中現價, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
-                              FROM stockchangedate.dbo.MasterStockAnalysis
-                              WHERE 盤中現價 > 0
-                          ) M ON RTRIM(F.代號) = RTRIM(M.代號) AND M.rn = 1
-                          LEFT JOIN (
-                              SELECT 代號, 最新公告營收年增, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 交易日期 DESC) AS rn
-                              FROM stockchangedate.dbo.View_Realtime_Revenue
-                          ) R ON RTRIM(F.代號) = RTRIM(R.代號) AND R.rn = 1
-                          LEFT JOIN (
-                              SELECT 代號, EPS累計, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
-                              FROM stockchangedate.dbo.financesum
-                          ) FN ON RTRIM(F.代號) = RTRIM(FN.代號) AND FN.rn = 1
-                          WHERE F.預估目標價 > 0
-                          ORDER BY ROUND(((F.預估目標價 - ISNULL(M.盤中現價, F.舊EPS中位數)) / NULLIF(ISNULL(M.盤中現價, F.舊EPS中位數), 0)) * 100, 1) DESC;`;
+                                      RTRIM(F.代號) AS [代號],
+                                      ISNULL(M.名稱, F.代號) AS [名稱],
+                                      ISNULL(M.盤中現價, 0) AS [現價],
+                                      ISNULL(R.最新公告營收年增, 0) AS [營收年增%],
+                                      ISNULL(FN.EPS累計, 0) AS [半年報EPS],
+                                      F.預估目標價 AS [FactSet目標價],
+                                      ROUND(((F.預估目標價 - ISNULL(M.盤中現價, F.舊EPS中位數)) / NULLIF(ISNULL(M.盤中現價, F.舊EPS中位數), 0)) * 100, 1) AS [潛在空間%]
+                                  FROM stockchangedate.dbo.FactSetEstimates F
+                                  LEFT JOIN (
+                                      SELECT 代號, 名稱, 盤中現價, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+                                      FROM stockchangedate.dbo.MasterStockAnalysis
+                                      WHERE 盤中現價 > 0
+                                  ) M ON RTRIM(F.代號) = RTRIM(M.代號) AND M.rn = 1
+                                  LEFT JOIN (
+                                      SELECT 代號, 最新公告營收年增, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 交易日期 DESC) AS rn
+                                      FROM stockchangedate.dbo.View_Realtime_Revenue
+                                  ) R ON RTRIM(F.代號) = RTRIM(R.代號) AND R.rn = 1
+                                  LEFT JOIN (
+                                      SELECT 代號, EPS累計, ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) AS rn
+                                      FROM stockchangedate.dbo.financesum
+                                  ) FN ON RTRIM(F.代號) = RTRIM(FN.代號) AND FN.rn = 1
+                                  WHERE F.預估目標價 > 0
+                                  ORDER BY ROUND(((F.預估目標價 - ISNULL(M.盤中現價, F.舊EPS中位數)) / NULLIF(ISNULL(M.盤中現價, F.舊EPS中位數), 0)) * 100, 1) DESC;`;
             execQueryToTable(sqlGems, "stockchangedate", "#tblFundamentalGems");
         }
 
         // 📅 頁籤 7: 全球總經日曆
         function loadMacroCalendar() {
             const sqlMacro = `SELECT TOP 120
-                              [公布日期], [公布時間] AS [時間], [國家區域], [指標類別], [指標名稱], [重要性], [前值], [預測值], ISNULL([實際值], N'⏳ 待公布') AS [實際值], [影響解讀]
-                          FROM stockchangedate.dbo.MacroEconomicCalendar
-                          WHERE [公布日期] >= 20260101
-                          ORDER BY [公布日期] ASC, [公布時間] ASC;`;
+                                      [公布日期], [公布時間] AS [時間], [國家區域], [指標類別], [指標名稱], [重要性], [前值], [預測值], ISNULL([實際值], N'⏳ 待公布') AS [實際值], [影響解讀]
+                                  FROM stockchangedate.dbo.MacroEconomicCalendar
+                                  WHERE [公布日期] >= 20260101
+                                  ORDER BY [公布日期] ASC, [公布時間] ASC;`;
             execQueryToTable(sqlMacro, "stockchangedate", "#tblMacroCalendar");
         }
 
@@ -1517,5 +1522,74 @@ ORDER BY C.預估今日總分 DESC;`;
         });
 
     </script>
+
+    <script>
+        (function () {
+            // 1. 廣播發射核心
+            function syncStockBroadcast(code, name) {
+                if (!code) return;
+                code = code.toString().trim();
+                let m = code.match(/\b([0-9]{4,6})\b/);
+                if (!m) return;
+                code = m[1];
+                name = name || '';
+
+                console.log(`🚀 [第一戰區穿透發射] 成功同步: ${code} ${name}`);
+
+                // 寫入雙匯流排
+                try {
+                    localStorage.setItem('zen_selected_stock', code);
+                    localStorage.setItem('zen_stock_tick', Date.now().toString());
+                } catch (e) { }
+
+                if (typeof BroadcastChannel !== 'undefined') {
+                    new BroadcastChannel('zen_stock_sync').postMessage({ code: code, name: name, time: Date.now() });
+                }
+
+                // 同步更新右上角第三戰區按鈕網址
+                $('#btn-v3-link').attr('href', 'warroom_cockpit_v3.html?' + code);
+            }
+
+            // 🟢 2. 核心黑科技：以 Capture 模式穿透 DataTables 攔截！(點擊表格任一列 100% 必發射)
+            document.addEventListener('click', function (e) {
+                // 🔒 安全防護：只在點擊表格內部 <tr> 時觸發，完全不干擾其他導航與按鈕！
+                let tr = e.target.closest('table tbody tr');
+                if (!tr) return; // 點擊其他地方直接放行！
+
+                let text = tr.innerText || '';
+                // 抓取該列中第一個出現的 4~6 碼股票代號 (如 2444, 1521, 4580)
+                let match = text.match(/\b([0-9]{4,6})\b/);
+                if (match) {
+                    let code = match[1];
+                    // 抓取第二欄股名 (若有)
+                    let tds = tr.querySelectorAll('td');
+                    let name = (tds.length > 1) ? tds[1].innerText.trim() : '';
+                    syncStockBroadcast(code, name);
+                }
+            }, true); // 👈 關鍵就在這個 true！在 DataTables 吞掉事件前 0.001 毫秒精準攔截！
+
+            // 🟢 3. 雙擊 (Double Click) 備援穿透
+            document.addEventListener('dblclick', function (e) {
+                let tr = e.target.closest('table tbody tr');
+                if (!tr) return;
+                let match = (tr.innerText || '').match(/\b([0-9]{4,6})\b/);
+                if (match) syncStockBroadcast(match[1]);
+            }, true);
+
+            // 🟢 4. 輸入框與量化抽屜按鈕同步
+            $(document).on('change', 'input[placeholder*="3035"], input[placeholder*="代號"], #keyword', function () {
+                let val = $(this).val().trim();
+                if (val) syncStockBroadcast(val);
+            });
+
+            $(document).on('click', 'button:contains("量化抽屜")', function () {
+                let val = $('input[placeholder*="3035"]').val() || $('#keyword').val();
+                if (val) syncStockBroadcast(val.trim());
+            });
+        })();
+    </script>
+
+
 </body>
+
 </html>
