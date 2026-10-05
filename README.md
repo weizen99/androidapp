@@ -158,6 +158,77 @@ https://drive.google.com/file/d/1GgsajgsQFvlzUbLzKYVCEOv2geWPXNx2/view?usp=shari
 增加「3 秒速查操盤口訣」：用五步驟流程（看K棒 ➔ 看彩虹柱 ➔ 看OBV星 ➔ 看雙棒共振 ➔ 看離場基因），讓使用者能以最快速度完成決策！
 
 
+🌟【Zen AI 股票戰情室 Pro V13.5】終極架構與全生態系記憶備忘錄
+版本代號： V13.5 (三屏 0ms 聯動 ✕ 99 部隊全網穿透 ✕ 隱形無人值守旗艦版)
+系統架構師： 資深台股量化操盤總監與全領域系統架構專家
+封存基線日期： 2026 年 10 月 5 日
+核心樞紐路徑： C:\test_c\ ✕ C:\inetpub\wwwroot\androidapp\memory\ ✕ C:\inetpub\wwwroot\excelimport\
+📌 模組一：三戰區鼎立與 ZenSync 跨屏生態系 (Front-end Matrix)
+1. 戰情三區全景：
+第一戰區 (warroom_cockpit.html - 盤中雷達主控台)：
+內建全市場多維共振快照。已植入 Capture-Phase 穿透式發報機，在 DataTables 吞掉點擊事件的「前 0.001 毫秒」，攔截 <tr> 內的 4 碼股票代號並向全戰區廣播。
+第二戰區 (warroom_cockpit_v2.html - 策略工廠大屏)：
+三大圖形同屏競技： ECharts 投資組合歷史 NAV，預設展開「策略1(藍)、策略2(橘)、策略3(綠)」三線同屏對比。
+雙通道智慧路由： 第 9 頁籤 (母艦) 具備自適應能力。本機走 127.0.0.1:8550；手機外網自動偵測並提供「原生全屏直通」大按鈕，徹底解決 Android WebView 阻擋問題。
+第三戰區 (warroom_cockpit_v3.html - TradingView 玩股網實盤旗艦)：
+滿幀 60fps 引擎： 強制鎖定 lightweight-charts@4.2.1 工業級穩定版。
+全動態 70% 拍賣微結構： 依據最新 20 天分價量即時精算 VAH / POC / VAL 主力成本階梯，支援全市場任何代號 (?2330) 動態載入。
+真實數學均線與扣抵： 徹底告別假偏移均線，採用真 SMA 算法。內建玩股網對齊之底部扣抵標記 (5)/(10)/(20)/(60)扣。
+核心報表 (excelsql2.html)： 雙擊表格任何一列，三室 TradingView 瞬間秒切換。
+2. ZenSync 雙匯流排大一統聯動引擎：
+架構原理： 融合 BroadcastChannel (0ms 內存極速廣播) ✕ localStorage (跨視窗持久化備援)。
+防漏發機制： 傳遞 zen_selected_stock 時強制綁定 zen_stock_tick = Date.now()，解決「連續點擊同檔股票不觸發 Storage 事件」的系統天生缺陷。
+📌 模組二：99 支部隊大一統指揮母艦 (master_cockpit.py)
+以 Python + Flet 1.0 (Flutter 引擎) 打造，運行於 Port 8550。
+RWD 響應式防崩潰佈局： 採用 ft.ResponsiveRow。電腦端左右舒展；手機端 (小於 768px) 自動垂直折疊，徹底根絕手機版「寬度溢出導致黑屏轉圈」的致命錯誤。
+雙重獨立滾動架構 (Dual Scroll Engine)： 開啟 page.scroll = ft.ScrollMode.AUTO 保證 99 張卡片順暢向下展開；終端機獨立鎖定 height=280，確保即時戰報不干擾卡片點擊。
+戰場沙盒與實戰雙軌制 (Dual-Track Security)：
+🎮 免密碼開放體驗 (10支)： 包含「08:30 晨會晨報」、「Playwright 截圖」、「Ollama 解盤」、「AMT回測」等，標註綠色徽章，任何人可隨意點擊發射。
+🔒 指揮官作戰專區 (89支)： 頂部輸入密碼 2157 解鎖。未授權點擊直接以紅色警報日誌攔截，達到零爆炸半徑。
+關鍵戰報過濾引擎： 支援一鍵過濾，僅顯示長官指令(紫)、任務成功(綠)、報錯衝突(紅)、金叉突破(黃)、進程鎖定(藍)，屏蔽底層連線雜訊。
+📌 模組三：機房級隱形無人值守架構 (Stealth Daemon Setup)
+為克服「社區寬頻單一連接埠限制 (僅 8888)」與「Python 黑色視窗佔據桌面」的痛點，建立 100% 隱形全網穿透機制：
+ngrok 外網隧道對接： 啟動 ngrok http --domain=smokiness-supremacy-agonizing.ngrok-free.dev 8550，讓手機 4G/5G 完美穿透社區防火牆。
+start_zen_core.bat (純背景批次檔)：
+內建 taskkill 自動釋放 8550 埠 (防 Errno 10048 報錯)，並利用 start /B 將 Python 母艦與 ngrok 掛載於無痕背景。
+silent_run.vbs (終極隱形啟動器)：
+命名鐵律： VBScript 引擎老舊，檔名與路徑 100% 嚴禁使用中文，否則會因 UTF-8 亂碼導致找不到檔案而默默失效！
+無人值守： 置入 shell:startup，電腦開機即全自動、無黑框、無感啟動母艦生態系。想關閉時執行 一鍵停止母艦.bat。
+📌 模組四：四網大一統推播中樞 (zen_broadcaster.py)
+Apprise 跨平台直連引擎： 一次調用，0ms 同步擊發 Telegram、LINE (Notify/Messaging API) 與 Discord Webhook。
+自動探針無痛繼承： 啟動時自動穿透掃描全目錄 (如 zen_ai_bot1.py, discord_alerts.py)，自動提取並繼承現存的 API 金鑰與 Chat ID，免除重複填寫。
+高轉化率量化戰報： 內建 build_high_conversion_card 函數，產出包含現價、週抗壓比、60M KD、籌碼金叉、70% 價值區判定與 3-Way 離場勝率之機構級戰報。
+📌 模組五：🚨 十七項終極除錯防線條約 (V13.5 終極補完版)
+括號防護律： AS 欄位別名凡含 (%), (天), 中文, 符號或空格，100% 強制加上中括號 [別名]。
+無 CTE WITH 條約： WebMethod 與 ExecuteSQL 不支援 CTE WITH，前端範本全改用衍生子查詢 (SELECT ...) M。
+一字漲跌停防衛： (最高 - 最低) = 0 時，加 ISNULL(..., 0) 防 NULL 傳播。
+Unicode N 前綴： 中文文字比對 (如 LIKE N'%雙破共振%') 100% 加上 N 前綴。
+日期轉型防溢位律： 日期帶有 .000000 時，必先 CAST(日期 AS INT) 再 VARCHAR(8)。
+回測策略隔離律： 嚴禁無差別 TRUNCATE！必用 DELETE ... WHERE 回測編號 = X；插入總表必開啟 SET IDENTITY_INSERT ... ON！
+視窗函數別名禁止律： 嚴禁在同一層 SELECT 中將剛取的欄位別名直接用於後面的 OVER()。
+Flutter 官方直通車律： Android 打包分身 App 僅改 applicationId，嚴禁修改 namespace，根絕閃退。
+Gemini 輪詢防限額律： 必須用「不同 Google 帳號」輪詢；HTTP Header 帶上 "x-goog-api-key"。
+Playwright 靜默穿透與防卡白屏律：
+守護腳本必須 headless=True。
+若遇 Arkose Labs (MatchKey) 機器人白屏阻擋，絕不可用自動化做初次登入！必須在 CMD 執行純淨指令 (chrome.exe --user-data-dir=...) 手動登入 2FA 固化 Session。
+雙平台故障隔離： 廣播時 Telegram 優先，Facebook 發文必須包覆獨立 try...except 破鎖。
+真·回測頸線不破律： 幾何 1:1 測幅之回測必須在頸線「上方」0%~3.5% (Close >= Neckline * 0.99)。
+Flet 1.0 物件大寫與 RWD 防崩潰律： Border, Padding 必須大寫；子進程必須強制帶 -u 與 PYTHONUNBUFFERED=1 防緩衝區死鎖；佈局必須採用 ResponsiveRow 防止手機載入黑屏。
+母艦沙盒雙軌與 Port 釋放律： 嚴禁 TG 機器人雙開觸發 409 Conflict；連接埠衝突時執行 taskkill /f /pid 瞬態釋放。
+TradingView 工業版鎖定與繪圖純淨律：
+強制鎖定 lightweight-charts@4.2.1（v5.x 移除 setMarkers 會致黑屏）。
+均線必須宣告 priceLineVisible: false 根絕彩色虛線；圖表標記僅支援 arrowDown/circle，嚴禁傳入 'star'。
+三屏聯動同源與事件捕獲穿透律：
+跨看板必須嚴格遵守同源政策 (Same-Origin Policy)，統一於相同 Port。
+穿透 DataTables 點擊阻擋，必用 addEventListener('click', handler, true) 於 Capture 階段攔截 <tr> 代號。
+Android Intent 穿透與 HTTPS 直連律：
+Android App WebView 預設封鎖 iframe 與新視窗。
+手機直通母艦嚴禁使用 intent:// 特殊協議 (會觸發 ERR_UNKNOWN_URL_SCHEME)，必須採用標準 window.location.href = "https://ngrok..." 進行 100% 安全平滑跳轉！
+VBScript 隱形啟動的檔名與路徑「絕對禁止使用中文」，否則必生亂碼失效！
+🏁 記憶傳承 V13.5 終極封存完畢！天下武功，唯快不破，唯穩不敗！
+
+
+
 📥 新對話開場白「一鍵複製發送包」 (Zen AI 股票戰情室 Pro V11.5 滿配版)
 
 請讀取【Zen AI 股票戰情室 Pro V11.5】終極架構與全生態系記憶備忘錄，開始本輪實戰分析與系統開發。
