@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>私有文字分享系統</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 50px auto; background-color: #f4f4f4; padding: 20px; }
+        textarea { width: 100%; height: 250px; border-radius: 5px; border: 1px solid #ccc; padding: 10px; font-size: 16px; }
+        #linkArea { display: none; margin-top: 20px; padding: 15px; background: #eef; border: 1px dashed #77a; border-radius: 5px; }
+        #shareUrl { width: 80%; padding: 8px; }
+        button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #218838; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- 模式一：打包文字 (編輯模式) -->
+    <div id="main-ui">
+        <h2>打包文字到資料庫</h2>
+        <textarea id="textInput" placeholder="請在此貼上大量文字..."></textarea><br><br>
+        <button onclick="saveText()">生成分享連結</button>
+
+        <div id="linkArea">
+            <strong>分享連結已產生：</strong><br><br>
+            <input type="text" id="shareUrl" readonly>
+            <button onclick="copyUrl()" style="padding: 7px 15px; font-size: 14px;">複製</button>
+        </div>
+    </div>
+
+    <!-- 模式二：檢視內容 (讀取模式) -->
+    <div id="view-ui" class="hidden">
+        <h2>檢視內容</h2>
+        <div id="textContent" style="white-space: pre-wrap; border: 1px solid #ccc; padding: 20px; background: white; min-height: 200px;">讀取中...</div>
+        <br>
+        <button onclick="window.location.href = window.location.pathname">我也要打包文字</button>
+    </div>
+
+    <script>
+        // 【重要設定】請將此網址改為你後端 API 的實際位置
+        // 如果你的 API 跟網頁在同一個主機，建議使用相對路徑 '/api' 或完整的 duckdns 網址
+        const API_URL = 'https://zen2965.duckdns.org:8888/androidapp/api'; 
+
+        // 頁面載入判斷
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const textId = urlParams.get('id');
+
+            if (textId) {
+                // 切換到檢視模式
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('view-ui').classList.remove('hidden');
+                
+                fetch(`${API_URL}/view/${textId}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error("找不到資料");
+                        return res.json();
+                    })
+                    .then(data => {
+                        document.getElementById('textContent').innerText = data.Content;
+                    })
+                    .catch(err => {
+                        document.getElementById('textContent').innerText = "讀取失敗：" + err.message;
+                    });
+            }
+        };
+
+        // 儲存文字到資料庫
+        function saveText() {
+            const content = document.getElementById('textInput').value;
+            if (!content) return alert("請輸入文字");
+
+            const btn = document.querySelector('button');
+            btn.innerText = "處理中...";
+            btn.disabled = true;
+
+            fetch(`${API_URL}/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: content })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.id) {
+                    const fullUrl = window.location.origin + window.location.pathname + "?id=" + data.id;
+                    document.getElementById('shareUrl').value = fullUrl;
+                    document.getElementById('linkArea').style.display = 'block';
+                } else {
+                    alert("儲存失敗，後端沒回傳 ID");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("連線失敗，請檢查 API 伺服器是否啟動且允許連線");
+            })
+            .finally(() => {
+                btn.innerText = "生成分享連結";
+                btn.disabled = false;
+            });
+        }
+
+        // 複製功能
+        function copyUrl() {
+            const copyText = document.getElementById('shareUrl');
+            copyText.select();
+            document.execCommand("copy");
+            alert("網址已複製！");
+        }
+    </script>
+</body>
+</html>

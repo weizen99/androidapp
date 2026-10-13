@@ -1,0 +1,4686 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>圖文排版示例</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous" />
+    <link href="Content/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/trontastic/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column; /* 改成垂直方向 */
+            gap: 30px; /* 上下兩欄之間的距離 */
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .row {
+            display: flex;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .media-container {
+            width: 600px;
+            height: 800px; /* 根據需求調整高度 */
+            background-color: #f0f0f0;
+            border-radius: 40px;
+            overflow: hidden;
+            margin-right: 25px; /* 左右欄位之間各留25px，共50px */
+        }
+
+        .message-container {
+            flex-grow: 1; /* 占據右欄的全部空間 */
+            padding-right: 40px;
+            margin-left: 25px; /* 左右欄位之間各留25px，共50px */
+        }
+
+        .media-info {
+            padding: 40px;
+            margin-top: 5px;
+        }
+
+        .media {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 確保整個影片顯示在指定大小內 */
+        }
+
+	.media {
+   	 background: #000 url('play-icon.png') no-repeat center;
+    	background-size: 50px;
+	}
+
+
+        aside {
+            width: 600px;
+            float: left;
+            height: 1000px;
+            /* background-color:#FFFFCC;background-image:url(pokepic/p1.jpg);background-repeat:no-repeat;
+          background-size:"10% 10%"; */
+            background-color: #FFFFCC;
+        }
+
+
+        /* <link rel="stylesheet" type="text/css" href="css/color.css" /> */
+        h1#text1 {
+            margin: 0px;
+            padding: 0px;
+            top: 15px;
+            position: absolute;
+            font-size: 40px;
+            color: #FF0000;
+            margin-left: 50px;
+        }
+
+        h1#text2 {
+            margin: 0px;
+            padding: 5px;
+            position: absolute;
+            font-size: 30px;
+            color: #FFFFFF;
+            top: 30px;
+            margin-left: 50px;
+            z-index: 1;
+            filter: glow(color=#ff0000, strength=5);
+            text-shadow: 5px 5px 5px #FF0000;
+        }
+
+        .consection {
+            display: block;
+            border: 0px #330000 solid;
+            width: 600px;
+            left: 30px;
+            top: 60px;
+            margin: auto;
+            padding: 30px;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 16px;
+        }
+
+        .ptest {
+            color: saddlebrown;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        .ptest1 {
+            color: blue;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        .ptest2 {
+            color: red;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        .ptest3 {
+            color: green;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        a:hover {
+            border: 3px green solid;
+            text-decoration: none;
+        }
+
+        /* <link rel="stylesheet" href="css/color.css" /> */
+
+        /* @import url(css/color.css); */
+
+        /* a:link, a:visited {
+            border-style: solid;
+            border-width: 5px;
+            border-color: transparent;
+            }
+            a:hover {border:3px red;text-decoration:none;background-color: green;};
+        */
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark ptest2">
+        <a class="navbar-brand" href="https://sachi.zen2965.workers.dev/">首頁</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        常用連結
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item  disabled" href="https://zen2965.duckdns.org:8888/Book_Sample/testviedo1.html">短視頻留存</a>
+                        <a class="dropdown-item  disabled" href="https://zen2965.duckdns.org:8888/Book_Sample/testviedo.html">短影片</a>
+                        <a class="dropdown-item  disabled" href="https://zen2965.duckdns.org:8888/Book_Sample/testpic.html">圖片類1</a>
+                        
+
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdowntotol99" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        另類用法
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                        <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/messageword01.aspx">我的最愛資料庫(本地電腦)</a>
+                        <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/excelsql.html">搭配留言的select</a>
+			<a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/message3.html">留言有聲書(本地電腦)</a>
+
+
+                    </div>
+                </li>
+
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        空白
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                        <a class="dropdown-item" href="">空白</a>
+
+
+
+
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        空白
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="">空白</a>
+
+
+
+
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        空白
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="">空白</a>
+
+                        <div class="dropdown-divider"></div>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown5" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        空白
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href=">空白</a>
+
+                        <div class="dropdown-divider"></div>
+
+
+                    </div>
+                </li>
+
+
+            </ul>
+        </div>
+    </nav>
+    <br /><br />
+    <div class="container">
+
+      <!-- 第 1 筆 - Battle file and query (Webpage Instructions) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/Battle file and query (Webpage Instructions).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Battle file and query (Webpage Instructions)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 2 筆 - excel使用sql查詢 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/excel使用sql查詢.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>excel使用sql查詢</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 3 筆 - excel刪除空白資料列(最後一道手續完成,才能匯入到資料庫) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/excel刪除空白資料列(最後一道手續完成,才能匯入到資料庫).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>excel刪除空白資料列(最後一道手續完成,才能匯入到資料庫)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 4 筆 - Excel與Access連動,可快速簡易的進行新增、刪除跟修改 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/Excel與Access連動,可快速簡易的進行新增、刪除跟修改.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Excel與Access連動,可快速簡易的進行新增、刪除跟修改</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 5 筆 - excel讀取SQL資料庫檔案並以圖形顯示 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/excel讀取SQL資料庫檔案並以圖形顯示.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>excel讀取SQL資料庫檔案並以圖形顯示</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 6 筆 - 《古龍-多情劍客無情劍上》1-5回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍上》1-5回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍上》1-5回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 7 筆 - 《古龍-多情劍客無情劍上》11-15回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍上》11-15回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍上》11-15回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 8 筆 - 《古龍-多情劍客無情劍上》16-20回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍上》16-20回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍上》16-20回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 9 筆 - 《古龍-多情劍客無情劍上》21-25回  (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍上》21-25回  (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍上》21-25回  (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 10 筆 - 《古龍-多情劍客無情劍上》26-30回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍上》26-30回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍上》26-30回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 11 筆 - 《古龍-多情劍客無情劍上》6-10回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍上》6-10回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍上》6-10回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 12 筆 - 《古龍-多情劍客無情劍下》61-65回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍下》61-65回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍下》61-65回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 13 筆 - 《古龍-多情劍客無情劍下》66-70回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍下》66-70回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍下》66-70回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 14 筆 - 《古龍-多情劍客無情劍下》81-85回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍下》81-85回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍下》81-85回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 15 筆 - 《古龍-多情劍客無情劍下》86-89回(完) (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍下》86-89回(完) (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍下》86-89回(完) (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 16 筆 - 《古龍-多情劍客無情劍中》31-35回  (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍中》31-35回  (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍中》31-35回  (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 17 筆 - 《古龍-多情劍客無情劍中》36-40回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍中》36-40回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍中》36-40回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 18 筆 - 《古龍-多情劍客無情劍中》41-45回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍中》41-45回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍中》41-45回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 19 筆 - 《古龍-多情劍客無情劍中》46-50回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍中》46-50回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍中》46-50回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 20 筆 - 《古龍-多情劍客無情劍中》51-55回  (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍中》51-55回  (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍中》51-55回  (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 21 筆 - 《古龍-多情劍客無情劍中》56-60回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍中》56-60回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍中》56-60回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 22 筆 - 《古龍-多情劍客無情劍中》71-75回  (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍中》71-75回  (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍中》71-75回  (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 23 筆 - 《古龍-多情劍客無情劍中》76-80回 (小李飛刀) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-多情劍客無情劍中》76-80回 (小李飛刀).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-多情劍客無情劍中》76-80回 (小李飛刀)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 24 筆 - 《古龍-流星蝴蝶劍》1-2節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-流星蝴蝶劍》1-2節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-流星蝴蝶劍》1-2節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 25 筆 - 《古龍-流星蝴蝶劍》11-13節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-流星蝴蝶劍》11-13節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-流星蝴蝶劍》11-13節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 26 筆 - 《古龍-流星蝴蝶劍》14-16節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-流星蝴蝶劍》14-16節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-流星蝴蝶劍》14-16節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 27 筆 - 《古龍-流星蝴蝶劍》25-27節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-流星蝴蝶劍》25-27節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-流星蝴蝶劍》25-27節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 28 筆 - 《古龍-流星蝴蝶劍》28-29節(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-流星蝴蝶劍》28-29節(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-流星蝴蝶劍》28-29節(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 29 筆 - 《古龍-流星蝴蝶劍》3-4節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-流星蝴蝶劍》3-4節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-流星蝴蝶劍》3-4節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 30 筆 - 《古龍-流星蝴蝶劍》5-6節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-流星蝴蝶劍》5-6節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-流星蝴蝶劍》5-6節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 31 筆 - 《古龍-流星蝴蝶劍》7-8節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-流星蝴蝶劍》7-8節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-流星蝴蝶劍》7-8節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 32 筆 - 《古龍-流星蝴蝶劍》9-10節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-流星蝴蝶劍》9-10節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-流星蝴蝶劍》9-10節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 33 筆 - 《古龍-邊城浪子上 》1-9 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-邊城浪子上 》1-9.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-邊城浪子上 》1-9</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 34 筆 - 《古龍-邊城浪子上 》10-18 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-邊城浪子上 》10-18.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-邊城浪子上 》10-18</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 35 筆 - 《古龍-邊城浪子下 》1-8 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-邊城浪子下 》1-8.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-邊城浪子下 》1-8</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 36 筆 - 《古龍-邊城浪子下 》9-16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-邊城浪子下 》9-16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-邊城浪子下 》9-16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 37 筆 - 《古龍-邊城浪子中 》1-9 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-邊城浪子中 》1-9.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-邊城浪子中 》1-9</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 38 筆 - 《古龍-邊城浪子中 》10-17 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《古龍-邊城浪子中 》10-17.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《古龍-邊城浪子中 》10-17</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 39 筆 - 《水滸傳》1 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》1 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》1 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 40 筆 - 《水滸傳》11 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》11 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》11 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 41 筆 - 《水滸傳》8 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》8 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》8 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 42 筆 - 《水滸傳》》10 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》10 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》10 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 43 筆 - 《水滸傳》》12 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》12 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》12 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 44 筆 - 《水滸傳》》13 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》13 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》13 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 45 筆 - 《水滸傳》》14 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》14 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》14 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 46 筆 - 《水滸傳》》15 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》15 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》15 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 47 筆 - 《水滸傳》》16 of 16(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》16 of 16(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》16 of 16(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 48 筆 - 《水滸傳》》2 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》2 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》2 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 49 筆 - 《水滸傳》》3 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》3 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》3 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 50 筆 - 《水滸傳》》4 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》4 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》4 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 51 筆 - 《水滸傳》》5 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》5 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》5 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 52 筆 - 《水滸傳》》6 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》6 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》6 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 53 筆 - 《水滸傳》》7 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》7 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》7 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 54 筆 - 《水滸傳》》9 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《水滸傳》》9 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《水滸傳》》9 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 55 筆 - 《神偷天下 》1-10 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《神偷天下 》1-10.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《神偷天下 》1-10</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 56 筆 - 《神偷天下 》11-20 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《神偷天下 》11-20.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《神偷天下 》11-20</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 57 筆 - 《神偷天下 》21-30 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《神偷天下 》21-30.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《神偷天下 》21-30</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 58 筆 - 《神偷天下 》31-40 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《神偷天下 》31-40.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《神偷天下 》31-40</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 59 筆 - 《神偷天下 》41-50 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《神偷天下 》41-50.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《神偷天下 》41-50</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 60 筆 - 《神偷天下 》51-60 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《神偷天下 》51-60.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《神偷天下 》51-60</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 61 筆 - 《神偷天下 》61-70 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《神偷天下 》61-70.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《神偷天下 》61-70</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 62 筆 - 《神偷天下 》71-79(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《神偷天下 》71-79(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《神偷天下 》71-79(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 63 筆 - 《西遊記》11~20回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《西遊記》11~20回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《西遊記》11~20回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 64 筆 - 《西遊記》1~10回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《西遊記》1~10回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《西遊記》1~10回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 65 筆 - 《西遊記》21~30回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《西遊記》21~30回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《西遊記》21~30回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 66 筆 - 《西遊記》31~40回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《西遊記》31~40回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《西遊記》31~40回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 67 筆 - 《西遊記》51~60回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《西遊記》51~60回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《西遊記》51~60回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 68 筆 - 《西遊記》61~70回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《西遊記》61~70回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《西遊記》61~70回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 69 筆 - 《西遊記》71~80回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《西遊記》71~80回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《西遊記》71~80回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 70 筆 - 《西遊記》81~90回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《西遊記》81~90回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《西遊記》81~90回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 71 筆 - 《西遊記》91~100回(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/《西遊記》91~100回(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《西遊記》91~100回(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 72 筆 - 三國演義101~110回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義101~110回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義101~110回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 73 筆 - 三國演義111~120回(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義111~120回(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義111~120回(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 74 筆 - 三國演義11~20回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義11~20回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義11~20回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 75 筆 - 三國演義1~10回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義1~10回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義1~10回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 76 筆 - 三國演義21~30回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義21~30回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義21~30回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 77 筆 - 三國演義31~40回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義31~40回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義31~40回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 78 筆 - 三國演義41~50回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義41~50回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義41~50回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 79 筆 - 三國演義51~60回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義51~60回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義51~60回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 80 筆 - 三國演義61~70回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義61~70回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義61~70回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 81 筆 - 三國演義71~80回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義71~80回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義71~80回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 82 筆 - 三國演義81~90回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義81~90回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義81~90回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 83 筆 - 三國演義91~100回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/三國演義91~100回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三國演義91~100回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 84 筆 - 使用excel讀取巳下載的15個excel表(也可以寫入) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/使用excel讀取巳下載的15個excel表(也可以寫入).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>使用excel讀取巳下載的15個excel表(也可以寫入)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 85 筆 - 倚天屠龍記1-1集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記1-1集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記1-1集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 86 筆 - 倚天屠龍記1-3集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記1-3集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記1-3集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 87 筆 - 倚天屠龍記1-5集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記1-5集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記1-5集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 88 筆 - 倚天屠龍記1-6集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記1-6集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記1-6集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 89 筆 - 倚天屠龍記第2-1集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第2-1集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第2-1集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 90 筆 - 倚天屠龍記第2-2集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第2-2集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第2-2集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 91 筆 - 倚天屠龍記第2-3集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第2-3集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第2-3集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 92 筆 - 倚天屠龍記第3-1集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第3-1集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第3-1集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 93 筆 - 倚天屠龍記第3-2集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第3-2集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第3-2集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 94 筆 - 倚天屠龍記第3-3集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第3-3集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第3-3集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 95 筆 - 倚天屠龍記第3-4集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第3-4集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第3-4集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 96 筆 - 倚天屠龍記第3-5集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第3-5集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第3-5集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 97 筆 - 倚天屠龍記第3-6集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第3-6集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第3-6集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 98 筆 - 倚天屠龍記第3-7集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第3-7集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第3-7集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 99 筆 - 倚天屠龍記第4-1集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第4-1集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第4-1集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 100 筆 - 倚天屠龍記第4-2集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第4-2集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第4-2集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 101 筆 - 倚天屠龍記第4-3集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第4-3集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第4-3集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 102 筆 - 倚天屠龍記第4-4集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第4-4集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第4-4集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 103 筆 - 倚天屠龍記第七集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第七集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第七集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 104 筆 - 倚天屠龍記第三十一集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十一集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十一集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 105 筆 - 倚天屠龍記第三十七集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十七集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十七集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 106 筆 - 倚天屠龍記第三十三集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十三集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十三集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 107 筆 - 倚天屠龍記第三十九集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十九集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十九集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 108 筆 - 倚天屠龍記第三十二集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十二集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十二集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 109 筆 - 倚天屠龍記第三十五集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十五集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十五集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 110 筆 - 倚天屠龍記第三十八集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十八集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十八集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 111 筆 - 倚天屠龍記第三十六集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十六集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十六集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 112 筆 - 倚天屠龍記第三十四集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十四集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十四集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 113 筆 - 倚天屠龍記第三十集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第三十集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第三十集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 114 筆 - 倚天屠龍記第九集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第九集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第九集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 115 筆 - 倚天屠龍記第二十一集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十一集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十一集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 116 筆 - 倚天屠龍記第二十七集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十七集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十七集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 117 筆 - 倚天屠龍記第二十三集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十三集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十三集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 118 筆 - 倚天屠龍記第二十九集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十九集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十九集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 119 筆 - 倚天屠龍記第二十二集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十二集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十二集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 120 筆 - 倚天屠龍記第二十五集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十五集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十五集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 121 筆 - 倚天屠龍記第二十八集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十八集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十八集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 122 筆 - 倚天屠龍記第二十六集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十六集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十六集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 123 筆 - 倚天屠龍記第二十四集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十四集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十四集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 124 筆 - 倚天屠龍記第二十集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第二十集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第二十集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 125 筆 - 倚天屠龍記第五集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第五集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第五集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 126 筆 - 倚天屠龍記第八集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第八集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第八集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 127 筆 - 倚天屠龍記第六集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第六集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第六集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 128 筆 - 倚天屠龍記第十一集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十一集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十一集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 129 筆 - 倚天屠龍記第十七集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十七集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十七集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 130 筆 - 倚天屠龍記第十三集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十三集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十三集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 131 筆 - 倚天屠龍記第十九集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十九集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十九集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 132 筆 - 倚天屠龍記第十二集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十二集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十二集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 133 筆 - 倚天屠龍記第十五集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十五集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十五集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 134 筆 - 倚天屠龍記第十八集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十八集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十八集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 135 筆 - 倚天屠龍記第十六集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十六集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十六集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 136 筆 - 倚天屠龍記第十四集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十四集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十四集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 137 筆 - 倚天屠龍記第十集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第十集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第十集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 138 筆 - 倚天屠龍記第四十集(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第四十集(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第四十集(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 139 筆 - 倚天屠龍記第四集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/倚天屠龍記第四集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>倚天屠龍記第四集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 140 筆 - 利用excel讀取檔案並上傳到資料庫 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/利用excel讀取檔案並上傳到資料庫.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>利用excel讀取檔案並上傳到資料庫</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 141 筆 - 古龍-流星蝴蝶劍》17-19節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/古龍-流星蝴蝶劍》17-19節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>古龍-流星蝴蝶劍》17-19節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 142 筆 - 古龍-流星蝴蝶劍》20-24節 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/古龍-流星蝴蝶劍》20-24節.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>古龍-流星蝴蝶劍》20-24節</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 143 筆 - 圖片上傳至SQLServer建檔,網頁內可作單筆上傳或整批上傳並提供簡易的新增及刪除修改 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/圖片上傳至SQLServer建檔,網頁內可作單筆上傳或整批上傳並提供簡易的新增及刪除修改.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>圖片上傳至SQLServer建檔,網頁內可作單筆上傳或整批上傳並提供簡易的新增及刪除修改</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 144 筆 - 圖片檔案寫入到資料庫中,使用SQL Server Management -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/圖片檔案寫入到資料庫中,使用SQL Server Management.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>圖片檔案寫入到資料庫中,使用SQL Server Management</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 145 筆 - 建立hero-wars 競技場及大競技場的對戰資料庫 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/建立hero-wars 競技場及大競技場的對戰資料庫.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>建立hero-wars 競技場及大競技場的對戰資料庫</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 146 筆 - 我同時使用八種黃金交叉訊號(每種又有八個交叉訊號)來選股票 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/我同時使用八種黃金交叉訊號(每種又有八個交叉訊號)來選股票.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>我同時使用八種黃金交叉訊號(每種又有八個交叉訊號)來選股票</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 147 筆 - 我的網頁,盤中股票及其他 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/我的網頁,盤中股票及其他.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>我的網頁,盤中股票及其他</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 148 筆 - 把櫃買中心的分價資料也拿來作資料庫 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/把櫃買中心的分價資料也拿來作資料庫.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>把櫃買中心的分價資料也拿來作資料庫</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 149 筆 - 整批從excel匯入圖片後,再運行指令整批編輯 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/整批從excel匯入圖片後,再運行指令整批編輯.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>整批從excel匯入圖片後,再運行指令整批編輯</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 150 筆 - 書劍恩仇錄第一集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第一集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第一集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 151 筆 - 書劍恩仇錄第七集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第七集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第七集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 152 筆 - 書劍恩仇錄第三集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第三集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第三集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 153 筆 - 書劍恩仇錄第九集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第九集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第九集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 154 筆 - 書劍恩仇錄第二十集(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第二十集(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第二十集(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 155 筆 - 書劍恩仇錄第二集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第二集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第二集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 156 筆 - 書劍恩仇錄第五集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第五集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第五集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 157 筆 - 書劍恩仇錄第八集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第八集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第八集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 158 筆 - 書劍恩仇錄第六集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第六集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第六集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 159 筆 - 書劍恩仇錄第十一集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十一集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十一集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 160 筆 - 書劍恩仇錄第十七集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十七集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十七集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 161 筆 - 書劍恩仇錄第十三集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十三集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十三集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 162 筆 - 書劍恩仇錄第十九集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十九集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十九集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 163 筆 - 書劍恩仇錄第十二集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十二集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十二集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 164 筆 - 書劍恩仇錄第十五集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十五集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十五集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 165 筆 - 書劍恩仇錄第十八集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十八集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十八集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 166 筆 - 書劍恩仇錄第十六集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十六集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十六集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 167 筆 - 書劍恩仇錄第十四集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十四集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十四集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 168 筆 - 書劍恩仇錄第十集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第十集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第十集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 169 筆 - 書劍恩仇錄第四集 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/書劍恩仇錄第四集.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>書劍恩仇錄第四集</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 170 筆 - 李白 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/李白.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>李白</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 171 筆 - 歷代詩詞(上) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/歷代詩詞(上).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>歷代詩詞(上)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 172 筆 - 歷代詩詞(下) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/歷代詩詞(下).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>歷代詩詞(下)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 173 筆 - 白居易 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/白居易.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>白居易</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 174 筆 - 紅樓夢 101~105回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 101~105回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 101~105回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 175 筆 - 紅樓夢 106~110回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 106~110回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 106~110回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 176 筆 - 紅樓夢 111~115回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 111~115回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 111~115回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 177 筆 - 紅樓夢 116~120回(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 116~120回(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 116~120回(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 178 筆 - 紅樓夢 11~15回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 11~15回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 11~15回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 179 筆 - 紅樓夢 16~20回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 16~20回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 16~20回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 180 筆 - 紅樓夢 1~5回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 1~5回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 1~5回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 181 筆 - 紅樓夢 21~25回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 21~25回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 21~25回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 182 筆 - 紅樓夢 26~30回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 26~30回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 26~30回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 183 筆 - 紅樓夢 31~35回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 31~35回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 31~35回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 184 筆 - 紅樓夢 36~40回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 36~40回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 36~40回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 185 筆 - 紅樓夢 41~45回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 41~45回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 41~45回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 186 筆 - 紅樓夢 46~50回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 46~50回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 46~50回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 187 筆 - 紅樓夢 51~55回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 51~55回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 51~55回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 188 筆 - 紅樓夢 56~60回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 56~60回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 56~60回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 189 筆 - 紅樓夢 61~65回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 61~65回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 61~65回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 190 筆 - 紅樓夢 66~70回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 66~70回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 66~70回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 191 筆 - 紅樓夢 6~10回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 6~10回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 6~10回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 192 筆 - 紅樓夢 71~75回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 71~75回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 71~75回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 193 筆 - 紅樓夢 76~80回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 76~80回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 76~80回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 194 筆 - 紅樓夢 81~85回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 81~85回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 81~85回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 195 筆 - 紅樓夢 86~90回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 86~90回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 86~90回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 196 筆 - 紅樓夢 91~95回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 91~95回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 91~95回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 197 筆 - 紅樓夢 96~100回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/紅樓夢 96~100回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>紅樓夢 96~100回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 198 筆 - 衛斯理-不死藥 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-不死藥.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-不死藥</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 199 筆 - 衛斯理-再來一次 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-再來一次.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-再來一次</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 200 筆 - 衛斯理-原子空間 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-原子空間 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-原子空間 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 201 筆 - 衛斯理-原子空間 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-原子空間 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-原子空間 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 202 筆 - 衛斯理-叢林之神 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-叢林之神.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-叢林之神</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 203 筆 - 衛斯理-古聲 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-古聲.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-古聲</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 204 筆 - 衛斯理-合成 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-合成.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-合成</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 205 筆 - 衛斯理-地圖 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-地圖 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-地圖 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 206 筆 - 衛斯理-地圖 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-地圖 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-地圖 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 207 筆 - 衛斯理-地底奇人 1 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-地底奇人 1 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-地底奇人 1 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 208 筆 - 衛斯理-地底奇人 2 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-地底奇人 2 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-地底奇人 2 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 209 筆 - 衛斯理-地底奇人 3 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-地底奇人 3 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-地底奇人 3 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 210 筆 - 衛斯理-地底奇人 4 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-地底奇人 4 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-地底奇人 4 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 211 筆 - 衛斯理-地心洪爐 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-地心洪爐 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-地心洪爐 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 212 筆 - 衛斯理-地心洪爐 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-地心洪爐 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-地心洪爐 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 213 筆 - 衛斯理-多了一個 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-多了一個.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-多了一個</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 214 筆 - 衛斯理-大廈 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-大廈 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-大廈 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 215 筆 - 衛斯理-大廈 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-大廈 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-大廈 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 216 筆 - 衛斯理-天外金球 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-天外金球 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-天外金球 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 217 筆 - 衛斯理-天外金球 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-天外金球 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-天外金球 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 218 筆 - 衛斯理-奇玉(仙境) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-奇玉(仙境).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-奇玉(仙境)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 219 筆 - 衛斯理-奇門 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-奇門 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-奇門 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 220 筆 - 衛斯理-奇門 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-奇門 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-奇門 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 221 筆 - 衛斯理-妖火 1 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-妖火 1 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-妖火 1 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 222 筆 - 衛斯理-妖火 2 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-妖火 2 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-妖火 2 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 223 筆 - 衛斯理-妖火 3 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-妖火 3 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-妖火 3 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 224 筆 - 衛斯理-妖火 4 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-妖火 4 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-妖火 4 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 225 筆 - 衛斯理-尸變 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-尸變.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-尸變</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 226 筆 - 衛斯理-換頭記 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-換頭記 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-換頭記 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 227 筆 - 衛斯理-換頭記 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-換頭記 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-換頭記 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 228 筆 - 衛斯理-支離人 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-支離人 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-支離人 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 229 筆 - 衛斯理-支離人 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-支離人 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-支離人 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 230 筆 - 衛斯理-消失 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-消失.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-消失</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 231 筆 - 衛斯理-湖水 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-湖水.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-湖水</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 232 筆 - 衛斯理-狐變 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-狐變.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-狐變</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 233 筆 - 衛斯理-盡頭 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-盡頭.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-盡頭</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 234 筆 - 衛斯理-筆友 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-筆友.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-筆友</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 235 筆 - 衛斯理-紅月亮 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-紅月亮 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-紅月亮 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 236 筆 - 衛斯理-紅月亮 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-紅月亮 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-紅月亮 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 237 筆 - 衛斯理-聚寶盆 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-聚寶盆.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-聚寶盆</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 238 筆 - 衛斯理-藍血人 1 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-藍血人 1 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-藍血人 1 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 239 筆 - 衛斯理-藍血人 2 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-藍血人 2 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-藍血人 2 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 240 筆 - 衛斯理-藍血人 3 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-藍血人 3 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-藍血人 3 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 241 筆 - 衛斯理-藍血人 4 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-藍血人 4 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-藍血人 4 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 242 筆 - 衛斯理-虛像 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-虛像.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-虛像</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 243 筆 - 衛斯理-蜂云 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-蜂云 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-蜂云 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 244 筆 - 衛斯理-蜂云 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-蜂云 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-蜂云 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 245 筆 - 衛斯理-蠱惑 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-蠱惑.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-蠱惑</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 246 筆 - 衛斯理-訪客 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-訪客.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-訪客</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 247 筆 - 衛斯理-透明光 1 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-透明光 1 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-透明光 1 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 248 筆 - 衛斯理-透明光 2 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-透明光 2 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-透明光 2 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 249 筆 - 衛斯理-透明光 3 of 4  倪匡小說 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-透明光 3 of 4  倪匡小說.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-透明光 3 of 4  倪匡小說</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 250 筆 - 衛斯理-透明光 4 of 4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-透明光 4 of 4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-透明光 4 of 4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 251 筆 - 衛斯理-鑽石花 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-鑽石花 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-鑽石花 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 252 筆 - 衛斯理-鑽石花 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-鑽石花 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-鑽石花 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 253 筆 - 衛斯理-風水 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/衛斯理-風水.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>衛斯理-風水</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 254 筆 - 製作WebApi並以html網頁來串接自己的WebApi(JSON格式) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/製作WebApi並以html網頁來串接自己的WebApi(JSON格式).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>製作WebApi並以html網頁來串接自己的WebApi(JSON格式)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 255 筆 - 西遊記》41~50回 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/西遊記》41~50回.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>西遊記》41~50回</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 256 筆 - 詩詞等 有字幕 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/詩詞等 有字幕 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>詩詞等 有字幕 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 257 筆 - 詩詞等 有字幕 2 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/詩詞等 有字幕 2 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>詩詞等 有字幕 2 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 258 筆 - 透過excel來執行,將整個資料夾圖片檔全部寫入SQL資料庫 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/透過excel來執行,將整個資料夾圖片檔全部寫入SQL資料庫.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>透過excel來執行,將整個資料夾圖片檔全部寫入SQL資料庫</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 259 筆 - 金庸-天龍八部1~25回  1 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回  1 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回  1 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 260 筆 - 金庸-天龍八部1~25回  13 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回  13 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回  13 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 261 筆 - 金庸-天龍八部1~25回  2 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回  2 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回  2 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 262 筆 - 金庸-天龍八部1~25回  3 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回  3 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回  3 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 263 筆 - 金庸-天龍八部1~25回  4 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回  4 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回  4 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 264 筆 - 金庸-天龍八部1~25回  5 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回  5 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回  5 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 265 筆 - 金庸-天龍八部1~25回  9 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回  9 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回  9 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 266 筆 - 金庸-天龍八部1~25回 10 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回 10 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回 10 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 267 筆 - 金庸-天龍八部1~25回 11 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回 11 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回 11 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 268 筆 - 金庸-天龍八部1~25回 12 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回 12 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回 12 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 269 筆 - 金庸-天龍八部1~25回 14 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回 14 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回 14 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 270 筆 - 金庸-天龍八部1~25回 15 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回 15 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回 15 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 271 筆 - 金庸-天龍八部1~25回 16 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回 16 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回 16 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 272 筆 - 金庸-天龍八部1~25回 6 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回 6 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回 6 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 273 筆 - 金庸-天龍八部1~25回 7 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回 7 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回 7 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 274 筆 - 金庸-天龍八部1~25回 8 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部1~25回 8 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部1~25回 8 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 275 筆 - 金庸-天龍八部26~50回   1 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回   1 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回   1 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 276 筆 - 金庸-天龍八部26~50回   13 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回   13 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回   13 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 277 筆 - 金庸-天龍八部26~50回   5 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回   5 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回   5 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 278 筆 - 金庸-天龍八部26~50回   9 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回   9 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回   9 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 279 筆 - 金庸-天龍八部26~50回  10 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  10 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  10 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 280 筆 - 金庸-天龍八部26~50回  11 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  11 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  11 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 281 筆 - 金庸-天龍八部26~50回  12 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  12 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  12 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 282 筆 - 金庸-天龍八部26~50回  14 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  14 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  14 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 283 筆 - 金庸-天龍八部26~50回  15 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  15 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  15 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 284 筆 - 金庸-天龍八部26~50回  16 of 16(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  16 of 16(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  16 of 16(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 285 筆 - 金庸-天龍八部26~50回  2 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  2 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  2 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 286 筆 - 金庸-天龍八部26~50回  3 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  3 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  3 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 287 筆 - 金庸-天龍八部26~50回  4 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  4 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  4 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 288 筆 - 金庸-天龍八部26~50回  6 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  6 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  6 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 289 筆 - 金庸-天龍八部26~50回  7 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  7 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  7 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 290 筆 - 金庸-天龍八部26~50回  8 of 16 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-天龍八部26~50回  8 of 16.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-天龍八部26~50回  8 of 16</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 291 筆 - 金庸-白馬嘯西風 1 of 2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-白馬嘯西風 1 of 2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-白馬嘯西風 1 of 2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 292 筆 - 金庸-白馬嘯西風 2 of 2(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-白馬嘯西風 2 of 2(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-白馬嘯西風 2 of 2(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 293 筆 - 金庸-碧血劍 6 of 8 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-碧血劍 6 of 8.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-碧血劍 6 of 8</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 294 筆 - 金庸-碧血劍 7 of 8 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-碧血劍 7 of 8.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-碧血劍 7 of 8</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 295 筆 - 金庸-碧血劍 8 of 8(完) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/金庸-碧血劍 8 of 8(完).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>金庸-碧血劍 8 of 8(完)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+
+
+
+        
+
+
+
+       
+
+
+
+
+        <!-- 依此類推 -->
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+</body>
+</html>

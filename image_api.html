@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>圖片管理系統 2.4 全功能旗艦版</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+
+    <style>
+        :root {
+            --accent-blue: #00d2ff;
+            --glass: rgba(20, 20, 20, 0.95);
+        }
+
+        body {
+            background: #050505;
+            color: #fff;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .image-stage {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 10px 0;
+            border-bottom: 2px solid var(--accent-blue);
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viewer-box {
+            position: relative;
+            height: 80%;
+            width: 95%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        #mainImage {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: 0.1s;
+            transform-origin: center center;
+        }
+
+        .nav-control-bar {
+            background: rgba(40, 40, 40, 0.8);
+            border-radius: 50px;
+            padding: 5px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        /* 卡片與刪除按鈕 */
+        .img-card {
+            position: relative;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .active-card {
+            border: 2px solid var(--accent-blue) !important;
+            box-shadow: 0 0 15px var(--accent-blue);
+        }
+
+        .thumb-wrapper {
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .thumb-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0.7;
+            }
+
+        .active-card img {
+            opacity: 1;
+        }
+
+        .direct-delete-btn {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            z-index: 10;
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: 0.2s;
+            font-size: 12px;
+        }
+
+        .img-card:hover .direct-delete-btn {
+            opacity: 1;
+        }
+
+        /* 右鍵選單 */
+        #contextMenu {
+            display: none;
+            position: absolute;
+            z-index: 2000;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            width: 150px;
+        }
+
+            #contextMenu div {
+                padding: 10px 15px;
+                cursor: pointer;
+                color: #eee;
+                font-size: 14px;
+                border-bottom: 1px solid #333;
+            }
+
+                #contextMenu div:hover {
+                    background: var(--accent-blue);
+                    color: #000;
+                }
+
+        input[type=number] {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 5px;
+            width: 70px;
+            text-align: center;
+        }
+
+        .jump-slider {
+            width: 180px;
+            accent-color: var(--accent-blue);
+        }
+
+        .search-bar {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="image-stage">
+        <div class="viewer-box" id="viewerBox">
+            <img id="mainImage" src="https://via.placeholder.com/1200x800/000000/00d2ff?text=Gallery+Ready" alt="Viewer">
+        </div>
+
+        <div id="imageTitle" class="mt-1 fw-bold text-info text-truncate" style="max-width:80%">請選擇照片</div>
+
+        <div class="nav-control-bar">
+            <button class="btn btn-primary btn-sm rounded-pill px-3" onclick="playSlideshow()" id="btnPlay">播放</button>
+            <input type="range" id="intervalRange" min="1" max="15" value="3" style="width:50px" oninput="$('#secVal').text(this.value)">
+            <span class="small"><span id="secVal">3</span>s</span>
+
+            <div class="vr"></div>
+            <span>跳轉至</span>
+            <input type="number" id="startInput" value="1" min="1" onchange="loadData()">
+            <span>張，顯示</span>
+            <input type="number" id="limitInput" value="100" min="10" max="1000" onchange="loadData()">
+
+            <div class="vr"></div>
+            <input type="range" id="jumpSlider" class="jump-slider" min="1" max="100" value="1" onchange="jumpBySlider(this.value)">
+            <span id="progressText" class="small">1/--</span>
+
+            <div class="vr"></div>
+            <button class="btn btn-outline-light btn-sm rounded-circle" onclick="rotateImage()"><i class="bi bi-arrow-clockwise"></i></button>
+            <button class="btn btn-outline-light btn-sm rounded-circle" onclick="downloadImage()"><i class="bi bi-download"></i></button>
+        </div>
+
+        <div class="mt-2 d-flex gap-2 w-75 justify-content-center">
+            <select id="folderFilter" class="form-select search-bar w-25" onchange="resetAndLoad()"><option value="ALL">📁 所有目錄</option></select>
+            <select id="yearFilter" class="form-select search-bar w-25" onchange="resetAndLoad()"><option value="ALL">📅 全部年份</option></select>
+            <input type="text" id="fuzzySearch" class="form-control search-bar w-50" placeholder="關鍵字搜尋...">
+        </div>
+    </div>
+
+    <!-- 右鍵選單 -->
+    <div id="contextMenu">
+        <div onclick="Swal.fire('成功','已設為封面','success')"><i class="bi bi-image-fill me-2"></i>設為封面</div>
+        <div onclick="askDeleteDirect(null, currentIdx)" class="text-danger"><i class="bi bi-trash-fill me-2"></i>刪除照片</div>
+    </div>
+
+    <div class="container mt-5 pb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold m-0">範圍: <span id="rangeLabel" class="text-info">1 - 100</span> / 總計 <span id="totalLabel">0</span></h5>
+            <div class="btn-group">
+                <button class="btn btn-outline-info btn-sm" onclick="changeBatch(-1)"><i class="bi bi-chevron-left"></i> 前一組</button>
+                <button class="btn btn-outline-info btn-sm" onclick="changeBatch(1)">後一組 <i class="bi bi-chevron-right"></i></button>
+            </div>
+        </div>
+        <div id="imageGrid" class="row g-3"></div>
+    </div>
+
+    <script>
+        const API_URL = "https://zen2965.duckdns.org:8888/showimage/image_api.aspx";
+        let allImages = [];
+        let slideshowInterval = null;
+        let currentIdx = 0;
+        let totalRecords = 0;
+        let rotation = 0;
+
+        $(document).ready(function () {
+            loadFolders(); loadYears(); loadData(); initZoom();
+            $(document).on("click", () => $("#contextMenu").hide());
+
+            let searchTimer;
+            $("#fuzzySearch").on("input", function () {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => { resetAndLoad(); }, 500);
+            });
+        });
+
+        function initZoom() {
+            const $box = $('#viewerBox'), $img = $('#mainImage');
+            $box.on('mousemove', function (e) {
+                if (slideshowInterval) return;
+                const offset = $box.offset(), x = ((e.pageX - offset.left) / $box.width()) * 100, y = ((e.pageY - offset.top) / $box.height()) * 100;
+                $img.css({ 'transform-origin': `${x}% ${y}%`, 'transform': `scale(2.5) rotate(${rotation}deg)` });
+            });
+            $box.on('mouseleave', function () { $img.css({ 'transform': `scale(1) rotate(${rotation}deg)`, 'transform-origin': 'center center' }); });
+        }
+
+        function loadData() {
+            const start = parseInt($("#startInput").val());
+            const limit = parseInt($("#limitInput").val());
+            $.ajax({
+                type: "POST", url: API_URL + "/GetData",
+                data: JSON.stringify({
+                    searchKey: $("#fuzzySearch").val(), sortBy: "識別碼", sortDir: "DESC",
+                    pageIndex: start, pageSize: limit,
+                    filterYear: $("#yearFilter").val(), filterFolder: $("#folderFilter").val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    if (res.d.errMsg) { Swal.fire("錯誤", res.d.errMsg, "error"); return; }
+                    allImages = res.d.data;
+                    totalRecords = res.d.totalCount;
+                    $("#rangeLabel").text(`${start} - ${Math.min(start + allImages.length - 1, totalRecords)}`);
+                    $("#totalLabel").text(totalRecords);
+                    $("#progressText").text(`${start}/${totalRecords}`);
+                    $("#jumpSlider").attr("max", totalRecords).val(start);
+                    renderGrid(allImages);
+                }
+            });
+        }
+
+        function renderGrid(list) {
+            let h = list.map((item, idx) => `
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="img-card" id="card-${idx}"
+                             onclick="handleInsertPlay(${idx}, '${getSrc(item.內容)}', '${item.姓名}')"
+                             oncontextmenu="handleRightClick(event, ${idx})">
+                            <button class="direct-delete-btn" onclick="askDeleteDirect(event, ${idx})"><i class="bi bi-trash"></i></button>
+                            <div class="thumb-wrapper"><img src="${getSrc(item.內容)}" loading="lazy"></div>
+                            <div class="p-2 text-center small text-truncate fw-bold">${item.姓名}</div>
+                        </div>
+                    </div>
+                `).join('');
+            $("#imageGrid").html(h || '<div class="text-center w-100 py-5 text-muted">查無照片</div>');
+            currentIdx = 0;
+            if (allImages.length > 0) viewImage(getSrc(allImages[0].內容), allImages[0].姓名);
+        }
+
+        function handleInsertPlay(idx, src, title) { currentIdx = idx; viewImage(src, title); }
+
+        function viewImage(src, title) {
+            rotation = 0;
+            $("#mainImage").css("transform", "scale(1) rotate(0deg)").attr("src", src);
+            $("#imageTitle").text(title);
+            $(".img-card").removeClass("active-card");
+            $(`#card-${currentIdx}`).addClass("active-card");
+        }
+
+        // --- 刪除邏輯 ---
+        function handleRightClick(e, idx) {
+            e.preventDefault(); currentIdx = idx;
+            $("#contextMenu").css({ top: e.pageY + "px", left: e.pageX + "px" }).fadeIn(100);
+        }
+
+        function askDeleteDirect(event, idx) {
+            if (event) event.stopPropagation();
+            let item = allImages[idx];
+            Swal.fire({
+                title: '確認刪除？', text: item.姓名, icon: 'warning',
+                input: 'password', inputPlaceholder: '管理密碼 (1234)', showCancelButton: true
+            }).then(res => {
+                if (res.isConfirmed) {
+                    $.ajax({
+                        type: "POST", url: API_URL + "/DeleteData",
+                        data: JSON.stringify({ id: item.識別碼, pwd: res.value }),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (r) {
+                            if (r.d.success) { Swal.fire("已刪除", "", "success"); loadData(); }
+                            else { Swal.fire("失敗", r.d.msg, "error"); }
+                        }
+                    });
+                }
+            });
+        }
+
+        // --- 跳轉與播放 ---
+        function jumpBySlider(val) { $("#startInput").val(val); loadData(); }
+        function resetAndLoad() { $("#startInput").val(1); loadData(); }
+        function changeBatch(dir) {
+            let nextStart = parseInt($("#startInput").val()) + (dir * parseInt($("#limitInput").val()));
+            if (nextStart < 1) nextStart = 1;
+            if (nextStart > totalRecords) return;
+            $("#startInput").val(nextStart); loadData();
+        }
+
+        function playSlideshow() {
+            if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; $("#btnPlay").text("播放").removeClass("btn-danger"); }
+            else {
+                $("#btnPlay").text("停止").addClass("btn-danger");
+                slideshowInterval = setInterval(() => {
+                    currentIdx++;
+                    if (currentIdx >= allImages.length) { changeBatch(1); return; }
+                    viewImage(getSrc(allImages[currentIdx].內容), allImages[currentIdx].姓名);
+                }, parseInt($("#intervalRange").val()) * 1000);
+            }
+        }
+
+        function getSrc(path) {
+            if (!path || path.startsWith('http')) return path || "";
+            try {
+                let cleanPath = decodeURIComponent(path).replace(/\\/g, '/');
+                let pivot = "Moments/", relativePath = cleanPath.split(pivot)[1] || cleanPath.split('/').pop();
+                return "https://zen2965.duckdns.org:8888/showimage/image/" + encodeURI(relativePath);
+            } catch (e) { return ""; }
+        }
+
+        function rotateImage() { rotation += 90; $("#mainImage").css("transform", `scale(1) rotate(${rotation}deg)`); }
+        function downloadImage() { window.open($("#mainImage").attr("src"), '_blank'); }
+        function loadFolders() { $.ajax({ type: "POST", url: API_URL + "/GetFolders", contentType: "application/json; charset=utf-8", success: function (res) { res.d.forEach(f => $("#folderFilter").append(`<option value="${f}">📁 ${f}</option>`)); } }); }
+        function loadYears() { $.ajax({ type: "POST", url: API_URL + "/GetYears", contentType: "application/json; charset=utf-8", success: function (res) { res.d.forEach(y => $("#yearFilter").append(`<option value="${y}">${y} 年</option>`)); } }); }
+    </script>
+</body>
+</html>

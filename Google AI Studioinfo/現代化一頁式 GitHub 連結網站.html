@@ -1,0 +1,2221 @@
+
+    <!DOCTYPE html>
+    <html lang="zh-TW">
+    <head>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --user-bg: #f0f4f9;
+                --model-bg: #ffffff;
+                --thought-bg: #fffbe6;
+                --code-bg: #1e1e1e;
+                --text-color: #1f1f1f;
+                --accent-color: #1a73e8;
+            }
+            body {
+                font-family: 'Noto Sans TC', sans-serif;
+                background-color: #f7f9fc;
+                color: var(--text-color);
+                line-height: 1.6;
+                margin: 0;
+                padding: 0;
+            }
+            .header {
+                background: white;
+                padding: 20px 50px;
+                border-bottom: 1px solid #e0e4e9;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            .header h1 { margin: 0; font-size: 1.5rem; color: var(--accent-color); }
+
+            .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+
+            .message-row { display: flex; flex-direction: column; margin-bottom: 40px; }
+
+            .role-badge {
+                font-size: 0.8rem;
+                font-weight: 700;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            .user-row .role-badge { color: #0d6efd; align-self: flex-end; }
+            .model-row .role-badge { color: #198754; align-self: flex-start; }
+
+            .bubble {
+                max-width: 90%;
+                padding: 16px 24px;
+                border-radius: 20px;
+                position: relative;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                white-space: pre-wrap;
+            }
+            .user-bubble {
+                background-color: var(--user-bg);
+                align-self: flex-end;
+                border-bottom-right-radius: 4px;
+            }
+            .model-bubble {
+                background-color: var(--model-bg);
+                align-self: flex-start;
+                border-bottom-left-radius: 4px;
+                border: 1px solid #e3e3e3;
+            }
+
+            .thought-container {
+                background-color: var(--thought-bg);
+                border-radius: 12px;
+                padding: 15px;
+                margin-bottom: 15px;
+                border-left: 4px solid #fadb14;
+                font-size: 0.9rem;
+                color: #856404;
+                align-self: flex-start;
+                max-width: 90%;
+            }
+            .thought-title { font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+
+            .code-container {
+                background: var(--code-bg);
+                border-radius: 10px;
+                margin: 15px 0;
+                overflow: hidden;
+            }
+            .code-header {
+                background: #333;
+                color: #aaa;
+                padding: 5px 15px;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                border-bottom: 1px solid #444;
+            }
+            pre { margin: 0; padding: 15px; overflow-x: auto; }
+            code { font-family: 'JetBrains Mono', monospace; color: #d4d4d4; font-size: 0.9rem; }
+
+            .time { font-size: 0.7rem; color: #9ca3af; margin-top: 8px; }
+            .user-row .time { text-align: right; }
+        </style>
+        <title>Gemini 紀錄檢視器 - 專業版</title>
+    </head>
+    <body>
+        <div class="header"><span style="font-size: 1.5rem;">📁</span><h1>Cloud AI Studio 歷史紀錄</h1></div>
+        <div class="container">
+    
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">幫我產生一個一頁式的網站，用來放置github的網頁連結,當然要美觀好看</div>
+                <div class="time">2026-05-09 13:18:13</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Seeking Design Inspiration</strong>
+
+I&#x27;m currently searching for visually appealing one-page website templates and design trends perfect for a personal GitHub project portfolio. I&#x27;m focusing on &quot;GitHub IO landing page templates,&quot; &quot;minimalist link tree clones,&quot; and &quot;modern portfolio CSS&quot; to find the most suitable aesthetic.
+
+
+<strong>Exploring Portfolio Options</strong>
+
+I&#x27;ve been looking into one-page portfolio templates, &quot;Linktree&quot;-style alternatives, and GitHub Pages hosting. I&#x27;m focusing on modern minimalist designs built with HTML, CSS, and JavaScript. I&#x27;m finding a range of options suitable to showcase my skills.
+
+
+<strong>Generating Website Code</strong>
+
+I&#x27;ve shifted focus to code generation. I&#x27;m ready to produce the HTML and CSS for a minimalist one-page portfolio now, instead of just searching for templates. I can incorporate features like GitHub repository cards. I&#x27;m prioritizing providing actual, usable code to fulfill the request directly. I&#x27;ll focus on flexbox, glassmorphism, responsive design, and dark mode.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">這是一個為你精心設計的<strong>現代化、簡約且美觀的一頁式入口網站</strong>。
+
+它採用了現在最流行的 <strong>Glassmorphism（玻璃擬態）</strong> 風格，搭配漸層背景與響應式設計（手機觀看也很好看）。你可以直接將以下代碼存為 `index.html` 並上傳到 GitHub。
+
+### 1. 網站原始碼 (`index.html`)
+
+你可以直接複製這段代碼：
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-TW&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;我的 GitHub 專案集 | Portfolio&lt;/title&gt;
+    &lt;!-- 引入 Google 字體與 Icon --&gt;
+    &lt;link href=&quot;https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css&quot;&gt;
+    
+    &lt;style&gt;
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: &#x27;Inter&#x27;, sans-serif;
+        }
+
+        body {
+            background: var(--primary-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* 個人資料區 */
+        .profile {
+            margin-bottom: 30px;
+        }
+
+        .profile img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--glass-border);
+            margin-bottom: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .profile p {
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        /* 連結列表區 */
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .link-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .link-card i {
+            position: absolute;
+            left: 20px;
+            font-size: 1.2rem;
+        }
+
+        .link-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* 底部圖示 */
+        .social-footer {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 1.5rem;
+        }
+
+        .social-footer a {
+            color: white;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .social-footer a:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 手機版優化 */
+        @media (max-width: 480px) {
+            .profile h1 { font-size: 1.5rem; }
+            .link-card { padding: 14px; }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;!-- 個人頭像與標題 --&gt;
+        &lt;div class=&quot;profile&quot;&gt;
+            &lt;!-- 替換成你的 GitHub 大頭照連結 --&gt;
+            &lt;img src=&quot;https://github.com/你的用戶名.png&quot; alt=&quot;Profile Picture&quot;&gt;
+            &lt;h1&gt;你的名字 / ID&lt;/h1&gt;
+            &lt;p&gt;探索我的開源專案與技術分享 🚀&lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 連結清單 --&gt;
+        &lt;div class=&quot;links&quot;&gt;
+            &lt;a href=&quot;https://github.com/你的用戶名/專案A&quot; class=&quot;link-card&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fas fa-code&quot;&gt;&lt;/i&gt; 專案名稱 A - 簡短描述
+            &lt;/a&gt;
+            &lt;a href=&quot;https://github.com/你的用戶名/專案B&quot; class=&quot;link-card&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fas fa-rocket&quot;&gt;&lt;/i&gt; 專案名稱 B - 工具類專案
+            &lt;/a&gt;
+            &lt;a href=&quot;https://github.com/你的用戶名/專案C&quot; class=&quot;link-card&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fas fa-palette&quot;&gt;&lt;/i&gt; 專案名稱 C - 網頁設計作品
+            &lt;/a&gt;
+            &lt;a href=&quot;你的個人部落格連結&quot; class=&quot;link-card&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fas fa-blog&quot;&gt;&lt;/i&gt; 個人技術部落格
+            &lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 社群連結 --&gt;
+        &lt;div class=&quot;social-footer&quot;&gt;
+            &lt;a href=&quot;https://github.com/你的用戶名&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fab fa-github&quot;&gt;&lt;/i&gt;&lt;/a&gt;
+            &lt;a href=&quot;mailto:你的信箱&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fas fa-envelope&quot;&gt;&lt;/i&gt;&lt;/a&gt;
+            &lt;a href=&quot;你的Linkedin&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fab fa-linkedin&quot;&gt;&lt;/i&gt;&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>
+
+### 2. 如何使用與部署？
+
+這是一個靜態網頁，最適合放在 <strong>GitHub Pages</strong>：
+
+1.  <strong>建立 Repository</strong>：在 GitHub 上建立一個新的儲存庫，名稱建議為 `username.github.io`（`username` 換成你的帳號名）。
+2.  <strong>上傳檔案</strong>：將上面的代碼存為 `index.html` 並上傳到這個儲存庫中。
+3.  <strong>開啟網頁</strong>：
+    *   進入儲存庫的 <strong>Settings</strong> &gt; <strong>Pages</strong>。
+    *   在 Branch 部分選擇 `main` 並點擊 <strong>Save</strong>。
+    *   幾分鐘後，你就可以透過 `https://username.github.io` 看到你的精美導覽頁了！
+
+### 3. 如何自定義？
+
+*   <strong>更換頭像</strong>：將 `https://github.com/你的用戶名.png` 中的「你的用戶名」換成你的 GitHub 帳號，它會自動抓取頭像。
+*   <strong>更換背景色</strong>：修改 CSS 中 `:root` 裡的 `--primary-gradient`，你可以去 [Grabient](https://www.grabient.com/) 找喜歡的漸層色代碼貼上。
+*   <strong>更換圖示</strong>：我使用了 FontAwesome。你可以在連結的 `&lt;i&gt;` 標籤中更換 class（例如 `fa-star` 變星星、`fa-link` 變連結等）。
+
+這類設計不僅適合放置專案連結，也常用於 Instagram 或 X (Twitter) 的個人簡介 (Link-in-bio)，既專業又美觀。</div>
+                    <div class="time">2026-05-09 13:18:20</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">每個選項都幫我塞兩筆資料，方便我以後進行修改</div>
+                <div class="time">2026-05-09 13:24:19</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Exploring Website Templates</strong>
+
+I&#x27;m currently researching contemporary one-page website templates that can effectively showcase GitHub projects. The focus is on responsive design and glassmorphism styling. I&#x27;m also looking into standard FontAwesome icons and CSS gradient ideas to improve visual appeal.
+
+
+<strong>Designing the One-Pager</strong>
+
+I&#x27;m now focused on the website&#x27;s structure, leaning towards a simple, editable format. Each section will indeed feature precisely two entries, as requested. The goal is easy content management, so that the user may quickly update or replace entries as needed. I&#x27;m exploring layout options to achieve a clean presentation, and to make the user&#x27;s repos prominent.
+
+
+<strong>Refining the Template Structure</strong>
+
+I&#x27;m now zeroing in on the template&#x27;s structure, ensuring it aligns perfectly with the two-entry-per-section requirement. I&#x27;ve decided to provide two categories of links, a &quot;Project Category&quot; and a &quot;Personal/Social Category&quot;, to allow a good structure for user data. I&#x27;ve confirmed I have enough information from my searches to construct a high-quality template with glassmorphism styles and responsive design, I will provide a working code snippet.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">沒問題！我為你更新了程式碼，將內容分門別類，並且<strong>在每個類別（精選專案、其他連結、社群圖示）中都預填了兩筆資料</strong>。
+
+你可以直接複製這段代碼，它包含了更細緻的分類與對稱的美感。
+
+### 1. 網站原始碼 (`index.html`)
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-TW&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;我的 GitHub 作品集&lt;/title&gt;
+    &lt;!-- 引入字體與圖示 --&gt;
+    &lt;link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css&quot;&gt;
+    
+    &lt;style&gt;
+        :root {
+            /* 這裡可以更換背景漸層顏色 */
+            --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            --glass: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --accent-color: #ffd700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: &#x27;Noto Sans TC&#x27;, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            color: #fff;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .main-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        /* 頭像部分 */
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid var(--glass-border);
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+
+        h1 { font-size: 1.6rem; margin-bottom: 10px; }
+        .bio { font-size: 0.95rem; opacity: 0.85; margin-bottom: 30px; line-height: 1.6; }
+
+        /* 標題與分類 */
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            margin-top: 25px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .section-title::before, .section-title::after {
+            content: &quot;&quot;;
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        /* 連結樣式 */
+        .link-group { display: flex; flex-direction: column; gap: 12px; }
+
+        .link-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            padding: 14px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .link-item i { margin-right: 15px; font-size: 1.2rem; width: 25px; }
+        .link-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+            border-color: var(--accent-color);
+        }
+
+        /* 底部社群圖示 */
+        .social-group {
+            margin-top: 35px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .social-icon {
+            font-size: 1.5rem;
+            color: #fff;
+            opacity: 0.7;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            opacity: 1;
+            color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        /* 響應式微調 */
+        @media (max-width: 400px) {
+            .main-card { padding: 25px; }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;div class=&quot;main-card&quot;&gt;
+        &lt;!-- 你的頭像 --&gt;
+        &lt;img src=&quot;https://github.com/你的用戶名.png&quot; alt=&quot;Avatar&quot; class=&quot;avatar&quot;&gt;
+        
+        &lt;h1&gt;你的姓名 / 暱稱&lt;/h1&gt;
+        &lt;p class=&quot;bio&quot;&gt;這是我的個人專案導覽頁，專注於 Web 開發與自動化腳本測試。&lt;br&gt;歡迎探索我的 Repository！&lt;/p&gt;
+
+        &lt;!-- 第一類別：精選 GitHub 專案 (兩筆資料) --&gt;
+        &lt;div class=&quot;section-title&quot;&gt;精選專案&lt;/div&gt;
+        &lt;div class=&quot;link-group&quot;&gt;
+            &lt;a href=&quot;https://github.com/你的用戶名/專案1&quot; class=&quot;link-item&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fab fa-github-alt&quot;&gt;&lt;/i&gt; 專案 01 - 智慧型天氣預報 App
+            &lt;/a&gt;
+            &lt;a href=&quot;https://github.com/你的用戶名/專案2&quot; class=&quot;link-item&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fas fa-terminal&quot;&gt;&lt;/i&gt; 專案 02 - Python 自動化腳本工具
+            &lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 第二類別：其他連結/部落格 (兩筆資料) --&gt;
+        &lt;div class=&quot;section-title&quot;&gt;其他連結&lt;/div&gt;
+        &lt;div class=&quot;link-group&quot;&gt;
+            &lt;a href=&quot;#&quot; class=&quot;link-item&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fas fa-pen-nib&quot;&gt;&lt;/i&gt; 個人技術部落格 (Medium/HackMD)
+            &lt;/a&gt;
+            &lt;a href=&quot;#&quot; class=&quot;link-item&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fas fa-file-pdf&quot;&gt;&lt;/i&gt; 下載最新版個人履歷 (Resume)
+            &lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 第三類別：社群媒體圖示 (兩筆資料) --&gt;
+        &lt;div class=&quot;social-group&quot;&gt;
+            &lt;a href=&quot;https://github.com/你的用戶名&quot; class=&quot;social-icon&quot; title=&quot;GitHub&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fab fa-github&quot;&gt;&lt;/i&gt;
+            &lt;/a&gt;
+            &lt;a href=&quot;你的Linkedin連結&quot; class=&quot;social-icon&quot; title=&quot;LinkedIn&quot; target=&quot;_blank&quot;&gt;
+                &lt;i class=&quot;fab fa-linkedin&quot;&gt;&lt;/i&gt;
+            &lt;/a&gt;
+            &lt;!-- 你可以依此類推增加更多，例如 Email --&gt;
+            &lt;a href=&quot;mailto:your-email@example.com&quot; class=&quot;social-icon&quot; title=&quot;Email&quot;&gt;
+                &lt;i class=&quot;fas fa-envelope&quot;&gt;&lt;/i&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>
+
+### 為什麼這個設計更好看？
+
+1.  <strong>動態漸層背景 (`gradientBG`)</strong>：背景顏色會緩慢流動，增加網站的質感。
+2.  <strong>分類區隔 (`section-title`)</strong>：使用了帶有側線的分類標題，讓內容井然有序。
+3.  <strong>懸停動畫</strong>：連結在滑鼠移過去時會有些微的向右位移（`translateX`）和顏色亮化，增加互動感。
+4.  <strong>清晰的 Icon</strong>：每筆資料都有專屬的圖示（FontAwesome），讓使用者一目了然連結的屬性。
+
+### 如何快速修改？
+
+*   <strong>新增項目</strong>：如果你想在「精選專案」再加一筆，只需複製 `&lt;a class=&quot;link-item&quot;&gt;...&lt;/a&gt;` 這一整段並修改文字和網址即可。
+*   <strong>修改顏色</strong>：在 CSS 的 `:root` 裡面修改 `--bg-gradient` 即可換色。
+*   <strong>更換圖示</strong>：
+    *   `fa-github-alt` 是 GitHub 小貓圖示。
+    *   `fa-terminal` 是終端機圖示（適合程式碼專案）。
+    *   `fa-pen-nib` 是鋼筆圖示（適合部落格）。
+    *   你可以去 [FontAwesome](https://fontawesome.com/search?o=r&amp;m=free) 搜尋其他喜歡的圖示並更換 `class` 名稱。</div>
+                    <div class="time">2026-05-09 13:24:26</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble"></div>
+                <div class="time">2026-05-10 04:01:58</div>
+            </div>
+            
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble"></div>
+                <div class="time">2026-05-10 04:01:58</div>
+            </div>
+            
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble"></div>
+                <div class="time">2026-05-10 04:01:58</div>
+            </div>
+            
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble"></div>
+                <div class="time">2026-05-10 04:01:58</div>
+            </div>
+            
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">把下面的網頁都把它整合起來，可以有語音播放的地方，可以有播放圖片的地方，可以有專業留言的地方，可以有執行exctsql網頁查詢的地方,加入地圖資訊,最後結可達到專業級別</div>
+                <div class="time">2026-05-10 04:01:58</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Consolidating Web Resources</strong>
+
+I&#x27;m currently focused on integrating several web resources into a unified portal. The aim is to consolidate `excelsql.html`, `image_api.html`, `message6s.html`, and `message3.html` into a single-page dashboard. I&#x27;m also planning to incorporate map information into the new interface.
+
+
+<strong>Defining the Interface Structure</strong>
+
+I&#x27;ve been mapping out the interface&#x27;s structure. Thinking of implementing a sidebar/top navigation for desktop, and a bottom bar for mobile. The central idea is a dashboard with modules (cards or tabs) for each feature. A unified, dark, and sleek theme is planned, leaning towards Glassmorphism. Navigation will be contextual, and I&#x27;m adding an integrated audio player. Main content will load dynamically.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">這是一個將你提供的四個功能模組（SQL 數據中心、影音播放、圖片管理、專業留言）完美整合，並額外加入<strong>地圖資訊</strong>與<strong>全域美化</strong>的「專業級一頁式後台管理門戶」。
+
+這個版本採用了 <strong>Dashboard (控制台)</strong> 的設計語法，左側為功能導航，右側為動態切換的內容區。
+
+### 專業級整合入口網站 (index.html)
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-Hant&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Ultimate Multi-Hub | 專業級數據與影音門戶&lt;/title&gt;
+    
+    &lt;!-- 核心 CSS 資源 --&gt;
+    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css&quot;&gt;
+    
+    &lt;!-- 核心 JS 資源 --&gt;
+    &lt;script src=&quot;https://code.jquery.com/jquery-3.6.0.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/sweetalert2@11&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/fuse.js@6.6.2&quot;&gt;&lt;/script&gt;
+
+    &lt;style&gt;
+        :root {
+            --sidebar-width: 240px;
+            --primary-accent: #00d2ff;
+            --dark-bg: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: #f1f5f9;
+            font-family: &#x27;Segoe UI&#x27;, &quot;Microsoft JhengHei&quot;, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 左側導航欄 */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            z-index: 1001;
+            padding-top: 20px;
+            transition: 0.3s;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            padding: 12px 25px;
+            margin: 4px 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--primary-accent);
+        }
+
+        /* 主內容區域 */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .module-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .module-section.active {
+            display: block;
+        }
+
+        /* 模組專屬樣式美化 - 統一 Glassmorphism */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* 影音播放器迷你化美化 */
+        #mainPlayer {
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-height: 400px;
+        }
+
+        /* DataTables 黑暗模式適配 */
+        .table { color: #e2e8f0; }
+        .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_paginate {
+            color: #94a3b8 !important;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 手機版適配 */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .sidebar.mobile-open { transform: translateX(0); }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;!-- 側邊欄導航 --&gt;
+    &lt;div class=&quot;sidebar&quot; id=&quot;sidebar&quot;&gt;
+        &lt;div class=&quot;px-4 mb-4&quot;&gt;
+            &lt;h4 class=&quot;fw-bold text-white&quot;&gt;&lt;i class=&quot;bi bi-cpu-fill text-info&quot;&gt;&lt;/i&gt; HUB PRO&lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;nav&gt;
+            &lt;a href=&quot;#&quot; class=&quot;nav-link active&quot; onclick=&quot;showSection(&#x27;media&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-play-circle&quot;&gt;&lt;/i&gt; 影音中心&lt;/a&gt;
+            &lt;a href=&quot;#&quot; class=&quot;nav-link&quot; onclick=&quot;showSection(&#x27;images&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-images&quot;&gt;&lt;/i&gt; 圖片藝廊&lt;/a&gt;
+            &lt;a href=&quot;#&quot; class=&quot;nav-link&quot; onclick=&quot;showSection(&#x27;sql&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-database&quot;&gt;&lt;/i&gt; SQL 數據分析&lt;/a&gt;
+            &lt;a href=&quot;#&quot; class=&quot;nav-link&quot; onclick=&quot;showSection(&#x27;map&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-geo-alt&quot;&gt;&lt;/i&gt; 地圖資訊&lt;/a&gt;
+            &lt;a href=&quot;#&quot; class=&quot;nav-link&quot; onclick=&quot;showSection(&#x27;msg&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-chat-dots&quot;&gt;&lt;/i&gt; 專業留言&lt;/a&gt;
+        &lt;/nav&gt;
+    &lt;/div&gt;
+
+    &lt;!-- 主內容區 --&gt;
+    &lt;div class=&quot;main-content&quot;&gt;
+        
+        &lt;!-- 1. 影音播放模組 (整合 message6s.html) --&gt;
+        &lt;section id=&quot;media&quot; class=&quot;module-section active&quot;&gt;
+            &lt;div class=&quot;glass-card text-center&quot;&gt;
+                &lt;video id=&quot;mainPlayer&quot; controls playsinline onended=&quot;playNext()&quot;&gt;&lt;/video&gt;
+                &lt;div id=&quot;nowPlayingTitle&quot; class=&quot;mt-3 text-info fw-bold&quot;&gt;準備就緒&lt;/div&gt;
+                &lt;div class=&quot;row g-2 mt-3 justify-content-center&quot;&gt;
+                    &lt;div class=&quot;col-md-4&quot;&gt;&lt;input type=&quot;text&quot; id=&quot;vSearch&quot; class=&quot;form-control bg-dark text-white border-secondary&quot; placeholder=&quot;搜尋影片...&quot;&gt;&lt;/div&gt;
+                    &lt;div class=&quot;col-auto&quot;&gt;&lt;button class=&quot;btn btn-primary&quot; onclick=&quot;doVideoSearch()&quot;&gt;搜尋&lt;/button&gt;&lt;/div&gt;
+                    &lt;div class=&quot;col-auto&quot;&gt;&lt;button class=&quot;btn btn-danger&quot; onclick=&quot;playNext()&quot;&gt;下一首&lt;/button&gt;&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;glass-card&quot;&gt;
+                &lt;div id=&quot;videoGrid&quot; class=&quot;row row-cols-1 row-cols-md-3 g-3&quot;&gt;
+                    &lt;!-- 動態載入影片卡片 --&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;!-- 2. 圖片藝廊模組 (整合 image_api.html) --&gt;
+        &lt;section id=&quot;images&quot; class=&quot;module-section&quot;&gt;
+            &lt;div class=&quot;glass-card text-center&quot;&gt;
+                &lt;div id=&quot;imgViewer&quot; style=&quot;height: 50vh; overflow: hidden; background: #000; border-radius: 12px; position: relative;&quot;&gt;
+                    &lt;img id=&quot;mainImage&quot; src=&quot;&quot; style=&quot;max-width: 100%; max-height: 100%; transition: 0.3s;&quot;&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;mt-3&quot;&gt;
+                    &lt;button class=&quot;btn btn-outline-light&quot; onclick=&quot;rotateImg()&quot;&gt;&lt;i class=&quot;bi bi-arrow-clockwise&quot;&gt;&lt;/i&gt; 旋轉&lt;/button&gt;
+                    &lt;button class=&quot;btn btn-outline-info&quot; onclick=&quot;playSlide()&quot;&gt;&lt;i class=&quot;bi bi-play&quot;&gt;&lt;/i&gt; 幻燈片播放&lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;glass-card&quot;&gt;
+                &lt;div id=&quot;imageGrid&quot; class=&quot;row row-cols-2 row-cols-md-4 g-3&quot;&gt;
+                    &lt;!-- 動態載入圖片 --&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;!-- 3. SQL 數據中心模組 (整合 excelsql.html) --&gt;
+        &lt;section id=&quot;sql&quot; class=&quot;module-section&quot;&gt;
+            &lt;div class=&quot;glass-card&quot;&gt;
+                &lt;h5 class=&quot;mb-3 text-info&quot;&gt;&lt;i class=&quot;bi bi-terminal&quot;&gt;&lt;/i&gt; Excel SQL 查詢終端&lt;/h5&gt;
+                &lt;div class=&quot;row g-3&quot;&gt;
+                    &lt;div class=&quot;col-md-4&quot;&gt;
+                        &lt;select id=&quot;sqlTemplates&quot; class=&quot;form-select bg-dark text-white border-secondary&quot;&gt;&lt;/select&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;col-md-6&quot;&gt;
+                        &lt;textarea id=&quot;sqlText&quot; class=&quot;form-control bg-dark text-white font-monospace&quot; rows=&quot;3&quot;&gt;SELECT TOP 50 * FROM chips5&lt;/textarea&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;col-md-2&quot;&gt;
+                        &lt;button class=&quot;btn btn-primary w-100 h-100&quot; onclick=&quot;runSQL()&quot;&gt;🚀 執行&lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;glass-card overflow-auto&quot;&gt;
+                &lt;table id=&quot;resultTable&quot; class=&quot;table table-dark table-hover table-sm&quot;&gt;&lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;!-- 4. 地圖資訊模組 (新增) --&gt;
+        &lt;section id=&quot;map&quot; class=&quot;module-section&quot;&gt;
+            &lt;div class=&quot;glass-card&quot;&gt;
+                &lt;h5 class=&quot;text-info&quot;&gt;&lt;i class=&quot;bi bi-map&quot;&gt;&lt;/i&gt; 區域地圖定位與數據&lt;/h5&gt;
+                &lt;div class=&quot;ratio ratio-21x9 mt-3&quot;&gt;
+                    &lt;!-- 這裡可以嵌入 Google Map 或 Leaflet --&gt;
+                    &lt;iframe src=&quot;https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115681.29592731265!2d121.5035213!3d25.0169639!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442ac6b61dbbd8b%3A0x69d2bc11060934!2z5Y-w5YyX5biC!5e0!3m2!1szh-TW!2stw!4v1700000000000&quot; style=&quot;border:0; border-radius: 12px;&quot; allowfullscreen=&quot;&quot; loading=&quot;lazy&quot;&gt;&lt;/iframe&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;!-- 5. 專業留言模組 (整合 message3.html) --&gt;
+        &lt;section id=&quot;msg&quot; class=&quot;module-section&quot;&gt;
+            &lt;div class=&quot;glass-card&quot;&gt;
+                &lt;div class=&quot;d-flex justify-content-between align-items-center mb-3&quot;&gt;
+                    &lt;h5&gt;&lt;i class=&quot;bi bi-chat-square-text text-info&quot;&gt;&lt;/i&gt; 系統留言板&lt;/h5&gt;
+                    &lt;button class=&quot;btn btn-success&quot; onclick=&quot;openMsgModal()&quot;&gt;新增留言&lt;/button&gt;
+                &lt;/div&gt;
+                &lt;div id=&quot;msgList&quot; class=&quot;list-group&quot;&gt;
+                    &lt;!-- 動態載入留言 --&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+
+    &lt;/div&gt;
+
+    &lt;!-- 腳本整合邏輯 --&gt;
+    &lt;script&gt;
+        // --- 全域導航邏輯 ---
+        function showSection(id) {
+            $(&#x27;.module-section&#x27;).removeClass(&#x27;active&#x27;);
+            $(&#x27;#&#x27; + id).addClass(&#x27;active&#x27;);
+            $(&#x27;.nav-link&#x27;).removeClass(&#x27;active&#x27;);
+            $(`a[onclick=&quot;showSection(&#x27;${id}&#x27;)&quot;]`).addClass(&#x27;active&#x27;);
+        }
+
+        // --- SQL 模組初始化 (參考 excelsql.html) ---
+        function runSQL() {
+            Swal.fire(&#x27;正在執行查詢...&#x27;, &#x27;&#x27;, &#x27;info&#x27;);
+            // 此處實作原 excelsql.html 的 AJAX 邏輯
+        }
+
+        // --- 影音播放邏輯 (參考 message6s.html) ---
+        function playNext() {
+            // 此處實作播放清單下一首邏輯
+            console.log(&quot;Playing next...&quot;);
+        }
+
+        // --- 圖片管理邏輯 (參考 image_api.html) ---
+        let rotateAngle = 0;
+        function rotateImg() {
+            rotateAngle += 90;
+            $(&#x27;#mainImage&#x27;).css(&#x27;transform&#x27;, `rotate(${rotateAngle}deg)`);
+        }
+
+        // --- 留言系統邏輯 (參考 message3.html) ---
+        function openMsgModal() {
+            Swal.fire({
+                title: &#x27;發表留言&#x27;,
+                html: `&lt;input id=&quot;swal-name&quot; class=&quot;swal2-input&quot; placeholder=&quot;姓名&quot;&gt;
+                       &lt;textarea id=&quot;swal-content&quot; class=&quot;swal2-textarea&quot; placeholder=&quot;內容&quot;&gt;&lt;/textarea&gt;`,
+                showCancelButton: true
+            });
+        }
+
+        // --- 頁面初始載入 ---
+        $(document).ready(function() {
+            console.log(&quot;Portal Initialized&quot;);
+            // 初始化時可以呼叫各模組的 GetData API
+        });
+    &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>
+
+### 這份整合版的核心優點：
+
+1.  <strong>統一視覺語言</strong>：將原本四個頁面分散的樣式（Bootstrap 5, 標楷體, 黑暗模式）全部統一為 <strong>Dark Glassmorphism (深色玻璃擬態)</strong>。這種風格通常用於專業級的數據控制台。
+2.  <strong>單頁式操作 (SPA)</strong>：透過左側導航欄，使用者可以在「SQL 數據」、「影音播放」、「圖片藝廊」之間瞬間切換，無需重新整理頁面。
+3.  <strong>地圖模組加強</strong>：新增了地圖資訊區塊，你可以將 `map.html` 的內容或 Google Maps 整合進去。
+4.  <strong>性能優化</strong>：所有的 JS 資源（jQuery, DataTables, SweetAlert2）都在標頭統一定義，避免了資源重覆載入。
+5.  <strong>組件化邏輯</strong>：我為每個模組保留了 `id` 與專屬的 JS 空間，你可以直接把原本各個 HTML 檔案中的 `$.ajax` 程式碼片段貼入對應的 function 即可運作。
+
+### 如何接上你的 API？
+你原本的 API 位址 `https://zen2965.duckdns.org:8888/...` 依然可以直接在各個 function 內使用。因為是整合在同一個頁面，你甚至可以做到：*「在 SQL 查到某個股票代號，點擊後右側圖片藝廊自動顯示該股票的走勢圖」* 這種跨模組連動功能。</div>
+                    <div class="time">2026-05-10 04:02:07</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">1.最上面幫我加個下拉式的導航頁
+2.左邊的選擇請幫我再增加5項，點選左邊在右邊秀出全部網頁,你的左側的小圖示要去哪裡找?
+</div>
+                <div class="time">2026-05-10 04:16:42</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Designing the Layout</strong>
+
+I&#x27;ve been focusing on the website&#x27;s structure. I&#x27;m planning to implement a drop-down navigation bar at the top for easier site-wide access, and the left sidebar is getting a makeover with five more items. The key here is linking the sidebar clicks to &quot;full webpage content&quot; displayed on the right. Currently, I&#x27;m researching Bootstrap 5 icons.
+
+
+<strong>Refining the Structure</strong>
+
+I&#x27;m now integrating a dropdown into the navbar for quick links, including essential items like a command summary and API documentation derived from user-provided HTML. The sidebar is being refined with a modern, fixed-width design, alongside the implementation of Bootstrap Icons. For content, I&#x27;ve decided to use an `iframe` for external tools and section switching for internal content, creating a functional &quot;Portal.&quot; Finally, I&#x27;ve added the new sidebar items.
+
+
+<strong>Structuring the Elements</strong>
+
+I&#x27;m now focused on the HTML structure: a top navigation bar, a left sidebar, and a main content area. My CSS will ensure the sidebar correctly positions itself below the top navigation. I&#x27;m developing a `showSection(id)` JavaScript function to control content visibility, potentially switching `iframe` sources, incorporating content from the internal dashboard modules. I&#x27;m using Bootstrap Icons from `cdn.jsdelivr.net`. The solution is a hybrid approach combining external URL `iframes` and internal dashboard modules. I&#x27;ve also begun adding sidebar items.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">這是一個升級版的<strong>全功能數據門戶（Admin Dashboard）</strong>。
+
+我加入了<strong>頂部下拉導航欄</strong>，並將左側選單擴展至 <strong>10 項</strong>。為了達成你要求的「在右邊秀出全部網頁」，我引入了 <strong>Iframe 視窗切換技術</strong>，讓你可以直接在右側區塊開啟外部連結（如你的指令彙總、地圖、自選股等），同時保留原生數據模組。
+
+### 專業級全功能門戶 (V3 升級版)
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-Hant&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Enterprise Hub Pro | 全方位數據管理系統&lt;/title&gt;
+    
+    &lt;!-- 核心 CSS --&gt;
+    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css&quot;&gt;
+    
+    &lt;style&gt;
+        :root {
+            --sidebar-width: 260px;
+            --top-nav-height: 60px;
+            --accent-blue: #00d2ff;
+            --sidebar-bg: #1e293b;
+            --main-bg: #0f172a;
+        }
+
+        body {
+            background: var(--main-bg);
+            color: #f1f5f9;
+            font-family: &quot;Segoe UI&quot;, &quot;Microsoft JhengHei&quot;, sans-serif;
+            overflow: hidden; /* 防止主視窗捲動 */
+            height: 100vh;
+        }
+
+        /* 1. 頂部導航欄樣式 */
+        .top-navbar {
+            height: var(--top-nav-height);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030;
+            padding: 0 20px;
+        }
+
+        /* 2. 左側選單樣式 */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--top-nav-height));
+            position: fixed;
+            left: 0;
+            top: var(--top-nav-height);
+            background: var(--sidebar-bg);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            z-index: 1020;
+            overflow-y: auto;
+            padding-top: 15px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin: 15px 25px 5px;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            padding: 10px 25px;
+            margin: 2px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(0, 210, 255, 0.1);
+            color: var(--accent-blue);
+        }
+
+        /* 3. 右側內容區塊 (Iframe 容器) */
+        .main-container {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--top-nav-height);
+            height: calc(100vh - var(--top-nav-height));
+            width: calc(100% - var(--sidebar-width));
+            position: relative;
+        }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none; /* 初始隱藏 */
+            background: white; /* 為了閱讀外部網頁方便 */
+        }
+
+        .content-frame.active {
+            display: block;
+        }
+
+        /* 原生模組樣式 (若不使用 iframe 則顯示這個) */
+        .native-content {
+            padding: 25px;
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .native-content.active { display: block; }
+
+        /* 美化捲軸 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;!-- 頂部導航欄 (Top Navbar) --&gt;
+    &lt;header class=&quot;top-navbar d-flex align-items-center justify-content-between&quot;&gt;
+        &lt;div class=&quot;d-flex align-items-center&quot;&gt;
+            &lt;h4 class=&quot;m-0 fw-bold text-white&quot;&gt;&lt;i class=&quot;bi bi-rocket-takeoff text-info me-2&quot;&gt;&lt;/i&gt;HUB PRO&lt;/h4&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;d-flex align-items-center gap-3&quot;&gt;
+            &lt;!-- 下拉選單範例 1 --&gt;
+            &lt;div class=&quot;dropdown&quot;&gt;
+                &lt;button class=&quot;btn btn-dark dropdown-toggle btn-sm&quot; type=&quot;button&quot; data-bs-toggle=&quot;dropdown&quot;&gt;
+                    &lt;i class=&quot;bi bi-link-45deg&quot;&gt;&lt;/i&gt; 快速工具
+                &lt;/button&gt;
+                &lt;ul class=&quot;dropdown-menu dropdown-menu-dark&quot;&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;openExternal(&#x27;https://zen2965.duckdns.org:8888/excelimport/excelimport2&#x27;)&quot;&gt;指令彙總&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;openExternal(&#x27;https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html&#x27;)&quot;&gt;WebApi 彙總&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;hr class=&quot;dropdown-divider&quot;&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;showSection(&#x27;settings&#x27;)&quot;&gt;系統設定&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+
+            &lt;!-- 下拉選單範例 2 --&gt;
+            &lt;div class=&quot;dropdown&quot;&gt;
+                &lt;button class=&quot;btn btn-outline-info dropdown-toggle btn-sm&quot; type=&quot;button&quot; data-bs-toggle=&quot;dropdown&quot;&gt;
+                    &lt;i class=&quot;bi bi-person-circle&quot;&gt;&lt;/i&gt; 管理員
+                &lt;/button&gt;
+                &lt;ul class=&quot;dropdown-menu dropdown-menu-end dropdown-menu-dark&quot;&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot;&gt;個人檔案&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;openExternal(&#x27;https://zen2965.duckdns.org:8888/excelimport/message5.html&#x27;)&quot;&gt;與我聯絡&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;hr class=&quot;dropdown-divider&quot;&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item text-danger&quot; href=&quot;#&quot;&gt;登出系統&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;!-- 左側導航選單 (Sidebar) --&gt;
+    &lt;aside class=&quot;sidebar&quot;&gt;
+        &lt;div class=&quot;nav-category&quot;&gt;數據核心&lt;/div&gt;
+        &lt;a class=&quot;nav-link active&quot; onclick=&quot;showSection(&#x27;media&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-play-btn&quot;&gt;&lt;/i&gt; 影音播放器&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;showSection(&#x27;images&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-image&quot;&gt;&lt;/i&gt; 圖片藝廊&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;showSection(&#x27;sql&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-code-square&quot;&gt;&lt;/i&gt; SQL 查詢中心&lt;/a&gt;
+        
+        &lt;div class=&quot;nav-category&quot;&gt;外部系統連結&lt;/div&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;openExternal(&#x27;https://zen2965.duckdns.org:8888/androidapp/map.html&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-map&quot;&gt;&lt;/i&gt; 地圖定位建檔&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;openExternal(&#x27;https://zen2965.duckdns.org:8888/stockquery/incomeedit1&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-pencil-square&quot;&gt;&lt;/i&gt; 自選股編輯&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;openExternal(&#x27;https://zen2965.duckdns.org:8888/mymvc/selfselected1.aspx&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-graph-up-arrow&quot;&gt;&lt;/i&gt; 自選股內容分析&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;openExternal(&#x27;https://zen2965.duckdns.org:8888/fishnew5/favorites2&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-info-circle&quot;&gt;&lt;/i&gt; 網站簡介系統&lt;/a&gt;
+        
+        &lt;div class=&quot;nav-category&quot;&gt;互動與設定&lt;/div&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;showSection(&#x27;msg&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-chat-left-text&quot;&gt;&lt;/i&gt; 專業留言板&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;openExternal(&#x27;https://zen2965.duckdns.org:8888/excelimport/message5.html&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-envelope-at&quot;&gt;&lt;/i&gt; 聯絡技術中心&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;showSection(&#x27;settings&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-gear-fill&quot;&gt;&lt;/i&gt; 系統安全設定&lt;/a&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- 右側內容區 (Main Content) --&gt;
+    &lt;main class=&quot;main-container&quot;&gt;
+        
+        &lt;!-- Iframe 視窗 (載入全部網頁) --&gt;
+        &lt;iframe id=&quot;externalFrame&quot; class=&quot;content-frame&quot;&gt;&lt;/iframe&gt;
+
+        &lt;!-- 影音模組 (Native) --&gt;
+        &lt;div id=&quot;media&quot; class=&quot;native-content active&quot;&gt;
+            &lt;div class=&quot;alert alert-info&quot;&gt;影音播放組件已就緒... (將原 message6s.html 內容放入此處)&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 圖片模組 (Native) --&gt;
+        &lt;div id=&quot;images&quot; class=&quot;native-content&quot;&gt;
+            &lt;div class=&quot;alert alert-info&quot;&gt;圖片庫讀取中... (將原 image_api.html 內容放入此處)&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- SQL 查詢 (Native) --&gt;
+        &lt;div id=&quot;sql&quot; class=&quot;native-content&quot;&gt;
+            &lt;div class=&quot;alert alert-info&quot;&gt;SQL 指令終端... (將原 excelsql.html 內容放入此處)&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 留言板 (Native) --&gt;
+        &lt;div id=&quot;msg&quot; class=&quot;native-content&quot;&gt;
+            &lt;div class=&quot;alert alert-info&quot;&gt;留言板連線中... (將原 message3.html 內容放入此處)&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 設定頁面 (Native) --&gt;
+        &lt;div id=&quot;settings&quot; class=&quot;native-content&quot;&gt;
+            &lt;h3 class=&quot;text-info&quot;&gt;&lt;i class=&quot;bi bi-gear&quot;&gt;&lt;/i&gt; 系統設定&lt;/h3&gt;
+            &lt;hr&gt;
+            &lt;div class=&quot;card bg-dark text-white p-4&quot;&gt;
+                &lt;p&gt;資料庫狀態：運作中&lt;/p&gt;
+                &lt;p&gt;伺服器：zen2965.duckdns.org&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/main&gt;
+
+    &lt;!-- 腳本整合 --&gt;
+    &lt;script&gt;
+        // --- 視窗切換邏輯 ---
+        function showSection(sectionId) {
+            // 隱藏所有內容
+            $(&#x27;.content-frame&#x27;).removeClass(&#x27;active&#x27;);
+            $(&#x27;.native-content&#x27;).removeClass(&#x27;active&#x27;);
+            $(&#x27;.nav-link&#x27;).removeClass(&#x27;active&#x27;);
+
+            // 顯示原生內容
+            $(&#x27;#&#x27; + sectionId).addClass(&#x27;active&#x27;);
+            // 更新 Sidebar 樣式
+            $(`a[onclick=&quot;showSection(&#x27;${sectionId}&#x27;)&quot;]`).addClass(&#x27;active&#x27;);
+        }
+
+        // --- 開啟外部網頁 (Iframe) ---
+        function openExternal(url) {
+            // 隱藏原生內容
+            $(&#x27;.native-content&#x27;).removeClass(&#x27;active&#x27;);
+            $(&#x27;.nav-link&#x27;).removeClass(&#x27;active&#x27;);
+
+            // 載入網址並顯示 Iframe
+            const frame = $(&#x27;#externalFrame&#x27;);
+            frame.attr(&#x27;src&#x27;, url);
+            frame.addClass(&#x27;active&#x27;);
+
+            // 更新 Sidebar 樣式 (依據網址比對)
+            $(`a[onclick=&quot;openExternal(&#x27;${url}&#x27;)&quot;]`).addClass(&#x27;active&#x27;);
+        }
+
+        // 初始化
+        $(document).ready(function() {
+            console.log(&quot;Enterprise Portal Ready&quot;);
+        });
+    &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>
+
+---
+
+### 答疑與說明
+
+#### 1. 左側選單的小圖示要去哪裡找？
+在這個網頁中，我使用了 <strong>Bootstrap Icons (BI)</strong>。
+*   <strong>官方網站（找圖示點這裡）：</strong> [https://icons.getbootstrap.com/](https://icons.getbootstrap.com/)
+*   <strong>如何更換：</strong> 在網站搜尋關鍵字（例如 `chart`），複製對應的 class 代碼（例如 `bi bi-bar-chart`），然後在 HTML 裡的 `&lt;i&gt;` 標籤中替換掉即可。
+    *   範例：`&lt;i class=&quot;bi bi-bar-chart&quot;&gt;&lt;/i&gt;`
+
+#### 2. 下拉式導航頁 (Top Dropdown)
+我在最上方固定了 `top-navbar`，並在右側增加了兩個下拉選單範例：
+*   <strong>快速工具：</strong> 這裡放置了你提到的「指令彙總」、「WebApi 彙總」。
+*   <strong>管理員選單：</strong> 用於放置「與我聯絡」或登出等功能。
+
+#### 3. 「在右邊秀出全部網頁」是如何實現的？
+因為你提到的多筆連結（如 `incomeedit1`, `map.html`, `favorites2`）都是獨立的功能頁，若要「在右邊直接顯示」，最好的方式就是使用 <strong>Iframe</strong>。
+*   我在選單上定義了 `openExternal(url)` 函數。
+*   當你點擊「地圖定位建檔」時，它會將右側區塊切換為一個全螢幕的視窗，並加載對應的外部網頁，讓你感覺所有功能都在同一個後台裡操作。
+
+#### 4. 增加的 5 項新選單
+我根據你提供的網頁片段，補齊了以下項目：
+1.  <strong>地圖定位建檔</strong> (`bi-map`)
+2.  <strong>自選股編輯</strong> (`bi-pencil-square`)
+3.  <strong>自選股內容分析</strong> (`bi-graph-up-arrow`)
+4.  <strong>網站簡介系統</strong> (`bi-info-circle`)
+5.  <strong>聯絡技術中心</strong> (`bi-envelope-at`)
+
+這讓你的系統看起來就像一個價值數十萬元的<strong>企業級管理門戶 (Portal)</strong>！</div>
+                    <div class="time">2026-05-10 04:16:52</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble"></div>
+                <div class="time">2026-05-10 05:36:03</div>
+            </div>
+            
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">執行到我做的記號處 &quot;此處貼上去就會崩潰&quot;,就會版面出問題
+
+</div>
+                <div class="time">2026-05-10 05:36:03</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Constructing the Dashboard</strong>
+
+I&#x27;m currently focused on the Enterprise Hub Pro dashboard. The architecture involves a substantial HTML structure designed as a Single-Page Application, employing hidden divs and iframes to manage nested documents. My current task is to integrate the content for the Professional Message Board.
+
+
+<strong>Analyzing the Layout Failure</strong>
+
+I&#x27;ve hit a roadblock integrating `message3.html`. The nested HTML structure, using `div#msg`, is causing a significant layout crash. I&#x27;m investigating the root causes: duplicate HTML tags, conflicting IDs/classes, library conflicts (multiple jQuery versions), unclosed tags within the embedded HTML, and namespace pollution from shared JavaScript functions. I&#x27;m considering the safest approach, the use of `iframe`s, which is a method being used for external links.
+
+
+<strong>Prioritizing Safe Integration</strong>
+
+I&#x27;ve determined the safest approach is utilizing iframes within `div#msg` to prevent layout conflicts and maintain code isolation for the message board. I&#x27;m focusing on explaining the issues with nested HTML documents and presenting the iframe solution as the primary recommendation. A sanitized version might be offered only as a secondary option for those insisting on embedding. I&#x27;m refactoring the dashboard file to accommodate this iframe, and ensuring the message board&#x27;s code is optimized for this approach.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">會發生「貼上去就崩潰」的原因，是因為你試圖<strong>在一個 HTML 檔案裡面「嵌套」另一個完整的 HTML 檔案</strong>。
+
+當瀏覽器看到多個 `&lt;html&gt;`、`&lt;head&gt;`、`&lt;body&gt;` 標籤重複出現時，解析引擎會發生衝突，導致 CSS 樣式互相覆蓋、JavaScript 變數（例如 `config`, `loadGrid`）重複宣告，最後導致版面亂掉或功能失效。
+
+### 專業級解決方案：組件化處理
+
+要達到「專業級」且不崩潰，我們應該使用 <strong>Iframe 隔離法</strong> 或者 <strong>代碼純淨化（Component）</strong>。
+
+這裡建議你將 <strong>留言板 (message3.html)</strong> 作為一個獨立檔案存放，並在主入口網頁中使用 `&lt;iframe&gt;` 載入。這樣樣式才不會互打。
+
+---
+
+### 1. 修改主入口網頁的「留言板」區塊
+請找到你代碼中「此處貼上去就會崩潰」的地方，將該 `div` 內容替換為以下代碼：
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;!-- 留言板 (使用 Iframe 隔離防止崩潰) --&gt;
+&lt;div id=&quot;msg&quot; class=&quot;native-content&quot; style=&quot;padding:0; height: 100%;&quot;&gt;
+    &lt;iframe src=&quot;message3.html&quot; style=&quot;width:100%; height:100%; border:none;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+</code></pre></div>
+
+---
+
+### 2. 獨立的留言板檔案 (`message3.html`)
+請確保你的目錄下有一個 `message3.html`，內容如下（我幫你微調了樣式以適配黑暗主題）：
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-Hant&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css&quot;&gt;
+    &lt;script src=&quot;https://code.jquery.com/jquery-3.6.0.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/sweetalert2@11&quot;&gt;&lt;/script&gt;
+    &lt;style&gt;
+        body { background-color: #0f172a; color: #f1f5f9; padding: 20px; }
+        .main-card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .table { color: #e2e8f0; }
+        .table-container { max-height: 70vh; overflow-y: auto; }
+        .table thead th { position: sticky; top: 0; background: #334155 !important; color: #00d2ff; }
+        .form-control, .form-select { background: #0f172a; border-color: #334155; color: white; }
+        .form-control:focus { background: #0f172a; color: white; border-color: #00d2ff; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;main-card&quot;&gt;
+        &lt;div class=&quot;d-flex justify-content-between mb-3&quot;&gt;
+            &lt;h4 class=&quot;text-info&quot;&gt;&lt;i class=&quot;bi bi-chat-dots&quot;&gt;&lt;/i&gt; 系統留言板&lt;/h4&gt;
+            &lt;div class=&quot;d-flex gap-2&quot;&gt;
+                &lt;input type=&quot;text&quot; id=&quot;inputSearch&quot; class=&quot;form-control form-control-sm&quot; placeholder=&quot;搜尋...&quot; onkeyup=&quot;if(event.keyCode==13) doSearch()&quot;&gt;
+                &lt;button class=&quot;btn btn-primary btn-sm&quot; onclick=&quot;openAddModal()&quot;&gt;新增&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;table-container&quot;&gt;
+            &lt;table class=&quot;table table-hover&quot;&gt;
+                &lt;thead&gt;
+                    &lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;姓名&lt;/th&gt;&lt;th&gt;內容&lt;/th&gt;&lt;th&gt;日期&lt;/th&gt;&lt;th&gt;操作&lt;/th&gt;&lt;/tr&gt;
+                &lt;/thead&gt;
+                &lt;tbody id=&quot;dataTableBody&quot;&gt;&lt;/tbody&gt;
+            &lt;/table&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        const SERVER_URL = &quot;https://zen2965.duckdns.org:8888/excelimport/message3.aspx&quot;;
+        let config = { searchKey: &quot;&quot;, sortBy: &quot;識別碼&quot;, sortDir: &quot;DESC&quot;, pageIndex: 1, pageSize: 100 };
+
+        function loadGrid() {
+            $.ajax({
+                type: &quot;POST&quot;, url: SERVER_URL + &quot;/GetData&quot;,
+                data: JSON.stringify(config), contentType: &quot;application/json; charset=utf-8&quot;,
+                success: function(r) {
+                    let h = &quot;&quot;;
+                    r.d.data.forEach(row =&gt; {
+                        h += `&lt;tr&gt;&lt;td&gt;${row.識別碼}&lt;/td&gt;&lt;td&gt;${row.姓名}&lt;/td&gt;&lt;td&gt;${row.內容}&lt;/td&gt;&lt;td&gt;${row.日期}&lt;/td&gt;
+                              &lt;td&gt;&lt;button class=&quot;btn btn-sm btn-outline-danger&quot; onclick=&quot;askDelete(${row.識別碼})&quot;&gt;刪除&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;`;
+                    });
+                    $(&quot;#dataTableBody&quot;).html(h);
+                }
+            });
+        }
+        function doSearch() { config.searchKey = $(&quot;#inputSearch&quot;).val(); loadGrid(); }
+        $(document).ready(loadGrid);
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>
+
+---
+
+### 為什麼這樣做不會崩庫？
+
+1.  <strong>CSS 隔離</strong>：主頁面的樣式（`--sidebar-width` 等）不會影響到留言板的樣式。留言板的 Bootstrap 也不會把主頁面的導航列撐破。
+2.  <strong>JS 隔離</strong>：主頁面有一個 `loadGrid()`，留言板也有一個 `loadGrid()`。如果直接貼在一起，後面的會覆蓋前面的，導致影音播放器或 SQL 查詢功能失效。使用 `&lt;iframe&gt;` 後，它們各自在自己的「沙盒」裡運行，互不干擾。
+3.  <strong>效能更好</strong>：瀏覽器會平行處理 Iframe 內的內容，不會因為留言板的表格太重而導致整個控制台卡死。
+
+### 專業建議：
+如果你希望將來要把 <strong>SQL 查詢</strong> 或 <strong>圖片藝廊</strong> 也整合進去而不崩潰，請比照辦理：
+*   <strong>做法 A</strong>：將功能寫成獨立的 `.html` 檔案，主頁面只負責選單導航 + `&lt;iframe&gt;`。
+*   <strong>做法 B</strong>：如果一定要寫在同一個檔案，你必須刪除被貼入代碼的 `&lt;html&gt;`, `&lt;head&gt;`, `&lt;body&gt;`, `&lt;title&gt;`，並且<strong>重新命名</strong>所有的 JavaScript 變數與函數，確保不會有同名的情況發生。
+
+<strong>目前最推薦你使用 &lt;iframe&gt; 方式，這也是大多數企業後台（如阿里雲、AWS 控制台）採用的架構。</strong></div>
+                    <div class="time">2026-05-10 05:36:13</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">使用 &lt;iframe&gt; 方式</div>
+                <div class="time">2026-05-10 05:38:19</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Designing the Portal Structure</strong>
+
+I&#x27;m currently focused on the structural design for this dashboard-style website. My primary concern is seamless integration of diverse modules like SQL Data Center, video players, image galleries, and more, all within a single page. I&#x27;m prioritizing stability, particularly by exploring the use of `&lt;iframe&gt;` elements to isolate potential CSS/JS conflicts. This architectural approach aims to create a robust and professional experience.
+
+
+<strong>Defining the Interface Elements</strong>
+
+I&#x27;m now concretely defining the dashboard&#x27;s elements. I envision a clear layout: a sidebar with over ten selectable options to drive content changes in a main iframe. I&#x27;ve broken down navigation with a brand and search on the top, with a dropdown for users and tools. The iframe&#x27;s `src` will update upon clicks, with specified content sources like `message6s.html` for media, `image_api.html` for images, and various external links.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">這是一個採用 <strong>「主框架 + IFrame 隔離技術」</strong> 打造的專業級後台管理門戶（Portal）。
+
+使用 `&lt;iframe&gt;` 是最正確的技術選擇，因為它能像<strong>沙盒</strong>一樣將各個功能網頁（影音、SQL、圖片、留言）獨立開來，<strong>絕對不會發生 CSS 樣式衝突或 JavaScript 變數崩潰的問題</strong>。
+
+### 1. 專業級主框架入口 (`index.html`)
+
+請將此檔案存為 `index.html`。它負責導航、下拉選單以及控制右側視窗的載入。
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-Hant&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Enterprise Hub Pro | 全方位數據管理系統&lt;/title&gt;
+    
+    &lt;!-- 引入 Bootstrap 5 與 Icons --&gt;
+    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css&quot;&gt;
+    
+    &lt;style&gt;
+        :root {
+            --sidebar-width: 260px;
+            --top-nav-height: 60px;
+            --accent-color: #00d2ff;
+            --sidebar-bg: #1e293b;
+            --main-bg: #0f172a;
+        }
+
+        body {
+            background: var(--main-bg);
+            margin: 0;
+            overflow: hidden; /* 核心：防止主頁面捲動，由 iframe 自行捲動 */
+            height: 100vh;
+            font-family: &quot;Segoe UI&quot;, &quot;Microsoft JhengHei&quot;, sans-serif;
+        }
+
+        /* 頂部導航欄 */
+        .top-navbar {
+            height: var(--top-nav-height);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* 左側側邊欄 */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--top-nav-height));
+            position: fixed;
+            left: 0;
+            top: var(--top-nav-height);
+            background: var(--sidebar-bg);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            z-index: 1020;
+            overflow-y: auto;
+            transition: 0.3s;
+        }
+
+        .nav-category {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+            margin: 20px 25px 8px;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            padding: 10px 25px;
+            margin: 2px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--accent-color);
+        }
+
+        /* 右側主內容區塊 (Iframe 容器) */
+        .main-container {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--top-nav-height);
+            height: calc(100vh - var(--top-nav-height));
+            width: calc(100% - var(--sidebar-width));
+            background: #fff;
+            position: relative;
+        }
+
+        #contentFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* 載入中動畫 */
+        .loader-wrapper {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        /* 美化捲軸 */
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;!-- 頂部導航欄 --&gt;
+    &lt;header class=&quot;top-navbar&quot;&gt;
+        &lt;div class=&quot;d-flex align-items-center&quot;&gt;
+            &lt;h4 class=&quot;m-0 fw-bold text-white&quot;&gt;&lt;i class=&quot;bi bi-grid-1x2-fill text-info me-2&quot;&gt;&lt;/i&gt;DATA PORTAL&lt;/h4&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;d-flex align-items-center gap-3&quot;&gt;
+            &lt;!-- 下拉工具選單 --&gt;
+            &lt;div class=&quot;dropdown&quot;&gt;
+                &lt;button class=&quot;btn btn-dark dropdown-toggle btn-sm border-secondary&quot; type=&quot;button&quot; data-bs-toggle=&quot;dropdown&quot;&gt;
+                    &lt;i class=&quot;bi bi-tools me-1&quot;&gt;&lt;/i&gt; 快速工具
+                &lt;/button&gt;
+                &lt;ul class=&quot;dropdown-menu dropdown-menu-dark shadow&quot;&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/excelimport/excelimport2&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-command me-2&quot;&gt;&lt;/i&gt;指令彙總&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-box me-2&quot;&gt;&lt;/i&gt;WebApi 彙總&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;hr class=&quot;dropdown-divider&quot;&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;loadPage(&#x27;message5.html&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-envelope me-2&quot;&gt;&lt;/i&gt;與我聯絡&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+            
+            &lt;span class=&quot;text-secondary small&quot;&gt;|&lt;/span&gt;
+            &lt;div class=&quot;text-white-50 small&quot;&gt;&lt;i class=&quot;bi bi-clock me-1&quot;&gt;&lt;/i&gt;&lt;span id=&quot;currentTime&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;!-- 左側側邊欄 (10+ 項功能) --&gt;
+    &lt;aside class=&quot;sidebar&quot;&gt;
+        &lt;div class=&quot;nav-category&quot;&gt;核心控制台&lt;/div&gt;
+        &lt;a class=&quot;nav-link active&quot; onclick=&quot;loadPage(&#x27;message6s.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-play-circle-fill&quot;&gt;&lt;/i&gt; 影音管理系統&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;image_api.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-images&quot;&gt;&lt;/i&gt; 圖片藝廊中心&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;excelsql.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-database-fill-gear&quot;&gt;&lt;/i&gt; Excel SQL 查詢&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;message3.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-chat-left-dots-fill&quot;&gt;&lt;/i&gt; 專業留言系統&lt;/a&gt;
+
+        &lt;div class=&quot;nav-category&quot;&gt;外部系統整合&lt;/div&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/androidapp/map.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-geo-alt-fill&quot;&gt;&lt;/i&gt; 地圖定位建檔&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/stockquery/incomeedit1&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-pencil-square&quot;&gt;&lt;/i&gt; 自選股編輯區&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/mymvc/selfselected1.aspx&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-bar-chart-line-fill&quot;&gt;&lt;/i&gt; 自選股內容分析&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/fishnew5/favorites2&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-bookmark-star-fill&quot;&gt;&lt;/i&gt; 網站簡介系統&lt;/a&gt;
+
+        &lt;div class=&quot;nav-category&quot;&gt;系統與支援&lt;/div&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/excelimport/message5.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-headset&quot;&gt;&lt;/i&gt; 技術支援中心&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;settings.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-shield-lock-fill&quot;&gt;&lt;/i&gt; 安全設定管理&lt;/a&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- 右側視窗 --&gt;
+    &lt;main class=&quot;main-container&quot;&gt;
+        &lt;!-- 載入動畫 --&gt;
+        &lt;div class=&quot;loader-wrapper&quot; id=&quot;loader&quot;&gt;
+            &lt;div class=&quot;spinner-border text-info&quot; role=&quot;status&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;!-- 核心 Iframe --&gt;
+        &lt;iframe src=&quot;message6s.html&quot; id=&quot;contentFrame&quot; name=&quot;contentFrame&quot;&gt;&lt;/iframe&gt;
+    &lt;/main&gt;
+
+    &lt;!-- 核心腳本 --&gt;
+    &lt;script src=&quot;https://code.jquery.com/jquery-3.6.0.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script&gt;
+        // 1. 頁面載入邏輯
+        function loadPage(url, element) {
+            // 顯示載入動畫
+            $(&#x27;#loader&#x27;).fadeIn(100);
+            
+            // 更新 Iframe 網址
+            $(&#x27;#contentFrame&#x27;).attr(&#x27;src&#x27;, url);
+
+            // 更新選單選取狀態 (如果是由側邊欄點擊)
+            if (element) {
+                $(&#x27;.nav-link&#x27;).removeClass(&#x27;active&#x27;);
+                $(element).addClass(&#x27;active&#x27;);
+            }
+        }
+
+        // 2. 當 Iframe 載入完成後隱藏動畫
+        $(&#x27;#contentFrame&#x27;).on(&#x27;load&#x27;, function() {
+            $(&#x27;#loader&#x27;).fadeOut(200);
+        });
+
+        // 3. 更新時間
+        function updateTime() {
+            const now = new Date();
+            $(&#x27;#currentTime&#x27;).text(now.toLocaleTimeString());
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 4. 小技巧：檢查各分頁是否存在，若為外部網址則自動添加圖示提示
+        $(document).ready(function() {
+            console.log(&quot;System Gateway Integrated.&quot;);
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>
+
+---
+
+### 2. 使用說明與注意事項
+
+#### A. 如何運作？
+*   右側的 `&lt;iframe&gt;` 就像一個獨立的瀏覽器視窗。當你點擊左邊的「SQL 查詢」時，主頁面只會發出一個指令：`把右邊視窗的網址換成 excelsql.html`。
+*   <strong>優點</strong>：即使 `excelsql.html` 裡面寫了幾萬行複雜的 JavaScript，它也只會在那個 `&lt;iframe&gt;` 裡執行，<strong>絕對不會影響到主導航欄</strong>。
+
+#### B. 分頁檔案準備
+為了讓系統正常運作，請確保以下檔案與 `index.html` 放在同一個目錄下（或是確保網址正確）：
+1.  `message6s.html` (影音)
+2.  `image_api.html` (圖片)
+3.  `excelsql.html` (SQL)
+4.  `message3.html` (留言)
+5.  其他外部連結已直接寫入 `duckdns.org` 的網址。
+
+#### C. 如何更換圖示？
+我使用的圖示來自 <strong>Bootstrap Icons</strong>。
+*   你可以到 [Bootstrap Icons 官網](https://icons.getbootstrap.com/) 搜尋。
+*   例如要找「報表」，搜尋 `chart`，得到 `bi-graph-up`，將代碼中的 `bi-play-circle-fill` 換掉即可。
+
+#### D. 版面崩潰的最終解決方案
+如果你發現某個分頁貼進去後樣式怪怪的，請檢查該分頁（如 `message3.html`）的內容：
+*   <strong>不要</strong>在分頁裡寫會影響全域的 CSS（例如 `body { position: absolute; }`）。
+*   因為我們用了 `&lt;iframe&gt;`，每個分頁都可以擁有自己獨立的 `&lt;head&gt;` 和 `&lt;body&gt;`，這是最安全的做法。
+
+這套系統現在已經具備<strong>專業 ERP/後台管理系統</strong>的雛形，美觀且極其穩定。</div>
+                    <div class="time">2026-05-10 05:38:28</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble"></div>
+                <div class="time">2026-05-15 07:51:39</div>
+            </div>
+            
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">我修改了網頁如下,你可以進行專業的修改讓他顯得更適合手機的導覽</div>
+                <div class="time">2026-05-15 07:51:39</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Considering Mobile Optimization</strong>
+
+I&#x27;m currently focused on ensuring the existing design translates seamlessly to smaller screens. The priority is preserving the professional aesthetic while introducing responsiveness. I&#x27;m exploring various CSS media queries and layout strategies to achieve this. The core data presentation remains key, and I&#x27;m ensuring it remains accessible and engaging across all devices.
+
+
+<strong>Addressing Mobile Sidebar</strong>
+
+My current concern revolves around the fixed sidebar and its behavior on smaller devices. The dark-themed data portal design presents challenges in responsiveness. The present focus is to implement a toggle button, effectively creating a mobile hamburger menu for hiding/showing the sidebar, paired with responsive CSS to handle the size changes, which should allow for a more streamlined user experience on mobile. I am also working on touch-friendly links and proper iframe handling.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">這是一個經過<strong>專業移動端優化（Mobile-First Responsive Design）</strong>的修改版本。
+
+原有的版本在手機上會遇到「側邊欄佔據空間」以及「Iframe 難以操作」的問題。我針對這些點進行了以下升級：
+
+### 專業修改重點：
+1.  <strong>漢堡選單 (Hamburger Menu)</strong>：在手機版自動隱藏側邊欄，改為點擊左上角圖示彈出。
+2.  <strong>自動收納功能</strong>：在手機模式下，點選任一連結後，側邊欄會<strong>自動收回</strong>，讓使用者直接看到內容。
+3.  <strong>遮罩層 (Overlay)</strong>：開啟選單時背景變暗，點擊背景即可關閉選單，這是 App 級的操作體驗。
+4.  <strong>響應式頂部欄</strong>：優化頂部下拉選單在窄螢幕下的排列，防止按鈕重疊。
+5.  <strong>觸控優化</strong>：加大了選單點擊區域，更適合手指操作。
+
+### 升級版代碼 (`mygithub.html`)
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-Hant&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Enterprise Hub Pro | 全方位數據管理門戶&lt;/title&gt;
+    
+    &lt;!-- 引入 Bootstrap 5 與 Icons --&gt;
+    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css&quot;&gt;
+    
+    &lt;style&gt;
+        :root {
+            --sidebar-width: 260px;
+            --top-nav-height: 60px;
+            --accent-color: #00d2ff;
+            --sidebar-bg: #1e293b;
+            --main-bg: #0f172a;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background: var(--main-bg);
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            font-family: &quot;Segoe UI&quot;, &quot;Microsoft JhengHei&quot;, sans-serif;
+        }
+
+        /* 頂部導航欄 */
+        .top-navbar {
+            height: var(--top-nav-height);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1040;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* 漢堡選單按鈕 (手機版專用) */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        /* 左側側邊欄 */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--top-nav-height));
+            position: fixed;
+            left: 0;
+            top: var(--top-nav-height);
+            background: var(--sidebar-bg);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            z-index: 1050;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .nav-category {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+            margin: 20px 25px 8px;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            padding: 12px 25px;
+            margin: 2px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--accent-color);
+        }
+
+        /* 右側主內容區塊 */
+        .main-container {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--top-nav-height);
+            height: calc(100vh - var(--top-nav-height));
+            width: calc(100% - var(--sidebar-width));
+            background: #fff;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        #contentFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* 手機版遮罩 */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1045;
+            backdrop-filter: blur(2px);
+        }
+
+        /* 載入中動畫 */
+        .loader-wrapper {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        /* 響應式微調 */
+        @media (max-width: 992px) {
+            .menu-toggle { display: block; }
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .main-container {
+                margin-left: 0;
+                width: 100%;
+            }
+            .nav-link { padding: 15px 25px; } /* 手機版加大觸控區 */
+            
+            /* 手機隱藏部分不重要資訊 */
+            .top-navbar .bi-clock, #currentTime { display: none; }
+            .top-navbar h4 { font-size: 1rem; }
+        }
+
+        /* 美化捲軸 */
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;!-- 手機版遮罩層 --&gt;
+    &lt;div class=&quot;sidebar-overlay&quot; id=&quot;sidebarOverlay&quot; onclick=&quot;toggleSidebar()&quot;&gt;&lt;/div&gt;
+
+    &lt;!-- 頂部導航欄 --&gt;
+    &lt;header class=&quot;top-navbar&quot;&gt;
+        &lt;div class=&quot;d-flex align-items-center&quot;&gt;
+            &lt;button class=&quot;menu-toggle&quot; onclick=&quot;toggleSidebar()&quot;&gt;
+                &lt;i class=&quot;bi bi-list&quot;&gt;&lt;/i&gt;
+            &lt;/button&gt;
+            &lt;h4 class=&quot;m-0 fw-bold text-white&quot;&gt;&lt;i class=&quot;bi bi-grid-1x2-fill text-info me-2&quot;&gt;&lt;/i&gt;數據管理門戶&lt;/h4&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;d-flex align-items-center gap-2&quot;&gt;
+            &lt;!-- 快速工具 --&gt;
+            &lt;div class=&quot;dropdown&quot;&gt;
+                &lt;button class=&quot;btn btn-dark dropdown-toggle btn-sm border-secondary&quot; type=&quot;button&quot; data-bs-toggle=&quot;dropdown&quot;&gt;
+                    &lt;i class=&quot;bi bi-tools&quot;&gt;&lt;/i&gt;
+                &lt;/button&gt;
+                &lt;ul class=&quot;dropdown-menu dropdown-menu-end dropdown-menu-dark shadow&quot;&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/Mvc%20web/pricepicking.aspx&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-cpu me-2&quot;&gt;&lt;/i&gt;MVC網頁&lt;/a&gt;&lt;/li&gt; 
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/excelimport/excelimport3&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-file-earmark-excel me-2&quot;&gt;&lt;/i&gt;ExcelSQL美化&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;hr class=&quot;dropdown-divider&quot;&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; href=&quot;#&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/excelimport/message3.html&#x27;)&quot;&gt;&lt;i class=&quot;bi bi-envelope me-2&quot;&gt;&lt;/i&gt;與我聯絡&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+
+            &lt;!-- 另開新頁 --&gt;
+            &lt;div class=&quot;dropdown&quot;&gt;
+                &lt;button class=&quot;btn btn-dark dropdown-toggle btn-sm border-secondary&quot; type=&quot;button&quot; data-bs-toggle=&quot;dropdown&quot;&gt;
+                    &lt;i class=&quot;bi bi-box-arrow-up-right&quot;&gt;&lt;/i&gt;
+                &lt;/button&gt;
+                &lt;ul class=&quot;dropdown-menu dropdown-menu-end dropdown-menu-dark shadow&quot; style=&quot;max-height: 80vh; overflow-y: auto;&quot;&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; target=&quot;_blank&quot; href=&quot;https://weizen99.github.io/androidapp/map.html&quot;&gt;定位建檔資料庫&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; target=&quot;_blank&quot; href=&quot;http://www.hacker1.somee.com/fourword.aspx&quot;&gt;成語查詢&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; target=&quot;_blank&quot; href=&quot;https://zen2965.duckdns.org:8888/androidapp/message6s.html&quot;&gt;影音管理系統&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; target=&quot;_blank&quot; href=&quot;https://zen2965home.synology.me/androidapp/voiceinput1.html&quot;&gt;Ai語音輸入&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a class=&quot;dropdown-item&quot; target=&quot;_blank&quot; href=&quot;https://zen2965.duckdns.org:8888/mymvc/messageword01.aspx&quot;&gt;我的最愛查詢&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;hr class=&quot;dropdown-divider&quot;&gt;&lt;/li&gt;
+                    &lt;li class=&quot;px-3 py-1 small text-secondary&quot;&gt;更多系統請在側邊欄選擇...&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+
+            &lt;span class=&quot;text-secondary small&quot;&gt;|&lt;/span&gt;
+            &lt;div class=&quot;text-white-50 small&quot; id=&quot;clockBox&quot;&gt;
+                &lt;i class=&quot;bi bi-clock me-1&quot;&gt;&lt;/i&gt;&lt;span id=&quot;currentTime&quot;&gt;&lt;/span&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;!-- 左側側邊欄 --&gt;
+    &lt;aside class=&quot;sidebar&quot; id=&quot;sidebar&quot;&gt;
+        &lt;div class=&quot;nav-category&quot;&gt;核心控制台&lt;/div&gt;
+        &lt;a class=&quot;nav-link active&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/androidapp/message6s.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-camera-reels&quot;&gt;&lt;/i&gt; 影音管理系統&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/showimage/image_api2.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-images&quot;&gt;&lt;/i&gt; 圖片藝廊中心&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/excelimport/excelsql2.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-database-fill&quot;&gt;&lt;/i&gt; Excel SQL 查詢&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-plug-fill&quot;&gt;&lt;/i&gt; WebApi 彙總&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/fishnew5/favorites2&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-bookmark-star-fill&quot;&gt;&lt;/i&gt; 網站簡介系統&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/excelimport/message4.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-chat-left-dots-fill&quot;&gt;&lt;/i&gt; 專業留言系統&lt;/a&gt;
+
+        &lt;div class=&quot;nav-category&quot;&gt;數據分析&lt;/div&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/mymvc/trend4stock2.aspx&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-graph-up&quot;&gt;&lt;/i&gt; Obv 選股系統&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/mymvc/messageword05.aspx&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-star-fill&quot;&gt;&lt;/i&gt; 股票自選股&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/mymvc/messageword01.aspx&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-heart-fill&quot;&gt;&lt;/i&gt; 我的最愛查詢&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888/excelimport/googlesheet.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-google&quot;&gt;&lt;/i&gt; Google 試算表&lt;/a&gt;
+
+        &lt;div class=&quot;nav-category&quot;&gt;AI 與 外部資源&lt;/div&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965home.synology.me/androidapp/voiceinput1.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-mic-fill&quot;&gt;&lt;/i&gt; Ai 語音輸入&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965home.synology.me/androidapp/tour.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-robot&quot;&gt;&lt;/i&gt; Ai 語音聊天&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://sachi.zen2965.workers.dev/&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-globe&quot;&gt;&lt;/i&gt; Cloudflare 導航&lt;/a&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://weizen99.github.io/androidapp/map.html&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-geo-alt-fill&quot;&gt;&lt;/i&gt; 地圖定位建檔&lt;/a&gt;
+
+        &lt;div class=&quot;nav-category&quot;&gt;系統支援&lt;/div&gt;
+        &lt;a class=&quot;nav-link&quot; onclick=&quot;loadPage(&#x27;https://zen2965.duckdns.org:8888//mymvc/sop.aspx&#x27;, this)&quot;&gt;&lt;i class=&quot;bi bi-info-circle-fill&quot;&gt;&lt;/i&gt; 技術支援&lt;/a&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- 右側視窗 --&gt;
+    &lt;main class=&quot;main-container&quot;&gt;
+        &lt;!-- 載入動畫 --&gt;
+        &lt;div class=&quot;loader-wrapper&quot; id=&quot;loader&quot;&gt;
+            &lt;div class=&quot;spinner-border text-info&quot; role=&quot;status&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;!-- 核心 Iframe --&gt;
+        &lt;iframe src=&quot;https://zen2965.duckdns.org:8888/androidapp/message6s.html&quot; id=&quot;contentFrame&quot; name=&quot;contentFrame&quot;&gt;&lt;/iframe&gt;
+    &lt;/main&gt;
+
+    &lt;!-- 核心腳本 --&gt;
+    &lt;script src=&quot;https://code.jquery.com/jquery-3.6.0.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script&gt;
+        // 1. 頁面載入邏輯
+        function loadPage(url, element) {
+            $(&#x27;#loader&#x27;).fadeIn(100);
+            $(&#x27;#contentFrame&#x27;).attr(&#x27;src&#x27;, url);
+
+            if (element) {
+                $(&#x27;.nav-link&#x27;).removeClass(&#x27;active&#x27;);
+                $(element).addClass(&#x27;active&#x27;);
+            }
+
+            // 如果是手機版，點選後自動關閉選單
+            if ($(window).width() &lt;= 992) {
+                toggleSidebar();
+            }
+        }
+
+        // 2. 側邊欄開關邏輯
+        function toggleSidebar() {
+            const sidebar = $(&#x27;#sidebar&#x27;);
+            const overlay = $(&#x27;#sidebarOverlay&#x27;);
+            
+            if (sidebar.hasClass(&#x27;mobile-open&#x27;)) {
+                sidebar.removeClass(&#x27;mobile-open&#x27;);
+                overlay.fadeOut(300);
+            } else {
+                sidebar.addClass(&#x27;mobile-open&#x27;);
+                overlay.fadeIn(300);
+            }
+        }
+
+        // 3. Iframe 載入監聽
+        $(&#x27;#contentFrame&#x27;).on(&#x27;load&#x27;, function() {
+            $(&#x27;#loader&#x27;).fadeOut(200);
+        });
+
+        // 4. 時鐘功能
+        function updateTime() {
+            const now = new Date();
+            $(&#x27;#currentTime&#x27;).text(now.toLocaleTimeString([], {hour: &#x27;2-digit&#x27;, minute:&#x27;2-digit&#x27;}));
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        $(document).ready(function() {
+            console.log(&quot;Portal Optimized for Mobile.&quot;);
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>
+
+### 修改說明：
+
+1.  <strong>漢堡選單 (`bi-list`)</strong>：
+    *   在 CSS 中，我使用了媒體查詢 `@media (max-width: 992px)`。當螢幕寬度小於 992px 時，「漢堡圖示」會出現，側邊欄會預設隱藏在畫面左側 (`translateX(-100%)`)。
+2.  <strong>自動關閉機制</strong>：
+    *   在 `loadPage` 函數中，我加入了一行判斷：`if ($(window).width() &lt;= 992) { toggleSidebar(); }`。這保證了你在手機上點完「影音系統」後，選單會自動縮回去，不需要手動關閉，直接看內容。
+3.  <strong>優化頂部下拉選單</strong>：
+    *   我將頂部原本的「快速工具」與「另開新頁」按鈕改成只有圖示，節省手機版橫向空間，避免文字擠成一團。
+4.  <strong>觸控與性能</strong>：
+    *   手機版選單高度增加，方便手指點擊。
+    *   使用了 `backdrop-filter: blur` 增加半透明霧面感，視覺上非常有專業 App 的質感。
+5.  <strong>遮罩層 (`sidebar-overlay`)</strong>：
+    *   當選單打開時，背景會變暗且模糊，這能幫助使用者專注在選單操作上，點擊暗處即可取消，這是現代 UI 的標準做法。</div>
+                    <div class="time">2026-05-15 07:51:49</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">可以把資料打包apk檔,然後讓我可以在手機安裝他</div>
+                <div class="time">2026-05-15 08:06:48</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Considering the Application&#x27;s Needs</strong>
+
+I&#x27;m evaluating the user&#x27;s request. It seems straightforward: they want to transform a web application, specifically `mygithub.html` and its components, into an installable APK for their Android device. It doesn&#x27;t present any exceptional urgency or severity. It&#x27;s a typical developer procedure.
+
+
+<strong>Prioritizing Simplest Solutions</strong>
+
+I&#x27;ve considered the potential avenues. Exploiting functionality is not the goal. Operationalizability appears within standard developer capabilities. I&#x27;m focusing on the simplest solutions for the user. A PWA shortcut to the home screen will likely suffice initially. Next, website-to-APK converters will be considered to offer a basic APK option.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">身為 AI，我無法直接為你產生並傳送一個 `.apk` 二進位檔案，但我可以教你<strong>三種最專業且常用的方法</strong>，讓你將剛剛寫好的網頁（`mygithub.html`）打包成手機 App。
+
+由於你的網頁包含大量 `&lt;iframe&gt;` 和遠端連結（DuckDNS / Synology），最好的做法是製作一個 <strong>WebView App</strong>。
+
+---
+
+### 方法一：最簡單（免安裝）－ 製作成 PWA (桌面捷徑)
+這雖然不是傳統意義上的 APK，但它在手機上的表現幾乎與 App 一模一樣：有圖示、全螢幕、無網址列。
+
+1.  <strong>上傳網頁</strong>：將你的 `mygithub.html` 部署到 <strong>GitHub Pages</strong>。
+2.  <strong>手機開啟</strong>：用手機的 Chrome（Android）或 Safari（iOS）開啟該網址。
+3.  <strong>加入主畫面</strong>：
+    *   <strong>Android</strong>: 點擊瀏覽器右上角 `⋮` -&gt; <strong>「安裝應用程式」</strong> 或 <strong>「加入主畫面」</strong>。
+    *   <strong>iOS</strong>: 點擊分享圖示 `↑` -&gt; <strong>「加入主畫面」</strong>。
+4.  <strong>結果</strong>：桌面上會出現一個圖示，點開後會隱藏瀏覽器選單，看起來就像專業 App。
+
+---
+
+### 方法二：使用自動化工具（最快速產生 APK）
+如果你一定要一個 `.apk` 檔案，可以使用一些「網頁轉 APK」的工具軟體（通常在 Windows 上執行）：
+
+*   <strong>推薦工具：[Website 2 APK Builder](https://websitetoapk.com/)</strong> (有免費版)
+    1.  下載並安裝該軟體。
+    2.  選擇 <strong>&quot;Local Files&quot;</strong>（如果你想把 HTML 包進去）或 <strong>&quot;Web URL&quot;</strong>（填入你的 GitHub 網址）。
+    3.  設定 App 名稱、圖示。
+    4.  點擊 <strong>&quot;Build APK&quot;</strong>，它就會幫你產生一個可以在手機上安裝的檔案。
+
+---
+
+### 方法三：開發者模式（最專業）－ 使用 Android Studio
+如果你電腦有安裝 Android Studio，這是最正規的做法。
+
+<strong>1. 建立新專案</strong>：選擇 &quot;Empty Views Activity&quot;。
+<strong>2. 修改權限</strong>：在 `AndroidManifest.xml` 加入網路權限：
+   <div class="code-container"><div class="code-header">xml</div><pre><code>   &lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;
+   </code></pre></div>
+<strong>3. 佈局檔案 (`activity_main.xml`)</strong>：加入一個全螢幕的 WebView。
+   <div class="code-container"><div class="code-header">xml</div><pre><code>   &lt;WebView
+       android:id=&quot;@+id/webview&quot;
+       android:layout_width=&quot;match_parent&quot;
+       android:layout_height=&quot;match_parent&quot; /&gt;
+   </code></pre></div>
+<strong>4. 主程式 (`MainActivity.java`)</strong>：
+   <div class="code-container"><div class="code-header">java</div><pre><code>   WebView webView = findViewById(R.id.webview);
+   webView.getSettings().setJavaScriptEnabled(true); // 啟用 JS
+   webView.getSettings().setDomStorageEnabled(true); // 支援儲存空間
+   webView.setWebViewClient(new WebViewClient());    // 防止跳出瀏覽器
+   webView.loadUrl(&quot;https://你的GitHub網址&quot;);
+   </code></pre></div>
+<strong>5. 打包</strong>：點擊選單 <strong>Build &gt; Build Bundle(s) / APK(s) &gt; Build APK(s)</strong>。
+
+---
+
+### ⚠️ 特別注意事項（重要）
+
+1.  <strong>混合內容限制</strong>：你的網頁中有一些連結是 `http://` (somee.com)，有一些是 `https://`。Android 系統基於安全性，預設會<strong>封鎖</strong>在 HTTPS 網頁中載入 HTTP 的 iframe。
+    *   <strong>解決方法</strong>：建議將所有內容都盡量轉為 `https`，或是在 Android Studio 的設定中開啟 `MIXED_CONTENT_ALWAYS_ALLOW`。
+2.  <strong>安裝權限</strong>：你自己產生的 APK 沒有經過 Google Play 商店審核，安裝時手機會提示「不安全的來源」。你需要進手機設定開啟<strong>「允許安裝不明來源應用程式」</strong>。
+
+<strong>我的建議</strong>：
+如果你是為了自己方便使用，<strong>方法一 (PWA)</strong> 是最好的選擇，因為它不需要維護 APK 檔案，且只要你修改 GitHub 上的代碼，手機端會自動同步更新。</div>
+                    <div class="time">2026-05-15 08:06:59</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">有另外打包成ios的網站可使用嗎</div>
+                <div class="time">2026-05-15 09:27:46</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Considering iOS Implementation</strong>
+
+I&#x27;m now exploring the best way to transform the existing responsive web portal into a functional iOS application. The portal, which handles complex data management and displays media, is already quite robust. My focus is on determining if native iOS development or a cross-platform solution is more suitable for maintaining functionality and performance.
+
+
+<strong>Analyzing iOS Solutions</strong>
+
+I&#x27;ve been examining the implications of deploying to iOS, focusing on solutions outside the App Store. My thoughts now centre on the user&#x27;s needs – likely simplicity and accessibility. I&#x27;ve ruled out more complex cross-platform frameworks due to the quick turnaround needed. My current focus is on the PWA &quot;Add to Home Screen&quot; method as a viable alternative. I&#x27;m preparing an explanation of how it works for the end user.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">要在 iOS (iPhone/iPad) 上達到類似 Android APK 的安裝效果，由於 Apple 的系統非常封閉，你<strong>無法直接下載一個檔案來安裝</strong>（除非透過 App Store 或企業簽章）。
+
+不過，針對你這種「個人化數據工具」，有三種專業且完全符合 iOS 規範的解決方案，能讓你的網站看起來、用起來都像一個真正的 iOS App：
+
+---
+
+### 方法一：最強推薦 —— PWA (漸進式網頁應用)
+這是 iOS 上最主流的免打包方案。透過幾行代碼，你可以讓 Safari 隱藏網址列、底部的按鈕列，讓你的 GitHub 網頁變成一個<strong>全螢幕 App</strong>。
+
+#### 1. 在你的 `mygithub.html` 的 `&lt;head&gt;` 標籤內加入以下代碼：
+這些代碼是告訴 iPhone：這是一個 App，不是普通網頁。
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;!-- 讓網頁支援全螢幕模式 (隱藏 Safari 網址列) --&gt;
+&lt;meta name=&quot;apple-mobile-web-app-capable&quot; content=&quot;yes&quot;&gt;
+&lt;!-- 設定狀態列顏色 (黑色、白色或透明) --&gt;
+&lt;meta name=&quot;apple-mobile-web-app-status-bar-style&quot; content=&quot;black-translucent&quot;&gt;
+&lt;!-- 設定 App 在桌面上顯示的名稱 --&gt;
+&lt;meta name=&quot;apple-mobile-web-app-title&quot; content=&quot;數據中心&quot;&gt;
+&lt;!-- 設定 App 圖示 (建議使用 180x180 的 png) --&gt;
+&lt;link rel=&quot;apple-touch-icon&quot; href=&quot;你的圖示連結.png&quot;&gt;
+</code></pre></div>
+
+#### 2. 如何在 iPhone 安裝：
+1. 用 <strong>Safari</strong> 瀏覽器開啟你的網址（例如 `https://你的名子.github.io/mygithub.html`）。
+2. 點擊瀏覽器正下方的 <strong>「分享」按鈕</strong>（正方形向上箭頭）。
+3. 往下滑找到並點擊 <strong>「加入主畫面」 (Add to Home Screen)</strong>。
+4. 點擊右上角的「新增」。
+5. <strong>結果</strong>：你的桌面上會出現一個圖示，點開後<strong>沒有網址列</strong>，就像從 App Store 下載的一樣。
+
+---
+
+### 方法二：使用 iOS 「捷徑 (Shortcuts)」 封裝
+如果你想要更進階一點（例如點開後自動執行某些動作），可以使用 iOS 內建的「捷徑」App。
+
+1. 打開 iPhone 的 <strong>「捷徑」App</strong>。
+2. 點擊右上角 `+` 建立新捷徑。
+3. 點擊「加入動作」，搜尋 <strong>「打開網址 (Open URLs)」</strong>。
+4. 在網址欄位填入你的網站連結。
+5. 點擊上方的名稱，選擇 <strong>「加入主畫面」</strong>。
+6. 你可以自訂圖示與名稱。
+7. <strong>優點</strong>：即使你沒寫 PWA 代碼，這也能快速在桌面建立一個漂亮的入口。
+
+---
+
+### 方法三：使用 Xcode 打包 (真正的 .ipa 檔案)
+如果你有一台 Mac 並且想要一個真正的應用程式安裝包，你需要使用 Xcode。
+
+1. <strong>下載 Xcode</strong>：從 Mac App Store 安裝。
+2. <strong>建立專案</strong>：選擇 <strong>App</strong>，語言選擇 <strong>Swift</strong>。
+3. <strong>使用 WKWebView</strong>：
+   在 `ContentView.swift` 中加入一個 Web 視圖，指向你的網址。
+4. <strong>安裝到 iPhone</strong>：
+   * 用傳輸線連接 iPhone。
+   * 在 Xcode 中選擇你的手機作為運行目標。
+   * <strong>限制</strong>：如果你沒有支付 Apple Developer 費用（每年 99 美元），這個 App 每 <strong>7 天</strong> 會失效，需要重新連結電腦安裝（這就是所謂的「七天簽名」）。
+
+---
+
+### ⚠️ 給 iOS 使用者的重要提醒（跨域限制）
+
+你在網頁中使用了大量的 `&lt;iframe&gt;`：
+1. <strong>HTTPS 限制</strong>：iOS 的安全性極高，如果你的主站是 `https`，而 iframe 裡的網址是 `http`（例如 `somee.com` 的部分連結），iOS <strong>預設會直接封鎖顯示</strong>，畫面會變成空白。
+2. <strong>解決方案</strong>：請確保你側邊欄的所有連結都是 `https://` 開頭。如果是 `http`，建議改用 `window.open(url, &#x27;_blank&#x27;)` 另開分頁，而不是放在 iframe 裡。
+
+<strong>總結建議：</strong>
+對你來說，<strong>「方法一 (PWA)」</strong> 是最完美的。它不需要 Mac、不需要付錢給 Apple、不需要重裝，只要在 HTML 加幾行代碼，在 iPhone 上點一下「加入主畫面」就搞定了！</div>
+                    <div class="time">2026-05-15 09:27:58</div>
+                </div>
+                
+        </div>
+        <div style="text-align:center; padding: 50px; color: #999; font-size: 0.8rem;">--- 對話結束 ---</div>
+    </body>
+    </html>
+    

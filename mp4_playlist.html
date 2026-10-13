@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的影片播放清單</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", Arial; background: #121212; color: #e0e0e0; margin: 0; padding: 0; }
+        .player-container { position: sticky; top: 0; background: #000; padding: 10px; z-index: 1000; text-align: center; border-bottom: 1px solid #333; }
+        video { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: #000; }
+        #nowPlaying { margin-top: 10px; font-size: 14px; color: #ff4d4d; height: 20px; }
+        .list-container { padding: 10px; }
+        .video-item { background: #1e1e1e; margin-bottom: 5px; padding: 12px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; border: 1px solid #333; }
+        .video-item:hover { background: #333; }
+        .play-icon { margin-right: 12px; color: #ff4d4d; }
+        .video-name { font-size: 14px; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <video id="mainPlayer" controls playsinline>
+            <source id="videoSource" src="" type="video/mp4">
+        </video>
+        <div id="nowPlaying">請選擇影片播放</div>
+    </div>
+    <div class="list-container">
+
+        <div class="video-item" onclick="playVideo('vedio1/%23%E6%B8%85%E6%B4%81%E5%A6%99%E6%8B%9B%20%23%E7%94%9F%E6%B4%BB%E5%B0%8F%E5%A6%99%E6%8B%9B%20%23%E5%8D%AB%E7%94%9F%E9%97%B4%E6%B8%85%E6%B4%81%20%23%E5%8D%AB%E7%94%9F%E9%97%B4%20%23%E6%B1%A1%E6%B8%8D%E8%BD%BB%E6%9D%BE%E5%8E%BB%E9%99%A4.mp4', '#清洁妙招 #生活小妙招 #卫生间清洁 #卫生间 #污渍轻松去除.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">#清洁妙招 #生活小妙招 #卫生间清洁 #卫生间 #污渍轻松去除.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%23%E7%94%9F%E6%B4%BB%E5%B0%8F%E5%A6%99%E6%8B%9B%20%23%E7%94%9F%E6%B4%BB%E5%B0%8F%E6%8A%80%E5%B7%A7%20%23%E7%94%9F%E6%B4%BB%E5%B0%8F%E7%AA%8D%E9%97%A8.mp4', '#生活小妙招 #生活小技巧 #生活小窍门.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">#生活小妙招 #生活小技巧 #生活小窍门.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/10000000_522341222298871_9064572427632848562_n.mp4', '10000000_522341222298871_9064572427632848562_n.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">10000000_522341222298871_9064572427632848562_n.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/1543100.t.mp4', '1543100.t.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">1543100.t.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/168356.t.mp4', '168356.t.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">168356.t.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/197237546_1128964554238242_545777383417838155_n.mp4', '197237546_1128964554238242_545777383417838155_n.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">197237546_1128964554238242_545777383417838155_n.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/2020%E5%B9%B4%E5%8C%97%E6%96%B0%E9%81%8B%E5%8B%95%E6%9C%83.mp4', '2020年北新運動會.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">2020年北新運動會.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/233382.t.mp4', '233382.t.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">233382.t.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/2504.t.mp4', '2504.t.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">2504.t.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/278686562_540867150721465_8845147927268066913_n.mp4', '278686562_540867150721465_8845147927268066913_n.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">278686562_540867150721465_8845147927268066913_n.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/325551.t.mp4', '325551.t.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">325551.t.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/37670.t.mp4', '37670.t.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">37670.t.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/602479270.612005.mp4', '602479270.612005.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">602479270.612005.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/602852689.046255.mp4', '602852689.046255.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">602852689.046255.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/6053.t.mp4', '6053.t.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">6053.t.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/622515998.636876.mp4', '622515998.636876.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">622515998.636876.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/kitchen%20space%20design%20_%20%20%23shorts%20%23housedesign.mp4', 'kitchen space design _  #shorts #housedesign.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">kitchen space design _  #shorts #housedesign.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20Atlantis%20Is%20Calling%20%28S.O.S.%20For%20Love%29%20%28Official%20Music%20Video%29.mp4', 'Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20Brother%20Louie%20%28Official%20Music%20Video%29.mp4', 'Modern Talking - Brother Louie (Official Music Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - Brother Louie (Official Music Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20Cheri%20Cheri%20Lady%20%28Official%20Music%20Video%29.mp4', 'Modern Talking - Cheri Cheri Lady (Official Music Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - Cheri Cheri Lady (Official Music Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20Geronimo%27s%20Cadillac%20%28Official%20Music%20Video%29.mp4', 'Modern Talking - Geronimo\'s Cadillac (Official Music Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - Geronimo's Cadillac (Official Music Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20You%27re%20My%20Heart%2C%20You%27re%20My%20Soul%20%28Official%20Music%20Video%29.mp4', 'Modern Talking - You\'re My Heart, You\'re My Soul (Official Music Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - You're My Heart, You're My Soul (Official Music Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Small%20bedroom%20design%20_%20smal%20l%20room%20design%20_%20%20%23house%20%20%23shorts.mp4', 'Small bedroom design _ smal l room design _  #house  #shorts.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Small bedroom design _ smal l room design _  #house  #shorts.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/y2mate.com%20-%20%E7%9C%8B%E8%A6%8B%E5%8F%B0%E7%81%A3%E4%B9%8B%E7%BE%8E_u5Rjaj1d5P4_1080p.mp4', 'y2mate.com - 看見台灣之美_u5Rjaj1d5P4_1080p.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">y2mate.com - 看見台灣之美_u5Rjaj1d5P4_1080p.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B8%89%E7%94%9F%E7%9F%B3%E4%B8%8B.mp4', '三生石下.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">三生石下.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%82%B7%E5%BF%83%E7%9A%84%E7%B7%A3.mp4', '傷心的緣.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">傷心的緣.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%9C%9F%E5%91%B3%E6%83%85%E8%A9%B1.mp4', '土味情話.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">土味情話.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%A4%A7%E8%A1%A3%E8%85%B0%E5%B8%A6%E7%B3%BB%E6%B3%95%23%E7%94%9F%E6%B4%BB%E5%B0%8F%E5%A6%99%E6%8B%9B%23%E7%94%9F%E6%B4%BB%E5%B0%8F%E5%A6%99%E6%8B%9B%23%E7%94%9F%E6%B4%BB%E7%AA%8D%E9%97%A8%23%E7%94%9F%E6%B4%BB%E5%B0%8F%E6%8A%80%E5%B7%A7%20%E6%AF%8F%E6%97%A5%E6%9B%B4%E6%96%B0.mp4', '大衣腰带系法#生活小妙招#生活小妙招#生活窍门#生活小技巧 每日更新.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">大衣腰带系法#生活小妙招#生活小妙招#生活窍门#生活小技巧 每日更新.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%B0%8F%E6%8A%80%E5%B7%A7%E5%A4%A7%E5%A6%99%E7%94%A8%20%23shorts.mp4', '小技巧大妙用 #shorts.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">小技巧大妙用 #shorts.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%BF%83%E8%82%9D%E7%84%A1%E4%BA%BA%E7%96%BC.mp4', '心肝無人疼.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">心肝無人疼.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%92%A9%E5%A6%B9%E9%AB%98%E6%89%8B.mp4', '撩妹高手.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">撩妹高手.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%92%A9%E5%A6%B9%E9%AB%98%E6%89%8B2.mp4', '撩妹高手2.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">撩妹高手2.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%92%A9%E5%A6%B9%E9%AB%98%E6%89%8B3.mp4', '撩妹高手3.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">撩妹高手3.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%92%A9%E5%A6%B9%E9%AB%98%E6%89%8B4.mp4', '撩妹高手4.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">撩妹高手4.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%92%A9%E5%A6%B9%E9%AB%98%E6%89%8B5.mp4', '撩妹高手5.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">撩妹高手5.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%92%A9%E5%A6%B9%E9%AB%98%E6%89%8B6.mp4', '撩妹高手6.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">撩妹高手6.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%98%A5%E9%A2%A8%E6%88%80%E6%83%85.mp4', '春風戀情.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">春風戀情.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%AF%9B%E7%AD%86%E5%B0%8F%E5%A4%A9%E6%89%8D.mp4', '毛筆小天才.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">毛筆小天才.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%94%A8%E4%B8%80%E7%94%9F%E7%AD%89%E5%BE%85.mp4', '用一生等待.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">用一生等待.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%80%81%E9%96%A3%E4%B8%BB%E7%9A%84%E8%A9%B1.mp4', '老閣主的話.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">老閣主的話.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%8A%B1%E5%BC%8F%E6%92%A9%E5%A6%B9.mp4', '花式撩妹.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">花式撩妹.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%96%9B%E4%B8%81%E5%B1%B1%E7%89%87%E9%A0%AD%E7%89%87%E5%B0%BE.mp4', '薛丁山片頭片尾.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">薛丁山片頭片尾.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E9%A1%8F%E8%A9%A0%E6%BD%94%E5%85%AC%E8%BB%8A%E4%B8%80%E6%97%A5%E8%A1%8C.mp4', '顏詠潔公車一日行.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">顏詠潔公車一日行.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E9%A1%8F%E8%A9%A0%E6%BD%94%E6%8B%86%E8%A7%A3%E9%9B%BB%E9%A2%A8%E6%89%87.mp4', '顏詠潔拆解電風扇.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">顏詠潔拆解電風扇.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/trend%E4%BD%BF%E7%94%A8%E8%AA%AA%E6%98%8E.mp4', 'trend使用說明.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">trend使用說明.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/HITA%20-%20%E8%B5%A4%E4%BC%B6%E3%80%8C%E6%83%85%E5%AD%97%E9%9B%A3%E8%90%BD%E5%A2%A8%EF%BC%8C%E5%A5%B9%E5%94%B1%E9%A0%88%E4%BB%A5%E8%A1%80%E4%BE%86%E5%92%8C%E3%80%82%E3%80%8D%5B%20High%20Quality%20Lyrics%20%5D%5B%20Chinese%20Style%20%5D%20tk%E6%8E%A8%E8%96%A6.mp4', 'HITA - 赤伶「情字難落墨，她唱須以血來和。」[ High Quality Lyrics ][ Chinese Style ] tk推薦.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">HITA - 赤伶「情字難落墨，她唱須以血來和。」[ High Quality Lyrics ][ Chinese Style ] tk推薦.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Krewella%20-%20Come%20And%20Get%20It%20%28Razihel%20Remix%29%20%5BFree%5D.mp4', 'Krewella - Come And Get It (Razihel Remix) [Free].mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Krewella - Come And Get It (Razihel Remix) [Free].mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/LBI%E5%88%A9%E6%AF%94%20-%20%E5%B0%8F%E5%9F%8E%E5%A4%8F%E5%A4%A9%E3%80%8E%E6%A9%98%E9%BB%83%E8%89%B2%E7%9A%84%E6%97%A5%E8%90%BD%20%E5%90%9E%E6%B2%92%E5%9C%A8%E6%B5%B7%E5%B9%B3%E7%B7%9A%E3%80%8F%E3%80%90Lyrics%20Video%E3%80%91.mp4', 'LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/MV%E8%8A%B1%E5%83%AE%E3%80%8A%E6%B8%A1%E6%88%91%E4%B8%8D%E6%B8%A1%E5%A5%B9%E3%80%8B%EF%BC%8C%E6%AD%8C%E5%A3%B0%E5%87%84%E7%BE%8E%E4%BC%A4%E6%84%9F%EF%BC%8C%E5%90%AC%E5%85%A5%E4%BA%86%E5%BF%83.mp4', 'MV花僮《渡我不渡她》，歌声凄美伤感，听入了心.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">MV花僮《渡我不渡她》，歌声凄美伤感，听入了心.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/NightCore%20Alibi%20%28Krewella%29%EF%BC%88%E9%99%84%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AD%AF%EF%BC%89.mp4', 'NightCore Alibi (Krewella)（附中文翻譯）.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">NightCore Alibi (Krewella)（附中文翻譯）.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/pro%20-%20%E7%AD%89%E4%B8%8D%E4%BE%86%E8%8A%B1%E9%96%8B%E3%80%8C%E6%88%91%E5%80%91%E7%9A%84%E6%84%9B%20%E5%B0%B1%E5%83%8F%E7%A7%8B%E8%91%89%E7%AD%89%E4%B8%8D%E5%88%B0%E8%8A%B1%E9%96%8B%E3%80%8D%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9EPinyinLyrics%E3%80%91%E2%99%AA.mp4', 'pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/PSY%20-ft.%20HYUNA-%20-%20%EC%98%A4%EB%B9%A4%20%EB%94%B1%20%EB%82%B4%20%EC%8A%A4%ED%83%80%EC%9D%BC%20MV.mp4', 'PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Skillet%20-%20_Feel%20Invincible_%20%5BOfficial%20Music%20Video%5D.mp4', 'Skillet - _Feel Invincible_ [Official Music Video].mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Skillet - _Feel Invincible_ [Official Music Video].mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Sold%20Out%E3%80%8A%E7%84%A1%E7%95%8F%E5%90%91%E5%89%8D%E3%80%8B%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AD%AF%20Hawk%20Nelson__%E7%95%B6%E9%BC%93%E9%BB%9E%E8%90%BD%E4%B8%8B%E6%99%82%EF%BC%8C%E4%BD%A0%E6%88%91%E9%83%BD%E5%9B%9E%E4%B8%8D%E4%BA%86%E9%A0%AD%E4%BA%86.mp4', 'Sold Out《無畏向前》中文翻譯 Hawk Nelson__當鼓點落下時，你我都回不了頭了.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Sold Out《無畏向前》中文翻譯 Hawk Nelson__當鼓點落下時，你我都回不了頭了.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Song%20Voyage%20Chicken%20Attack%20%E9%9B%9E%E9%9B%9E%E6%94%BB%E6%93%8A%20-%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AD%AF%E7%89%88-.mp4', 'Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版-.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版-.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A2021%E6%8A%96%E9%9F%B3%E5%90%88%E9%9B%86%E3%80%8B%20%E4%B8%80%E6%9C%88%E4%BB%BD%E7%83%AD%E9%97%A8%E6%AD%8C%E6%9B%B2%E6%80%BB%E7%BB%93%20%E6%9C%80%E7%81%AB%E6%9C%80%E7%83%AD%E9%97%A8%E6%B4%97%E8%84%91%E6%8A%96%E9%9F%B3%E6%AD%8C%E6%9B%B2%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E5%BE%AA%E7%8E%AF%E6%92%AD%E6%94%BE%20%EF%BC%81.mp4', '《2021抖音合集》 一月份热门歌曲总结 最火最热门洗脑抖音歌曲【動態歌詞】循环播放 ！.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《2021抖音合集》 一月份热门歌曲总结 最火最热门洗脑抖音歌曲【動態歌詞】循环播放 ！.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E4%BC%AF%E8%99%8E%E8%AF%B4%E3%80%8B%E2%80%94%E4%BC%AF%E7%88%B5%20Johnny_%E5%94%90%E4%BC%AF%E8%99%8E%20Annie%20%EF%BC%88%E6%97%A0rap%E7%89%88%EF%BC%89%E9%99%84%E5%B8%A6%E6%AD%8C%E8%AF%8D%E3%80%8C%E6%98%8E%E6%9C%88%E4%B8%87%E5%B9%B4%E6%97%A0%E5%89%8D%E8%BA%AB%EF%BC%8C%E7%85%A7%E8%A7%81%E5%8F%A4%E4%BB%8A%E7%8B%AC%E9%86%92%E4%BA%BA%EF%BC%8C%E5%85%AC%E5%AD%90%E7%8E%8B%E5%AD%99%E4%BD%95%E5%BF%85%E9%97%AE%EF%BC%8C%E8%99%9A%E5%BA%A6%E6%88%91%E9%9D%92%E6%98%A5%E3%80%82%E3%80%8D.mp4', '《伯虎说》—伯爵 Johnny_唐伯虎 Annie （无rap版）附带歌词「明月万年无前身，照见古今独醒人，公子王孙何必问，虚度我青春。」.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《伯虎说》—伯爵 Johnny_唐伯虎 Annie （无rap版）附带歌词「明月万年无前身，照见古今独醒人，公子王孙何必问，虚度我青春。」.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E5%8F%AF%E5%8F%AF%E6%89%98%E6%B5%B7%E7%9A%84%E7%89%A7%E7%BE%8A%E4%BA%BA%E3%80%8B%E7%9A%84%E7%9C%9F%E6%AD%A3%E5%8E%9F%E5%94%B1%EF%BC%8C%E9%85%8D%E4%B8%8A%E2%80%9C%E5%8E%9F%E7%94%9F%E6%80%81%E2%80%9D%E7%9A%84%E4%B8%81%E7%9C%9F%EF%BC%8C%E8%B6%85%E7%BE%8E.mp4', '《可可托海的牧羊人》的真正原唱，配上“原生态”的丁真，超美.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《可可托海的牧羊人》的真正原唱，配上“原生态”的丁真，超美.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E5%AD%A4%E5%8B%87%E8%80%85%E3%80%8B%EF%BC%88%E3%80%8A%E8%8B%B1%E9%9B%84%E8%81%AF%E7%9B%9F%EF%BC%9A%E9%9B%99%E5%9F%8E%E4%B9%8B%E6%88%B0%E3%80%8B%E5%8B%95%E7%95%AB%E5%8A%87%E9%9B%86%E4%B8%AD%E6%96%87%E4%B8%BB%E9%A1%8C%E6%9B%B2%EF%BC%89%E9%99%B3%E5%A5%95%E8%BF%85%20Eason%20Chan%20-Official%20MV-.mp4', '《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV-.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV-.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E6%97%B6%E4%B9%8B%E6%AD%8C-%E8%8A%B1%E4%B8%8E%E7%84%B0%E7%9A%84%E7%8B%82%E6%83%B3%E8%AF%97%E3%80%8BOP%E3%80%8A%E9%BB%91%E7%84%B0%E3%80%8B%E5%AE%8C%E6%95%B4%E7%89%88%E5%85%AC%E5%B8%83%EF%BC%81Song%20of%20Time%20Opening%20Full%20Version%21.mp4', '《时之歌-花与焰的狂想诗》OP《黑焰》完整版公布！Song of Time Opening Full Version!.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《时之歌-花与焰的狂想诗》OP《黑焰》完整版公布！Song of Time Opening Full Version!.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E6%B5%B7%E5%BA%95%E3%80%8B%E5%87%A4%E5%87%B0%E4%BC%A0%E5%A5%87%20%E2%80%9C%E7%9C%BC%E6%B3%AA%E6%B2%A1%E6%9C%89%E5%A3%B0%E9%9F%B3%EF%BC%8C%E4%BD%86%E6%88%91%E6%83%B3%E6%8A%B1%E7%B4%A7%E4%BD%A0%E2%80%9D%E3%80%8A%E4%B8%BA%E6%AD%8C%E8%80%8C%E8%B5%9E%E3%80%8BCUT%20_%E6%B5%99%E6%B1%9F%E5%8D%AB%E8%A7%86%E5%AE%98%E6%96%B9HD_.mp4', '《海底》凤凰传奇 “眼泪没有声音，但我想抱紧你”《为歌而赞》CUT _浙江卫视官方HD_.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《海底》凤凰传奇 “眼泪没有声音，但我想抱紧你”《为歌而赞》CUT _浙江卫视官方HD_.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E7%8A%AC%E5%A4%9C%E5%8F%89%E3%80%8B%E4%B8%BB%E9%A2%98%E6%9B%B2%E3%80%8A%E7%A9%BF%E8%B6%8A%E6%97%B6%E7%A9%BA%E7%9A%84%E6%80%9D%E5%BF%B5%E3%80%8B%E9%92%A2%E7%90%B4%E7%89%88.mp4', '《犬夜叉》主题曲《穿越时空的思念》钢琴版.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《犬夜叉》主题曲《穿越时空的思念》钢琴版.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E8%B5%B7%E9%A3%8E%E4%BA%86%E3%80%8B%E5%BC%A0%E5%90%AB%E9%9F%B5%E3%80%81%E4%BD%99%E7%AC%9B%E3%80%81%E9%97%AB%E6%B0%B8%E5%BC%BA%20%E2%80%94%20%E5%BD%93%E6%B5%81%E8%A1%8C%E9%9F%B3%E4%B9%90%E3%80%81%E7%BE%8E%E5%A3%B0%E4%B8%8E%E6%B0%91%E4%B9%90%E7%9B%B8%E7%BB%93%E5%90%88%EF%BC%8C%E7%BB%99%E4%BD%A0%E5%85%A8%E6%96%B0%E7%9A%84%E8%A7%86%E5%90%AC%E6%84%9F%E5%8F%97%EF%BC%81%E3%80%90SMG%E4%B8%8A%E6%B5%B7%E4%B8%9C%E6%96%B9%E5%8D%AB%E8%A7%86%E9%9F%B3%E4%B9%90%E9%A2%91%E9%81%93%E3%80%91.mp4', '《起风了》张含韵、余笛、闫永强 — 当流行音乐、美声与民乐相结合，给你全新的视听感受！【SMG上海东方卫视音乐频道】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《起风了》张含韵、余笛、闫永强 — 当流行音乐、美声与民乐相结合，给你全新的视听感受！【SMG上海东方卫视音乐频道】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8E%E5%85%AD%E5%85%86%E5%B9%B4%E3%81%A8%E4%B8%80%E5%A4%9C%E7%89%A9%E8%AA%9E%E3%80%8F%E3%80%90%E9%B9%BF%E4%B9%83%28%E3%81%8B%E3%81%AE%29%E3%80%91%E4%B8%AD%E6%97%A5%E5%AD%97%E5%B9%95.mp4', '『六兆年と一夜物語』【鹿乃(かの)】中日字幕.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">『六兆年と一夜物語』【鹿乃(かの)】中日字幕.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90identity%20v-%E7%AC%AC%E4%BA%94%E4%BA%BA%E6%A0%BC%E6%AD%8C%E8%88%9E%E5%8A%A8%E7%94%BB%E3%80%91%E5%86%B3%E6%AD%BB%E8%A1%8C%E8%BF%9B.mp4', '【identity v-第五人格歌舞动画】决死行进.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【identity v-第五人格歌舞动画】决死行进.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E3%80%91%E6%AD%8C%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F%20%E7%96%91%E5%BF%83%E6%9A%97%E9%AC%BC%20%E8%91%9B%E8%91%89%20%E3%81%AB%E3%81%98%E3%81%95%E3%82%93%E3%80%90%E3%80%91.mp4', '【】歌ってみた 疑心暗鬼 葛葉 にじさん【】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【】歌ってみた 疑心暗鬼 葛葉 にじさん【】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E3%81%BF%E3%81%86%E3%82%81%E3%83%BB%E3%83%A1%E3%82%A4%E3%83%AA%E3%82%A2%E3%83%BB217%E3%80%91%E6%A1%83%E6%BA%90%E6%81%8B%E6%AD%8C-Tougen%20Renka-%20OFFiCiAL.mp4', '【みうめ・メイリア・217】桃源恋歌-Tougen Renka- OFFiCiAL.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【みうめ・メイリア・217】桃源恋歌-Tougen Renka- OFFiCiAL.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E3%81%BF%E3%81%86%E3%82%81%E3%83%BB%E3%83%A1%E3%82%A4%E3%83%AA%E3%82%A2%E3%83%BB217%E3%80%91%E6%A5%B5%E6%A5%BD%E6%B5%84%E5%9C%9F-Gokuraku%20Jodo-%20OFFiCiAL.mp4', '【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E3%82%AA%E3%83%AA%E3%82%B8%E3%83%8A%E3%83%ABMV%E3%80%91%E3%82%A2%E3%82%A6%E3%83%88%E3%82%B5%E3%82%A4%E3%83%80%E3%83%BC%20_%20ChroNoiR%E3%80%90cover%E3%80%91.mp4', '【オリジナルMV】アウトサイダー _ ChroNoiR【cover】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【オリジナルMV】アウトサイダー _ ChroNoiR【cover】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E4%B8%89%E7%84%A1Cover%E3%80%91%E6%9C%A8%E8%98%AD%E8%A1%8C%E3%80%90%E5%BF%98%E5%B7%9D%E9%A2%A8%E8%8F%AF%E9%8C%84%E3%80%91.mp4', '【三無Cover】木蘭行【忘川風華錄】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【三無Cover】木蘭行【忘川風華錄】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E4%B8%89%E7%84%A1%E7%BF%BB%E5%94%B1%E3%80%91%E5%8D%81%E4%BA%8C%E9%8E%AE%E9%AD%82%E6%AD%8C%20%E3%80%90Official%20Video%20HD%E3%80%91.mp4', '【三無翻唱】十二鎮魂歌 【Official Video HD】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【三無翻唱】十二鎮魂歌 【Official Video HD】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E4%B8%89%E7%84%A1%E7%BF%BB%E5%94%B1%E3%80%91%E9%99%B0%E9%99%BD%E5%85%88%E7%94%9F%20%E3%80%90Official%20Video%E3%80%91.mp4', '【三無翻唱】陰陽先生 【Official Video】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【三無翻唱】陰陽先生 【Official Video】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E4%B8%AD%E6%96%87%E5%AD%97%E5%B9%95%E3%80%91Aldnoah%20Zero%20OST%20-%20aLIEz.mp4', '【中文字幕】Aldnoah Zero OST - aLIEz.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【中文字幕】Aldnoah Zero OST - aLIEz.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E5%90%88%E5%94%B1%E3%80%91%E6%95%97%E5%8C%97%E3%81%AE%E5%B0%91%E5%B9%B4%E3%80%908%E4%BA%BA%EF%BC%8B%CE%B1%E3%80%91.mp4', '【合唱】敗北の少年【8人＋α】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【合唱】敗北の少年【8人＋α】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E5%A7%90%E5%A7%90%E4%BB%AC%E7%9A%84%E8%88%9E%E5%8F%B0%E3%80%91%E3%80%8A%23%E5%A4%A7%E7%A2%97%E5%AE%BD%E9%9D%A2%E3%80%8B%E5%9C%A8%E7%BA%BF%E5%90%B8%E7%B2%89%EF%BC%8C%E5%A7%90%E5%A7%90%E4%BB%AC%E5%85%A8%E7%BB%84Slay%E6%9C%89%E5%A5%B3%E5%9B%A2%E8%8C%83%E5%84%BF%EF%BC%81%E3%80%8A%23%E4%B9%98%E9%A3%8E%E7%A0%B4%E6%B5%AA%E7%9A%84%E5%A7%90%E5%A7%90%E3%80%8BSisters%20Who%20Make%20Waves%E3%80%90%E6%B9%96%E5%8D%97%E5%8D%AB%E8%A7%86%E5%AE%98%E6%96%B9HD%E3%80%91.mp4', '【姐姐们的舞台】《#大碗宽面》在线吸粉，姐姐们全组Slay有女团范儿！《#乘风破浪的姐姐》Sisters Who Make Waves【湖南卫视官方HD】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【姐姐们的舞台】《#大碗宽面》在线吸粉，姐姐们全组Slay有女团范儿！《#乘风破浪的姐姐》Sisters Who Make Waves【湖南卫视官方HD】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E5%B0%8F%E9%AD%82_%E5%93%A6%E6%BC%8F_%E5%90%BE%E6%81%A9_%E5%A6%96%E6%89%AC_KBShinya%E3%80%91%E3%80%90%E7%9B%97%E5%A2%93%E7%AC%94%E8%AE%B0%E3%80%91%E6%88%91%E4%BB%AC%EF%BC%88%E7%BE%A4%E5%83%8F%E5%90%8C%E4%BA%BA%EF%BC%89.mp4', '【小魂_哦漏_吾恩_妖扬_KBShinya】【盗墓笔记】我们（群像同人）.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【小魂_哦漏_吾恩_妖扬_KBShinya】【盗墓笔记】我们（群像同人）.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E6%8A%96%E9%9F%B3DJ%E7%89%88%E3%80%91%E9%98%BF%E6%82%A0%E6%82%A0%20-%20%E8%88%8A%E5%A4%A2%E4%B8%80%E5%A0%B4%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E6%97%A9%E7%9F%A5%E9%A9%9A%E9%B4%BB%E4%B8%80%E5%A0%B4%20%E4%BD%95%E5%BF%85%E6%83%85%E6%B7%B1%E4%B8%80%E5%BE%80%E3%80%8D%E2%99%AA.mp4', '【抖音DJ版】阿悠悠 - 舊夢一場【動態歌詞】「早知驚鴻一場 何必情深一往」♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【抖音DJ版】阿悠悠 - 舊夢一場【動態歌詞】「早知驚鴻一場 何必情深一往」♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E6%8A%96%E9%9F%B3%E3%80%91%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E8%B5%A4%E4%BC%B6%E3%80%8C%E6%83%85%E5%AD%97%E9%9B%A3%E8%90%BD%E5%A2%A8%20%E5%A5%B9%E5%94%B1%E9%A0%88%E4%BB%A5%E8%A1%80%E4%BE%86%E5%92%8C%E3%80%8D%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E2%99%AA.mp4', '【抖音】等什麼君 - 赤伶「情字難落墨 她唱須以血來和」【動態歌詞】♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【抖音】等什麼君 - 赤伶「情字難落墨 她唱須以血來和」【動態歌詞】♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E6%97%B6%E4%B9%8B%E6%AD%8CProject%E3%80%91%E3%80%90%E7%89%B9%E5%88%AB%E6%9B%B2%E3%80%91%E6%89%AD%E8%BD%AC%E6%99%A8%E6%98%9F%E7%9A%84%E8%88%B5%E8%BD%AE%20%28Full%20Ver%29%E3%80%9012%E4%BA%BA%E6%88%98%E6%96%97%E6%9B%B2%E3%80%91.mp4', '【时之歌Project】【特别曲】扭转晨星的舵轮 (Full Ver)【12人战斗曲】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【时之歌Project】【特别曲】扭转晨星的舵轮 (Full Ver)【12人战斗曲】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E6%97%B6%E4%B9%8B%E6%AD%8CProject%E3%80%91%E3%80%90%E7%89%B9%E5%88%AB%E6%9B%B2%E3%80%91%E9%A3%8E%E4%B8%8D%E5%AE%9A%E3%80%90%E4%BA%BA%E8%A1%A3%E5%A4%A7%E4%BA%BA%E3%80%91.mp4', '【时之歌Project】【特别曲】风不定【人衣大人】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【时之歌Project】【特别曲】风不定【人衣大人】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E7%8B%82%E5%BE%92%E3%80%91%E3%80%8CO2O%E7%94%B7%E5%9C%98%E3%80%8D%E4%B8%A4%E6%94%BB%E6%88%B2%E8%85%94%E5%8E%9Fkey%E9%AB%98%E9%9F%B3%E7%82%B8%E8%A3%82%E7%BF%BB%E5%94%B1%E3%80%90Allen%26Mini%E5%85%94feat.%E5%8F%B8%E6%96%93%E3%80%91.mp4', '【狂徒】「O2O男團」两攻戲腔原key高音炸裂翻唱【Allen&Mini兔feat.司斓】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【狂徒】「O2O男團」两攻戲腔原key高音炸裂翻唱【Allen&Mini兔feat.司斓】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E7%8E%8B%E8%80%85%E4%B9%8B%E6%AD%8C%E3%80%91%E7%8E%8B%E8%80%85%E8%8D%A3%E8%80%80%C2%B7100%E8%8B%B1%E9%9B%84%E7%BE%A4%E5%83%8F%E7%8C%AE%E7%A4%BC%E6%AD%8C%E3%80%8A%E7%99%BE%E6%88%98%E6%88%90%E8%AF%97%E3%80%8B.mp4', '【王者之歌】王者荣耀·100英雄群像献礼歌《百战成诗》.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【王者之歌】王者荣耀·100英雄群像献礼歌《百战成诗》.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E7%AC%AC%E4%BA%94%E4%BA%BA%E6%A0%BC%E6%89%8B%E6%9B%B8%E3%80%91%E7%9B%A3%E7%AE%A1%E8%80%85%E5%80%91%E7%9A%84GOGO%E5%B9%BD%E9%9D%88%E8%88%B9.mp4', '【第五人格手書】監管者們的GOGO幽靈船.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【第五人格手書】監管者們的GOGO幽靈船.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E7%B6%9C%E6%BC%AB%E9%AB%98%E7%87%83AMV%E3%80%91%E9%80%99%E9%A6%96BGM%E6%9C%89%E6%AF%92%20%E7%95%B6FADE%E9%81%87%E8%A6%8B%E9%80%99%E4%BA%9B%E6%97%8B%E5%BE%8B.mp4', '【綜漫高燃AMV】這首BGM有毒 當FADE遇見這些旋律.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【綜漫高燃AMV】這首BGM有毒 當FADE遇見這些旋律.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E7%BA%AF%E4%BA%AB%E3%80%91%E8%B0%81%E7%9A%84DNA%E5%8A%A8%E4%BA%86%EF%BC%81%E8%A9%B9%E9%9B%AF%E5%A9%B7%E5%BC%A0%E8%BF%9C%20%E7%83%AD%E8%A1%80%E6%BC%94%E7%BB%8E%E3%80%8A%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85%E3%80%8B%E4%B8%BB%E9%A2%98%E6%9B%B2%E3%80%8A%E9%9D%92%E9%B8%9F%E3%80%8B%EF%BC%8C%E5%A4%AA%E7%87%83%E4%BA%86%EF%BC%81%20%E3%80%8A%E6%88%91%E4%BB%AC%E7%9A%84%E6%AD%8C4%E3%80%8BSinging%20with%20legends%20S4%20EP12%E3%80%90%E4%B8%9C%E6%96%B9%E5%8D%AB%E8%A7%86%E5%AE%98%E6%96%B9%E9%A2%91%E9%81%93%E3%80%91.mp4', '【纯享】谁的DNA动了！詹雯婷张远 热血演绎《火影忍者》主题曲《青鸟》，太燃了！ 《我们的歌4》Singing with legends S4 EP12【东方卫视官方频道】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【纯享】谁的DNA动了！詹雯婷张远 热血演绎《火影忍者》主题曲《青鸟》，太燃了！ 《我们的歌4》Singing with legends S4 EP12【东方卫视官方频道】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E7%BA%AF%E4%BA%AB%E3%80%91%E9%BB%84%E9%9C%84%E9%9B%B2%E5%86%8D%E5%94%B1%E5%8A%B1%E5%BF%97%E2%80%9C%E7%A5%9E%E6%9B%B2%E2%80%9D%E3%80%8A%E6%98%9F%E8%BE%B0%E5%A4%A7%E6%B5%B7%E3%80%8B%EF%BC%8C%E6%88%91%E7%9A%84%E6%A2%A6%E6%83%B3%E5%8F%88%E5%9B%9E%E6%9D%A5%E4%BA%86%EF%BC%81Huang%20Xiaoyun%20-%20_Stars%20and%20Sea_%20_%20%E6%B5%81%E6%B7%8C%E7%9A%84%E6%AD%8C%E5%A3%B0S3EP3.mp4', '【纯享】黄霄雲再唱励志“神曲”《星辰大海》，我的梦想又回来了！Huang Xiaoyun - _Stars and Sea_ _ 流淌的歌声S3EP3.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【纯享】黄霄雲再唱励志“神曲”《星辰大海》，我的梦想又回来了！Huang Xiaoyun - _Stars and Sea_ _ 流淌的歌声S3EP3.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E7%BA%AF%E4%BA%AB%E7%89%88%E3%80%91%E5%91%A8%E6%B7%B1%E6%8C%91%E6%88%98%E4%BA%8C%E6%AC%A1%E5%85%83%E7%A5%9E%E6%9B%B2%E3%80%8A%E8%BE%BE%E6%8B%89%E5%B4%A9%E5%90%A7%E3%80%8B%E8%A7%A3%E9%94%81%E9%AD%94%E6%80%A7%E8%88%9E%E6%AD%A5%20%E3%80%8A%E6%AD%8C%E6%89%8B%C2%B7%E5%BD%93%E6%89%93%E4%B9%8B%E5%B9%B4%E3%80%8BSinger%202020%E3%80%90%E6%B9%96%E5%8D%97%E5%8D%AB%E8%A7%86%E5%AE%98%E6%96%B9HD%E3%80%91.mp4', '【纯享版】周深挑战二次元神曲《达拉崩吧》解锁魔性舞步 《歌手·当打之年》Singer 2020【湖南卫视官方HD】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【纯享版】周深挑战二次元神曲《达拉崩吧》解锁魔性舞步 《歌手·当打之年》Singer 2020【湖南卫视官方HD】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E8%82%A5%E7%9A%82%E8%8F%8C%E3%80%91%E4%B8%87%E7%A5%9E%E7%BA%AA%20Deities%20of%20Cathaysia%E3%80%90%E5%AE%98%E6%96%B9%E9%AB%98%E6%B8%85Official%20HD%E3%80%91.mp4', '【肥皂菌】万神纪 Deities of Cathaysia【官方高清Official HD】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【肥皂菌】万神纪 Deities of Cathaysia【官方高清Official HD】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E8%A5%BF%E7%93%9CJUN%E3%80%91%E5%8E%9F%E5%88%9B%E3%80%8A%E5%BD%BC%E5%B2%B8%E3%80%8B%20%20%20%E7%AD%89%E4%B8%80%E5%8F%A5%E5%B8%A6%E6%88%91%E5%9B%9E%E5%AE%B6.mp4', '【西瓜JUN】原创《彼岸》   等一句带我回家.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【西瓜JUN】原创《彼岸》   等一句带我回家.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E9%A3%9F%E7%89%A9%E8%AF%AD%E4%B8%80%E5%91%A8%E5%B9%B4%E3%80%91%E3%80%8A%E4%B8%80%E8%BD%BD%E7%99%BE%E5%91%B3%E3%80%8B%E4%B9%9D%E4%BD%8D%E5%8F%A4%E9%A3%8E%E5%A4%A7%E4%BD%AC%E7%8C%AE%E5%94%B1.mp4', '【食物语一周年】《一载百味》九位古风大佬献唱.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【食物语一周年】《一载百味》九位古风大佬献唱.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%81%AB%E3%81%98%E3%81%95%E3%82%93%E3%81%98%20-%20Virtual%20to%20LIVE%20%5BOfficial%20Music%20Video%5D.mp4', 'にじさんじ - Virtual to LIVE [Official Music Video].mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">にじさんじ - Virtual to LIVE [Official Music Video].mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%82%A2%E3%83%B3%E3%83%8E%E3%82%A6%E3%83%B3%E3%83%BB%E3%83%9E%E3%82%B6%E3%83%BC%E3%82%B0%E3%83%BC%E3%82%B9_wowaka%20%28covered%20by%20%E3%83%8F%E3%83%83%E3%83%94%E3%83%BC%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%29.mp4', 'アンノウン・マザーグース_wowaka (covered by ハッピートリガー).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">アンノウン・マザーグース_wowaka (covered by ハッピートリガー).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%82%B5%E3%83%9E%E3%83%BC%E3%82%BF%E3%82%A4%E3%83%A0%E3%83%AC%E3%82%B3%E3%83%BC%E3%83%89%20_%E3%81%98%E3%82%93%20%EF%BC%88covered%20by%20AXF%EF%BC%89.mp4', 'サマータイムレコード _じん （covered by AXF）.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">サマータイムレコード _じん （covered by AXF）.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%83%95%E3%82%A9%E3%83%8B%E3%82%A4%20_%20%E4%B8%8D%E7%A0%B4%E6%B9%8A%20Cover.mp4', 'フォニイ _ 不破湊 Cover.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">フォニイ _ 不破湊 Cover.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B8%80%E7%99%BE%E4%B8%87%E4%B8%AA%E5%8F%AF%E8%83%BD%20%E5%BC%A0%E5%90%AB%E9%9F%B5%20%20%28%20%E5%BC%A0%E6%B6%B5%E9%9F%B5%20%20zhang%20han%20yun%29%20%E3%80%90%20%E5%9C%A8%E4%B8%80%E7%9E%AC%E9%97%B4%20%E6%9C%89%E4%B8%80%E7%99%BE%E4%B8%87%E4%B8%AA%E5%8F%AF%E8%83%BD%20%E3%80%91%20%E8%BD%BB%E6%9F%94%E7%89%88%20%E5%A5%BD%E5%90%AC%20%E9%AB%98%E9%9F%B3%E5%93%81%E8%B3%AA%20%E5%8A%A8%E6%80%81%E6%AD%8C%E8%AF%8Dlyrics.mp4', '一百万个可能 张含韵  ( 张涵韵  zhang han yun) 【 在一瞬间 有一百万个可能 】 轻柔版 好听 高音品質 动态歌词lyrics.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">一百万个可能 张含韵  ( 张涵韵  zhang han yun) 【 在一瞬间 有一百万个可能 】 轻柔版 好听 高音品質 动态歌词lyrics.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B8%80%E9%A6%96%E5%A5%BD%E8%81%BD%E7%9A%84%E5%8F%A4%E9%A2%A8%E9%9F%B3%E6%A8%82%E3%80%8A%E7%B4%85%E5%A1%B5%E7%9A%86%E9%81%8E%E5%AE%A2%E3%80%8B%E6%88%91%E9%A1%98%E5%BE%9E%E6%AD%A4%E7%BE%BD%E5%8C%96%E4%BD%9C%E4%BB%99%EF%BC%8C%E6%83%85%E4%B8%8D%E5%86%8D%E7%95%99%E6%88%80.mp4', '一首好聽的古風音樂《紅塵皆過客》我願從此羽化作仙，情不再留戀.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">一首好聽的古風音樂《紅塵皆過客》我願從此羽化作仙，情不再留戀.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B8%83%E9%9F%B3%E7%9B%92%20-%20%E4%BA%91%E6%B7%B1%E4%B8%8D%E7%9F%A5%E5%A4%84%E3%80%90%E5%8F%A4%E9%A3%8E%E6%8E%A8%E8%8D%90%E3%80%91%E3%80%8E%E5%8A%A8%E6%80%81%E6%AD%8C%E8%AF%8D%20_%20%E5%AE%8C%E6%95%B4%E9%AB%98%E6%B8%85%E9%9F%B3%E8%B4%A8%20%E4%B8%80%E9%A6%96%E8%B6%85%E5%A5%BD%E5%90%AC%E7%9A%84%E5%8F%A4%E9%A3%8E%E6%AD%8C%E6%9B%B2%E3%80%8FQi%20Yin%20He%20-%20Yun%20Shen%20Bu%20Zhi%20Chu.mp4', '七音盒 - 云深不知处【古风推荐】『动态歌词 _ 完整高清音质 一首超好听的古风歌曲』Qi Yin He - Yun Shen Bu Zhi Chu.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">七音盒 - 云深不知处【古风推荐】『动态歌词 _ 完整高清音质 一首超好听的古风歌曲』Qi Yin He - Yun Shen Bu Zhi Chu.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B8%8B%E5%B1%B1%20%E8%A6%81%E4%B8%8D%E8%A6%81%E8%B2%B7%E8%8F%9C%E3%80%90%E5%89%B5%E4%BD%9CMV%E3%80%91chinese%20danceChinese%20elegant%20classical%20woman.mp4', '下山 要不要買菜【創作MV】chinese danceChinese elegant classical woman.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">下山 要不要買菜【創作MV】chinese danceChinese elegant classical woman.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B9%9D%E4%B9%9D%E5%85%AB%E5%8D%81%E4%B8%80-%E5%85%AB%E4%BA%BA%E6%B7%B7%E9%9F%B3%28%E6%98%93%E8%A8%80_%E6%A8%8A%E6%A3%8B_%E5%8D%97%E4%B9%85_%E9%9B%99%E7%AC%99_%E6%B9%8A%E8%A9%A9_%E5%B0%8F%E9%AD%82_%E7%89%B9%E6%9B%BC_%E8%A3%82%E5%A4%A9%29.mp4', '九九八十一-八人混音(易言_樊棋_南久_雙笙_湊詩_小魂_特曼_裂天).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">九九八十一-八人混音(易言_樊棋_南久_雙笙_湊詩_小魂_特曼_裂天).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B9%9D%E4%B9%9D%E5%85%AB%E5%8D%81%E4%B8%80-%E5%85%AB%E4%BA%BA%E6%B7%B7%E9%9F%B3-%E6%98%93%E8%A8%80%E6%A8%8A%E6%A3%8B%E5%8D%97%E4%B9%85%E9%9B%99%E7%AC%99%E6%B9%8A%E8%A9%A9%E5%B0%8F%E9%AD%82%E7%89%B9%E6%9B%BC%E8%A3%82%E5%A4%A9-.mp4', '九九八十一-八人混音-易言樊棋南久雙笙湊詩小魂特曼裂天-.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">九九八十一-八人混音-易言樊棋南久雙笙湊詩小魂特曼裂天-.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%BA%BA%E9%97%B4%E6%83%8A%E9%B8%BF%E5%AE%A2%20_%20%E4%BA%BA%E9%96%93%E9%A9%9A%E9%B4%BB%E5%AE%A2%20-%20%E5%8F%B6%E9%87%8C%E3%80%90%E5%8F%B9%E4%BA%BA%E9%97%B4%20%E4%B8%80%E5%8E%BB%E9%A3%8E%E6%B5%81%E5%94%AF%E5%B0%91%E5%B9%B4%E3%80%91%E5%8F%A4%E9%A3%8E%20%E4%B8%AD%E5%9B%BD%E9%A3%8E%20%E4%B8%AD%E6%96%87%E6%AD%8C%E6%9B%B2%20%E5%8D%8E%E8%AF%AD%E6%AD%8C%E6%9B%B2%20%E6%8A%96%E9%9F%B3%20_%20Chinese%20Song%2C%20Chinese%20Music.mp4', '人间惊鸿客 _ 人間驚鴻客 - 叶里【叹人间 一去风流唯少年】古风 中国风 中文歌曲 华语歌曲 抖音 _ Chinese Song, Chinese Music.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">人间惊鸿客 _ 人間驚鴻客 - 叶里【叹人间 一去风流唯少年】古风 中国风 中文歌曲 华语歌曲 抖音 _ Chinese Song, Chinese Music.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E7%81%AB%E7%9A%84BGM%E3%80%90%E6%88%B0%E6%AD%8C%E3%80%91Victory.mp4', '全世界最火的BGM【戰歌】Victory.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">全世界最火的BGM【戰歌】Victory.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%86%8D%E8%A6%8B%E8%8E%AB%E5%A6%AE%E5%8D%A1%20-%20%E5%BD%AD%E5%B8%AD%E5%BD%A5%20Franky%E5%BC%97%E8%98%AD%E5%A5%87%E3%80%8E%E4%B8%80%E5%80%8B%E4%BA%BA%E6%83%B3%E6%83%B3%E6%83%B3%E6%83%B3%E5%88%B0%E5%BF%83%E7%97%9B%E3%80%8C%E6%80%8E%E9%BA%BD%E8%83%BD%E5%A4%A0%E4%B8%8D%E6%87%82%E3%80%8D%EF%BC%8C%E6%83%85%E7%B7%92%E4%B8%80%E9%BB%9E%E9%BB%9E%E9%BB%9E%E9%BB%9E%E5%88%B0%E5%A4%B1%E6%8E%A7%E3%80%8C%E8%AE%8A%E5%BE%97%E6%9C%89%E6%81%83%E7%84%A1%E6%81%90%E3%80%8D%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91.mp4', '再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%88%9D%E9%9F%B3%E6%9C%AA%E4%BE%86-%E7%94%A9%E8%94%A5%E6%AD%8C-Ievan%20polkka-%20%E4%B8%AD%E6%96%87%E7%A9%BA%E8%80%B3%E7%89%88.mp4', '初音未來-甩蔥歌-Ievan polkka- 中文空耳版.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">初音未來-甩蔥歌-Ievan polkka- 中文空耳版.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%8D%8A%E7%94%9F%E9%9B%AA%20-%20%E6%98%AF%E4%B8%83%E5%8F%94%E5%91%A2%20%281%E5%B0%8F%E6%97%B6%EF%BC%8C%E5%8D%95%E6%9B%B2%E5%BE%AA%E7%8E%AF%29%E3%80%8E%E5%8D%8A%E7%94%9F%E9%A3%8E%E9%9B%AA%20%E5%90%B9%E4%B8%8D%E6%95%A3%E8%8A%B1%E8%90%BD%E6%97%B6%E8%8A%82%E7%9A%84%E7%9C%BC%E6%B3%AA%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E_Lyrics%20Video%E3%80%91.mp4', '半生雪 - 是七叔呢 (1小时，单曲循环)『半生风雪 吹不散花落时节的眼泪』【動態歌詞_Lyrics Video】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">半生雪 - 是七叔呢 (1小时，单曲循环)『半生风雪 吹不散花落时节的眼泪』【動態歌詞_Lyrics Video】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%90%B3%E9%9D%92%E5%B3%B0%E3%80%88%E8%B5%B7%E9%A2%A8%E4%BA%86%E3%80%89%EF%BC%88%E9%9B%BB%E8%A6%96%E5%8A%87%E3%80%90%E5%8A%A0%E6%B2%B9%EF%BC%8C%E4%BD%A0%E6%98%AF%E6%9C%80%E6%A3%92%E7%9A%84%E3%80%91%E4%B8%BB%E9%A1%8C%E6%9B%B2%EF%BC%89.mp4', '吳青峰〈起風了〉（電視劇【加油，你是最棒的】主題曲）.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">吳青峰〈起風了〉（電視劇【加油，你是最棒的】主題曲）.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%91%A8%E6%B7%B1%E5%88%B0%E5%BA%95%E6%9C%89%E5%A4%9A%E5%BC%BA%EF%BC%9F%E6%89%8D%E4%BC%9A%E6%86%8B%E5%87%BA%E8%BF%998%E4%B8%AA%E7%A5%9E%E7%BA%A7%E7%8E%B0%E5%9C%BA%EF%BC%8C%E7%9C%9F%E6%98%AF%E5%A5%BD%E5%90%AC%E5%88%B0%E5%8D%95%E6%9B%B2%E5%BE%AA%E7%8E%AF%EF%BC%81.mp4', '周深到底有多强？才会憋出这8个神级现场，真是好听到单曲循环！.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">周深到底有多强？才会憋出这8个神级现场，真是好听到单曲循环！.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%93%88%E5%B0%BC%E5%85%8B%E5%AD%9C%E3%80%8CMV%E3%80%8D-%20%E9%97%BB%E4%BA%BA%E5%90%AC%E6%9B%B8%20%28%E8%A2%AB%E7%A8%B1%E7%82%BA%E5%8D%83%E5%B9%B4%E4%B8%80%E9%81%87%E7%BE%8E%E5%A5%B3%E7%9A%84%E6%96%B0%E7%96%86%E5%9B%9B%E7%BE%8E%EF%BC%8C%E4%B8%80%E8%B7%B3%E3%80%8C%E4%B8%80%E6%A2%A6%E6%95%A6%E7%85%8C%E3%80%8D%E4%BE%BF%E6%8A%8A%E8%90%AC%E5%8D%83%E7%94%B7%E5%A3%AB%E8%BF%B7%E6%AD%BB%EF%BC%81%29.mp4', '哈尼克孜「MV」- 闻人听書 (被稱為千年一遇美女的新疆四美，一跳「一梦敦煌」便把萬千男士迷死！).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">哈尼克孜「MV」- 闻人听書 (被稱為千年一遇美女的新疆四美，一跳「一梦敦煌」便把萬千男士迷死！).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%9B%9E%E5%B0%8F%E4%BB%99%20-%20%E9%86%92%E4%B8%8D%E6%9D%A5%E7%9A%84%E6%A2%A6%E3%80%8C%E4%BD%A0%E6%98%AF%E6%88%91%E8%A7%A6%E7%A2%B0%E4%B8%8D%E5%88%B0%E7%9A%84%E9%A3%8E%EF%BC%8C%E9%86%92%E4%B8%8D%E6%9D%A5%E7%9A%84%E6%A2%A6%E3%80%8D%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E_p%C4%ABn%20y%C4%ABn%20g%C4%93%20c%C3%AD%E3%80%91.mp4', '回小仙 - 醒不来的梦「你是我触碰不到的风，醒不来的梦」【動態歌詞_pīn yīn gē cí】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">回小仙 - 醒不来的梦「你是我触碰不到的风，醒不来的梦」【動態歌詞_pīn yīn gē cí】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%A4%A2%E7%84%B6%20%28Mira%29%20-%20%E5%B0%91%E5%B9%B4%20%E3%80%8E%E6%88%91%E9%82%84%E6%98%AF%E5%BE%9E%E5%89%8D%E9%82%A3%E5%80%8B%E5%B0%91%E5%B9%B4%20%E6%B2%92%E6%9C%89%E4%B8%80%E7%B5%B2%E7%B5%B2%E6%94%B9%E8%AE%8A%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91.mp4', '夢然 (Mira) - 少年 『我還是從前那個少年 沒有一絲絲改變』【動態歌詞】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">夢然 (Mira) - 少年 『我還是從前那個少年 沒有一絲絲改變』【動態歌詞】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%A4%A7%E7%B1%BD%E3%80%8A%E7%99%BD%E6%9C%88%E5%85%89%E4%B8%8E%E6%9C%B1%E7%A0%82%E7%97%A3%E3%80%8B%E5%AE%8C%E6%95%B4%E7%89%88MV.mp4', '大籽《白月光与朱砂痣》完整版MV.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">大籽《白月光与朱砂痣》完整版MV.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%B0%8F%E6%A8%82%E5%93%A5%20-%20%E6%89%A7%E8%BF%B7%E4%B8%8D%E6%82%9F%EF%BC%88DJ%E7%89%88%EF%BC%89%E3%80%8E%E6%88%91%E5%B0%8D%E4%BD%A0%E5%8F%88%E4%BD%95%E6%AD%A2%E6%98%AF%E5%9F%B7%E8%BF%B7%E4%B8%8D%E6%82%9F%EF%BC%8C%E7%9C%BC%E6%B7%9A%E5%81%B6%E7%88%BE%E6%9C%83%E8%8E%AB%E5%90%8D%E7%9A%84%E5%85%89%E9%A1%A7%E3%80%82%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp4', '小樂哥 - 执迷不悟（DJ版）『我對你又何止是執迷不悟，眼淚偶爾會莫名的光顧。』【動態歌詞Lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">小樂哥 - 执迷不悟（DJ版）『我對你又何止是執迷不悟，眼淚偶爾會莫名的光顧。』【動態歌詞Lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%B1%B1%E6%B0%B4%E7%B5%84%E5%90%88%20-%20%E4%BD%A0%E8%8E%AB%E8%B5%B0%E3%80%8E%E5%A6%B9%E5%85%92%E4%B8%AB%E9%A0%AD%E4%BD%A0%E8%8E%AB%E8%B5%B0%EF%BC%8C%E5%94%B1%E9%A6%96%E6%AD%8C%E6%AD%8C%E5%85%92%E6%8A%8A%E4%BD%A0%E7%95%99%E3%80%82%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp4', '山水組合 - 你莫走『妹兒丫頭你莫走，唱首歌歌兒把你留。』【動態歌詞Lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">山水組合 - 你莫走『妹兒丫頭你莫走，唱首歌歌兒把你留。』【動態歌詞Lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%BC%A0%E5%90%AB%E9%9F%B5%E5%94%B1%E6%AD%8C%E5%88%B0%E5%BA%95%E6%9C%89%E5%A4%9A%E5%A5%BD%E5%90%AC%EF%BC%9F%E7%8E%B0%E5%9C%BA%E4%B8%80%E9%A6%96%E3%80%8A%E8%B5%B7%E9%A3%8E%E4%BA%86%E3%80%8B%EF%BC%8C%E5%90%AC%E7%9A%84%E9%AA%A8%E5%A4%B4%E9%83%BD%E9%85%A5%E4%BA%86%EF%BC%81.mp4', '张含韵唱歌到底有多好听？现场一首《起风了》，听的骨头都酥了！.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">张含韵唱歌到底有多好听？现场一首《起风了》，听的骨头都酥了！.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%8D%AE%E8%AF%B4%E6%97%A5%E6%9C%AC%E5%81%87%E5%94%B1%E7%8A%AF%E6%B3%95%EF%BC%8C%E6%89%8D%E9%80%BC%E5%87%BA%E4%BA%86%E8%BF%995%E4%B8%AA%E7%A5%9E%E7%BA%A7%E7%8E%B0%E5%9C%BA%EF%BC%81%E6%AF%8F%E9%A6%96%E9%83%BD%E8%83%BD%E8%A1%80%E6%B4%97%E5%85%A8%E7%BD%91.mp4', '据说日本假唱犯法，才逼出了这5个神级现场！每首都能血洗全网.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">据说日本假唱犯法，才逼出了这5个神级现场！每首都能血洗全网.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%98%8E%E6%98%9F%E5%86%92%E5%85%85%E9%80%89%E6%89%8B%E5%8F%82%E5%8A%A0%E9%80%89%E7%A7%80%EF%BC%8C%E4%B8%93%E9%97%A8%E2%80%9C%E5%BF%BD%E6%82%A0%E2%80%9D%E5%AF%BC%E5%B8%88%EF%BC%8C%E6%9E%97%E4%BF%8A%E6%9D%B0%EF%BC%9A%E9%AA%97%E4%BA%BA%EF%BC%81.mp4', '明星冒充选手参加选秀，专门“忽悠”导师，林俊杰：骗人！.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">明星冒充选手参加选秀，专门“忽悠”导师，林俊杰：骗人！.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%98%AF%E4%B8%83%E5%8F%94%E5%91%A2%20-%20%E5%8D%8A%E7%94%9F%E9%9B%AA%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E5%8D%8A%E7%94%9F%E9%A2%A8%E9%9B%AA%20%E5%90%B9%E4%B8%8D%E6%95%A3%E6%AD%B2%E6%9C%88%E7%95%99%E4%B8%8B%E7%9A%84%E7%9C%BC%E6%B7%9A%E3%80%8D%E2%99%AA.mp4', '是七叔呢 - 半生雪【動態歌詞】「半生風雪 吹不散歲月留下的眼淚」♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">是七叔呢 - 半生雪【動態歌詞】「半生風雪 吹不散歲月留下的眼淚」♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%98%AF%E4%B8%83%E5%8F%94%E5%91%A2%20-%20%E8%B8%8F%E5%B1%B1%E6%B2%B3%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E9%95%B7%E6%A7%8D%E5%88%BA%E7%A0%B4%E9%9B%B2%E9%9C%9E%20%E6%94%BE%E4%B8%8B%E4%B8%80%E7%94%9F%E7%89%BD%E6%8E%9B%E3%80%8D%E2%99%AA.mp4', '是七叔呢 - 踏山河【動態歌詞】「長槍刺破雲霞 放下一生牽掛」♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">是七叔呢 - 踏山河【動態歌詞】「長槍刺破雲霞 放下一生牽掛」♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%9C%AC%E8%8D%89%E7%BA%B2%E7%9B%AE%20%E5%91%A8%E6%9D%B0%E4%BC%A6%20-%E6%AD%8C%E8%AF%8D%E7%89%88-.mp4', '本草纲目 周杰伦 -歌词版-.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">本草纲目 周杰伦 -歌词版-.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%A3%84%E4%BD%9B%E5%85%A5%E9%AD%94%20-%20%E6%AE%98%E9%9B%AA%E3%80%8E%E4%BD%9B%E5%89%8D%E4%B8%80%E8%B7%AA%E5%A4%9A%E5%B9%B4%E4%BD%9B%E4%B8%8D%E6%86%90%E5%BF%83%EF%BC%8C%E5%8D%BB%E8%AE%93%E6%88%91%E8%B5%B0%E5%85%A5%E7%B5%95%E5%A2%83%EF%BC%8C%E9%82%A3%E6%88%91%E6%88%90%E9%AD%94%E5%8F%AA%E7%82%BA%E6%8F%9B%E4%B8%80%E4%BB%BD%E5%AE%89%E5%AF%A7%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E6%B7%B7%E5%89%AA%E8%87%AA%EF%BC%9A%E8%8A%B1%E5%8D%83%E9%AA%A8.mp4', '棄佛入魔 - 殘雪『佛前一跪多年佛不憐心，卻讓我走入絕境，那我成魔只為換一份安寧』【動態歌詞】混剪自：花千骨.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">棄佛入魔 - 殘雪『佛前一跪多年佛不憐心，卻讓我走入絕境，那我成魔只為換一份安寧』【動態歌詞】混剪自：花千骨.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%A9%9F%E5%8B%95%E6%88%A6%E5%A3%AB%E3%82%AC%E3%83%B3%E3%83%80%E3%83%A0SEED%20Full%20Ending%20%E3%81%82%E3%82%93%E3%81%AA%E3%81%AB%E4%B8%80%E7%B7%92%E3%81%A0%E3%81%A3%E3%81%9F%E3%81%AE%E3%81%AB%20-ReTracks%20by%20See-Saw%20%E4%B8%AD%E6%97%A5%E6%AD%8C%E8%A9%9E%20%281%29.mp4', '機動戦士ガンダムSEED Full Ending あんなに一緒だったのに -ReTracks by See-Saw 中日歌詞 (1).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">機動戦士ガンダムSEED Full Ending あんなに一緒だったのに -ReTracks by See-Saw 中日歌詞 (1).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%BA%AB%E5%A5%95%E5%BF%83%20-%20%E4%B8%80%E8%B7%AF%E7%94%9F%E8%8A%B1%E3%80%8E%E6%88%91%E5%B8%8C%E6%9C%9B%E8%A8%B1%E9%81%8E%E7%9A%84%E9%A1%98%E6%9C%9B%E4%B8%80%E8%B7%AF%E7%94%9F%E8%8A%B1%EF%BC%8C%E8%AD%B7%E9%80%81%E9%82%A3%E6%99%82%E7%9A%84%E5%A4%A2%E6%8A%B5%E6%93%8B%E9%81%8E%E9%A2%A8%E6%B2%99%E3%80%82%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9EVietsubPinyin%20Lyrics%E3%80%91.mp4', '溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85%E7%96%BE%E9%A2%A8%E5%82%B3%20%E7%89%87%E9%A0%AD%E6%9B%B23-%E9%9D%92%E9%B3%A5%EF%BC%88%E5%8E%9F%E8%81%B2%20%E5%AE%8C%E6%95%B4%E7%89%88%EF%BC%89Naruto%20Shippuden%20opening3%20-%20Blue%20Bird.mp4', '火影忍者疾風傳 片頭曲3-青鳥（原聲 完整版）Naruto Shippuden opening3 - Blue Bird.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">火影忍者疾風傳 片頭曲3-青鳥（原聲 完整版）Naruto Shippuden opening3 - Blue Bird.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%87%95%E7%84%A1%E6%AD%87%20%20%E8%94%A3%E9%9B%AA%E5%85%92%E3%80%90%E5%89%B5%E4%BD%9CMV%E3%80%91.mp4', '燕無歇  蔣雪兒【創作MV】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">燕無歇  蔣雪兒【創作MV】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%8E%8B%E5%BF%BB%E8%BE%B0%26%E8%8B%8F%E6%98%9F%E5%A9%95%20-%20%E6%B8%85%E7%A9%BA%E3%80%90DJ%E7%89%88%E3%80%91%E2%99%AA%20KarenDaidai.mp4', '王忻辰&苏星婕 - 清空【DJ版】♪ KarenDaidai.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">王忻辰&苏星婕 - 清空【DJ版】♪ KarenDaidai.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%AC%AC%E4%BA%94%E4%BA%BA%E6%A0%BC%EF%BC%9A%E4%B8%89%E5%91%A8%E5%B9%B4%E8%B4%BA%E6%9B%B2%E3%80%8A%E5%88%9D%E6%84%BF%E3%80%8BPV%EF%BC%81%E9%95%BF%E9%A3%8E%E8%B5%B7%E4%BA%8E%E6%AF%AB%E6%9C%AB%EF%BC%8C%E5%A4%9A%E8%B0%A2%E4%B8%89%E8%BD%BD%E5%90%8C%E8%A1%8C%E8%80%85%EF%BC%81%E3%80%90%E5%B0%8F%E7%A0%B8%E5%A2%A8%E3%80%91IdentityV.mp4', '第五人格：三周年贺曲《初愿》PV！长风起于毫末，多谢三载同行者！【小砸墨】IdentityV.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">第五人格：三周年贺曲《初愿》PV！长风起于毫末，多谢三载同行者！【小砸墨】IdentityV.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%AD%89%E4%BB%80%E4%B9%88%E5%90%9B%20%20%20%E5%87%89%E5%A4%9C%E6%A8%AA%E5%A1%98%E3%80%90%E6%AD%8C%E8%AF%8D%E5%AD%97%E5%B9%95%20%20%E5%AE%8C%E6%95%B4%E7%89%88%E9%AB%98%E6%B8%85%E6%97%A0%E6%8D%9F%E9%9F%B3%E8%B4%A8%E3%80%91%E2%99%AB%E3%80%8C%E5%A4%9C%E6%9C%AA%E5%A4%AE%EF%BC%8C%E6%98%9F%E6%B1%89%E8%A5%BF%E6%B5%81%E8%8D%A1%E8%87%B3%E8%8B%8D%E8%8C%AB%E3%80%8D.mp4', '等什么君   凉夜横塘【歌词字幕  完整版高清无损音质】♫「夜未央，星汉西流荡至苍茫」.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">等什么君   凉夜横塘【歌词字幕  完整版高清无损音质】♫「夜未央，星汉西流荡至苍茫」.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%AD%89%E4%BB%80%E4%B9%88%E5%90%9B%E6%AD%8C%E6%9B%B2%20%E7%AD%89%E4%BB%80%E4%B9%88%E5%90%9B%E8%AF%AF%E7%BA%A2%E5%A6%86%20%E8%BE%9E%E4%B9%9D%E9%97%A8%E5%9B%9E%E5%BF%86%20%E8%B5%A4%E4%BC%B6%20%20%E7%AD%89%E4%BB%80%E4%B9%88%E5%90%9B%20%E5%85%B3%E5%B1%B1%E9%85%92%20%E3%80%90%E5%90%88%E8%BE%91%E3%80%91.mp4', '等什么君歌曲 等什么君误红妆 辞九门回忆 赤伶  等什么君 关山酒 【合辑】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">等什么君歌曲 等什么君误红妆 辞九门回忆 赤伶  等什么君 关山酒 【合辑】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E6%85%95%E5%A4%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E5%A7%BB%E7%B7%A3%E6%A8%B9%E4%B8%8B%E5%85%B1%E6%B1%82%E6%9C%88%E8%80%81%20%E5%9F%B7%E6%89%8B%E6%9A%AE%E6%9A%AE%E6%9C%9D%E6%9C%9D%E3%80%8D%E2%99%AA.mp4', '等什麼君 - 慕夏【動態歌詞】「姻緣樹下共求月老 執手暮暮朝朝」♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">等什麼君 - 慕夏【動態歌詞】「姻緣樹下共求月老 執手暮暮朝朝」♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E6%98%A5%E5%BA%AD%E9%9B%AA%E3%80%90%E5%8E%9F%E5%94%B1%EF%BC%9A%E6%A9%99%E7%BF%BC%E3%80%91%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E6%88%91%E5%BF%83%E5%8C%AA%E7%9F%B3%E4%B8%8D%E5%8F%AF%E8%BD%89%20%E6%88%91%E5%BF%83%E5%8C%AA%E5%B8%AD%E4%B8%8D%E5%8F%AF%E5%8D%B7%E3%80%8D%E2%99%AA.mp4', '等什麼君 - 春庭雪【原唱：橙翼】【動態歌詞】「我心匪石不可轉 我心匪席不可卷」♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">等什麼君 - 春庭雪【原唱：橙翼】【動態歌詞】「我心匪石不可轉 我心匪席不可卷」♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E8%BE%AD%E4%B9%9D%E9%96%80%E5%9B%9E%E6%86%B6%E3%80%8E%E6%88%B2%E5%AD%90%E5%A4%9A%E7%A7%8B%EF%BC%8C%E5%8F%AF%E6%86%90%E4%B8%80%E8%99%95%E6%83%85%E6%B7%B1%E8%88%8A%E3%80%82%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp4', '等什麼君 - 辭九門回憶『戲子多秋，可憐一處情深舊。』【動態歌詞Lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">等什麼君 - 辭九門回憶『戲子多秋，可憐一處情深舊。』【動態歌詞Lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E9%97%9C%E5%B1%B1%E9%85%92%28%E5%A5%B3%E8%81%B2%E7%89%88%29%E3%80%8E%E6%88%91%E8%87%AA%E9%97%9C%E5%B1%B1%E9%BB%9E%E9%85%92%EF%BC%8C%E5%8D%83%E7%A7%8B%E7%9A%86%E5%85%A5%E5%96%89%E3%80%82%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp4', '等什麼君 - 關山酒(女聲版)『我自關山點酒，千秋皆入喉。』【動態歌詞Lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">等什麼君 - 關山酒(女聲版)『我自關山點酒，千秋皆入喉。』【動態歌詞Lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9BCover%20-%20%E9%9D%92%E7%B5%B2%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E5%90%9B%E4%B8%8D%E8%A6%8B%E5%A6%BE%E8%B5%B7%E8%88%9E%E7%BF%A9%E7%BF%A9%20%E5%90%9B%E4%B8%8D%E8%A6%8B%E5%A6%BE%E9%BC%93%E7%91%9F%E7%B6%BF%E7%B6%BF%E3%80%8D%E2%99%AA.mp4', '等什麼君Cover - 青絲【動態歌詞】「君不見妾起舞翩翩 君不見妾鼓瑟綿綿」♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">等什麼君Cover - 青絲【動態歌詞】「君不見妾起舞翩翩 君不見妾鼓瑟綿綿」♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%83%A1%E6%AD%8C%20-%20%E7%BE%8E%E9%BA%97%E7%9A%84%E7%A5%9E%E8%A9%B1%E3%80%8E%E5%8D%BB%E9%80%A3%E4%B8%80%E5%8F%A5%E6%88%91%E6%84%9B%E4%BD%A0%E9%83%BD%20%E4%B8%8D%E8%83%BD%E8%AA%AA%E5%87%BA%E5%8F%A3%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp4', '胡歌 - 美麗的神話『卻連一句我愛你都 不能說出口』【動態歌詞Lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">胡歌 - 美麗的神話『卻連一句我愛你都 不能說出口』【動態歌詞Lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%8A%B1%E5%83%AE%20-%20%E6%B5%AA%E5%AD%90%E9%97%B2%E8%AF%9D%E3%80%8C%E6%88%91%E9%A5%AE%E8%BF%87%E9%A3%8E%E5%92%BD%E8%BF%87%E6%B2%99%EF%BC%8C%E6%B5%AA%E5%AD%90%E6%97%A0%E9%92%B1%E9%80%9B%E9%85%92%E5%AE%B6%E3%80%82%E3%80%8D%E2%99%AA%20KarenDaidai.mp4', '花僮 - 浪子闲话「我饮过风咽过沙，浪子无钱逛酒家。」♪ KarenDaidai.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">花僮 - 浪子闲话「我饮过风咽过沙，浪子无钱逛酒家。」♪ KarenDaidai.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%8A%B1%E7%B2%A5%20-%20%E6%AD%B8%E5%8E%BB%E4%BE%86%E5%85%AE%E3%80%8E%E6%AD%A4%E5%8E%BB%E5%BF%85%E7%B6%93%E5%B9%B4%EF%BC%8C%E8%8D%92%E9%87%8E%E5%AF%92%E6%9A%91%E6%8F%9B%E7%B4%85%E9%A1%8F%E3%80%8F%E3%80%90%E4%B8%AD%E6%96%87%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELycris%E3%80%91%E5%AE%8C%E6%95%B4%E7%89%88.mp4', '花粥 - 歸去來兮『此去必經年，荒野寒暑換紅顏』【中文動態歌詞Lycris】完整版.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">花粥 - 歸去來兮『此去必經年，荒野寒暑換紅顏』【中文動態歌詞Lycris】完整版.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%94%A1%E4%BE%9D%E6%9E%97%20Jolin%20Tsai%E3%80%8A%E8%AA%AA%E6%84%9B%E4%BD%A0%E3%80%8B-feat.G.E.M.%E9%84%A7%E7%B4%AB%E6%A3%8B-%20Official%20Live%20Music%20Video%20%281%29.mp4', '蔡依林 Jolin Tsai《說愛你》-feat.G.E.M.鄧紫棋- Official Live Music Video (1).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">蔡依林 Jolin Tsai《說愛你》-feat.G.E.M.鄧紫棋- Official Live Music Video (1).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%B1%86%E5%8C%85%20-%20%E4%BD%9C%E9%85%92%20-DJ%E9%BB%98%E6%B6%B5%E7%89%88-%20%E3%80%8C%E6%88%91%E7%94%A8%E5%B1%B1%E5%B7%9D%E4%BD%9C%E9%85%92%20%E6%95%AC%E4%BD%A0%E6%97%B7%E4%B8%96%E6%B8%A9%E6%9F%94%E3%80%8D%E3%80%90%E5%8A%A8%E6%80%81%E6%AD%8C%E8%AF%8D%20lyrics%E3%80%91.mp4', '豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%B2%B7%E8%BE%A3%E6%A4%92%E4%B9%9F%E7%94%A8%E5%88%B8%20-%20%E8%B5%B7%E9%A2%A8%E4%BA%86%20%28%E6%96%B0%E7%89%88%29%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp4', '買辣椒也用券 - 起風了 (新版)【動態歌詞Lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">買辣椒也用券 - 起風了 (新版)【動態歌詞Lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%B8%8F%E5%B1%B1%E6%B2%B3%20%20%E6%98%AF%E4%B8%83%E5%8F%94%E5%91%A2%E3%80%90%E5%89%B5%E4%BD%9CMV%E3%80%91.mp4', '踏山河  是七叔呢【創作MV】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">踏山河  是七叔呢【創作MV】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%BF%99%E6%89%8D%E6%98%AF%E3%80%8A%E9%94%99%E4%BD%8D%E6%97%B6%E7%A9%BA%E3%80%8B%E7%9C%9F%E6%AD%A3%E7%9A%84%E5%8E%9F%E5%94%B1%EF%BC%8C%E5%8A%A8%E4%BA%BA%E7%9A%84%E6%97%8B%E5%BE%8B%EF%BC%8C%E6%84%9F%E4%BA%BA%E7%9A%84%E6%AD%8C%E8%AF%8D%EF%BC%8C%E5%A4%AA%E5%A5%BD%E5%90%AC.mp4', '这才是《错位时空》真正的原唱，动人的旋律，感人的歌词，太好听.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">这才是《错位时空》真正的原唱，动人的旋律，感人的歌词，太好听.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E9%98%BF%E8%82%86%20-%20%E7%86%B1%E6%84%9B105%C2%B0C%E7%9A%84%E4%BD%A0%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8CSuper%20Idol%E7%9A%84%E7%AC%91%E5%AE%B9%20%E9%83%BD%E6%B2%92%E4%BD%A0%E7%9A%84%E7%94%9C%E3%80%8D%E2%99%AA.mp4', '阿肆 - 熱愛105°C的你【動態歌詞】「Super Idol的笑容 都沒你的甜」♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">阿肆 - 熱愛105°C的你【動態歌詞】「Super Idol的笑容 都沒你的甜」♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E9%A3%9E%E5%85%B0%20%E6%88%91%E5%8F%AA%E5%87%9D%E6%9C%9B%E7%9D%80%E4%BD%A0.mp4', '飞兰 我只凝望着你.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">飞兰 我只凝望着你.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20Atlantis%20Is%20Calling%20%28S.O.S.%20For%20Love%29%20%28Official%20Music%20Video%29.mp4', 'Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20Back%20For%20Good%2098_%20Mix%20%28Hard%20Qoo%20Mix%29%20%E6%91%A9%E7%99%BB%E8%AA%9E%E9%8C%84%2080_s%20%E7%B6%93%E5%85%B8%E8%BF%AA%E6%96%AF%E5%8F%AF%E9%80%A3%E7%BA%8C%E8%88%9E%E6%9B%B2.mp4', 'Modern Talking - Back For Good 98_ Mix (Hard Qoo Mix) 摩登語錄 80_s 經典迪斯可連續舞曲.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - Back For Good 98_ Mix (Hard Qoo Mix) 摩登語錄 80_s 經典迪斯可連續舞曲.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20Cheri%20Cheri%20Lady%20%28Official%20Music%20Video%29.mp4', 'Modern Talking - Cheri Cheri Lady (Official Music Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - Cheri Cheri Lady (Official Music Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20Geronimo_s%20Cadillac%20%28Official%20Music%20Video%29.mp4', 'Modern Talking - Geronimo_s Cadillac (Official Music Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - Geronimo_s Cadillac (Official Music Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20Space%20Mix%20_98.mp4', 'Modern Talking - Space Mix _98.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - Space Mix _98.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20You%20Can%20Win%20If%20You%20Want%20%28Rockpop%20Music%20Hall%2029.06.1985%29.mp4', 'Modern Talking - You Can Win If You Want (Rockpop Music Hall 29.06.1985).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - You Can Win If You Want (Rockpop Music Hall 29.06.1985).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Modern%20Talking%20-%20You_re%20My%20Heart%2C%20You_re%20My%20Soul%20%28Official%20Music%20Video%29.mp4', 'Modern Talking - You_re My Heart, You_re My Soul (Official Music Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Modern Talking - You_re My Heart, You_re My Soul (Official Music Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E2%9D%A4%20Modern%20Talking%20%E2%9D%A4%20%20Brother%20Louie%20%E2%9D%A4.mp4', '❤ Modern Talking ❤  Brother Louie ❤.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">❤ Modern Talking ❤  Brother Louie ❤.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Bananarama%20-%20Venus%20%28Official%20Video%29.mp4', 'Bananarama - Venus (Official Video).mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Bananarama - Venus (Official Video).mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Circle%20In%20The%20Sand%E3%80%8A%E6%B2%99%E7%81%98%E4%B8%8A%E7%9A%84%E5%9C%88%E5%9C%88%E3%80%8B~%20Belinda%20Carlisle%E4%B8%AD%E8%8B%B1%E6%AD%8C%E8%A9%9E.mp4', 'Circle In The Sand《沙灘上的圈圈》~ Belinda Carlisle中英歌詞.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Circle In The Sand《沙灘上的圈圈》~ Belinda Carlisle中英歌詞.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/DJ%E7%89%88%E4%BC%A4%E6%84%9F%E6%83%85%E6%AD%8C%E9%85%8D%E9%9F%B3%E3%80%8A%E6%A2%A6%E4%B8%AD%E7%9A%84%E4%BD%A0%E5%92%8C%E6%88%91%E3%80%8B%E6%AD%8C%E5%A3%B0%E6%97%8B%E5%BE%8B%E5%8A%B2%E7%88%86%E5%8A%A8%E6%84%9F%EF%BC%8C%E6%B7%B1%E6%83%85%E6%84%9F%E4%BA%BA%E3%80%90%E6%9E%97%E6%9E%97%E8%8B%91%E7%88%B1%E9%9F%B3%E4%B9%90%E3%80%91.mp4', 'DJ版伤感情歌配音《梦中的你和我》歌声旋律劲爆动感，深情感人【林林苑爱音乐】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">DJ版伤感情歌配音《梦中的你和我》歌声旋律劲爆动感，深情感人【林林苑爱音乐】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Kylie%20Minogue%20-%20I%20Should%20Be%20So%20Lucky%20-%20Official%20Video.mp4', 'Kylie Minogue - I Should Be So Lucky - Official Video.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Kylie Minogue - I Should Be So Lucky - Official Video.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Kylie%20Minogue%20-%20The%20Loco-Motion.mp4', 'Kylie Minogue - The Loco-Motion.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Kylie Minogue - The Loco-Motion.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E4%BD%A0%E6%98%AF%E6%88%91%E7%9A%84%E6%A0%BC%E6%A1%91%E8%8A%B1%E3%80%8B%E6%BC%94%E5%94%B1%EF%BC%9A%E6%A2%81%E7%BA%A2-audioonly.mp4', '《你是我的格桑花》演唱：梁红-audioonly.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《你是我的格桑花》演唱：梁红-audioonly.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%BA%BA%E7%94%9F%E5%B0%B1%E6%98%AF%E4%B8%80%E5%A0%B4%E8%87%AA%E6%B8%A1.mp4', '人生就是一場自渡.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">人生就是一場自渡.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%BA%BA%E7%94%9F%E9%A0%88%E8%87%AA%E6%B8%A1.mp4', '人生須自渡.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">人生須自渡.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%BD%A0%E4%B8%8D%E9%85%8D.mp4', '你不配.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">你不配.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%81%87%E5%A6%82%E7%88%B1%E6%9C%89%E5%A4%A9%E6%84%8F%20-%20%E6%9D%8E%E5%81%A5.mp4', '假如爱有天意 - 李健.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">假如爱有天意 - 李健.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%81%9A%E5%80%8B%E7%94%9F%E6%B4%BB%E5%BC%B7%E8%80%85.mp4', '做個生活強者.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">做個生活強者.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%8C%97%E5%B1%B1%E7%9A%84%E9%A2%A8%E5%90%B9%E4%B8%8D%E5%88%B0%E5%8D%97%E5%B1%B1%E5%B0%BE.mp4', '北山的風吹不到南山尾.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">北山的風吹不到南山尾.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%A4%A7%E6%98%8E%E9%A2%A8%E8%8F%AFbgm%EF%BD%9C%E8%83%8C%E6%99%AF%E9%9F%B3%E6%A8%82%EF%BD%9C%E5%88%9D%E5%BF%83%EF%BD%9C%E9%9B%BB%E8%A6%96%E5%8A%87%E3%80%90%E9%AB%98%E6%B8%85%E3%80%91.mp4', '大明風華bgm｜背景音樂｜初心｜電視劇【高清】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">大明風華bgm｜背景音樂｜初心｜電視劇【高清】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%A4%A9%E4%BD%BF%E7%9A%84%E7%BF%85%E8%86%80%E5%AE%8C%E6%95%B4.mp4', '天使的翅膀完整.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">天使的翅膀完整.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%B0%8D%E8%91%97%E6%9C%88%E4%BA%AE%E8%A8%B1%E5%80%8B%E9%A1%98.mp4', '對著月亮許個願.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">對著月亮許個願.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%BE%90%E8%AA%89%E6%BB%95%20%20%E5%A4%A9%E4%BD%BF%E7%9A%84%E7%BF%85%E8%86%80%20%E9%AB%98%E6%B8%85.mp4', '徐誉滕  天使的翅膀 高清.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">徐誉滕  天使的翅膀 高清.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%88%91%E5%B0%B1%E6%98%AF%E9%82%A3%E9%BA%BC%E5%8F%AF%E6%84%9B.mp4', '我就是那麼可愛.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">我就是那麼可愛.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%8A%96%E9%9F%B3TikTok%E7%A5%9E%E6%9B%B2%20-%20%E7%A7%91%E7%9B%AE%E4%B8%89%20%28%E4%B8%80%E7%AC%91%E6%B1%9F%E6%B9%96%29%20%5B%E7%A7%91%E7%9B%AE%E4%B8%89%E5%AE%8C%E6%95%B4%E7%89%88%5D.mp4', '抖音TikTok神曲 - 科目三 (一笑江湖) [科目三完整版].mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">抖音TikTok神曲 - 科目三 (一笑江湖) [科目三完整版].mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%9D%8F%E8%8A%B1%E8%90%BD.mp4', '杏花落.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">杏花落.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%8B%82%E6%B5%AA.mp4', '狂浪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">狂浪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%95%99%E9%BB%9E%E9%87%91%E9%8C%A2%E9%A4%8A%E8%80%81%E5%90%A7.mp4', '留點金錢養老吧.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">留點金錢養老吧.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%A5%9D%E7%A6%8F%E9%80%81%E7%B5%A6%E6%9C%89%E7%B6%A0%E7%9A%84%E4%BA%BA.mp4', '祝福送給有綠的人.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">祝福送給有綠的人.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%AD%89%E4%B8%80%E5%80%8B%E4%BA%BA%E5%88%B0%E4%BE%86.mp4', '等一個人到來.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">等一個人到來.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%81%9E%E4%BA%BA%E8%81%BD%E6%9B%B8_%20-%20%E4%B8%80%E7%AC%91%E6%B1%9F%E6%B9%96%E3%80%8E%E6%B1%9F%E6%B9%96%E4%B8%80%E7%AC%91%20%E6%B5%AA%E6%BB%94%E6%BB%94%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp4', '聞人聽書_ - 一笑江湖『江湖一笑 浪滔滔』【動態歌詞Lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">聞人聽書_ - 一笑江湖『江湖一笑 浪滔滔』【動態歌詞Lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%8A%B1%E5%A7%90%20_%20%E7%8B%82%E6%B5%AA%20_%20%28DJ%20V1%29%20_%20%281080P%29KTV.mp4', '花姐 _ 狂浪 _ (DJ V1) _ (1080P)KTV.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">花姐 _ 狂浪 _ (DJ V1) _ (1080P)KTV.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%A1%A8%E6%BC%94.mp4', '表演.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">表演.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%B3%BD%E9%A6%AC.mp4', '賽馬.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">賽馬.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%B4%9F%E6%88%91%E4%B8%8D%E8%B4%9F%E5%A5%B9%20-%20%20%E8%B5%B5%E6%B4%8B%20_Fu%20wo%20bu%20fu%20ta%20%20-%20Zhao%20yang.mp4', '负我不负她 -  赵洋 _Fu wo bu fu ta  - Zhao yang.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">负我不负她 -  赵洋 _Fu wo bu fu ta  - Zhao yang.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E9%AB%98%E5%8B%9D%E7%BE%8E%20~%20%E7%B7%A3.mp4', '高勝美 ~ 緣.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">高勝美 ~ 緣.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/LBI%E5%88%A9%E6%AF%94%20-%20%E5%B0%8F%E5%9F%8E%E5%A4%8F%E5%A4%A9%E3%80%8E%E6%A9%98%E9%BB%83%E8%89%B2%E7%9A%84%E6%97%A5%E8%90%BD%20%E5%90%9E%E6%B2%92%E5%9C%A8%E6%B5%B7%E5%B9%B3%E7%B7%9A%E3%80%8F%E3%80%90Lyrics%20Video%E3%80%91.mp4', 'LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/pro%20-%20%E7%AD%89%E4%B8%8D%E4%BE%86%E8%8A%B1%E9%96%8B%E3%80%8C%E6%88%91%E5%80%91%E7%9A%84%E6%84%9B%20%E5%B0%B1%E5%83%8F%E7%A7%8B%E8%91%89%E7%AD%89%E4%B8%8D%E5%88%B0%E8%8A%B1%E9%96%8B%E3%80%8D%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9EPinyinLyrics%E3%80%91%E2%99%AA.mp4', 'pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/PSY%20-ft.%20HYUNA-%20-%20%EC%98%A4%EB%B9%A4%20%EB%94%B1%20%EB%82%B4%20%EC%8A%A4%ED%83%80%EC%9D%BC%20MV.mp4', 'PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/Song%20Voyage%20Chicken%20Attack%20%E9%9B%9E%E9%9B%9E%E6%94%BB%E6%93%8A%20-%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AD%AF%E7%89%88-.mp4', 'Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版-.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版-.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E5%AD%A4%E5%8B%87%E8%80%85%E3%80%8B%EF%BC%88%E3%80%8A%E8%8B%B1%E9%9B%84%E8%81%AF%E7%9B%9F%EF%BC%9A%E9%9B%99%E5%9F%8E%E4%B9%8B%E6%88%B0%E3%80%8B%E5%8B%95%E7%95%AB%E5%8A%87%E9%9B%86%E4%B8%AD%E6%96%87%E4%B8%BB%E9%A1%8C%E6%9B%B2%EF%BC%89%E9%99%B3%E5%A5%95%E8%BF%85%20Eason%20Chan%20-Official%20MV-.mp4', '《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV-.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV-.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E3%81%BF%E3%81%86%E3%82%81%E3%83%BB%E3%83%A1%E3%82%A4%E3%83%AA%E3%82%A2%E3%83%BB217%E3%80%91%E6%A5%B5%E6%A5%BD%E6%B5%84%E5%9C%9F-Gokuraku%20Jodo-%20OFFiCiAL.mp4', '【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E4%B8%AD%E6%96%87%E5%AD%97%E5%B9%95%E3%80%91Aldnoah%20Zero%20OST%20-%20aLIEz.mp4', '【中文字幕】Aldnoah Zero OST - aLIEz.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【中文字幕】Aldnoah Zero OST - aLIEz.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%86%8D%E8%A6%8B%E8%8E%AB%E5%A6%AE%E5%8D%A1%20-%20%E5%BD%AD%E5%B8%AD%E5%BD%A5%20Franky%E5%BC%97%E8%98%AD%E5%A5%87%E3%80%8E%E4%B8%80%E5%80%8B%E4%BA%BA%E6%83%B3%E6%83%B3%E6%83%B3%E6%83%B3%E5%88%B0%E5%BF%83%E7%97%9B%E3%80%8C%E6%80%8E%E9%BA%BD%E8%83%BD%E5%A4%A0%E4%B8%8D%E6%87%82%E3%80%8D%EF%BC%8C%E6%83%85%E7%B7%92%E4%B8%80%E9%BB%9E%E9%BB%9E%E9%BB%9E%E9%BB%9E%E5%88%B0%E5%A4%B1%E6%8E%A7%E3%80%8C%E8%AE%8A%E5%BE%97%E6%9C%89%E6%81%83%E7%84%A1%E6%81%90%E3%80%8D%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91.mp4', '再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%88%9D%E9%9F%B3%E6%9C%AA%E4%BE%86-%E7%94%A9%E8%94%A5%E6%AD%8C-Ievan%20polkka-%20%E4%B8%AD%E6%96%87%E7%A9%BA%E8%80%B3%E7%89%88.mp4', '初音未來-甩蔥歌-Ievan polkka- 中文空耳版.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">初音未來-甩蔥歌-Ievan polkka- 中文空耳版.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%9C%AC%E8%8D%89%E7%BA%B2%E7%9B%AE%20%E5%91%A8%E6%9D%B0%E4%BC%A6%20-%E6%AD%8C%E8%AF%8D%E7%89%88-.mp4', '本草纲目 周杰伦 -歌词版-.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">本草纲目 周杰伦 -歌词版-.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%BA%AB%E5%A5%95%E5%BF%83%20-%20%E4%B8%80%E8%B7%AF%E7%94%9F%E8%8A%B1%E3%80%8E%E6%88%91%E5%B8%8C%E6%9C%9B%E8%A8%B1%E9%81%8E%E7%9A%84%E9%A1%98%E6%9C%9B%E4%B8%80%E8%B7%AF%E7%94%9F%E8%8A%B1%EF%BC%8C%E8%AD%B7%E9%80%81%E9%82%A3%E6%99%82%E7%9A%84%E5%A4%A2%E6%8A%B5%E6%93%8B%E9%81%8E%E9%A2%A8%E6%B2%99%E3%80%82%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9EVietsubPinyin%20Lyrics%E3%80%91.mp4', '溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%B1%86%E5%8C%85%20-%20%E4%BD%9C%E9%85%92%20-DJ%E9%BB%98%E6%B6%B5%E7%89%88-%20%E3%80%8C%E6%88%91%E7%94%A8%E5%B1%B1%E5%B7%9D%E4%BD%9C%E9%85%92%20%E6%95%AC%E4%BD%A0%E6%97%B7%E4%B8%96%E6%B8%A9%E6%9F%94%E3%80%8D%E3%80%90%E5%8A%A8%E6%80%81%E6%AD%8C%E8%AF%8D%20lyrics%E3%80%91.mp4', '豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B8%8B%E5%AE%9A%E6%B1%BA%E5%BF%83%E5%BF%98%E8%A8%98%E4%BD%A0.mp4', '下定決心忘記你.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">下定決心忘記你.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%86%AC%E5%A4%A9%E6%88%80%E6%84%9B%E6%9C%80%E9%81%A9%E5%90%88.mp4', '冬天戀愛最適合.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">冬天戀愛最適合.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%88%86%E6%89%8B%E4%BB%A5%E5%BE%8C%E8%AA%B0%E9%82%84%E8%A8%98%E5%BE%97%E8%AA%B0.mp4', '分手以後誰還記得誰.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">分手以後誰還記得誰.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%96%9D%E4%B8%8B%E4%BA%BA%E7%94%9F%E5%85%A9%E6%9D%AF%E9%85%92.mp4', '喝下人生兩杯酒.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">喝下人生兩杯酒.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%9F%8E%E5%B8%82%E9%9C%93%E8%99%B9%E9%BB%9E%E4%BA%AE%E5%A4%9C%E7%9A%84%E9%BB%91.mp4', '城市霓虹點亮夜的黑.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">城市霓虹點亮夜的黑.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%A5%BD%E6%AD%B9%E6%94%8F%E6%98%AF%E5%91%BD.mp4', '好歹攏是命.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">好歹攏是命.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%83%85%E7%B7%A3.mp4', '情緣.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">情緣.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%BE%8E%E9%BA%97%E7%9A%84%E8%9D%B4%E8%9D%B6.mp4', '美麗的蝴蝶.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">美麗的蝴蝶.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%BC%95%E9%AC%86%E8%A1%8C%E8%B5%B0%E4%BA%BA%E4%B8%96%E9%96%93.mp4', '輕鬆行走人世間.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">輕鬆行走人世間.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/LiSA%20-%20Crossing%20Field.mp4', 'LiSA - Crossing Field.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">LiSA - Crossing Field.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/MV%E8%8A%B1%E5%83%AE%E3%80%8A%E6%B8%A1%E6%88%91%E4%B8%8D%E6%B8%A1%E5%A5%B9%E3%80%8B%EF%BC%8C%E6%AD%8C%E5%A3%B0%E5%87%84%E7%BE%8E%E4%BC%A4%E6%84%9F%EF%BC%8C%E5%90%AC%E5%85%A5%E4%BA%86%E5%BF%83.mp4', 'MV花僮《渡我不渡她》，歌声凄美伤感，听入了心.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">MV花僮《渡我不渡她》，歌声凄美伤感，听入了心.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/only%20my%20railgun%E3%80%90%E3%83%9F%E3%83%8B%E5%90%88%E5%94%B1%E3%80%917th%20Anniversary%20Edition.mp4', 'only my railgun【ミニ合唱】7th Anniversary Edition.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">only my railgun【ミニ合唱】7th Anniversary Edition.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/SawanoHiroyuki-nZk-mizuki%E3%80%8EAZ%E3%80%8FMusic%20Video%20Short%20ver.mp4', 'SawanoHiroyuki-nZk-mizuki『AZ』Music Video Short ver.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">SawanoHiroyuki-nZk-mizuki『AZ』Music Video Short ver.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8A%E5%A4%A9%E6%B6%AF%E3%80%8B%E4%BB%BB%E8%B4%A4%E9%BD%90%E3%80%81%E5%88%98%E5%AE%87%E5%AE%81%20%E2%80%94%20%E7%86%9F%E6%82%89%E7%9A%84%E6%97%8B%E5%BE%8B%E4%B8%8D%E4%B8%80%E6%A0%B7%E7%9A%84%E6%84%9F%E8%A7%89%EF%BC%8C%E5%8F%A4%E9%A3%8E%E4%B8%8E%E4%B8%AD%E5%9B%BD%E9%A3%8E%E7%9A%84%E7%A2%B0%E6%92%9E%E5%A4%AA%E9%9C%87%E6%92%BC%E4%BA%86%EF%BC%81%20%E3%80%90SMG%E4%B8%8A%E6%B5%B7%E4%B8%9C%E6%96%B9%E5%8D%AB%E8%A7%86%E9%9F%B3%E4%B9%90%E9%A2%91%E9%81%93%E3%80%91.mp4', '《天涯》任贤齐、刘宇宁 — 熟悉的旋律不一样的感觉，古风与中国风的碰撞太震撼了！ 【SMG上海东方卫视音乐频道】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">《天涯》任贤齐、刘宇宁 — 熟悉的旋律不一样的感觉，古风与中国风的碰撞太震撼了！ 【SMG上海东方卫视音乐频道】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%8Conly%20my%20railgun%E3%80%8D%E6%AD%8C%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F%E3%80%90%EF%BC%8A%E3%81%AA%E3%81%BF%E3%82%8A%E3%82%93%E3%80%91.mp4', '「only my railgun」歌ってみた【＊なみりん】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">「only my railgun」歌ってみた【＊なみりん】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E3%81%BF%E3%81%86%E3%82%81%E3%83%BB%E3%83%A1%E3%82%A4%E3%83%AA%E3%82%A2%E3%83%BB217%E3%80%91%E6%A1%83%E6%BA%90%E6%81%8B%E6%AD%8C-Tougen%20Renka-%20OFFiCiAL.mp4', '【みうめ・メイリア・217】桃源恋歌-Tougen Renka- OFFiCiAL.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【みうめ・メイリア・217】桃源恋歌-Tougen Renka- OFFiCiAL.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E4%B8%89%E7%84%A1%E7%BF%BB%E5%94%B1%E3%80%91%E5%8D%81%E4%BA%8C%E9%8E%AE%E9%AD%82%E6%AD%8C%20%E3%80%90Official%20Video%20HD%E3%80%91.mp4', '【三無翻唱】十二鎮魂歌 【Official Video HD】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【三無翻唱】十二鎮魂歌 【Official Video HD】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E6%BB%BF%E6%BC%A2%E3%80%91%E5%90%9B%E8%87%A8%E5%A4%A9%E4%B8%8B%E3%80%90%E7%89%B9%E6%9B%BC%C3%97Lao%E4%B9%BE%E5%AA%BD%E3%80%91%E7%87%83%E5%88%B0%E7%82%B8%E8%A3%82%E7%9A%84%E5%AE%B6%E9%95%B7%E7%B5%84%EF%BC%81%20%EF%BC%81.mp4', '【滿漢】君臨天下【特曼×Lao乾媽】燃到炸裂的家長組！ ！.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【滿漢】君臨天下【特曼×Lao乾媽】燃到炸裂的家長組！ ！.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E7%B6%9C%E6%BC%AB%E9%AB%98%E7%87%83AMV%E3%80%91%E9%80%99%E9%A6%96BGM%E6%9C%89%E6%AF%92%20%E7%95%B6FADE%E9%81%87%E8%A6%8B%E9%80%99%E4%BA%9B%E6%97%8B%E5%BE%8B.mp4', '【綜漫高燃AMV】這首BGM有毒 當FADE遇見這些旋律.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【綜漫高燃AMV】這首BGM有毒 當FADE遇見這些旋律.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E7%BA%AF%E4%BA%AB%E3%80%91%E8%B0%81%E7%9A%84DNA%E5%8A%A8%E4%BA%86%EF%BC%81%E8%A9%B9%E9%9B%AF%E5%A9%B7%E5%BC%A0%E8%BF%9C%20%E7%83%AD%E8%A1%80%E6%BC%94%E7%BB%8E%E3%80%8A%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85%E3%80%8B%E4%B8%BB%E9%A2%98%E6%9B%B2%E3%80%8A%E9%9D%92%E9%B8%9F%E3%80%8B%EF%BC%8C%E5%A4%AA%E7%87%83%E4%BA%86%EF%BC%81%20%E3%80%8A%E6%88%91%E4%BB%AC%E7%9A%84%E6%AD%8C4%E3%80%8BSinging%20with%20legends%20S4%20EP12%E3%80%90%E4%B8%9C%E6%96%B9%E5%8D%AB%E8%A7%86%E5%AE%98%E6%96%B9%E9%A2%91%E9%81%93%E3%80%91.mp4', '【纯享】谁的DNA动了！詹雯婷张远 热血演绎《火影忍者》主题曲《青鸟》，太燃了！ 《我们的歌4》Singing with legends S4 EP12【东方卫视官方频道】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【纯享】谁的DNA动了！詹雯婷张远 热血演绎《火影忍者》主题曲《青鸟》，太燃了！ 《我们的歌4》Singing with legends S4 EP12【东方卫视官方频道】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E3%80%90%E9%A3%9F%E7%89%A9%E8%AF%AD%E4%B8%80%E5%91%A8%E5%B9%B4%E3%80%91%E3%80%8A%E4%B8%80%E8%BD%BD%E7%99%BE%E5%91%B3%E3%80%8B%E4%B9%9D%E4%BD%8D%E5%8F%A4%E9%A3%8E%E5%A4%A7%E4%BD%AC%E7%8C%AE%E5%94%B1.mp4', '【食物语一周年】《一载百味》九位古风大佬献唱.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">【食物语一周年】《一载百味》九位古风大佬献唱.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B8%80%E9%A6%96%E5%A5%BD%E8%81%BD%E7%9A%84%E5%8F%A4%E9%A2%A8%E9%9F%B3%E6%A8%82%E3%80%8A%E7%B4%85%E5%A1%B5%E7%9A%86%E9%81%8E%E5%AE%A2%E3%80%8B%E6%88%91%E9%A1%98%E5%BE%9E%E6%AD%A4%E7%BE%BD%E5%8C%96%E4%BD%9C%E4%BB%99%EF%BC%8C%E6%83%85%E4%B8%8D%E5%86%8D%E7%95%99%E6%88%80.mp4', '一首好聽的古風音樂《紅塵皆過客》我願從此羽化作仙，情不再留戀.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">一首好聽的古風音樂《紅塵皆過客》我願從此羽化作仙，情不再留戀.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B8%8B%E5%B1%B1%20%E8%A6%81%E4%B8%8D%E8%A6%81%E8%B2%B7%E8%8F%9C%E3%80%90%E5%89%B5%E4%BD%9CMV%E3%80%91chinese%20danceChinese%20elegant%20classical%20woman.mp4', '下山 要不要買菜【創作MV】chinese danceChinese elegant classical woman.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">下山 要不要買菜【創作MV】chinese danceChinese elegant classical woman.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%B9%9D%E4%B9%9D%E5%85%AB%E5%8D%81%E4%B8%80-%E5%85%AB%E4%BA%BA%E6%B7%B7%E9%9F%B3-%E6%98%93%E8%A8%80%E6%A8%8A%E6%A3%8B%E5%8D%97%E4%B9%85%E9%9B%99%E7%AC%99%E6%B9%8A%E8%A9%A9%E5%B0%8F%E9%AD%82%E7%89%B9%E6%9B%BC%E8%A3%82%E5%A4%A9-.mp4', '九九八十一-八人混音-易言樊棋南久雙笙湊詩小魂特曼裂天-.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">九九八十一-八人混音-易言樊棋南久雙笙湊詩小魂特曼裂天-.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E4%BA%91%E6%9C%B5%E6%9C%80%E7%BB%8F%E5%85%B8%E7%9A%84%E4%B8%89%E9%A6%96%E6%AD%8C%E6%9B%B2%EF%BC%8C%E7%8E%B0%E5%9C%BA%E3%80%8A%E4%B8%89%E9%A6%96%E8%BF%9E%E5%94%B1%E3%80%8B%E7%9C%9F%E6%98%AF%E5%A4%A9%E7%B1%81%E4%B9%8B%E9%9F%B3%EF%BC%81.mp4', '云朵最经典的三首歌曲，现场《三首连唱》真是天籁之音！.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">云朵最经典的三首歌曲，现场《三首连唱》真是天籁之音！.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E7%81%AB%E7%9A%84BGM%E3%80%90%E6%88%B0%E6%AD%8C%E3%80%91Victory.mp4', '全世界最火的BGM【戰歌】Victory.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">全世界最火的BGM【戰歌】Victory.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E5%88%80%E9%83%8E%E3%80%8A%202002%E5%B9%B4%E7%9A%84%E7%AC%AC%E4%B8%80%E5%A0%B4%E9%9B%AA%20%E3%80%8B%E5%B8%B6%E8%B5%B0%E4%BA%86%E6%9C%80%E5%BE%8C%E4%B8%80%E7%89%87%E9%A3%84%E8%90%BD%E7%9A%84%E9%BB%83%E8%91%89.mp4', '刀郎《 2002年的第一場雪 》帶走了最後一片飄落的黃葉.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">刀郎《 2002年的第一場雪 》帶走了最後一片飄落的黃葉.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%8D%AE%E8%AF%B4%E6%97%A5%E6%9C%AC%E5%81%87%E5%94%B1%E7%8A%AF%E6%B3%95%EF%BC%8C%E6%89%8D%E9%80%BC%E5%87%BA%E4%BA%86%E8%BF%995%E4%B8%AA%E7%A5%9E%E7%BA%A7%E7%8E%B0%E5%9C%BA%EF%BC%81%E6%AF%8F%E9%A6%96%E9%83%BD%E8%83%BD%E8%A1%80%E6%B4%97%E5%85%A8%E7%BD%91.mp4', '据说日本假唱犯法，才逼出了这5个神级现场！每首都能血洗全网.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">据说日本假唱犯法，才逼出了这5个神级现场！每首都能血洗全网.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%A3%84%E4%BD%9B%E5%85%A5%E9%AD%94%20-%20%E6%AE%98%E9%9B%AA%E3%80%8E%E4%BD%9B%E5%89%8D%E4%B8%80%E8%B7%AA%E5%A4%9A%E5%B9%B4%E4%BD%9B%E4%B8%8D%E6%86%90%E5%BF%83%EF%BC%8C%E5%8D%BB%E8%AE%93%E6%88%91%E8%B5%B0%E5%85%A5%E7%B5%95%E5%A2%83%EF%BC%8C%E9%82%A3%E6%88%91%E6%88%90%E9%AD%94%E5%8F%AA%E7%82%BA%E6%8F%9B%E4%B8%80%E4%BB%BD%E5%AE%89%E5%AF%A7%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E6%B7%B7%E5%89%AA%E8%87%AA%EF%BC%9A%E8%8A%B1%E5%8D%83%E9%AA%A8.mp4', '棄佛入魔 - 殘雪『佛前一跪多年佛不憐心，卻讓我走入絕境，那我成魔只為換一份安寧』【動態歌詞】混剪自：花千骨.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">棄佛入魔 - 殘雪『佛前一跪多年佛不憐心，卻讓我走入絕境，那我成魔只為換一份安寧』【動態歌詞】混剪自：花千骨.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E6%A9%9F%E5%8B%95%E6%88%A6%E5%A3%AB%E3%82%AC%E3%83%B3%E3%83%80%E3%83%A0SEED%20Full%20Ending%20%E3%81%82%E3%82%93%E3%81%AA%E3%81%AB%E4%B8%80%E7%B7%92%E3%81%A0%E3%81%A3%E3%81%9F%E3%81%AE%E3%81%AB%20-ReTracks%20by%20See-Saw%20%E4%B8%AD%E6%97%A5%E6%AD%8C%E8%A9%9E.mp4', '機動戦士ガンダムSEED Full Ending あんなに一緒だったのに -ReTracks by See-Saw 中日歌詞.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">機動戦士ガンダムSEED Full Ending あんなに一緒だったのに -ReTracks by See-Saw 中日歌詞.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%81%AB%E5%BD%B1%E5%BF%8D%E8%80%85%E7%96%BE%E9%A2%A8%E5%82%B3%20%E7%89%87%E9%A0%AD%E6%9B%B23-%E9%9D%92%E9%B3%A5%EF%BC%88%E5%8E%9F%E8%81%B2%20%E5%AE%8C%E6%95%B4%E7%89%88%EF%BC%89Naruto%20Shippuden%20opening3%20-%20Blue%20Bird.mp4', '火影忍者疾風傳 片頭曲3-青鳥（原聲 完整版）Naruto Shippuden opening3 - Blue Bird.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">火影忍者疾風傳 片頭曲3-青鳥（原聲 完整版）Naruto Shippuden opening3 - Blue Bird.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%BB%8F%E5%85%B8%E8%80%81%E6%AD%8C%E3%80%8A%E8%A5%BF%E6%B5%B7%E6%83%85%E6%AD%8C%E3%80%8B%E5%88%80%E9%83%8E%E7%8B%AC%E7%89%B9%E5%97%93%E9%9F%B3%EF%BC%8C%E5%94%B1%E5%87%BA%E4%BA%86%E4%BA%BA%E9%97%B4%E6%B2%A7%E6%A1%91%EF%BC%8C%E6%AF%8F%E6%AC%A1%E9%83%BD%E6%B7%B1%E6%B7%B1%E6%84%9F%E5%8A%A8.mp4', '经典老歌《西海情歌》刀郎独特嗓音，唱出了人间沧桑，每次都深深感动.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">经典老歌《西海情歌》刀郎独特嗓音，唱出了人间沧桑，每次都深深感动.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E7%BE%85%E5%89%8E%E6%B5%B7%E5%B8%82Raksha%20Haishi%20%20-%20%E5%88%80%E9%83%8EDaolang%E3%80%8E%E9%82%A3%E9%A9%AC%E6%88%B7%E4%B8%8D%E7%9F%A5%E9%81%93%E4%BB%96%E6%98%AF%E4%B8%80%E5%A4%B4%E9%A9%B4%20%20%E9%82%A3%E5%8F%88%E9%B8%9F%E4%B8%8D%E7%9F%A5%E9%81%93%E4%BB%96%E6%98%AF%E4%B8%80%E5%8F%AA%E9%B8%A1%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91.mp4', '羅剎海市Raksha Haishi  - 刀郎Daolang『那马户不知道他是一头驴  那又鸟不知道他是一只鸡』【動態歌詞】.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">羅剎海市Raksha Haishi  - 刀郎Daolang『那马户不知道他是一头驴  那又鸟不知道他是一只鸡』【動態歌詞】.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%94%A1%E4%BE%9D%E6%9E%97%20Jolin%20Tsai%E3%80%8A%E8%AA%AA%E6%84%9B%E4%BD%A0%E3%80%8B-feat.G.E.M.%E9%84%A7%E7%B4%AB%E6%A3%8B-%20Official%20Live%20Music%20Video.mp4', '蔡依林 Jolin Tsai《說愛你》-feat.G.E.M.鄧紫棋- Official Live Music Video.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">蔡依林 Jolin Tsai《說愛你》-feat.G.E.M.鄧紫棋- Official Live Music Video.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E9%8B%BC%E5%BD%88W%20%E4%B8%BB%E9%A1%8C%E6%9B%B2%20Just%20Communication%20-%20Mobile%20Suit%20Gundam%20Wing.mp4', '鋼彈W 主題曲 Just Communication - Mobile Suit Gundam Wing.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">鋼彈W 主題曲 Just Communication - Mobile Suit Gundam Wing.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E9%A3%9E%E5%85%B0%20%E6%88%91%E5%8F%AA%E5%87%9D%E6%9C%9B%E7%9D%80%E4%BD%A0.mp4', '飞兰 我只凝望着你.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">飞兰 我只凝望着你.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E9%AD%8F%E4%BD%B3%E8%89%BA%20%E3%80%8A%E5%BF%98%E5%B7%9D%E7%9A%84%E6%B2%B3%E3%80%8B%20%E5%A5%BD%E5%90%AC%E5%8F%88%E4%BC%A4%E6%84%9F%EF%BC%8C%E5%90%AC%E5%93%AD%E4%BA%86%20%E3%80%90%E5%88%9B%E4%BD%9CMV%20-%20%E6%AD%8C%E8%AF%8D%20Lyrics%E3%80%91%20%E3%80%8C%E4%B8%80%E6%AC%A1%E5%9B%9E%E7%9C%B8%EF%BC%8C%E5%B0%86%E6%88%91%E7%9A%84%E5%BF%83%E7%89%B5%E6%89%AF%EF%BC%9B%E6%84%BF%E7%94%A8%E5%8D%83%E5%B9%B4%E5%AD%A4%E7%8B%AC%E5%AF%82%E5%AF%9E%EF%BC%8C%E6%8D%A2%E4%B8%80%E6%AC%A1%E5%92%8C%E4%BD%A0%E7%9B%B8%E6%BF%A1%E4%BB%A5%E6%B2%AB%E3%80%8D.mp4', '魏佳艺 《忘川的河》 好听又伤感，听哭了 【创作MV - 歌词 Lyrics】 「一次回眸，将我的心牵扯；愿用千年孤独寂寞，换一次和你相濡以沫」.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">魏佳艺 《忘川的河》 好听又伤感，听哭了 【创作MV - 歌词 Lyrics】 「一次回眸，将我的心牵扯；愿用千年孤独寂寞，换一次和你相濡以沫」.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/%E8%AC%9D%E9%87%91%E7%87%95%E5%AE%98%E6%96%B9HD%E3%80%8C%E5%A7%90%E5%A7%90%E3%80%8D%E8%B7%B3%E9%87%9D%E8%88%9E%E6%9B%B2MV%E5%A4%A7%E9%A6%96%E6%92%AD%20Jeannie%20Hsieh-SISTER.%5BTaiwan%20Singer%5D%20-%20YouTube.mp4', '謝金燕官方HD「姐姐」跳針舞曲MV大首播 Jeannie Hsieh-SISTER.[Taiwan Singer] - YouTube.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">謝金燕官方HD「姐姐」跳針舞曲MV大首播 Jeannie Hsieh-SISTER.[Taiwan Singer] - YouTube.mp4</span>
+        </div>
+        <div class="video-item" onclick="playVideo('vedio1/VIDEO0018.mp4', 'VIDEO0018.mp4')">
+            <span class="play-icon">▶</span>
+            <span class="video-name">VIDEO0018.mp4</span>
+        </div>
+    </div>
+    <script>
+        function playVideo(src, title) {
+            const video = document.getElementById('mainPlayer');
+            const source = document.getElementById('videoSource');
+            const titleDisplay = document.getElementById('nowPlaying');
+            
+            // 直接設定來源，腳本已在後端處理好編碼
+            video.src = src; 
+            video.load();
+            video.play().catch(e => {
+                console.error("播放失敗:", e);
+                titleDisplay.innerText = "❌ 播放失敗：可能是編碼格式手機不支援";
+            });
+            titleDisplay.innerText = "正在播放： " + title;
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+    </script>
+</body>
+</html>

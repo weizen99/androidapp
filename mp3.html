@@ -1,0 +1,990 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>我的影片播放清單</title>
+        <style>
+            body { font-family: "Microsoft JhengHei", sans-serif; background: #f9f9f9; padding: 40px; }
+            .category-section { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px; padding: 20px; }
+            h2 { color: #cc0000; border-bottom: 2px solid #cc0000; padding-bottom: 10px; }
+            .video-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; align-items: center; }
+            .video-item:last-child { border-bottom: none; }
+            .video-item a { text-decoration: none; color: #333; font-size: 16px; flex-grow: 1; }
+            .video-item a:hover { color: #065fd4; }
+            .play-icon { margin-right: 10px; color: #888; }
+        </style>
+    </head>
+    <body>
+        <h1>🎬 我的播放清單</h1>
+    <div class="category-section"><h2>📂 音樂</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/Matthew%20Lien%20-%2001Flying%20Squirrel%20Creek_320k.mp3" target="_blank">Matthew Lien - 01Flying Squirrel Creek_320k.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/Matthew%20Lien%20bressanone_320k.mp3" target="_blank">Matthew Lien bressanone_320k.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%91%A8%E5%8D%8E%E5%81%A5%2C%20%E8%8B%8F%E6%85%A7%E4%BC%A6-%E6%BD%87%E6%BD%87%E9%9B%A8%E6%9C%AA%E6%AD%87%28%E7%94%B5%E8%A7%86%E5%89%A7%E3%80%8A%E7%B2%BE%E5%BF%A0%E5%B2%B3%E9%A3%9E%E3%80%8B%E4%B8%BB%E9%A2%98%E6%9B%B2%29.mp3" target="_blank">周华健, 苏慧伦-潇潇雨未歇(电视剧《精忠岳飞》主题曲).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%93%88%E5%B0%BC%E5%85%8B%E5%AD%9C%E3%80%8CMV%E3%80%8D-%20%E9%97%BB%E4%BA%BA%E5%90%AC%E6%9B%B8%20%28%E8%A2%AB%E7%A8%B1%E7%82%BA%E5%8D%83%E5%B9%B4%E4%B8%80%E9%81%87%E7%BE%8E%E5%A5%B3%E7%9A%84%E6%96%B0%E7%96%86%E5%9B%9B%E7%BE%8E%EF%BC%8C%E4%B8%80%E8%B7%B3%E3%80%8C%E4%B8%80%E6%A2%A6%E6%95%A6%E7%85%8C%E3%80%8D%E4%BE%BF%E6%8A%8A%E8%90%AC%E5%8D%83%E7%94%B7%E5%A3%AB%E8%BF%B7%E6%AD%BB%EF%BC%81%29.mp3" target="_blank">哈尼克孜「MV」- 闻人听書 (被稱為千年一遇美女的新疆四美，一跳「一梦敦煌」便把萬千男士迷死！).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E7%AD%89%E4%BB%80%E4%B9%88%E5%90%9B%20%E5%87%89%E5%A4%9C%E6%A8%AA%E5%A1%98%E3%80%90%E6%AD%8C%E8%AF%8D%E5%AD%97%E5%B9%95%20%E5%AE%8C%E6%95%B4%E7%89%88%E9%AB%98%E6%B8%85%E6%97%A0%E6%8D%9F%E9%9F%B3%E8%B4%A8%E3%80%91%E2%99%AB%E3%80%8C%E5%A4%9C%E6%9C%AA%E5%A4%AE%EF%BC%8C%E6%98%9F%E6%B1%89%E8%A5%BF%E6%B5%81%E8%8D%A1%E8%87%B3%E8%8B%8D%E8%8C%AB%E3%80%8D.mp3" target="_blank">等什么君 凉夜横塘【歌词字幕 完整版高清无损音质】♫「夜未央，星汉西流荡至苍茫」.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9BCover%20-%20%E9%9D%92%E7%B5%B2%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E5%90%9B%E4%B8%8D%E8%A6%8B%E5%A6%BE%E8%B5%B7%E8%88%9E%E7%BF%A9%E7%BF%A9%20%E5%90%9B%E4%B8%8D%E8%A6%8B%E5%A6%BE%E9%BC%93%E7%91%9F%E7%B6%BF%E7%B6%BF%E3%80%8D%E2%99%AA.mp3" target="_blank">等什麼君Cover - 青絲【動態歌詞】「君不見妾起舞翩翩 君不見妾鼓瑟綿綿」♪.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E7%BB%88%E4%BA%8E%E6%89%BE%E5%88%B0%E8%BF%99%E9%A6%96%E6%83%85%E6%AD%8C%E5%AF%B9%E5%94%B1%EF%BC%8C%E5%A4%AA%E6%92%95%E5%BF%83%E8%A3%82%E8%82%BA%E4%BA%86%EF%BC%8C%E5%94%B1%E7%9A%84%E5%8D%83%E4%B8%87%E4%BA%BA%E4%B8%80%E6%8A%8A%E9%BC%BB%E6%B6%95%E4%B8%80%E6%8A%8A%E6%B3%AA%EF%BC%8C%E5%A4%AA%E5%A5%BD%E5%90%AC%E4%BA%86%EF%BC%81%E7%BB%99%E7%94%9F%E6%B4%BB%E5%8A%A0%E7%82%B9%E7%B3%96.mp3" target="_blank">终于找到这首情歌对唱，太撕心裂肺了，唱的千万人一把鼻涕一把泪，太好听了！给生活加点糖.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E8%83%A1%E6%AD%8C%20-%20%E7%BE%8E%E9%BA%97%E7%9A%84%E7%A5%9E%E8%A9%B1%E3%80%8E%E5%8D%BB%E9%80%A3%E4%B8%80%E5%8F%A5%E6%88%91%E6%84%9B%E4%BD%A0%E9%83%BD%20%E4%B8%8D%E8%83%BD%E8%AA%AA%E5%87%BA%E5%8F%A3%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91.mp3" target="_blank">胡歌 - 美麗的神話『卻連一句我愛你都 不能說出口』【動態歌詞】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%BE%99%E7%9C%BC%2C%20%E8%8A%9D%E9%BA%BB-%E5%8A%A8%E4%B8%8D%E5%8A%A8%E5%B0%B1%E8%AF%B4%E7%88%B1%E6%88%91.mp3" target="_blank">龙眼, 芝麻-动不动就说爱我.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%EF%BC%BB%E7%B5%B1%E4%B8%80%E7%8D%85%2012%E5%BC%B7%E5%97%86%E5%8F%B8%E6%9B%B2%EF%BC%BD%E7%B5%B1%E4%B8%80%E5%B0%9A%E5%8B%87%EF%BC%88%E5%8F%B0%E7%81%A3%E5%B0%9A%E5%8B%87%EF%BC%89%E3%80%8C%E4%B8%AD%E8%8F%AF%E9%9A%8A%E7%89%88%E6%9C%AC%E3%80%8D%20%23%E7%B5%B1%E4%B8%80%E7%8D%85%20%23%E7%B5%B1%E4%B8%80%E5%B0%9A%E5%8B%87%20%23%E5%8F%B0%E7%81%A3%E5%B0%9A%E5%8B%87%20%2312%E5%BC%B7%20%23%E5%97%86%E5%8F%B8%E6%9B%B2%20%23%E4%B8%AD%E8%8F%AF%E9%9A%8A%20%23%E7%B6%93%E5%85%B8%E8%B3%BD%20%23wbc_320k.mp3" target="_blank">［統一獅 12強嗆司曲］統一尚勇（台灣尚勇）「中華隊版本」 #統一獅 #統一尚勇 #台灣尚勇 #12強 #嗆司曲 #中華隊 #經典賽 #wbc_320k.mp3</a>
+            </div>
+            </div><div class="category-section"><h2>📂 30_mp3</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/ABBA%20-%20Gimme%21%20Gimme%21%20Gimme%21%20%28A%20Man%20After%20Midnight%29.mp3" target="_blank">ABBA - Gimme! Gimme! Gimme! (A Man After Midnight).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Backstreet%20Boys%20-%20Everybody%20%28Backstreet%27s%20Back%29%20%28Lyrics%29.mp3" target="_blank">Backstreet Boys - Everybody (Backstreet's Back) (Lyrics).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Boney%20M.%20-%20Sunny%20%28ZDF%20Disco%20performance%20-%2005.02.1977%29.mp3" target="_blank">Boney M. - Sunny (ZDF Disco performance - 05.02.1977).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Casablanca.mp3" target="_blank">Casablanca.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/C%C3%A9line%20Dion%20-%20The%20Power%20Of%20Love%20%28Official%20Remastered%20HD%20Video%29.mp3" target="_blank">Céline Dion - The Power Of Love (Official Remastered HD Video).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Five%20Hundred%20Miles%20%E7%94%B5%E5%BD%B1%E3%80%8A%E9%86%89%E4%B9%A1%E6%B0%91%E8%B0%A3%E3%80%8B%E6%8F%92%E6%9B%B2%20%E4%B8%AD%E8%8B%B1%E5%AD%97%E5%B9%95%20%20%20Justin%20Timberlake%20%E9%9F%B3%E6%82%A6%E5%8F%B0%E8%B6%85%E6%B8%85%E7%89%88%E6%9C%AC.mp3" target="_blank">Five Hundred Miles 电影《醉乡民谣》插曲 中英字幕   Justin Timberlake 音悦台超清版本.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/George%20Michael%20-%20Careless%20Whisper%20%28Official%20Video%29.mp3" target="_blank">George Michael - Careless Whisper (Official Video).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Hotel%20California.mp3" target="_blank">Hotel California.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/John%20Denver%20-%20Take%20Me%20Home%2C%20Country%20Roads%20%28from%20The%20Wildlife%20Concert%29.mp3" target="_blank">John Denver - Take Me Home, Country Roads (from The Wildlife Concert).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/KTV%E7%89%88%E2%96%B4big%20big%20world%20%E5%A4%A7%E5%A4%A7%E7%9A%84%E4%B8%96%E7%95%8C~Emilia%E8%89%BE%E8%9C%9C%E8%8E%89%E4%BA%9E~%E4%B8%AD%E6%96%87%E8%8B%B1%E6%96%87%E5%AD%97%E5%B9%95%20lyrics.mp3" target="_blank">KTV版▴big big world 大大的世界~Emilia艾蜜莉亞~中文英文字幕 lyrics.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Leo%20Sayer%20-%20More%20Than%20I%20Can%20Say%20%28Official%20HD%20Music%20Video%29.mp3" target="_blank">Leo Sayer - More Than I Can Say (Official HD Music Video).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Michael%20Jackson%20-%20Beat%20It%20%28Official%204K%20Video%29.mp3" target="_blank">Michael Jackson - Beat It (Official 4K Video).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Michael%20Jackson%20-%20Dangerous%20-%20Live%20Munich%201997%20-%20HD.mp3" target="_blank">Michael Jackson - Dangerous - Live Munich 1997 - HD.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Modern%20Talking%20-%20Brother%20Louie%20%28Video%29.mp3" target="_blank">Modern Talking - Brother Louie (Video).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Moonlight%20Shadow.mp3" target="_blank">Moonlight Shadow.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/NEW%20%F0%9F%93%80%20Come%20And%20Get%20Your%20Love%20-%20Redbone%20%7BStereo%7D%201974.mp3" target="_blank">NEW 📀 Come And Get Your Love - Redbone {Stereo} 1974.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Queen%20-%20We%20Will%20Rock%20You%20%28Live%20Aid%201985%29.mp3" target="_blank">Queen - We Will Rock You (Live Aid 1985).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Say%20You%2C%20Say%20Me.mp3" target="_blank">Say You, Say Me.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Simon%20%26%20Garfunkel%20-%20The%20Sound%20of%20Silence%20%28from%20The%20Concert%20in%20Central%20Park%29.mp3" target="_blank">Simon & Garfunkel - The Sound of Silence (from The Concert in Central Park).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/The%20Beatles%20-%20Hey%20Jude.mp3" target="_blank">The Beatles - Hey Jude.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/The%20Beatles%20-%20Lemon%20Tree%20%28Official%20Music%20Video%29.mp3" target="_blank">The Beatles - Lemon Tree (Official Music Video).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/The%20Carpenters%20-%20Yesterday%20Once%20More%20%28INCLUDES%20LYRICS%29.mp3" target="_blank">The Carpenters - Yesterday Once More (INCLUDES LYRICS).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/USA%20For%20Africa%20-%20We%20Are%20The%20World%20%28HQ%20official%20Video%29.mp3" target="_blank">USA For Africa - We Are The World (HQ official Video).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/Whitney%20Houston%20-%20I%20Will%20Always%20Love%20You%20%28Official%204K%20Video%29.mp3" target="_blank">Whitney Houston - I Will Always Love You (Official 4K Video).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/%E3%80%8ABressanone%20%20%E5%B8%83%E5%88%97%E7%91%9F%E5%84%82%20%E3%80%8BMatthew%20Lien%20%E2%80%A2%20%E4%B8%80%E9%A6%96%E6%B7%A1%E6%B7%A1%E6%86%82%E5%82%B7%20%E5%A6%82%E8%A9%A9%E5%A6%82%E7%95%AB%E7%9A%84%E9%9B%A2%E9%84%89%E6%9B%B2%E2%99%A5%E2%99%AA%E2%99%AB_%E2%80%A2.mp3" target="_blank">《Bressanone  布列瑟儂 》Matthew Lien • 一首淡淡憂傷 如詩如畫的離鄉曲♥♪♫_•.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/%E3%80%8AMy%20Heart%20Will%20Go%20On%E3%80%8B%E3%80%8A%E6%88%91%E5%BF%83%E6%B0%B8%E6%81%86%E3%80%8BCeline%20Dion%20%E4%B8%AD%E8%8B%B1%E5%AD%97%E5%B9%95.mp3" target="_blank">《My Heart Will Go On》《我心永恆》Celine Dion 中英字幕.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/%E3%80%90%E6%97%A0%E5%B9%BF%E5%91%8A%20No%20Ads%E3%80%91%E7%BB%8F%E5%85%B8%E8%8B%B1%E6%96%87%E6%AD%8C%E6%9B%B2%E3%80%8A%E6%AD%A4%E6%83%85%E4%B8%8D%E7%A7%BB%E3%80%8B%EF%BC%88Nothing%27s%20gonna%20change%20my%20love%20for%20you%20%29%20%23%E4%B8%AD%E8%8B%B1%E6%96%87%E5%AF%B9%E7%85%A7.mp3" target="_blank">【无广告 No Ads】经典英文歌曲《此情不移》（Nothing's gonna change my love for you ) #中英文对照.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/%E7%BB%8F%E5%85%B8%E9%87%91%E6%9B%B2%E3%80%8A%E6%88%91%E7%9A%84%E5%90%8D%E5%AD%97%E5%8F%AB%E4%BC%8A%E8%8E%B2%E3%80%8B%EF%BC%8C%E6%B3%95%E8%AF%AD%E6%AD%8C%E4%B9%9F%E5%8F%AF%E4%BB%A5%E8%BF%99%E4%B9%88%E5%A5%BD%E5%90%AC%EF%BC%81.mp3" target="_blank">经典金曲《我的名字叫伊莲》，法语歌也可以这么好听！.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/%E9%87%91%E6%9B%B2%E4%B9%8B%E8%81%B2--022%20Right%20here%20waiting%20%E5%9C%A8%E6%AD%A4%E7%AD%89%E5%80%99%20...Richard%20Marx..%E4%B8%AD%E8%8B%B1%E6%96%87%E5%AD%97%E5%B9%95.mp3" target="_blank">金曲之聲--022 Right here waiting 在此等候 ...Richard Marx..中英文字幕.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/mp3/30_mp3/%E9%A3%8E%E9%9D%A1%E5%85%A8%E7%90%83%E7%9A%84%E5%A5%A5%E6%96%AF%E5%8D%A1%E9%87%91%E6%9B%B2%E3%80%8A%E6%96%AF%E5%8D%A1%E5%B8%83%E7%BD%97%E9%9B%86%E5%B8%82%E3%80%8B%EF%BC%8C%E8%8E%8E%E6%8B%89%E5%B8%83%E8%8E%B1%E6%9B%BC%E6%BC%94%E5%94%B1%EF%BC%8C%E7%BE%8E%E6%9E%81%E4%BA%86.mp3" target="_blank">风靡全球的奥斯卡金曲《斯卡布罗集市》，莎拉布莱曼演唱，美极了.mp3</a>
+            </div>
+            </div><div class="category-section"><h2>📂 old</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/visions.mp3" target="_blank">visions.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E3%80%8A%E7%90%85%E7%90%8A%E6%A6%9C%E3%80%8B%E6%8F%92%E6%9B%B2.MV%E3%80%8A%E7%B4%85%E9%A1%8F%E8%88%8A%E3%80%8Bby%E5%8A%89%E6%BF%A4.mp3" target="_blank">《琅琊榜》插曲.MV《紅顏舊》by劉濤.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E3%80%90HD%E3%80%91%E7%8E%8B%E5%87%B1%20-%20%E8%B5%A4%E8%A1%80%E9%95%B7%E6%AE%B7%20%5B%E6%AD%8C%E8%A9%9E%E5%AD%97%E5%B9%95%5D%5B%E9%9B%BB%E8%A6%96%E5%8A%87%E3%80%8A%E7%90%85%E7%90%8A%E6%A6%9C%E3%80%8B%E6%8F%92%E6%9B%B2%5D%5B%E5%AE%8C%E6%95%B4%E9%AB%98%E9%9F%B3%E8%B3%AA%5D%20Nirvana%20in%20Fire%20Theme%20Song.mp3" target="_blank">【HD】王凱 - 赤血長殷 [歌詞字幕][電視劇《琅琊榜》插曲][完整高音質] Nirvana in Fire Theme Song.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E4%B8%80%E5%89%AA%E6%A2%85_%E8%B2%BB%E7%8E%89%E6%B8%85%E7%9A%84%E7%B6%93%E5%85%B8%E5%A5%BD%E6%AD%8C%28%E6%96%B0%E7%89%88%E9%AB%98%E6%B8%85%29.mp3" target="_blank">一剪梅_費玉清的經典好歌(新版高清).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E4%BD%95%E7%82%BA%E6%B0%B8%E6%81%86.mp3" target="_blank">何為永恆.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E4%BD%A0%E6%98%AF%E6%88%91%E8%83%B8%E5%8F%A3%E6%B0%B8%E8%BF%9C%E7%9A%84%E7%97%9B.mp3" target="_blank">你是我胸口永远的痛.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E5%88%98%E6%B6%9B%20%E7%B4%85%E9%A1%8F%E8%88%8A%20%E7%90%85%E7%90%8A%E6%A6%9C%20%E6%8F%92%E6%9B%B2%EF%BC%88%E9%AB%98%E9%9F%B3%E8%B4%A8%EF%BC%89.mp3" target="_blank">刘涛 紅顏舊 琅琊榜 插曲（高音质）.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E5%8D%81%E9%87%8C%E6%A1%83%E8%8A%B1.mp3" target="_blank">十里桃花.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E5%A6%82%E6%88%91%E8%A5%BF%E6%B2%88.mp3" target="_blank">如我西沈.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E5%AD%9D%E5%BA%84%E7%A7%98%E5%8F%B2%E4%B8%BB%E9%A1%8C%E6%9B%B2.mp3" target="_blank">孝庄秘史主題曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E5%B0%87%E8%BB%8D%E4%BB%A4.mp3" target="_blank">將軍令.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E5%BC%B5%E9%9D%9A%E7%A9%8E%E9%9B%A2%E6%AD%8C.mp3" target="_blank">張靚穎離歌.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%88%91%E5%80%91%E5%A5%BD%E5%83%8F%E5%86%8D%E9%82%A3%E8%A6%8B%E9%81%8E.mp3" target="_blank">我們好像再那見過.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%96%97%E7%BE%85%E5%A4%A7%E9%99%B8%E7%A0%B4%E7%B9%AD.mp3" target="_blank">斗羅大陸破繭.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%96%B0%E6%B0%B4%E6%BB%B8%E5%82%B3%E7%89%87%E5%B0%BE%E6%9B%B2%E5%9B%9B%E6%B5%B7%E8%B5%B4%E7%9B%9F.mp3" target="_blank">新水滸傳片尾曲四海赴盟.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%9C%97%E6%9C%97%E6%99%B4%E5%A4%A9.mp3" target="_blank">朗朗晴天.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%9D%8E%E9%BA%97%E8%8A%AC%20Lily%20Lee%E3%80%90%E6%84%9B%E6%B1%9F%E5%B1%B1%E6%9B%B4%E6%84%9B%E7%BE%8E%E4%BA%BA%20The%20bold%20and%20the%20beautiful%E3%80%91%E5%8F%B0%E8%A6%96%E3%80%8C%E5%80%9A%E5%A4%A9%E5%B1%A0%E9%BE%8D%E8%A8%98%E3%80%8D%E7%89%87%E5%B0%BE%E6%9B%B2%20Official%20Music%20Video.mp3" target="_blank">李麗芬 Lily Lee【愛江山更愛美人 The bold and the beautiful】台視「倚天屠龍記」片尾曲 Official Music Video.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%AC%8A%E5%BE%A1%E5%A4%A9%E4%B8%8B.mp3" target="_blank">權御天下.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%AD%A6%E5%AA%9A%E5%A8%98%E5%82%B3%E5%A5%87%E4%B8%BB%E9%A1%8C%E6%9B%B2.mp3" target="_blank">武媚娘傳奇主題曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%B6%BC%E6%B6%BC.mp3" target="_blank">涼涼.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%B8%85%E6%98%8E.mp3" target="_blank">清明.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E6%BC%A2%E6%AD%A6%E5%A4%A7%E5%B8%9D%E4%B8%BB%E9%A1%8C%E6%9B%B2.mp3" target="_blank">漢武大帝主題曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E7%A5%9E%E9%86%AB%E5%96%9C%E4%BE%86%E6%A8%82%E7%89%87%E5%B0%BE%E6%9B%B2%20%E4%BA%BA%E9%96%93%E6%83%85%E5%A4%9A.mp3" target="_blank">神醫喜來樂片尾曲 人間情多.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E7%A5%9E%E9%B5%B0%E4%BF%A0%E4%BE%B6%E6%84%9B%E4%B8%8A%E4%BD%A0%E6%98%AF%E4%B8%80%E5%80%8B%E9%8C%AF.mp3" target="_blank">神鵰俠侶愛上你是一個錯.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E7%B2%BE%E5%BF%A0%E5%B2%B3%E9%A3%9B%E7%89%87%E5%B0%BE%E6%9B%B2%E7%B2%BE%E5%BF%A0%E5%82%B3%E5%A5%87.mp3" target="_blank">精忠岳飛片尾曲精忠傳奇.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E8%B5%A4%E8%A1%80%E9%95%B7%E6%AE%B7.mp3" target="_blank">赤血長殷.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E9%80%8D%E9%81%A52013%E7%AC%91%E5%82%B2%E6%B1%9F%E6%B9%96%E4%B8%BB%E9%A2%98%E6%9B%B2.mp3" target="_blank">逍遥2013笑傲江湖主题曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E9%95%B7%E7%94%9F%E8%A8%A3.mp3" target="_blank">長生訣.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E9%99%B3%E7%A0%94%E5%B8%8C%E7%A5%9E%E9%B5%B0%E4%BF%A0%E4%BE%B6%E4%B8%BB%E9%A1%8C%E6%9B%B2.mp3" target="_blank">陳研希神鵰俠侶主題曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E9%9A%8B%E5%94%90%E6%BC%94%E7%BE%A9%E7%89%87%E5%B0%BE%E6%9B%B2.mp3" target="_blank">隋唐演義片尾曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E9%9B%A8%E8%9D%B6_%E5%BC%B5%E9%9D%9A%E7%A9%8E%E9%84%A7%E7%B4%AB%E7%A5%BA.mp3" target="_blank">雨蝶_張靚穎鄧紫祺.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E9%A3%9B%E9%B3%A5%E5%92%8C%E8%9F%AC.mp3" target="_blank">飛鳥和蟬.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E9%A8%B0%E6%A0%BC%E7%88%BE%20%E5%A4%A7%E7%94%B7%E4%BA%BA%E5%BA%B7%E7%86%99%E7%8E%8B%E6%9C%9D.mp3" target="_blank">騰格爾 大男人康熙王朝.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E9%B9%BF%E9%BC%8E%E8%A8%98%E4%B8%BB%E9%A1%8C%E6%9B%B2%E5%A4%A9%E6%84%8F%E5%A6%82%E6%AD%A4.mp3" target="_blank">鹿鼎記主題曲天意如此.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/old/%E9%B9%BF%E9%BC%8E%E8%A8%98%E7%89%87%E5%B0%BE%E6%9B%B2%E4%BD%A0%E4%B8%8D%E6%98%AF%E6%88%91%E5%BE%9E%E5%B0%8F%E6%83%B3%E5%AB%81%E7%9A%84%E5%A4%A7%E8%8B%B1%E9%9B%84.mp3" target="_blank">鹿鼎記片尾曲你不是我從小想嫁的大英雄.mp3</a>
+            </div>
+            </div><div class="category-section"><h2>📂 台語</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E5%8F%B0%E7%81%A3%E4%B9%8B%E8%81%B2-02-%E6%B5%B7%E6%B3%A2%E6%B5%AA-%E9%BB%83%E4%B9%99%E7%8E%B2%E5%92%8C%E9%83%AD%E6%A1%82%E5%BD%AC.mp3" target="_blank">台灣之聲-02-海波浪-黃乙玲和郭桂彬.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E5%90%91%E8%95%99%E7%8E%B2-01-%E6%84%9B%E7%94%B2%E8%B6%85%E9%81%8E%28%E4%B8%89%E7%AB%8B%E9%9B%BB%E8%A6%96%E5%85%AB%E9%BB%9E%E6%AA%94%7B%E5%8F%B0%E7%81%A3%E9%9C%B9%E9%9D%82%E7%81%AB%7D%E7%89%87%E5%B0%BE%E6%9B%B2%29.mp3" target="_blank">向蕙玲-01-愛甲超過(三立電視八點檔{台灣霹靂火}片尾曲).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E6%B1%9F%E6%83%A0%EF%BC%86%E9%98%BF%E6%9D%9C-03-%E5%A4%A2%E4%B8%AD%E7%9A%84%E6%83%85%E8%A9%B1.mp3" target="_blank">江惠＆阿杜-03-夢中的情話.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E7%A7%A6%E6%A5%8A%26%E6%96%B9%E9%A6%A8-04-%E5%BE%8C%E6%82%94.mp3" target="_blank">秦楊&方馨-04-後悔.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E8%94%A1%E5%B0%8F%E8%99%8E-01-%E4%B8%80%E7%94%9F%E5%8F%AA%E6%9C%89%E4%BD%A0.mp3" target="_blank">蔡小虎-01-一生只有你.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E8%A5%BF%E5%8D%BF_%E9%9D%9E%E5%B8%B8%E5%A5%B3.mp3" target="_blank">西卿_非常女.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E8%AC%9D%E9%87%91%E7%87%95-02-%E5%8F%89%E7%87%92%E5%8C%85.mp3" target="_blank">謝金燕-02-叉燒包.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E8%AC%9D%E9%87%91%E7%87%95-YoYo%E5%A7%8A%E5%A6%B9.mp3" target="_blank">謝金燕-YoYo姊妹.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E8%AC%9D%E9%87%91%E7%87%95-%E5%90%AB%E6%B7%9A%E8%B7%B3%E6%81%B0%E6%81%B0.mp3" target="_blank">謝金燕-含淚跳恰恰.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E9%BB%83%E5%A6%83-%E7%A7%8B%E9%9B%A8%E5%BD%BC%E4%B8%80%E6%9A%9D.mp3" target="_blank">黃妃-秋雨彼一暝.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E9%BE%8D%E5%8D%83%E7%8E%89%2B%E8%94%A1%E5%B0%8F%E8%99%8E-%E7%89%BD%E6%89%8B%E5%81%9A%E9%99%A3%E8%A1%8C.mp3" target="_blank">龍千玉+蔡小虎-牽手做陣行.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E9%BE%8D%E5%8D%83%E7%8E%89-%E5%95%8F%E8%8A%B1-01-%E5%95%8F%E8%8A%B1.mp3" target="_blank">龍千玉-問花-01-問花.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E5%8F%B0%E8%AA%9E/%E9%BE%8D%E5%8D%83%E7%8E%89-%E5%95%8F%E8%8A%B1-16-%E9%98%BF%E9%83%8E.MP3" target="_blank">龍千玉-問花-16-阿郎.MP3</a>
+            </div>
+            </div><div class="category-section"><h2>📂 新進音樂</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/2020%E7%BD%91%E7%BB%9C%E6%9C%80%E7%81%AB%E7%9A%84%E5%8D%81%E4%BD%8D%E7%BE%8E%E5%A5%B3%E6%AD%8C%E6%89%8B%EF%BC%8C%E4%B8%80%E4%BA%BA%E4%B8%80%E9%A6%96%E4%BB%A3%E8%A1%A8%E4%BD%9C%EF%BC%8C%E7%AE%80%E7%9B%B4%E5%BC%80%E5%8F%A3%E8%B7%AA%EF%BC%81.mp3" target="_blank">2020网络最火的十位美女歌手，一人一首代表作，简直开口跪！.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/HITA%20-%20%E8%B5%A4%E4%BC%B6%E3%80%8C%E6%83%85%E5%AD%97%E9%9B%A3%E8%90%BD%E5%A2%A8%EF%BC%8C%E5%A5%B9%E5%94%B1%E9%A0%88%E4%BB%A5%E8%A1%80%E4%BE%86%E5%92%8C%E3%80%82%E3%80%8D%5B%20High%20Quality%20Lyrics%20%5D%5B%20Chinese%20Style%20%5D%20tk%E6%8E%A8%E8%96%A6.mp3" target="_blank">HITA - 赤伶「情字難落墨，她唱須以血來和。」[ High Quality Lyrics ][ Chinese Style ] tk推薦.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/Krewella%20-%20Come%20And%20Get%20It%20%28Razihel%20Remix%29%20%5BFree%5D.mp3" target="_blank">Krewella - Come And Get It (Razihel Remix) [Free].mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/NightCore%20Alibi%20%28Krewella%29%EF%BC%88%E9%99%84%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AD%AF%EF%BC%89.mp3" target="_blank">NightCore Alibi (Krewella)（附中文翻譯）.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/Sold%20Out%E3%80%8A%E7%84%A1%E7%95%8F%E5%90%91%E5%89%8D%E3%80%8B%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AD%AF%20Hawk%20Nelson%20%E7%95%B6%E9%BC%93%E9%BB%9E%E8%90%BD%E4%B8%8B%E6%99%82%EF%BC%8C%E4%BD%A0%E6%88%91%E9%83%BD%E5%9B%9E%E4%B8%8D%E4%BA%86%E9%A0%AD%E4%BA%86.mp3" target="_blank">Sold Out《無畏向前》中文翻譯 Hawk Nelson 當鼓點落下時，你我都回不了頭了.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%8A%E4%BC%AF%E8%99%8E%E8%AF%B4%E3%80%8B%E2%80%94%E4%BC%AF%E7%88%B5%20Johnny%20%E5%94%90%E4%BC%AF%E8%99%8E%20Annie%20%EF%BC%88%E6%97%A0rap%E7%89%88%EF%BC%89%E9%99%84%E5%B8%A6%E6%AD%8C%E8%AF%8D%E3%80%8C%E6%98%8E%E6%9C%88%E4%B8%87%E5%B9%B4%E6%97%A0%E5%89%8D%E8%BA%AB%EF%BC%8C%E7%85%A7%E8%A7%81%E5%8F%A4%E4%BB%8A%E7%8B%AC%E9%86%92%E4%BA%BA%EF%BC%8C%E5%85%AC%E5%AD%90%E7%8E%8B%E5%AD%99%E4%BD%95%E5%BF%85%E9%97%AE%EF%BC%8C%E8%99%9A%E5%BA%A6%E6%88%91%E9%9D%92%E6%98%A5%E3%80%82%E3%80%8D.mp3" target="_blank">《伯虎说》—伯爵 Johnny 唐伯虎 Annie （无rap版）附带歌词「明月万年无前身，照见古今独醒人，公子王孙何必问，虚度我青春。」.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%8A%E5%8F%AF%E5%8F%AF%E6%89%98%E6%B5%B7%E7%9A%84%E7%89%A7%E7%BE%8A%E4%BA%BA%E3%80%8B%E7%9A%84%E7%9C%9F%E6%AD%A3%E5%8E%9F%E5%94%B1%EF%BC%8C%E9%85%8D%E4%B8%8A%E2%80%9C%E5%8E%9F%E7%94%9F%E6%80%81%E2%80%9D%E7%9A%84%E4%B8%81%E7%9C%9F%EF%BC%8C%E8%B6%85%E7%BE%8E.mp3" target="_blank">《可可托海的牧羊人》的真正原唱，配上“原生态”的丁真，超美.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%8A%E6%97%B6%E4%B9%8B%E6%AD%8C-%E8%8A%B1%E4%B8%8E%E7%84%B0%E7%9A%84%E7%8B%82%E6%83%B3%E8%AF%97%E3%80%8BOP%E3%80%8A%E9%BB%91%E7%84%B0%E3%80%8B%E5%AE%8C%E6%95%B4%E7%89%88%E5%85%AC%E5%B8%83%EF%BC%81Song%20of%20Time%20Opening%20Full%20Version%21.mp3" target="_blank">《时之歌-花与焰的狂想诗》OP《黑焰》完整版公布！Song of Time Opening Full Version!.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%8A%E6%B5%B7%E5%BA%95%E3%80%8B%E5%87%A4%E5%87%B0%E4%BC%A0%E5%A5%87%20%E2%80%9C%E7%9C%BC%E6%B3%AA%E6%B2%A1%E6%9C%89%E5%A3%B0%E9%9F%B3%EF%BC%8C%E4%BD%86%E6%88%91%E6%83%B3%E6%8A%B1%E7%B4%A7%E4%BD%A0%E2%80%9D%E3%80%8A%E4%B8%BA%E6%AD%8C%E8%80%8C%E8%B5%9E%E3%80%8BCUT%20%E6%B5%99%E6%B1%9F%E5%8D%AB%E8%A7%86%E5%AE%98%E6%96%B9HD.mp3" target="_blank">《海底》凤凰传奇 “眼泪没有声音，但我想抱紧你”《为歌而赞》CUT 浙江卫视官方HD.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%8A%E7%8A%AC%E5%A4%9C%E5%8F%89%E3%80%8B%E4%B8%BB%E9%A2%98%E6%9B%B2%E3%80%8A%E7%A9%BF%E8%B6%8A%E6%97%B6%E7%A9%BA%E7%9A%84%E6%80%9D%E5%BF%B5%E3%80%8B%E9%92%A2%E7%90%B4%E7%89%88.mp3" target="_blank">《犬夜叉》主题曲《穿越时空的思念》钢琴版.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%8A%E8%B5%B7%E9%A3%8E%E4%BA%86%E3%80%8B%E5%BC%A0%E5%90%AB%E9%9F%B5%E3%80%81%E4%BD%99%E7%AC%9B%E3%80%81%E9%97%AB%E6%B0%B8%E5%BC%BA%20%E2%80%94%20%E5%BD%93%E6%B5%81%E8%A1%8C%E9%9F%B3%E4%B9%90%E3%80%81%E7%BE%8E%E5%A3%B0%E4%B8%8E%E6%B0%91%E4%B9%90%E7%9B%B8%E7%BB%93%E5%90%88%EF%BC%8C%E7%BB%99%E4%BD%A0%E5%85%A8%E6%96%B0%E7%9A%84%E8%A7%86%E5%90%AC%E6%84%9F%E5%8F%97%EF%BC%81%E3%80%90SMG%E4%B8%8A%E6%B5%B7%E4%B8%9C%E6%96%B9%E5%8D%AB%E8%A7%86%E9%9F%B3%E4%B9%90%E9%A2%91%E9%81%93%E3%80%91.mp3" target="_blank">《起风了》张含韵、余笛、闫永强 — 当流行音乐、美声与民乐相结合，给你全新的视听感受！【SMG上海东方卫视音乐频道】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%8E%E5%85%AD%E5%85%86%E5%B9%B4%E3%81%A8%E4%B8%80%E5%A4%9C%E7%89%A9%E8%AA%9E%E3%80%8F%E3%80%90%E9%B9%BF%E4%B9%83%28%E3%81%8B%E3%81%AE%29%E3%80%91%E4%B8%AD%E6%97%A5%E5%AD%97%E5%B9%95.mp3" target="_blank">『六兆年と一夜物語』【鹿乃(かの)】中日字幕.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90identity%20v-%E7%AC%AC%E4%BA%94%E4%BA%BA%E6%A0%BC%E6%AD%8C%E8%88%9E%E5%8A%A8%E7%94%BB%E3%80%91%E5%86%B3%E6%AD%BB%E8%A1%8C%E8%BF%9B.mp3" target="_blank">【identity v-第五人格歌舞动画】决死行进.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E3%80%91%E6%AD%8C%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F%20KING%20%E8%91%9B%E8%91%89%20%E3%80%90%E3%80%91.mp3" target="_blank">【】歌ってみた KING 葛葉 【】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E3%80%91%E6%AD%8C%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F%20%E7%96%91%E5%BF%83%E6%9A%97%E9%AC%BC%20%E8%91%9B%E8%91%89%20%E3%81%AB%E3%81%98%E3%81%95%E3%82%93%E3%80%90%E3%80%91.mp3" target="_blank">【】歌ってみた 疑心暗鬼 葛葉 にじさん【】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E3%82%AA%E3%83%AA%E3%82%B8%E3%83%8A%E3%83%ABMV%E3%80%91%E3%82%A2%E3%82%A6%E3%83%88%E3%82%B5%E3%82%A4%E3%83%80%E3%83%BC%20ChroNoiR%E3%80%90cover%E3%80%91.mp3" target="_blank">【オリジナルMV】アウトサイダー ChroNoiR【cover】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E4%B8%89%E7%84%A1Cover%E3%80%91%E6%9C%A8%E8%98%AD%E8%A1%8C%E3%80%90%E5%BF%98%E5%B7%9D%E9%A2%A8%E8%8F%AF%E9%8C%84%E3%80%91.mp3" target="_blank">【三無Cover】木蘭行【忘川風華錄】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E4%B8%89%E7%84%A1%E7%BF%BB%E5%94%B1%E3%80%91%E9%99%B0%E9%99%BD%E5%85%88%E7%94%9F%20%E3%80%90Official%20Video%E3%80%91.mp3" target="_blank">【三無翻唱】陰陽先生 【Official Video】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E5%90%88%E5%94%B1%E3%80%91%E6%95%97%E5%8C%97%E3%81%AE%E5%B0%91%E5%B9%B4%E3%80%908%E4%BA%BA%EF%BC%8B%CE%B1%E3%80%91.mp3" target="_blank">【合唱】敗北の少年【8人＋α】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E5%A7%90%E5%A7%90%E4%BB%AC%E7%9A%84%E8%88%9E%E5%8F%B0%E3%80%91%E3%80%8A%20%E5%A4%A7%E7%A2%97%E5%AE%BD%E9%9D%A2%E3%80%8B%E5%9C%A8%E7%BA%BF%E5%90%B8%E7%B2%89%EF%BC%8C%E5%A7%90%E5%A7%90%E4%BB%AC%E5%85%A8%E7%BB%84Slay%E6%9C%89%E5%A5%B3%E5%9B%A2%E8%8C%83%E5%84%BF%EF%BC%81%E3%80%8A%20%E4%B9%98%E9%A3%8E%E7%A0%B4%E6%B5%AA%E7%9A%84%E5%A7%90%E5%A7%90%E3%80%8BSisters%20Who%20Make%20Waves%E3%80%90%E6%B9%96%E5%8D%97%E5%8D%AB%E8%A7%86%E5%AE%98%E6%96%B9HD%E3%80%91.mp3" target="_blank">【姐姐们的舞台】《 大碗宽面》在线吸粉，姐姐们全组Slay有女团范儿！《 乘风破浪的姐姐》Sisters Who Make Waves【湖南卫视官方HD】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E5%B0%8F%E9%AD%82%20%E5%93%A6%E6%BC%8F%20%E5%90%BE%E6%81%A9%20%E5%A6%96%E6%89%AC%20KBShinya%E3%80%91%E3%80%90%E7%9B%97%E5%A2%93%E7%AC%94%E8%AE%B0%E3%80%91%E6%88%91%E4%BB%AC%EF%BC%88%E7%BE%A4%E5%83%8F%E5%90%8C%E4%BA%BA%EF%BC%89.mp3" target="_blank">【小魂 哦漏 吾恩 妖扬 KBShinya】【盗墓笔记】我们（群像同人）.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E6%8A%96%E9%9F%B3DJ%E7%89%88%E3%80%91%E9%98%BF%E6%82%A0%E6%82%A0%20-%20%E8%88%8A%E5%A4%A2%E4%B8%80%E5%A0%B4%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E6%97%A9%E7%9F%A5%E9%A9%9A%E9%B4%BB%E4%B8%80%E5%A0%B4%20%E4%BD%95%E5%BF%85%E6%83%85%E6%B7%B1%E4%B8%80%E5%BE%80%E3%80%8D%E2%99%AA.mp3" target="_blank">【抖音DJ版】阿悠悠 - 舊夢一場【動態歌詞】「早知驚鴻一場 何必情深一往」♪.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E6%8A%96%E9%9F%B3%E3%80%91%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E8%B5%A4%E4%BC%B6%E3%80%8C%E6%83%85%E5%AD%97%E9%9B%A3%E8%90%BD%E5%A2%A8%20%E5%A5%B9%E5%94%B1%E9%A0%88%E4%BB%A5%E8%A1%80%E4%BE%86%E5%92%8C%E3%80%8D%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E2%99%AA.mp3" target="_blank">【抖音】等什麼君 - 赤伶「情字難落墨 她唱須以血來和」【動態歌詞】♪.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E6%97%B6%E4%B9%8B%E6%AD%8CProject%E3%80%91%E3%80%90%E7%89%B9%E5%88%AB%E6%9B%B2%E3%80%91%E6%89%AD%E8%BD%AC%E6%99%A8%E6%98%9F%E7%9A%84%E8%88%B5%E8%BD%AE%20%28Full%20Ver%29%E3%80%9012%E4%BA%BA%E6%88%98%E6%96%97%E6%9B%B2%E3%80%91.mp3" target="_blank">【时之歌Project】【特别曲】扭转晨星的舵轮 (Full Ver)【12人战斗曲】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E6%99%82%E4%B9%8B%E6%AD%8CProject%E3%80%91%E3%80%90%E6%9C%89%E8%81%B2%E6%BC%ABED%E3%80%91%E5%88%BA%E5%AE%A2%E7%99%BB%E5%A0%B4%E3%80%90Mario%26%E4%BF%BA%E9%86%AC%E3%80%91.mp3" target="_blank">【時之歌Project】【有聲漫ED】刺客登場【Mario&俺醬】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E7%8B%82%E5%BE%92%E3%80%91%E3%80%8CO2O%E7%94%B7%E5%9C%98%E3%80%8D%E4%B8%A4%E6%94%BB%E6%88%B2%E8%85%94%E5%8E%9Fkey%E9%AB%98%E9%9F%B3%E7%82%B8%E8%A3%82%E7%BF%BB%E5%94%B1%E3%80%90Allen%26Mini%E5%85%94feat.%E5%8F%B8%E6%96%93%E3%80%91.mp3" target="_blank">【狂徒】「O2O男團」两攻戲腔原key高音炸裂翻唱【Allen&Mini兔feat.司斓】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E7%8E%8B%E8%80%85%E4%B9%8B%E6%AD%8C%E3%80%91%E7%8E%8B%E8%80%85%E8%8D%A3%E8%80%80%C2%B7100%E8%8B%B1%E9%9B%84%E7%BE%A4%E5%83%8F%E7%8C%AE%E7%A4%BC%E6%AD%8C%E3%80%8A%E7%99%BE%E6%88%98%E6%88%90%E8%AF%97%E3%80%8B.mp3" target="_blank">【王者之歌】王者荣耀·100英雄群像献礼歌《百战成诗》.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E7%AC%AC%E4%BA%94%E4%BA%BA%E6%A0%BC%E6%89%8B%E6%9B%B8%E3%80%91%E7%9B%A3%E7%AE%A1%E8%80%85%E5%80%91%E7%9A%84GOGO%E5%B9%BD%E9%9D%88%E8%88%B9.mp3" target="_blank">【第五人格手書】監管者們的GOGO幽靈船.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E7%BA%AF%E4%BA%AB%E3%80%91%E9%BB%84%E9%9C%84%E9%9B%B2%E5%86%8D%E5%94%B1%E5%8A%B1%E5%BF%97%E2%80%9C%E7%A5%9E%E6%9B%B2%E2%80%9D%E3%80%8A%E6%98%9F%E8%BE%B0%E5%A4%A7%E6%B5%B7%E3%80%8B%EF%BC%8C%E6%88%91%E7%9A%84%E6%A2%A6%E6%83%B3%E5%8F%88%E5%9B%9E%E6%9D%A5%E4%BA%86%EF%BC%81Huang%20Xiaoyun%20-%20Stars%20and%20Sea%20%E6%B5%81%E6%B7%8C%E7%9A%84%E6%AD%8C%E5%A3%B0S3EP3.mp3" target="_blank">【纯享】黄霄雲再唱励志“神曲”《星辰大海》，我的梦想又回来了！Huang Xiaoyun - Stars and Sea 流淌的歌声S3EP3.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E7%BA%AF%E4%BA%AB%E7%89%88%E3%80%91%E5%91%A8%E6%B7%B1%E6%8C%91%E6%88%98%E4%BA%8C%E6%AC%A1%E5%85%83%E7%A5%9E%E6%9B%B2%E3%80%8A%E8%BE%BE%E6%8B%89%E5%B4%A9%E5%90%A7%E3%80%8B%E8%A7%A3%E9%94%81%E9%AD%94%E6%80%A7%E8%88%9E%E6%AD%A5%20%E3%80%8A%E6%AD%8C%E6%89%8B%C2%B7%E5%BD%93%E6%89%93%E4%B9%8B%E5%B9%B4%E3%80%8BSinger%202020%E3%80%90%E6%B9%96%E5%8D%97%E5%8D%AB%E8%A7%86%E5%AE%98%E6%96%B9HD%E3%80%91.mp3" target="_blank">【纯享版】周深挑战二次元神曲《达拉崩吧》解锁魔性舞步 《歌手·当打之年》Singer 2020【湖南卫视官方HD】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E8%82%A5%E7%9A%82%E8%8F%8C%E3%80%91%E4%B8%87%E7%A5%9E%E7%BA%AA%20Deities%20of%20Cathaysia%E3%80%90%E5%AE%98%E6%96%B9%E9%AB%98%E6%B8%85Official%20HD%E3%80%91.mp3" target="_blank">【肥皂菌】万神纪 Deities of Cathaysia【官方高清Official HD】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E8%A5%BF%E7%93%9CJUN%E3%80%91%E5%8E%9F%E5%88%9B%E3%80%8A%E5%BD%BC%E5%B2%B8%E3%80%8B%20%E7%AD%89%E4%B8%80%E5%8F%A5%E5%B8%A6%E6%88%91%E5%9B%9E%E5%AE%B6.mp3" target="_blank">【西瓜JUN】原创《彼岸》 等一句带我回家.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%80%90%E9%A3%9F%E7%89%A9%E8%AF%AD%E4%B8%80%E5%91%A8%E5%B9%B4%E3%80%91%E3%80%8A%E4%B8%80%E8%BD%BD%E7%99%BE%E5%91%B3%E3%80%8B%E4%B9%9D%E4%BD%8D%E5%8F%A4%E9%A3%8E%E5%A4%A7%E4%BD%AC%E7%8C%AE%E5%94%B1.mp3" target="_blank">【食物语一周年】《一载百味》九位古风大佬献唱.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%81%AB%E3%81%98%E3%81%95%E3%82%93%E3%81%98%20-%20Virtual%20to%20LIVE%20%5BOfficial%20Music%20Video%5D.mp3" target="_blank">にじさんじ - Virtual to LIVE [Official Music Video].mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%82%A2%E3%83%B3%E3%83%8E%E3%82%A6%E3%83%B3%E3%83%BB%E3%83%9E%E3%82%B6%E3%83%BC%E3%82%B0%E3%83%BC%E3%82%B9%20wowaka%20%28covered%20by%20%E3%83%8F%E3%83%83%E3%83%94%E3%83%BC%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%29.mp3" target="_blank">アンノウン・マザーグース wowaka (covered by ハッピートリガー).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%82%B5%E3%83%9E%E3%83%BC%E3%82%BF%E3%82%A4%E3%83%A0%E3%83%AC%E3%82%B3%E3%83%BC%E3%83%89%20%E3%81%98%E3%82%93%20%EF%BC%88covered%20by%20AXF%EF%BC%89.mp3" target="_blank">サマータイムレコード じん （covered by AXF）.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E3%83%95%E3%82%A9%E3%83%8B%E3%82%A4%20%E4%B8%8D%E7%A0%B4%E6%B9%8A%20Cover.mp3" target="_blank">フォニイ 不破湊 Cover.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%80%E7%99%BE%E4%B8%87%E4%B8%AA%E5%8F%AF%E8%83%BD%20%E5%BC%A0%E5%90%AB%E9%9F%B5%20%28%20%E5%BC%A0%E6%B6%B5%E9%9F%B5%20zhang%20han%20yun%29%20%E3%80%90%20%E5%9C%A8%E4%B8%80%E7%9E%AC%E9%97%B4%20%E6%9C%89%E4%B8%80%E7%99%BE%E4%B8%87%E4%B8%AA%E5%8F%AF%E8%83%BD%20%E3%80%91%20%E8%BD%BB%E6%9F%94%E7%89%88%20%E5%A5%BD%E5%90%AC%20%E9%AB%98%E9%9F%B3%E5%93%81%E8%B3%AA%20%E5%8A%A8%E6%80%81%E6%AD%8C%E8%AF%8Dlyrics.mp3" target="_blank">一百万个可能 张含韵 ( 张涵韵 zhang han yun) 【 在一瞬间 有一百万个可能 】 轻柔版 好听 高音品質 动态歌词lyrics.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%83%E9%9F%B3%E7%9B%92%20-%20%E4%BA%91%E6%B7%B1%E4%B8%8D%E7%9F%A5%E5%A4%84%E3%80%90%E5%8F%A4%E9%A3%8E%E6%8E%A8%E8%8D%90%E3%80%91%E3%80%8E%E5%8A%A8%E6%80%81%E6%AD%8C%E8%AF%8D%20%E5%AE%8C%E6%95%B4%E9%AB%98%E6%B8%85%E9%9F%B3%E8%B4%A8%20%E4%B8%80%E9%A6%96%E8%B6%85%E5%A5%BD%E5%90%AC%E7%9A%84%E5%8F%A4%E9%A3%8E%E6%AD%8C%E6%9B%B2%E3%80%8FQi%20Yin%20He%20-%20Yun%20Shen%20Bu%20Zhi%20Chu.mp3" target="_blank">七音盒 - 云深不知处【古风推荐】『动态歌词 完整高清音质 一首超好听的古风歌曲』Qi Yin He - Yun Shen Bu Zhi Chu.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B9%9D%E4%B9%9D%E5%85%AB%E5%8D%81%E4%B8%80-%E5%85%AB%E4%BA%BA%E6%B7%B7%E9%9F%B3%28%E6%98%93%E8%A8%80%20%E6%A8%8A%E6%A3%8B%20%E5%8D%97%E4%B9%85%20%E9%9B%99%E7%AC%99%20%E6%B9%8A%E8%A9%A9%20%E5%B0%8F%E9%AD%82%20%E7%89%B9%E6%9B%BC%20%E8%A3%82%E5%A4%A9%29.mp3" target="_blank">九九八十一-八人混音(易言 樊棋 南久 雙笙 湊詩 小魂 特曼 裂天).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%BA%BA%E9%97%B4%E6%83%8A%E9%B8%BF%E5%AE%A2%20%E4%BA%BA%E9%96%93%E9%A9%9A%E9%B4%BB%E5%AE%A2%20-%20%E5%8F%B6%E9%87%8C%E3%80%90%E5%8F%B9%E4%BA%BA%E9%97%B4%20%E4%B8%80%E5%8E%BB%E9%A3%8E%E6%B5%81%E5%94%AF%E5%B0%91%E5%B9%B4%E3%80%91%E5%8F%A4%E9%A3%8E%20%E4%B8%AD%E5%9B%BD%E9%A3%8E%20%E4%B8%AD%E6%96%87%E6%AD%8C%E6%9B%B2%20%E5%8D%8E%E8%AF%AD%E6%AD%8C%E6%9B%B2%20%E6%8A%96%E9%9F%B3%20Chinese%20Song%20Chinese%20Music.mp3" target="_blank">人间惊鸿客 人間驚鴻客 - 叶里【叹人间 一去风流唯少年】古风 中国风 中文歌曲 华语歌曲 抖音 Chinese Song Chinese Music.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E5%90%B3%E9%9D%92%E5%B3%B0%E3%80%88%E8%B5%B7%E9%A2%A8%E4%BA%86%E3%80%89%EF%BC%88%E9%9B%BB%E8%A6%96%E5%8A%87%E3%80%90%E5%8A%A0%E6%B2%B9%EF%BC%8C%E4%BD%A0%E6%98%AF%E6%9C%80%E6%A3%92%E7%9A%84%E3%80%91%E4%B8%BB%E9%A1%8C%E6%9B%B2%EF%BC%89.mp3" target="_blank">吳青峰〈起風了〉（電視劇【加油，你是最棒的】主題曲）.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E5%91%A8%E6%B7%B1%E5%88%B0%E5%BA%95%E6%9C%89%E5%A4%9A%E5%BC%BA%EF%BC%9F%E6%89%8D%E4%BC%9A%E6%86%8B%E5%87%BA%E8%BF%998%E4%B8%AA%E7%A5%9E%E7%BA%A7%E7%8E%B0%E5%9C%BA%EF%BC%8C%E7%9C%9F%E6%98%AF%E5%A5%BD%E5%90%AC%E5%88%B0%E5%8D%95%E6%9B%B2%E5%BE%AA%E7%8E%AF%EF%BC%81.mp3" target="_blank">周深到底有多强？才会憋出这8个神级现场，真是好听到单曲循环！.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E5%9B%9E%E5%B0%8F%E4%BB%99%20-%20%E9%86%92%E4%B8%8D%E6%9D%A5%E7%9A%84%E6%A2%A6%E3%80%8C%E4%BD%A0%E6%98%AF%E6%88%91%E8%A7%A6%E7%A2%B0%E4%B8%8D%E5%88%B0%E7%9A%84%E9%A3%8E%EF%BC%8C%E9%86%92%E4%B8%8D%E6%9D%A5%E7%9A%84%E6%A2%A6%E3%80%8D%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%20p%C4%ABn%20y%C4%ABn%20g%C4%93%20c%C3%AD%E3%80%91.mp3" target="_blank">回小仙 - 醒不来的梦「你是我触碰不到的风，醒不来的梦」【動態歌詞 pīn yīn gē cí】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E5%A4%A7%E7%B1%BD%E3%80%8A%E7%99%BD%E6%9C%88%E5%85%89%E4%B8%8E%E6%9C%B1%E7%A0%82%E7%97%A3%E3%80%8B%E5%AE%8C%E6%95%B4%E7%89%88MV.mp3" target="_blank">大籽《白月光与朱砂痣》完整版MV.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E5%B0%8F%E6%A8%82%E5%93%A5%20-%20%E5%9F%B7%E8%BF%B7%E4%B8%8D%E6%82%9F%E3%80%90%E5%8E%9F%E5%94%B1%EF%BC%9A%E9%90%B5%E8%85%A6%E8%A2%8Bmp3%E3%80%91%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E6%88%91%E5%B0%8D%E4%BD%A0%E5%8F%88%E4%BD%95%E6%AD%A2%E6%98%AF%E5%9F%B7%E8%BF%B7%E4%B8%8D%E6%82%9F%20%E7%9C%BC%E6%B7%9A%E5%81%B6%E7%88%BE%E6%9C%83%E8%8E%AB%E5%90%8D%E7%9A%84%E5%85%89%E9%A1%A7%E3%80%8D%E2%99%AA.mp3" target="_blank">小樂哥 - 執迷不悟【原唱：鐵腦袋mp3】【動態歌詞】「我對你又何止是執迷不悟 眼淚偶爾會莫名的光顧」♪.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E5%B1%B1%E6%B0%B4%E7%B5%84%E5%90%88%20-%20%E4%BD%A0%E8%8E%AB%E8%B5%B0%E3%80%8E%E5%A6%B9%E5%85%92%E4%B8%AB%E9%A0%AD%E4%BD%A0%E8%8E%AB%E8%B5%B0%EF%BC%8C%E5%94%B1%E9%A6%96%E6%AD%8C%E6%AD%8C%E5%85%92%E6%8A%8A%E4%BD%A0%E7%95%99%E3%80%82%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp3" target="_blank">山水組合 - 你莫走『妹兒丫頭你莫走，唱首歌歌兒把你留。』【動態歌詞Lyrics】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E5%BC%A0%E5%90%AB%E9%9F%B5%E5%94%B1%E6%AD%8C%E5%88%B0%E5%BA%95%E6%9C%89%E5%A4%9A%E5%A5%BD%E5%90%AC%EF%BC%9F%E7%8E%B0%E5%9C%BA%E4%B8%80%E9%A6%96%E3%80%8A%E8%B5%B7%E9%A3%8E%E4%BA%86%E3%80%8B%EF%BC%8C%E5%90%AC%E7%9A%84%E9%AA%A8%E5%A4%B4%E9%83%BD%E9%85%A5%E4%BA%86%EF%BC%81.mp3" target="_blank">张含韵唱歌到底有多好听？现场一首《起风了》，听的骨头都酥了！.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%97%E7%BE%85%E5%A4%A7%E9%99%B8%E7%A0%B4%E7%B9%AD.mp3" target="_blank">斗羅大陸破繭.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%98%AF%E4%B8%83%E5%8F%94%E5%91%A2%20-%20%E5%8D%8A%E7%94%9F%E9%9B%AA%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E5%8D%8A%E7%94%9F%E9%A2%A8%E9%9B%AA%20%E5%90%B9%E4%B8%8D%E6%95%A3%E6%AD%B2%E6%9C%88%E7%95%99%E4%B8%8B%E7%9A%84%E7%9C%BC%E6%B7%9A%E3%80%8D%E2%99%AA.mp3" target="_blank">是七叔呢 - 半生雪【動態歌詞】「半生風雪 吹不散歲月留下的眼淚」♪.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%98%AF%E4%B8%83%E5%8F%94%E5%91%A2%20-%20%E8%B8%8F%E5%B1%B1%E6%B2%B3%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E9%95%B7%E6%A7%8D%E5%88%BA%E7%A0%B4%E9%9B%B2%E9%9C%9E%20%E6%94%BE%E4%B8%8B%E4%B8%80%E7%94%9F%E7%89%BD%E6%8E%9B%E3%80%8D%E2%99%AA.mp3" target="_blank">是七叔呢 - 踏山河【動態歌詞】「長槍刺破雲霞 放下一生牽掛」♪.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E7%87%95%E7%84%A1%E6%AD%87%20%E8%94%A3%E9%9B%AA%E5%85%92%E3%80%90%E5%89%B5%E4%BD%9CMV%E3%80%91.mp3" target="_blank">燕無歇 蔣雪兒【創作MV】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E7%8E%8B%E5%BF%BB%E8%BE%B0%26%E8%8B%8F%E6%98%9F%E5%A9%95%20-%20%E6%B8%85%E7%A9%BA%E3%80%90DJ%E7%89%88%E3%80%91%E2%99%AA%20KarenDaidai.mp3" target="_blank">王忻辰&苏星婕 - 清空【DJ版】♪ KarenDaidai.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E7%AC%AC%E4%BA%94%E4%BA%BA%E6%A0%BC%EF%BC%9A%E4%B8%89%E5%91%A8%E5%B9%B4%E8%B4%BA%E6%9B%B2%E3%80%8A%E5%88%9D%E6%84%BF%E3%80%8BPV%EF%BC%81%E9%95%BF%E9%A3%8E%E8%B5%B7%E4%BA%8E%E6%AF%AB%E6%9C%AB%EF%BC%8C%E5%A4%9A%E8%B0%A2%E4%B8%89%E8%BD%BD%E5%90%8C%E8%A1%8C%E8%80%85%EF%BC%81%E3%80%90%E5%B0%8F%E7%A0%B8%E5%A2%A8%E3%80%91IdentityV.mp3" target="_blank">第五人格：三周年贺曲《初愿》PV！长风起于毫末，多谢三载同行者！【小砸墨】IdentityV.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E6%85%95%E5%A4%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E5%A7%BB%E7%B7%A3%E6%A8%B9%E4%B8%8B%E5%85%B1%E6%B1%82%E6%9C%88%E8%80%81%20%E5%9F%B7%E6%89%8B%E6%9A%AE%E6%9A%AE%E6%9C%9D%E6%9C%9D%E3%80%8D%E2%99%AA.mp3" target="_blank">等什麼君 - 慕夏【動態歌詞】「姻緣樹下共求月老 執手暮暮朝朝」♪.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E6%98%A5%E5%BA%AD%E9%9B%AA%E3%80%90%E5%8E%9F%E5%94%B1%EF%BC%9A%E6%A9%99%E7%BF%BC%E3%80%91%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8C%E6%88%91%E5%BF%83%E5%8C%AA%E7%9F%B3%E4%B8%8D%E5%8F%AF%E8%BD%89%20%E6%88%91%E5%BF%83%E5%8C%AA%E5%B8%AD%E4%B8%8D%E5%8F%AF%E5%8D%B7%E3%80%8D%E2%99%AA.mp3" target="_blank">等什麼君 - 春庭雪【原唱：橙翼】【動態歌詞】「我心匪石不可轉 我心匪席不可卷」♪.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E8%BE%AD%E4%B9%9D%E9%96%80%E5%9B%9E%E6%86%B6%E3%80%8E%E6%88%B2%E5%AD%90%E5%A4%9A%E7%A7%8B%EF%BC%8C%E5%8F%AF%E6%86%90%E4%B8%80%E8%99%95%E6%83%85%E6%B7%B1%E8%88%8A%E3%80%82%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp3" target="_blank">等什麼君 - 辭九門回憶『戲子多秋，可憐一處情深舊。』【動態歌詞Lyrics】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B%20-%20%E9%97%9C%E5%B1%B1%E9%85%92%28%E5%A5%B3%E8%81%B2%E7%89%88%29%E3%80%8E%E6%88%91%E8%87%AA%E9%97%9C%E5%B1%B1%E9%BB%9E%E9%85%92%EF%BC%8C%E5%8D%83%E7%A7%8B%E7%9A%86%E5%85%A5%E5%96%89%E3%80%82%E3%80%8F%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp3" target="_blank">等什麼君 - 關山酒(女聲版)『我自關山點酒，千秋皆入喉。』【動態歌詞Lyrics】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E8%8A%B1%E5%83%AE%20-%20%E6%B5%AA%E5%AD%90%E9%97%B2%E8%AF%9D%E3%80%8C%E6%88%91%E9%A5%AE%E8%BF%87%E9%A3%8E%E5%92%BD%E8%BF%87%E6%B2%99%EF%BC%8C%E6%B5%AA%E5%AD%90%E6%97%A0%E9%92%B1%E9%80%9B%E9%85%92%E5%AE%B6%E3%80%82%E3%80%8D%E2%99%AA%20KarenDaidai.mp3" target="_blank">花僮 - 浪子闲话「我饮过风咽过沙，浪子无钱逛酒家。」♪ KarenDaidai.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E8%8A%B1%E7%B2%A5%20-%20%E6%AD%B8%E5%8E%BB%E4%BE%86%E5%85%AE%E3%80%8E%E6%AD%A4%E5%8E%BB%E5%BF%85%E7%B6%93%E5%B9%B4%EF%BC%8C%E8%8D%92%E9%87%8E%E5%AF%92%E6%9A%91%E6%8F%9B%E7%B4%85%E9%A1%8F%E3%80%8F%E3%80%90%E4%B8%AD%E6%96%87%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELycris%E3%80%91%E5%AE%8C%E6%95%B4%E7%89%88.mp3" target="_blank">花粥 - 歸去來兮『此去必經年，荒野寒暑換紅顏』【中文動態歌詞Lycris】完整版.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E8%B2%B7%E8%BE%A3%E6%A4%92%E4%B9%9F%E7%94%A8%E5%88%B8%20-%20%E8%B5%B7%E9%A2%A8%E4%BA%86%20%28%E6%96%B0%E7%89%88%29%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9ELyrics%E3%80%91.mp3" target="_blank">買辣椒也用券 - 起風了 (新版)【動態歌詞Lyrics】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E8%B8%8F%E5%B1%B1%E6%B2%B3%20%E6%98%AF%E4%B8%83%E5%8F%94%E5%91%A2%E3%80%90%E5%89%B5%E4%BD%9CMV%E3%80%91.mp3" target="_blank">踏山河 是七叔呢【創作MV】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E8%BF%99%E6%89%8D%E6%98%AF%E3%80%8A%E9%94%99%E4%BD%8D%E6%97%B6%E7%A9%BA%E3%80%8B%E7%9C%9F%E6%AD%A3%E7%9A%84%E5%8E%9F%E5%94%B1%EF%BC%8C%E5%8A%A8%E4%BA%BA%E7%9A%84%E6%97%8B%E5%BE%8B%EF%BC%8C%E6%84%9F%E4%BA%BA%E7%9A%84%E6%AD%8C%E8%AF%8D%EF%BC%8C%E5%A4%AA%E5%A5%BD%E5%90%AC.mp3" target="_blank">这才是《错位时空》真正的原唱，动人的旋律，感人的歌词，太好听.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E9%98%BF%E8%82%86%20-%20%E7%86%B1%E6%84%9B105%C2%B0C%E7%9A%84%E4%BD%A0%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E3%80%8CSuper%20Idol%E7%9A%84%E7%AC%91%E5%AE%B9%20%E9%83%BD%E6%B2%92%E4%BD%A0%E7%9A%84%E7%94%9C%E3%80%8D%E2%99%AA.mp3" target="_blank">阿肆 - 熱愛105°C的你【動態歌詞】「Super Idol的笑容 都沒你的甜」♪.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E9%A3%9B%E9%B3%A5%E5%92%8C%E8%9F%AC.mp3" target="_blank">飛鳥和蟬.mp3</a>
+            </div>
+            </div><div class="category-section"><h2>📂 主題曲</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E3%80%8A%E7%90%85%E7%90%8A%E6%A6%9C%E3%80%8B%E6%8F%92%E6%9B%B2.MV%E3%80%8A%E7%B4%85%E9%A1%8F%E8%88%8A%E3%80%8Bby%E5%8A%89%E6%BF%A4.mp3" target="_blank">《琅琊榜》插曲.MV《紅顏舊》by劉濤.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E4%B8%80%E5%89%AA%E6%A2%85_%E8%B2%BB%E7%8E%89%E6%B8%85%E7%9A%84%E7%B6%93%E5%85%B8%E5%A5%BD%E6%AD%8C%28%E6%96%B0%E7%89%88%E9%AB%98%E6%B8%85%29.mp3" target="_blank">一剪梅_費玉清的經典好歌(新版高清).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E4%BD%95%E7%82%BA%E6%B0%B8%E6%81%86.mp3" target="_blank">何為永恆.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E5%88%98%E6%B6%9B%20%E7%B4%85%E9%A1%8F%E8%88%8A%20%E7%90%85%E7%90%8A%E6%A6%9C%20%E6%8F%92%E6%9B%B2%EF%BC%88%E9%AB%98%E9%9F%B3%E8%B4%A8%EF%BC%89.mp3" target="_blank">刘涛 紅顏舊 琅琊榜 插曲（高音质）.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E5%AD%9D%E5%BA%84%E7%A7%98%E5%8F%B2%E4%B8%BB%E9%A1%8C%E6%9B%B2.mp3" target="_blank">孝庄秘史主題曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E6%88%91%E5%80%91%E5%A5%BD%E5%83%8F%E5%86%8D%E9%82%A3%E8%A6%8B%E9%81%8E.mp3" target="_blank">我們好像再那見過.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E6%96%B0%E6%B0%B4%E6%BB%B8%E5%82%B3%E7%89%87%E5%B0%BE%E6%9B%B2%E5%9B%9B%E6%B5%B7%E8%B5%B4%E7%9B%9F.mp3" target="_blank">新水滸傳片尾曲四海赴盟.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E6%9D%8E%E9%BA%97%E8%8A%AC%20Lily%20Lee%E3%80%90%E6%84%9B%E6%B1%9F%E5%B1%B1%E6%9B%B4%E6%84%9B%E7%BE%8E%E4%BA%BA%20The%20bold%20and%20the%20beautiful%E3%80%91%E5%8F%B0%E8%A6%96%E3%80%8C%E5%80%9A%E5%A4%A9%E5%B1%A0%E9%BE%8D%E8%A8%98%E3%80%8D%E7%89%87%E5%B0%BE%E6%9B%B2%20Official%20Music%20Video.mp3" target="_blank">李麗芬 Lily Lee【愛江山更愛美人 The bold and the beautiful】台視「倚天屠龍記」片尾曲 Official Music Video.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E6%AD%A6%E5%AA%9A%E5%A8%98%E5%82%B3%E5%A5%87%E4%B8%BB%E9%A1%8C%E6%9B%B2.mp3" target="_blank">武媚娘傳奇主題曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E6%B6%BC%E6%B6%BC.mp3" target="_blank">涼涼.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E6%BC%A2%E6%AD%A6%E5%A4%A7%E5%B8%9D%E4%B8%BB%E9%A1%8C%E6%9B%B2.mp3" target="_blank">漢武大帝主題曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E7%A5%9E%E9%86%AB%E5%96%9C%E4%BE%86%E6%A8%82%E7%89%87%E5%B0%BE%E6%9B%B2%20%E4%BA%BA%E9%96%93%E6%83%85%E5%A4%9A.mp3" target="_blank">神醫喜來樂片尾曲 人間情多.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E7%B2%BE%E5%BF%A0%E5%B2%B3%E9%A3%9B%E7%89%87%E5%B0%BE%E6%9B%B2%E7%B2%BE%E5%BF%A0%E5%82%B3%E5%A5%87.mp3" target="_blank">精忠岳飛片尾曲精忠傳奇.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E9%80%8D%E9%81%A52013%E7%AC%91%E5%82%B2%E6%B1%9F%E6%B9%96%E4%B8%BB%E9%A2%98%E6%9B%B2.mp3" target="_blank">逍遥2013笑傲江湖主题曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E9%87%91%E5%BA%B8%E6%AD%A6%E4%BF%A010%E9%A6%96%E6%9C%80%E7%BB%8F%E5%85%B8%E6%AD%8C%E6%9B%B2%E5%90%88%E8%BC%AF%EF%BC%8C%E6%AF%8F%E9%A6%96%E6%AD%8C%E9%83%BD%E6%98%AF%E4%B8%80%E4%B8%AA%E6%B1%9F%E6%B9%96%E6%A2%A6%EF%BC%81%20Top%2010%20Best%20Songs%20about%20Swordsman%EF%BC%8C%E9%AB%98%E6%B8%85%EF%BC%8CHD.mp3" target="_blank">金庸武俠10首最经典歌曲合輯，每首歌都是一个江湖梦！ Top 10 Best Songs about Swordsman，高清，HD.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E9%99%B3%E7%A0%94%E5%B8%8C%E7%A5%9E%E9%B5%B0%E4%BF%A0%E4%BE%B6%E4%B8%BB%E9%A1%8C%E6%9B%B2.mp3" target="_blank">陳研希神鵰俠侶主題曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E9%9A%8B%E5%94%90%E6%BC%94%E7%BE%A9%E7%89%87%E5%B0%BE%E6%9B%B2.mp3" target="_blank">隋唐演義片尾曲.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E9%A8%B0%E6%A0%BC%E7%88%BE%20%E5%A4%A7%E7%94%B7%E4%BA%BA%E5%BA%B7%E7%86%99%E7%8E%8B%E6%9C%9D.mp3" target="_blank">騰格爾 大男人康熙王朝.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E9%B9%BF%E9%BC%8E%E8%A8%98%E4%B8%BB%E9%A1%8C%E6%9B%B2%E5%A4%A9%E6%84%8F%E5%A6%82%E6%AD%A4.mp3" target="_blank">鹿鼎記主題曲天意如此.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E4%B8%BB%E9%A1%8C%E6%9B%B2/%E9%B9%BF%E9%BC%8E%E8%A8%98%E7%89%87%E5%B0%BE%E6%9B%B2%E4%BD%A0%E4%B8%8D%E6%98%AF%E6%88%91%E5%BE%9E%E5%B0%8F%E6%83%B3%E5%AB%81%E7%9A%84%E5%A4%A7%E8%8B%B1%E9%9B%84.mp3" target="_blank">鹿鼎記片尾曲你不是我從小想嫁的大英雄.mp3</a>
+            </div>
+            </div><div class="category-section"><h2>📂 抖音2021</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%8A%96%E9%9F%B32021/2021%E3%80%8A%E6%9C%80%E7%81%AB%E5%8F%A4%E9%A3%8E%E6%AD%8C%E6%9B%B2%E3%80%8B%E6%8A%96%E9%9F%B3%20Tik%20Tok%20%E7%83%AD%E9%97%A8%E7%9A%84%E5%8F%A4%E9%A3%8E%E9%9F%B3%E4%B9%90%20%E3%80%8C%E4%B8%8D%E8%B0%93%E4%BE%A0x%E8%8E%AB%E9%97%AE%E5%BD%92%E6%9C%9Fx%E5%BC%B1%E6%B0%B4%E4%B8%89%E5%8D%83x%E8%B5%A4%E4%BC%B6x%E5%85%B3%E5%B1%B1%E9%85%92x%E7%90%B5%E7%90%B6%E8%A1%8Cx%E8%8B%8F%E5%B9%95%E9%81%AEx%E5%B9%BF%E5%AF%92%E5%AE%AB%E3%80%8D%20%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91.mp3" target="_blank">2021《最火古风歌曲》抖音 Tik Tok 热门的古风音乐 「不谓侠x莫问归期x弱水三千x赤伶x关山酒x琵琶行x苏幕遮x广寒宫」 【動態歌詞】.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%8A%96%E9%9F%B32021/%E3%80%8A2021%E6%8A%96%E9%9F%B3%E5%90%88%E9%9B%86%E3%80%8B%20%E4%B8%80%E6%9C%88%E4%BB%BD%E7%83%AD%E9%97%A8%E6%AD%8C%E6%9B%B2%E6%80%BB%E7%BB%93%20%E6%9C%80%E7%81%AB%E6%9C%80%E7%83%AD%E9%97%A8%E6%B4%97%E8%84%91%E6%8A%96%E9%9F%B3%E6%AD%8C%E6%9B%B2%E3%80%90%E5%8B%95%E6%85%8B%E6%AD%8C%E8%A9%9E%E3%80%91%E5%BE%AA%E7%8E%AF%E6%92%AD%E6%94%BE%20%EF%BC%81.mp3" target="_blank">《2021抖音合集》 一月份热门歌曲总结 最火最热门洗脑抖音歌曲【動態歌詞】循环播放 ！.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%8A%96%E9%9F%B32021/%E6%8A%96%E9%9F%B3%E6%AD%8C%E6%9B%B22021%E6%9C%80%E7%81%AB%E3%80%902021%E5%85%AD%E6%9C%88%E5%86%B7%E9%96%80%E6%96%B0%E6%AD%8C%E3%80%912021%E7%82%B9%E5%87%BB%E7%8E%87%E6%9C%80%E9%AB%98%E7%9A%84%E5%A4%A7%E7%83%AD%E9%97%A8%E6%AD%8C%E6%9B%B2%20%E9%98%BF%E8%82%86%20-%20%E7%86%B1%E6%84%9B105%C2%B0C%E7%9A%84%E4%BD%A0%E8%89%BE%E8%BE%B0%20-%20%E9%8C%AF%E4%BD%8D%E6%99%82%E7%A9%BA%20%E5%A4%A7%E7%B1%BD%20-%20%E7%99%BD%E6%9C%88%E5%85%89%E8%88%87%E7%A1%83%E7%A0%82%E7%97%A3%20%E5%BC%B5%E5%AE%B6%E6%97%BA-%E7%B5%A6%E4%B8%8D%E4%BA%86%E4%BD%A0%E6%9C%AA%E4%BE%86%20%E9%86%92%E4%B8%8D%E6%9D%A5%E7%9A%84%E6%A2%A6%20%E5%88%86%E4%BD%A0%E4%B8%80%E5%8D%8A.mp3" target="_blank">抖音歌曲2021最火【2021六月冷門新歌】2021点击率最高的大热门歌曲 阿肆 - 熱愛105°C的你艾辰 - 錯位時空 大籽 - 白月光與硃砂痣 張家旺-給不了你未來 醒不来的梦 分你一半.mp3</a>
+            </div>
+            </div><div class="category-section"><h2>📂 等什麼君</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E7%AD%89%E4%BB%80%E9%BA%BC%E5%90%9B/%E7%AD%89%E4%BB%80%E4%B9%88%E5%90%9B%E6%AD%8C%E6%9B%B2%20%E7%AD%89%E4%BB%80%E4%B9%88%E5%90%9B%E8%AF%AF%E7%BA%A2%E5%A6%86%20%E8%BE%9E%E4%B9%9D%E9%97%A8%E5%9B%9E%E5%BF%86%20%E8%B5%A4%E4%BC%B6%20%E7%AD%89%E4%BB%80%E4%B9%88%E5%90%9B%20%E5%85%B3%E5%B1%B1%E9%85%92%20%E3%80%90%E5%90%88%E8%BE%91%E3%80%91.mp3" target="_blank">等什么君歌曲 等什么君误红妆 辞九门回忆 赤伶 等什么君 关山酒 【合辑】.mp3</a>
+            </div>
+            </div><div class="category-section"><h2>📂 過期</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E9%81%8E%E6%9C%9F/visions.mp3" target="_blank">visions.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E9%81%8E%E6%9C%9F/%E5%A6%82%E6%88%91%E8%A5%BF%E6%B2%88.mp3" target="_blank">如我西沈.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E9%81%8E%E6%9C%9F/%E5%B0%87%E8%BB%8D%E4%BB%A4.mp3" target="_blank">將軍令.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E9%81%8E%E6%9C%9F/%E6%9C%97%E6%9C%97%E6%99%B4%E5%A4%A9.mp3" target="_blank">朗朗晴天.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E9%81%8E%E6%9C%9F/%E6%AC%8A%E5%BE%A1%E5%A4%A9%E4%B8%8B.mp3" target="_blank">權御天下.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E9%81%8E%E6%9C%9F/%E8%B5%A4%E8%A1%80%E9%95%B7%E6%AE%B7.mp3" target="_blank">赤血長殷.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E6%96%B0%E9%80%B2%E9%9F%B3%E6%A8%82/%E9%81%8E%E6%9C%9F/%E9%95%B7%E7%94%9F%E8%A8%A3.mp3" target="_blank">長生訣.mp3</a>
+            </div>
+            </div><div class="category-section"><h2>📂 鋼彈</h2>
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88Seed-T.M.%20Revolution-Invoke.mp3" target="_blank">鋼彈Seed-T.M. Revolution-Invoke.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88Seed-%E4%B8%BB%E9%A1%8C%E6%9B%B23-Believe.mp3" target="_blank">鋼彈Seed-主題曲3-Believe.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88SEED-%E5%BE%90%E8%8B%A5%E7%91%84orKAZUMA-moment.mp3" target="_blank">鋼彈SEED-徐若瑄orKAZUMA-moment.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88SEED-%E6%9B%BE%E7%B6%93%E9%80%99%E6%A8%A3%E7%9A%84%E5%9C%A8%E4%B8%80%E8%B5%B7.MP3" target="_blank">鋼彈SEED-曾經這樣的在一起.MP3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88seed%E6%9B%89%E4%B9%8B%E8%BB%8A~%E8%B6%85%E5%A5%BD%E8%81%BD~.mp3" target="_blank">鋼彈seed曉之車~超好聽~.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88W-Rhythm%20Emotion.mp3" target="_blank">鋼彈W-Rhythm Emotion.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88W_%E7%89%87%E9%A0%AD%E6%9B%B2_Just%20Communication.mp3" target="_blank">鋼彈W_片頭曲_Just Communication.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88%E6%A9%9F%E5%8B%95%E6%96%B0%E4%B8%96%E7%B4%80X-%E7%89%87%E9%A0%AD%E6%9B%B2-%E5%89%9B%E5%BD%88X.mp3" target="_blank">鋼彈機動新世紀X-片頭曲-剛彈X.mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88%E6%A9%9F%E5%99%A8%E4%BA%BA%E5%A4%A7%E6%88%B0-%20X-RESOLUTION%28%E6%B1%BA%E5%BF%83%29.mp3" target="_blank">鋼彈機器人大戰- X-RESOLUTION(決心).mp3</a>
+            </div>
+            
+            <div class="video-item">
+                <span class="play-icon">▶</span>
+                <a href="file:///C%3A/Users/zen29/Music/%E9%9F%B3%E6%A8%82/%E9%8B%BC%E5%BD%88/%E9%8B%BC%E5%BD%88%E7%B3%BB-%E9%8B%BC%E5%BD%88W%E5%8A%87%E5%A0%B4%E7%89%88%E4%B8%BB%E9%A1%8C%E6%9B%B2.mp3" target="_blank">鋼彈系-鋼彈W劇場版主題曲.mp3</a>
+            </div>
+            </div></body></html>

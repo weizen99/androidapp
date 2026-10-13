@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen AI 股票戰情室 Pro V15.5 終極大一統記憶備忘錄</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-gold: #f59e0b;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.68;
+            margin: 0;
+            padding: 24px 16px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            border-bottom: 2px solid var(--accent-gold);
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+        }
+        h1 {
+            color: var(--accent-gold);
+            font-size: 1.85rem;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .meta-info {
+            background-color: rgba(245, 158, 11, 0.08);
+            border: 1px solid var(--accent-gold);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #fde68a;
+            margin-bottom: 20px;
+        }
+        .meta-info div { margin-bottom: 4px; }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .nav-links a {
+            background: #243247;
+            color: var(--accent-blue);
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        .nav-links a:hover {
+            background: var(--accent-blue);
+            color: #0f172a;
+            font-weight: bold;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-header.new { color: #10b981; border-bottom-color: rgba(16, 185, 129, 0.4); }
+        .card-header.law { color: #f43f5e; border-bottom-color: rgba(244, 63, 94, 0.4); }
+        ul, ol {
+            padding-left: 20px;
+            margin: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            color: #e2e8f0;
+        }
+        li:last-child { margin-bottom: 0; }
+        strong { color: #ffffff; }
+        code, .code-tag {
+            background-color: #090d16;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 0.9em;
+            border: 1px solid #1e293b;
+        }
+        .cmd-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 10px;
+            list-style: none;
+            padding-left: 0;
+        }
+        .cmd-list li {
+            background: #131d2e;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent-blue);
+        }
+        .laws-list {
+            list-style-type: decimal;
+            padding-left: 22px;
+        }
+        .laws-list li {
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+        .footer-banner {
+            background: linear-gradient(90deg, #1e1b4b, #311042);
+            border: 1px solid var(--accent-purple);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #f5d0fe;
+            margin-top: 35px;
+        }
+        .badge-live { color: #ef4444; font-weight: bold; }
+        .badge-post { color: #38bdf8; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🌟【Zen AI 股票戰情室 Pro V15.5】終極大一統神機記憶備忘錄</h1>
+        <div class="meta-info">
+            <div><strong>版本代號：</strong>V15.5 (三戰區鼎立 ✕ 雙模物理截圖鎖定 ✕ PNA穿透 ✕ 四大硬骨頭全通關旗艦版)</div>
+            <div><strong>系統架構師：</strong>資深台股量化操盤總監與全領域系統架構專家</div>
+            <div><strong>封存基線日期：</strong>2026 年 10 月 13 日 (大破連線阻擋與時鐘誤判)</div>
+            <div><strong>核心樞紐路徑：</strong><code>C:\test_c\</code> ✕ <code>C:\inetpub\wwwroot\excelimport\</code> ✕ <code>C:\inetpub\wwwroot\androidapp\memory\</code></div>
+        </div>
+        <div class="nav-links">
+            <a href="https://weizen99.github.io/androidapp/memory/最新記憶傳承.html" target="_blank">🌐 線上記憶傳承</a>
+            <a href="https://weizen99.github.io/androidapp/memory/常用欄位.html" target="_blank">📊 常用欄位</a>
+            <a href="https://weizen99.github.io/androidapp/memory/所有的預存程序.html" target="_blank">⚙️ 所有的預存程序</a>
+            <a href="https://weizen99.github.io/androidapp/memory/test_c下的python用途.html" target="_blank">🐍 Python 用途清單</a>
+            <a href="https://weizen99.github.io/androidapp/memory/excelsql2_範本內容.html" target="_blank">📑 excelsql2 範本</a>
+            <a href="https://weizen99.github.io/androidapp/memory/主要網頁.html" target="_blank">🖥️ 主要網頁一覽</a>
+        </div>
+    </header>
+
+    <!-- 模組十 (本次 V15.5 重磅新增) -->
+    <section class="card">
+        <div class="card-header new">⚡ 模組十：雙模截圖物理強制鎖定 ✕ 四大硬骨頭全線貫通 (V15.5 重大突破)</div>
+        <ol>
+            <li><strong>母艦全域火控三維參數拆解矩陣 (master_cockpit.py)</strong>：
+                <ul>
+                    <li>頂部火控輸入框支援三維複合參數（例如：<code>2454 20260401 live</code> 或 <code>3017 post</code>）。</li>
+                    <li>母艦自動正則提取：4~6碼股號、8碼起日（<code>--start 20260401</code>）、時段模式（<code>--mode live</code> / <code>--mode post</code>），徹底消滅把 <code>--stock</code> 當股號的錯位烏龍。</li>
+                </ul>
+            </li>
+            <li><strong>Playwright 雙模截圖與解盤物理隔離 (chart_screenshot.py & chart_explain.py)</strong>：
+                <ul>
+                    <li><span class="badge-live">🔥 強制盤中即時 (--mode live)</span>：100% 強制執行 <code>sp_CalcIntradayStockLive</code> ＋ 100% 寫死點擊 <code>#btn_query_live</code>，帶出盤中最新跳動 K 棒！</li>
+                    <li><span class="badge-post">🌙 強制盤後歷史 (--mode post)</span>：100% 跳過盤中隨動 ＋ 100% 寫死點擊 <code>#btn_query_post</code>，精準載入日線全日結算數據！</li>
+                    <li>徹底拔除伺服器時鐘（08:30~14:00）盲猜邏輯，即使半夜復盤也能強制點閱盤中即時圖！</li>
+                </ul>
+            </li>
+            <li><strong>前端 excelsql2.html 極速意圖確認 (triggerScreenshot)</strong>：
+                <ul>
+                    <li>按下一鍵截圖時彈出 0.1 秒極速確認框：【確定/Enter】= 盤中即時；【取消/Esc】= 盤後歷史。</li>
+                    <li>徹底解決 Playwright 在無頭瀏覽器開啟全新分頁時「無法得知用戶螢幕選取意圖」的痛點。</li>
+                </ul>
+            </li>
+            <li><strong>雙通道後台四大硬骨頭徹底粉碎 (line_ai_bot1.py Port 5000)</strong>：
+                <ul>
+                    <li>全域部署 <code>@app.after_request</code> 注入 <code>Access-Control-Allow-Private-Network: true</code> 與 <code>Access-Control-Allow-Origin: *</code>，徹底擊碎 Chrome 私有網路 (PNA) 跨域連線失敗攔截！</li>
+                    <li>完美打通並驗證通過四大 API 路由：
+                        <br>1. <code>/push_to_line</code>：Qwen-7B 實戰解盤至 LINE (200 OK)
+                        <br>2. <code>/push_to_tg</code>：Qwen-7B 實戰解盤至 Telegram 群組 (200 OK)
+                        <br>3. <code>/push_data_to_line</code>：單列精準量化數據卡片至 LINE (200 OK)
+                        <br>4. <code>/push_data_to_tg</code>：單列精準量化數據卡片至 Telegram 群組 (200 OK)
+                    </li>
+                    <li>前端統一以 <code>http://127.0.0.1:5000</code> 內存回環直連，徹底脫離 ngrok 埠號衝突（ngrok 8550 專攻母艦外網遠端，5000 專供本地秒速推播）。</li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <!-- 模組一 -->
+    <section class="card">
+        <div class="card-header">📌 模組一：雙看板升級 ➔ 三戰區鼎立 (The Three Cockpits Matrix)</div>
+        <ol>
+            <li><strong>第一戰區 [warroom_cockpit.html] (盤中雷達主控台)：</strong>
+                <ul>
+                    <li>0ms 多維因子共振快照 (4維/3維起漲黑馬池) ✕ 盤中雷達全景 ✕ 3-Way 離場勝率。</li>
+                    <li>內建 Capture-Phase 穿透發報機，表格單擊或雙擊任一列，第三戰區 TradingView 瞬間 0.01 秒秒切換！</li>
+                </ul>
+            </li>
+            <li><strong>第二戰區 [warroom_cockpit_v2.html] (策略工廠大屏 ✕ 3大淨值曲線全景)：</strong>
+                <ul>
+                    <li>ECharts 投資組合歷史 NAV：預設開啟「🌟 三大策略全景對比 (3線同屏競技)」，科技藍(策略1 雙破共振 30%) ✕ 亮橘色(策略2 AMT突圍 20%) ✕ 翠綠色(策略3 存股DRIP複利 50%)。</li>
+                    <li>頂部直通第三戰區 (TradingView) 與 99 部隊母艦；第 9 頁籤無縫內嵌母艦 Flet Web。</li>
+                </ul>
+            </li>
+            <li><strong>第三戰區 [warroom_cockpit_v3.html] (TradingView ✕ 玩股網實盤旗艦大屏)：</strong>
+                <ul>
+                    <li>滿幀 60fps 引擎：鎖定 <code>lightweight-charts@4.2.1</code> 工業級穩定版。</li>
+                    <li>玩股網對齊規格：台股紅漲綠跌 K 線 ✕ 5/10/20/60/120MA 真數學均線 ✕ 底部 (5)/(10)/(20)/(60) 扣抵標記 ✕ 頭頂三級點火金星。</li>
+                    <li>全動態 70% 拍賣微結構：依據最新 20 天分價量即時精算 VAH / POC / VAL。</li>
+                    <li>頂部內建【🎵 戰情專屬影音台】(<code>musicyu.html</code>) 獨立大窗直通按鈕。</li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <!-- 模組二 & 三 -->
+    <section class="card">
+        <div class="card-header">📌 模組二 & 三：雙匯流排跨屏聯動 ✕ 全知大寬表特徵工程</div>
+        <ul>
+            <li><strong>ZenSync 雙匯流排大一統跨屏聯動：</strong>
+                <ul>
+                    <li>第一匯流排 (BroadcastChannel)：<code>zen_stock_sync</code> 同源內存 0ms 即時傳遞。</li>
+                    <li>第二匯流排 (localStorage 備援)：強制附加 <code>zen_stock_tick = Date.now()</code> 防防不觸發監聽。</li>
+                    <li>DataTables 捕獲階段穿透技術：使用 <code>addEventListener('click', handler, true)</code> 於 Capture 階段攔截。</li>
+                </ul>
+            </li>
+            <li><strong>全知大寬表量化特徵工程 (View_AI_Omni_Context)：</strong>
+                <ul>
+                    <li>股本基因標籤：&gt;500億 [巨型權值股] ｜ &gt;50億 [中型主力股] ｜ &lt;=50億 [小型輕盈飆股]。</li>
+                    <li>動態乖離戰術判定：小型飆股乖離率在 30% 內判定為 [小型飆股軋空主升段 (容忍高乖離)]，大型股 &gt;15% 過熱警告。</li>
+                    <li>一年期 3D AMT 價值區微結構：精算 POC_20、POC_60、POC_240 主力成本。</li>
+                    <li>物理去重裝甲：內建 <code>ROW_NUMBER() OVER(PARTITION BY a.代號 ORDER BY a.日期 DESC) as dedup_rn</code> 確保代號唯一。</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 模組四 & 五 -->
+    <section class="card">
+        <div class="card-header">📌 模組四 & 五：純英數 Telegram 旗艦 ✕ 第 100 號雙引擎調度</div>
+        <ul class="cmd-list">
+            <li><code>3443?</code> ➔ 👑 旗艦全知戰報 (大寬表 ✕ 雙表格 ✕ 戰令四要素)</li>
+            <li><code>3443?1</code> ➔ ⚡ 60M 伏兵轉強 (分時動能/KD金叉/當日攻防)</li>
+            <li><code>3443?2</code> ➔ 🧱 3D AMT 價值區 (20/60/240日主力成本)</li>
+            <li><code>3443?3</code> ➔ 🛡️ 3-Way 離場勝率 (5/10/20MA勝率PK/凱利%)</li>
+            <li><code>3443?4</code> ➔ 💎 籌碼集中度 (共振熱度/法人集中度)</li>
+            <li><code>3443B</code> 或 <code>3443!</code> ➔ 🚀 陣地一火控密令：向四網同步齊發！</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong>第 100 號部隊三重大腦階梯：</strong>Google 原廠 (<code>gemini-1.5-flash</code> 等 4 金鑰輪詢) ➔ OpenRouter 雲端備援 ➔ 本地 Ollama <code>qwen2.5:7b</code> 保底接管。解鎖 <code>maxOutputTokens: 8192</code> 並注入篇幅配速令！</p>
+    </section>
+
+    <!-- 二十一項終極除錯防線條約 -->
+    <section class="card">
+        <div class="card-header law">🚨 二十一項終極除錯防線條約 (V15.5 終極憲法)</div>
+        <ol class="laws-list">
+            <li><strong>括號防護律：</strong>AS 欄位別名凡含 (%), (天), 中文, 符號或空格，100% 強制加上中括號 <code>[別名]</code>。</li>
+            <li><strong>無 CTE WITH 條約：</strong>WebMethod 與 ExecuteSQL 不支援 CTE WITH，前端範本全改用衍生子查詢 <code>(SELECT ...) M</code>。</li>
+            <li><strong>一字漲跌停防衛：</strong>(最高 - 最低) = 0 時，加 <code>ISNULL(..., 0)</code> 防 NULL 傳播。</li>
+            <li><strong>Unicode N 前綴：</strong>所有中文文字比對 (如 <code>LIKE N'%雙破共振%'</code>) 100% 加上 N 前綴。</li>
+            <li><strong>日期轉型防溢位律：</strong>資料庫日期帶有 .000000 浮點數時，必須先 <code>CAST(日期 AS INT)</code>，再進行 VARCHAR(8) 與 TRY_CONVERT。</li>
+            <li><strong>回測策略隔離律：</strong>嚴禁無差別 TRUNCATE！必用 <code>DELETE ... WHERE 回測編號 = X</code>；插入總表必開啟 <code>SET IDENTITY_INSERT ... ON</code>。</li>
+            <li><strong>視窗函數別名禁止律：</strong>嚴禁在同一層 SELECT 中將剛取的欄位別名直接用於後面的 OVER() 視窗函數。</li>
+            <li><strong>Flutter 官方直通車律：</strong>Android 打包分身 App 僅改 applicationId，嚴禁修改 namespace；根絕閃退。</li>
+            <li><strong>Gemini 多金鑰防限額律：</strong>多金鑰輪詢池必須採用「不同 Google 帳號」輪詢；HTTP Header 帶上 "x-goog-api-key"。</li>
+            <li><strong>Playwright 靜默穿透與防卡白屏律：</strong>守護腳本必須 headless=True；遇 Arkose Labs 嚴禁自動登入，必用原生 Chrome 登入 2FA 固化 Session；嚴禁攜帶 --no-sandbox。</li>
+            <li><strong>雙平台故障隔離：</strong>廣播推播時 Telegram 優先發送，Facebook 發文必須包覆獨立 try...except 與破鎖機制。</li>
+            <li><strong>真·回測頸線不破律：</strong>幾何 1:1 測幅之回測必須在頸線「上方」0%~3.5% (Close &gt;= Neckline * 0.99)。</li>
+            <li><strong>Flet 1.0 物件大寫與 RWD 防崩潰律：</strong>Border, Padding 必須大寫；子進程必須強制帶 -u；佈局必須採用 ResponsiveRow 防手機黑屏。</li>
+            <li><strong>母艦單一長輪詢與沙盒授權律：</strong>同一組 TG Bot Token 嚴禁同時運行多個腳本防 409 Conflict；連接埠衝突時執行 taskkill 瞬態釋放。</li>
+            <li><strong>TradingView 工業版鎖定與繪圖純淨律：</strong>鎖定 <code>lightweight-charts@4.2.1</code>；均線強制 <code>priceLineVisible: false</code> 根絕彩色橫向虛線。</li>
+            <li><strong>三屏聯動同源與事件捕獲穿透律：</strong>跨看板聯動必須同源；穿透 DataTables 必用 <code>addEventListener('click', handler, true)</code> 於 Capture 階段攔截。</li>
+            <li><strong>Android Intent 穿透與 HTTPS 直連律：</strong>手機直通母艦嚴禁使用 intent:// 特殊協議，採用標準 HTTPS 平滑跳轉；VBScript 隱形啟動嚴禁使用中文檔名。</li>
+            <li><strong>純英數代號正規清洗律與大寬表物理去重律：</strong>提取股號必須使用 <code>re.search(r'([0-9]{4,6})', text)</code> 防代號帶問號 Bug；大寬表必內建 <code>ROW_NUMBER() ... dedup_rn = 1</code> 物理防重。</li>
+            <li><strong>大模型長文本防截斷與原廠 8K 解鎖律：</strong>調用 Google API 強制宣告 <code>maxOutputTokens: 8192</code>；戰令四要素公式：【動作定性】+【生死價位】+【成數上限】+【紀律名言】。</li>
+            <li><strong>顯式時段命令律 (Explicit Time-Mode Law - V15.5 NEW)：</strong>
+                <br>• 無頭瀏覽器 RPA 截圖嚴禁依賴伺服器時鐘盲猜時段！必須透過 <code>--mode live</code> 或 <code>--mode post</code> 顯式指令強制鎖定 DOM 按鈕（<code>#btn_query_live</code> vs <code>#btn_query_post</code>），杜絕非交易時段復盤誤判。
+            </li>
+            <li><strong>私有網路存取穿透律 (PNA Chrome Armor Law - V15.5 NEW)：</strong>
+                <br>• 當外網或動態 DNS 網域（如 <code>duckdns:8888</code>）呼叫本地私有服務（<code>127.0.0.1:5000</code>）時，Flask 必須於 <code>@app.after_request</code> 注入 <code>Access-Control-Allow-Private-Network: true</code>，前端優先採用 <code>http://127.0.0.1:5000</code> 直連，徹底消滅 Chrome 安全阻擋與路由器 NAT 回流黑洞！
+            </li>
+        </ol>
+    </section>
+
+    <div class="footer-banner">
+        🏁 記憶傳承 V15.5 終極大滿貫封存完畢！天下武功，唯快不破，唯穩不敗，無人值守神機大成！
+    </div>
+</div>
+
+</body>
+</html>

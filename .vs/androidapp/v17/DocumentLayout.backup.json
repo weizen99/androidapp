@@ -1,0 +1,156 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\inetpub\\wwwroot\\androidapp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\inetpub\\wwwroot\\androidapp\\mygithub.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:mygithub.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\inetpub\\wwwroot\\androidapp\\mygithub1.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:mygithub1.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\inetpub\\wwwroot\\androidapp\\stockpic7.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:stockpic7.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\inetpub\\wwwroot\\androidapp\\index2.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:index2.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\inetpub\\wwwroot\\androidapp\\myweb\\sidebars\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:myweb\\sidebars\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\inetpub\\wwwroot\\androidapp\\stockpic6.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:stockpic6.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\inetpub\\wwwroot\\androidapp\\stockpic5.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:stockpic5.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\inetpub\\wwwroot\\androidapp\\basicinfotable.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:basicinfotable.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "mygithub.html",
+              "DocumentMoniker": "C:\\inetpub\\wwwroot\\androidapp\\mygithub.html",
+              "RelativeDocumentMoniker": "mygithub.html",
+              "ToolTip": "C:\\inetpub\\wwwroot\\androidapp\\mygithub.html",
+              "RelativeToolTip": "mygithub.html",
+              "ViewState": "AgIAAMMAAAAAAAAAAAAAAOQAAABYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-05-25T05:17:12.535Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "mygithub1.html",
+              "DocumentMoniker": "C:\\inetpub\\wwwroot\\androidapp\\mygithub1.html",
+              "RelativeDocumentMoniker": "mygithub1.html",
+              "ToolTip": "C:\\inetpub\\wwwroot\\androidapp\\mygithub1.html",
+              "RelativeToolTip": "mygithub1.html",
+              "ViewState": "AgIAADsBAAAAAAAAAAAAAEEBAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-05-25T05:16:28.609Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "index2.html",
+              "DocumentMoniker": "C:\\inetpub\\wwwroot\\androidapp\\index2.html",
+              "RelativeDocumentMoniker": "index2.html",
+              "ToolTip": "C:\\inetpub\\wwwroot\\androidapp\\index2.html",
+              "RelativeToolTip": "index2.html",
+              "ViewState": "AgIAADgBAAAAAAAAAAAUwIoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-03-30T04:49:39.903Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "stockpic7.html",
+              "DocumentMoniker": "C:\\inetpub\\wwwroot\\androidapp\\stockpic7.html",
+              "RelativeDocumentMoniker": "stockpic7.html",
+              "ToolTip": "C:\\inetpub\\wwwroot\\androidapp\\stockpic7.html",
+              "RelativeToolTip": "stockpic7.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-03-27T07:45:51.692Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "stockpic6.html",
+              "DocumentMoniker": "C:\\inetpub\\wwwroot\\androidapp\\stockpic6.html",
+              "RelativeDocumentMoniker": "stockpic6.html",
+              "ToolTip": "C:\\inetpub\\wwwroot\\androidapp\\stockpic6.html",
+              "RelativeToolTip": "stockpic6.html",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAIwF0AAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-03-24T13:07:31.378Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "stockpic5.html",
+              "DocumentMoniker": "C:\\inetpub\\wwwroot\\androidapp\\stockpic5.html",
+              "RelativeDocumentMoniker": "stockpic5.html",
+              "ToolTip": "C:\\inetpub\\wwwroot\\androidapp\\stockpic5.html",
+              "RelativeToolTip": "stockpic5.html",
+              "ViewState": "AgIAAEwAAAAAAAAAAAAIwGYAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-03-22T09:40:28.377Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "basicinfotable.html",
+              "DocumentMoniker": "C:\\inetpub\\wwwroot\\androidapp\\basicinfotable.html",
+              "RelativeDocumentMoniker": "basicinfotable.html",
+              "ToolTip": "C:\\inetpub\\wwwroot\\androidapp\\basicinfotable.html",
+              "RelativeToolTip": "basicinfotable.html",
+              "ViewState": "AgIAAGYAAAAAAAAAAAAAAB8AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-03-22T06:38:14.498Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "index.html",
+              "DocumentMoniker": "C:\\inetpub\\wwwroot\\androidapp\\myweb\\sidebars\\index.html",
+              "RelativeDocumentMoniker": "myweb\\sidebars\\index.html",
+              "ToolTip": "C:\\inetpub\\wwwroot\\androidapp\\myweb\\sidebars\\index.html",
+              "RelativeToolTip": "myweb\\sidebars\\index.html",
+              "ViewState": "AgIAACsCAAAAAAAAAAAUwLYBAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-03-10T12:32:24.164Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

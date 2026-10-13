@@ -16,7 +16,7 @@
     <li class="nav-item"><a class="nav-link" href="http://www.hacker1.somee.com/mapsql2">完整版(較多資訊)</a> </li>
     <li class="nav-item"><a class="nav-link" href="http://www.hacker1.somee.com/maptest">完整新地圖</a> </li>
     <li class="nav-item"><a class="nav-link" href="http://www.hacker1.somee.com/guestmsg1.aspx">過渡暫存</a> </li>
-    <li class="nav-item"><a class="nav-link" href="http://220.135.3.78:8888/androidapp/index.html">回區城首頁</a> </li>
+    <li class="nav-item"><a class="nav-link" href="https://zen2965.duckdns.org:8888/androidapp/index.html">回區城首頁</a> </li>
 </ul>
 <br/>
          <asp:HyperLink ID="mylink" runat="server" Target="_blank">Google搜尋連結</asp:HyperLink>

@@ -1,0 +1,1750 @@
+
+    <!DOCTYPE html>
+    <html lang="zh-TW">
+    <head>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --user-bg: #f0f4f9;
+                --model-bg: #ffffff;
+                --thought-bg: #fffbe6;
+                --code-bg: #1e1e1e;
+                --text-color: #1f1f1f;
+                --accent-color: #1a73e8;
+            }
+            body {
+                font-family: 'Noto Sans TC', sans-serif;
+                background-color: #f7f9fc;
+                color: var(--text-color);
+                line-height: 1.6;
+                margin: 0;
+                padding: 0;
+            }
+            .header {
+                background: white;
+                padding: 20px 50px;
+                border-bottom: 1px solid #e0e4e9;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            .header h1 { margin: 0; font-size: 1.5rem; color: var(--accent-color); }
+
+            .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+
+            .message-row { display: flex; flex-direction: column; margin-bottom: 40px; }
+
+            .role-badge {
+                font-size: 0.8rem;
+                font-weight: 700;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            .user-row .role-badge { color: #0d6efd; align-self: flex-end; }
+            .model-row .role-badge { color: #198754; align-self: flex-start; }
+
+            .bubble {
+                max-width: 90%;
+                padding: 16px 24px;
+                border-radius: 20px;
+                position: relative;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                white-space: pre-wrap;
+            }
+            .user-bubble {
+                background-color: var(--user-bg);
+                align-self: flex-end;
+                border-bottom-right-radius: 4px;
+            }
+            .model-bubble {
+                background-color: var(--model-bg);
+                align-self: flex-start;
+                border-bottom-left-radius: 4px;
+                border: 1px solid #e3e3e3;
+            }
+
+            .thought-container {
+                background-color: var(--thought-bg);
+                border-radius: 12px;
+                padding: 15px;
+                margin-bottom: 15px;
+                border-left: 4px solid #fadb14;
+                font-size: 0.9rem;
+                color: #856404;
+                align-self: flex-start;
+                max-width: 90%;
+            }
+            .thought-title { font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+
+            .code-container {
+                background: var(--code-bg);
+                border-radius: 10px;
+                margin: 15px 0;
+                overflow: hidden;
+            }
+            .code-header {
+                background: #333;
+                color: #aaa;
+                padding: 5px 15px;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                border-bottom: 1px solid #444;
+            }
+            pre { margin: 0; padding: 15px; overflow-x: auto; }
+            code { font-family: 'JetBrains Mono', monospace; color: #d4d4d4; font-size: 0.9rem; }
+
+            .time { font-size: 0.7rem; color: #9ca3af; margin-top: 8px; }
+            .user-row .time { text-align: right; }
+        </style>
+        <title>Gemini 紀錄檢視器 - 專業版</title>
+    </head>
+    <body>
+        <div class="header"><span style="font-size: 1.5rem;">📁</span><h1>Cloud AI Studio 歷史紀錄</h1></div>
+        <div class="container">
+    
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-Hant&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Excel SQL 數據中心 - 高級版&lt;/title&gt;
+    &lt;!-- 引入核心樣式: Bootstrap 5 + DataTables --&gt;
+    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css&quot;&gt;
+
+    &lt;script src=&quot;https://code.jquery.com/jquery-3.6.0.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js&quot;&gt;&lt;/script&gt;
+
+    &lt;style&gt;
+        body {
+            font-family: &#x27;標楷體&#x27;;
+            background-color: #f0f2f5;
+            padding: 2px;
+        }
+
+        .sql-box {
+            background: #fff;
+            padding: 2px;
+            border-radius: 8px;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+
+        /* 凍結表頭與 Excel 滾動效果 */
+        .table-wrapper {
+            height: 65vh; /* 固定高度，產生捲軸 */
+            overflow: auto;
+            margin-top: 20px;
+            border: 1px solid #dee2e6;
+            background: #fff;
+        }
+
+        /* 凍結表頭 CSS */
+        #resultTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #212529 !important;
+            color: white;
+            white-space: nowrap;
+        }
+
+        /* 圖片樣式 */
+        .data-img {
+            max-width: 400px; /* 你可以根據需求調整成 400px 或 500px */
+            height: auto;
+            border-radius: 4px;
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+
+            .data-img:hover {
+                max-width: 600px; /* 移上去時再變大一點 */
+                transform: scale(2.5);
+                z-index: 999;
+                position: relative;
+            }
+
+        .template-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+
+        /* DataTables 樣式微調 */
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 10px;
+        }
+
+        .status-msg {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    
+    &lt;div class=&quot;container-fluid&quot;&gt;
+        &lt;ul class=&quot;nav nav-tabs xs-3&quot;&gt;
+            &lt;li class=&quot;nav-item&quot;&gt;&lt;a class=&quot;nav-link active&quot; href=&quot;#&quot;&gt;Excel SQL 數據中心&lt;/a&gt;&lt;/li&gt;
+            &lt;li class=&quot;nav-item&quot;&gt;&lt;a class=&quot;nav-link&quot; href=&quot;https://zen2965.duckdns.org:8888/excelimport/excelimport2&quot; target=&quot;_blank&quot;&gt;指令彙總&lt;/a&gt;&lt;/li&gt;
+            &lt;li class=&quot;nav-item&quot;&gt;&lt;a class=&quot;nav-link&quot; href=&quot;https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html&quot; target=&quot;_blank&quot;&gt;WebApi彙總&lt;/a&gt;&lt;/li&gt;
+            &lt;li class=&quot;nav-item&quot;&gt;&lt;a class=&quot;nav-link&quot; href=&quot;https://zen2965.duckdns.org:8888/androidapp/map.html&quot; target=&quot;_blank&quot;&gt;地圖定位建檔&lt;/a&gt;&lt;/li&gt;
+            &lt;li class=&quot;nav-item&quot;&gt;&lt;a class=&quot;nav-link&quot; href=&quot;https://zen2965.duckdns.org:8888/fishnew5/favorites2&quot; target=&quot;_blank&quot;&gt;網站簡介&lt;/a&gt;&lt;/li&gt;
+            &lt;li class=&quot;nav-item&quot;&gt;&lt;a class=&quot;nav-link&quot; href=&quot;https://zen2965.duckdns.org:8888/stockquery/incomeedit1&quot; target=&quot;_blank&quot;&gt;自選股編輯&lt;/a&gt;&lt;/li&gt;
+            &lt;li class=&quot;nav-item&quot;&gt;&lt;a class=&quot;nav-link&quot; href=&quot;https://zen2965.duckdns.org:8888/mymvc/selfselected1.aspx&quot; target=&quot;_blank&quot;&gt;自選股內容&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;div class=&quot;sql-box&quot;&gt;
+            &lt;!-- 範本載入區 --&gt;
+            &lt;div class=&quot;template-section&quot;&gt;
+                &lt;div class=&quot;row g-2&quot;&gt;
+                    &lt;div class=&quot;col-sm-3&quot;&gt;
+
+                        &lt;label class=&quot;form-label fw-bold&quot;&gt;🔍 搜尋範本：&lt;/label&gt;
+                        &lt;input type=&quot;text&quot; id=&quot;templateSearch&quot; class=&quot;form-control&quot; placeholder=&quot;輸入關鍵字...&quot;&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;col-sm-9&quot;&gt;
+                        &lt;label class=&quot;form-label fw-bold&quot;&gt;📑 選擇 50+ 組 SQL 範本：&lt;/label&gt;
+                        &lt;select id=&quot;sqlTemplates&quot; class=&quot;form-select&quot;&gt;
+                            &lt;option value=&quot;&quot;&gt;-- 請選擇範本 --&lt;/option&gt;
+                        &lt;/select&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class=&quot;row g-3&quot;&gt;
+                &lt;div class=&quot;col-sm-2&quot;&gt;
+                    &lt;label class=&quot;fw-bold text-danger&quot;&gt;密碼：&lt;/label&gt;
+                    &lt;input type=&quot;password&quot; id=&quot;txtPwd&quot; class=&quot;form-control&quot; value=&quot;****&quot;&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;col-sm-3&quot;&gt;
+                    &lt;label class=&quot;fw-bold&quot;&gt;資料庫：&lt;/label&gt;
+                    &lt;select id=&quot;useDatabase&quot; class=&quot;form-select&quot;&gt;
+                        &lt;option value=&quot;fromaccessdatabase&quot;&gt;fromaccessdatabase&lt;/option&gt;
+                        &lt;option value=&quot;stockchangedate&quot;&gt;stockchangedate&lt;/option&gt;
+                        &lt;option value=&quot;favor2&quot;&gt;favor2 (含圖片)&lt;/option&gt;
+                        &lt;option value=&quot;stockchange&quot;&gt;stockchange&lt;/option&gt;
+                        &lt;option value=&quot;stockprice&quot;&gt;stockprice&lt;/option&gt;
+                        &lt;option value=&quot;stockinfo&quot;&gt;stockinfo&lt;/option&gt;
+                        &lt;option value=&quot;work&quot;&gt;work&lt;/option&gt;
+                        &lt;option value=&quot;stockchangefour&quot;&gt;stockchangefour&lt;/option&gt;
+                        &lt;option value=&quot;pokopoko&quot;&gt;pokopoko&lt;/option&gt;
+                        &lt;option value=&quot;wordvoice&quot;&gt;wordvoice&lt;/option&gt;
+                        &lt;option value=&quot;favor1&quot;&gt;favor1&lt;/option&gt;
+                        &lt;option value=&quot;favor3&quot;&gt;favor3&lt;/option&gt;
+
+                    &lt;/select&gt;
+                &lt;/div&gt;
+                &lt;!--&lt;div class=&quot;col-sm-3&quot;&gt;
+                    &lt;label class=&quot;fw-bold&quot;&gt;日期參數：&lt;/label&gt;
+                    &lt;input type=&quot;text&quot; id=&quot;txtDate&quot; class=&quot;form-control&quot; placeholder=&quot;YYYYMMDD&quot;&gt;
+                &lt;/div&gt;--&gt;
+                &lt;div class=&quot;col-sm-7 d-flex align-items-end&quot;&gt;
+                    &lt;button id=&quot;btnQuery&quot; class=&quot;btn btn-primary w-100 fw-bold&quot;&gt;🚀 執行 Excel 格式查詢&lt;/button&gt;
+                &lt;/div&gt;
+
+                &lt;div class=&quot;col-12 sm-3&quot;&gt;
+                    &lt;label class=&quot;fw-bold&quot;&gt;SQL 指令 (SELECT 已自動補上)：&lt;/label&gt;
+                    &lt;textarea id=&quot;sqlText&quot; class=&quot;form-control font-monospace&quot; rows=&quot;4&quot;&gt; * FROM [dbo].[guestinfo4]&lt;/textarea&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div id=&quot;msg&quot; class=&quot;status-msg sm-3 text-primary&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 表格顯示區 --&gt;
+        &lt;div class=&quot;table-wrapper&quot;&gt;
+            &lt;table id=&quot;resultTable&quot; class=&quot;table table-bordered table-hover table-sm w-100&quot;&gt;
+                &lt;!-- DataTables 會動態產生內容 --&gt;
+            &lt;/table&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        // --- 範本資料庫 ---
+        const sqlTemplateLibrary = [
+
+            { cat: &quot;圖片類&quot;, title: &quot;面積 考卷&quot;, sql: `/*資料庫:fvor2*/top 20 * from stockgod` },
+            { cat: &quot;圖片類&quot;, title: &quot;Ai girl&quot;, sql: `/*資料庫:fvor2*/ * from stockgod21 where 識別碼&gt;300 and 識別碼&lt;320` },
+            { cat: &quot;圖片類&quot;, title: &quot;gif檔&quot;, sql: `/*資料庫:fvor2*/top 30 * from stockgod28` },
+            { cat: &quot;圖片類&quot;, title: &quot;圖片藝廊&quot;, sql: `/*詳見上排藝廊 https://weizen99.github.io/androidapp/basicinfotable.html */` },           
+            //{ cat: &quot;搜尋類&quot;, title: &quot;關鍵字搜尋我的最愛&quot;, sql: `top 100 * FROM favor1 WHERE word1 LIKE &#x27;%deepseek%&#x27; ORDER BY 時間戳記 DESC` },
+
+        ];
+        /*資料庫:stockchange*/
+        let dataTableInstance = null; // 用於存放 DataTables 實例
+
+        $(document).ready(function () {
+            // --- 初始化範本選單 ---
+            function loadTemplates(filter = &quot;&quot;) {
+                const $select = $(&quot;#sqlTemplates&quot;).empty().append(&#x27;&lt;option value=&quot;&quot;&gt;-- 請選擇範本 --&lt;/option&gt;&#x27;);
+                const filtered = sqlTemplateLibrary.filter(t =&gt; t.title.includes(filter) || t.cat.includes(filter));
+                let lastCat = &quot;&quot;;
+                let $group = null;
+                filtered.forEach(t =&gt; {
+                    if (t.cat !== lastCat) {
+                        lastCat = t.cat;
+                        $group = $(`&lt;optgroup label=&quot;【${lastCat}】&quot;&gt;&lt;/optgroup&gt;`).appendTo($select);
+                    }
+                    $group.append(`&lt;option value=&quot;${t.sql}&quot;&gt;${t.title}&lt;/option&gt;`);
+                });
+            }
+            loadTemplates();
+            $(&quot;#templateSearch&quot;).on(&quot;input&quot;, function () { loadTemplates($(this).val()); });
+            $(&quot;#sqlTemplates&quot;).on(&quot;change&quot;, function () { if ($(this).val()) $(&quot;#sqlText&quot;).val($(this).val()); });
+
+            // --- 核心查詢功能 ---
+            $(&quot;#btnQuery&quot;).click(function () {
+                const sql = $(&quot;#sqlText&quot;).val();
+                const db = $(&quot;#useDatabase&quot;).val();
+                const pwd = $(&quot;#txtPwd&quot;).val();
+
+                $(&quot;#msg&quot;).text(&quot;⏳ 正在像 Excel 一樣處理數據中...&quot;);
+
+                // 如果之前已經有表格，先銷毀它，否則重新繪製會報錯
+                if (dataTableInstance) {
+                    dataTableInstance.destroy();
+                    $(&quot;#resultTable&quot;).empty();
+                }
+
+                $.ajax({
+                    type: &quot;POST&quot;,
+                    url: &quot;https://zen2965.duckdns.org:8888/excelimport/DataService3.aspx/ExecuteSQL3&quot;,
+                    data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
+                    contentType: &quot;application/json; charset=utf-8&quot;,
+                    dataType: &quot;json&quot;,
+                    success: function (res) {
+                        try {
+                            const data = JSON.parse(res.d);
+                            if (!data || data.length === 0) {
+                                $(&quot;#msg&quot;).text(&quot;⚠ 查無資料。&quot;);
+                                return;
+                            }
+
+                            // 1. 動態建立表頭 (thead) 與內容 (tbody) 的 HTML 結構
+                            let keys = Object.keys(data[0]);
+                            let theadHtml = &quot;&lt;thead&gt;&lt;tr&gt;&quot;;
+                            keys.forEach(k =&gt; { theadHtml += `&lt;th&gt;${k}&lt;/th&gt;`; });
+                            theadHtml += &quot;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;/tbody&gt;&quot;;
+                            $(&quot;#resultTable&quot;).append(theadHtml);
+
+                            // 2. 準備每一行的數據
+                            data.forEach(row =&gt; {
+                                let trHtml = &quot;&lt;tr&gt;&quot;;
+                                keys.forEach(k =&gt; {
+                                    let val = row[k] === null ? &quot;&quot; : row[k];
+                                    if (k.toLowerCase() === &#x27;photo&#x27; &amp;&amp; val !== &quot;&quot;) {
+                                        let cleanVal = String(val).trim();
+                                        let imgSrc = cleanVal.startsWith(&quot;data:&quot;) ? cleanVal : &quot;data:image/jpeg;base64,&quot; + cleanVal;
+                                        trHtml += `&lt;td&gt;&lt;img src=&quot;${imgSrc}&quot; class=&quot;data-img&quot; onclick=&quot;window.open(this.src)&quot;&gt;&lt;/td&gt;`;
+                                    } else {
+                                        trHtml += `&lt;td&gt;${val}&lt;/td&gt;`;
+                                    }
+                                });
+                                trHtml += &quot;&lt;/tr&gt;&quot;;
+                                $(&quot;#resultTable tbody&quot;).append(trHtml);
+                            });
+
+                            // 3. 啟動 DataTables (Excel 功能核心)
+                            dataTableInstance = $(&#x27;#resultTable&#x27;).DataTable({
+                                &quot;language&quot;: { &quot;url&quot;: &quot;//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json&quot; },
+                                &quot;pageLength&quot;: 50, // 預設一頁 50 筆
+                                &quot;order&quot;: [],      // 預設不排序，由 SQL 控制
+                                &quot;searching&quot;: true, // 開啟關鍵字搜尋
+                                &quot;ordering&quot;: true,  // 開啟點擊表頭排序
+                                &quot;info&quot;: true,
+                                &quot;lengthMenu&quot;: [20, 50, 100, 500],
+                                &quot;scrollCollapse&quot;: true
+                            });
+
+                            $(&quot;#msg&quot;).text(&quot;✅ 查詢完成，共 &quot; + data.length + &quot; 筆。您可以點擊表頭進行排序。&quot;);
+                        } catch (err) {
+                            $(&quot;#msg&quot;).text(&quot;❌ 解析失敗: &quot; + err.message);
+                        }
+                    },
+                    error: function (e) {
+                        $(&quot;#msg&quot;).text(&quot;❌ 連線失敗，請確認家裡電腦 DataService 是否運作。&quot;);
+                    }
+                });
+            });
+        });
+    &lt;/script&gt;
+   
+&lt;/body&gt;
+&lt;/html&gt;
+
+Imports System.Web.Services
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.IO
+Imports Newtonsoft.Json
+Imports Microsoft.Ajax.Utilities
+Public Class DataService3
+    Inherits System.Web.UI.Page
+
+    &#x27; 接收一般 GET/POST 請求 (處理下載與上傳)
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
+        Dim action As String = Request.QueryString(&quot;action&quot;)
+
+        &#x27;If action = &quot;download&quot; Then
+        &#x27;    DownloadExcel(Request.QueryString(&quot;sql&quot;), Request.QueryString(&quot;db&quot;))
+        &#x27;ElseIf action = &quot;upload&quot; Then
+        &#x27;    UploadExcel()
+        &#x27;End If
+    End Sub
+
+    &#x27; AJAX 呼叫：執行 SQL 查詢
+    &lt;WebMethod()&gt;
+    Public Shared Function ExecuteSQL3(sql As String, db As String, pwd As String) As String
+
+        Dim connStr As String = &quot;&quot;
+        Select Case db
+            Case &quot;stockchangedate&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockchangedate;User ID=excelsql;Password=*****&quot;
+            Case &quot;favor2&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=favor2;User ID=excelsql;Password=*****&quot;
+            Case &quot;stockchange&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockchange;User ID=excelsql;Password=*****&quot;
+            Case &quot;stockprice&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockprice;User ID=excelsql;Password=*****&quot;
+            Case &quot;stockinfo&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockinfo;User ID=excelsql;Password=*****&quot;
+            Case &quot;work&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=work;User ID=excelsql;Password=*****&quot;
+
+            Case &quot;stockchangefour&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockchangefour;User ID=excelsql;Password=*****&quot;
+            Case &quot;fromaccessdatabase&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=fromaccessdatabase;User ID=excelsql;Password=*****&quot;
+            Case &quot;pokopoko&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=pokopoko;User ID=excelsql;Password=*****&quot;
+            Case &quot;wordvoice&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=wordvoice;User ID=excelsql;Password=*****&quot;
+            Case &quot;favor1&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=favor1;User ID=excelsql;Password=*****&quot;
+            Case &quot;poemleg&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=poemleg;User ID=excelsql;Password=*****&quot;
+            Case Else
+
+        End Select
+
+
+
+
+        If pwd &lt;&gt; &quot;****&quot; Then
+
+            Return &quot;密碼錯誤&quot;
+
+        Else
+
+            Dim forbiddenWords As String() = {&quot;UPDATE&quot;, &quot;DELETE&quot;, &quot;DROP&quot;, &quot;ALTER&quot;, &quot;INSERT&quot;, &quot;TRUNCATE&quot;, &quot;EXEC&quot;, &quot;CREATE&quot;, &quot;GRANT&quot;}
+            sql = &quot;select &quot; + sql
+            Dim upperSQL As String = sql.ToUpper()
+
+            For Each word In forbiddenWords
+                If upperSQL.Contains(word) Then
+
+                    Return &quot;錯誤：指令包含禁止字詞 &quot; &amp; word
+
+                    GoTo willstop
+
+                End If
+            Next
+
+
+
+            Dim dt As New DataTable()
+
+            Try
+                Using conn As New SqlConnection(connStr)
+                    Dim cmd As New SqlCommand(sql, conn)
+                    Dim adapter As New SqlDataAdapter(cmd)
+                    conn.Open()
+                    adapter.Fill(dt)
+                End Using
+                &#x27; 將結果轉為 JSON 傳回前端
+                Return JsonConvert.SerializeObject(dt)
+            Catch ex As Exception
+                Return &quot;[{&quot;&quot;Error&quot;&quot;:&quot;&quot;&quot; &amp; ex.Message.Replace(&quot;&quot;&quot;&quot;, &quot;&#x27;&quot;) &amp; &quot;&quot;&quot;}]&quot;
+            End Try
+
+            &#x27; 建立一個清單來存放處理過的資料
+            Dim rows As New List(Of Dictionary(Of String, Object))()
+
+            For Each dr As DataRow In dt.Rows
+                Dim row As New Dictionary(Of String, Object)()
+                For Each col As DataColumn In dt.Columns
+                    Dim cellValue As Object = dr(col)
+
+                    &#x27; 【關鍵修正】檢查這是不是圖片/二進位欄位
+                    If Not Convert.IsDBNull(cellValue) AndAlso cellValue.GetType() Is GetType(Byte()) Then
+                        &#x27; 將二進位 Byte() 轉為 Base64 字串
+                        row.Add(col.ColumnName, Convert.ToBase64String(CType(cellValue, Byte())))
+                    Else
+                        &#x27; 一般文字直接加入
+                        row.Add(col.ColumnName, cellValue)
+                    End If
+                Next
+                rows.Add(row)
+            Next
+
+            &#x27; 使用 Newtonsoft.Json 回傳
+            Return Newtonsoft.Json.JsonConvert.SerializeObject(rows)
+
+
+
+
+
+
+        End If
+
+willstop:
+        Return &quot;含禁止字詞&quot;
+
+    End Function
+
+    &#x27; 處理 Excel 下載 (此處建議沿用你原本的 Excel 產生邏輯)
+    Private Sub DownloadExcel(sql As String, db As String)
+        &#x27; ... 這裡放你原本 Button42 的 NPOI 或 EPPlus 程式碼 ...
+        &#x27; 最後用 Response.BinaryWrite 輸出檔案
+    End Sub
+
+    &#x27; 處理 Excel 上傳
+    Private Sub UploadExcel()
+        Dim file As HttpPostedFile = Request.Files(0)
+        Dim sheetIdx As String = Request.Form(&quot;sheetIdx&quot;)
+        If file IsNot Nothing Then
+            Dim savePath As String = Server.MapPath(&quot;~/Uploads/&quot;) &amp; file.FileName
+            file.SaveAs(savePath)
+            &#x27; ... 這裡執行將 Excel 寫入 SQL 的邏輯 ...
+            Response.Write(&quot;Success&quot;)
+            Response.End()
+        End If
+    End Sub
+
+End Class
+就是我們之前巳經可以完美運作的select查詢類的程式,是否也可以有 insert類 edit類 delete類的程式可以使用,那使用人員的id:excelsqlall 密碼:先暫定為:***,我會另外賦予excelsqlall人員在SQL資料庫中可新增 編輯 刪除權限</div>
+                <div class="time">2026-04-08 05:45:54</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Expanding Database Control</strong>
+
+I&#x27;ve been working on expanding the database interaction. Right now, I can only run `SELECT` queries, but I&#x27;m focusing on implementing `INSERT`, `EDIT`, and `DELETE` functionality. I&#x27;m also planning to create a new SQL user with broader permissions to manage these operations effectively. I&#x27;ll need to use the credential `excelsqlall` and set the password as `***`.
+
+
+<strong>Refining Authentication Strategy</strong>
+
+I&#x27;m now prioritizing a secure authentication strategy. Allowing raw SQL commands through AJAX is risky, but the user requested this pattern. I&#x27;m considering bypassing forbidden words for authorized users or developing separate logic. I can use the existing password field for connection string switching. This will determine permissions and keyword restrictions. We&#x27;ll also need to revisit the button labels.
+
+
+<strong>Implementing DML Queries</strong>
+
+I&#x27;m now refactoring `ExecuteSQL3` to differentiate between `SELECT` and DML queries. For DML operations (`INSERT`, `UPDATE`, `DELETE`), I&#x27;ll use the stronger credentials and `ExecuteNonQuery()`. I also need to conditionally bypass the forbidden word check if the admin password is provided. I&#x27;ll modify the frontend to display &quot;Rows Affected&quot; instead of assuming a table array for DML results. Furthermore, depending on the query type, I&#x27;ll return either JSON for `SELECT` or a success message with the row count for DML.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">為了實現 <strong>新增 (Insert)</strong>、<strong>編輯 (Update)</strong> 與 <strong>刪除 (Delete)</strong> 功能，我們需要調整後端的邏輯，使其能夠根據「操作權限（密碼）」來切換 SQL 帳號，並根據 SQL 指令的類型（是否為 SELECT）來決定使用 `ExecuteReader/Fill` 還是 `ExecuteNonQuery`。
+
+以下是針對你的需求進行的完整修改建議：
+
+### 1. 後端 VB.NET (DataService3.aspx.vb) 修改
+
+主要的變動點：
+*   <strong>權限判斷</strong>：如果密碼是 `****`，維持「唯讀」且過濾關鍵字。
+*   <strong>高權限帳號</strong>：如果密碼是 `***`，則使用 `excelsqlall` 帳號連線，且「不攔截」關鍵字。
+*   <strong>執行邏輯</strong>：判斷指令。如果是 `SELECT` 則回傳 JSON 陣列；如果是 `INSERT/UPDATE/DELETE` 則回傳「影響列數」。
+
+<div class="code-container"><div class="code-header">vbnet</div><pre><code>&lt;WebMethod()&gt;
+Public Shared Function ExecuteSQL3(sql As String, db As String, pwd As String) As String
+    &#x27; 1. 設定帳號密碼與權限邏輯
+    Dim sqlUser As String = &quot;&quot;
+    Dim sqlPw As String = &quot;&quot;
+    Dim isReadOnly As Boolean = True
+
+    If pwd = &quot;****&quot; Then
+        sqlUser = &quot;excelsql&quot;
+        sqlPw = &quot;*****&quot;
+        isReadOnly = True
+    ElseIf pwd = &quot;***&quot; Then
+        sqlUser = &quot;excelsqlall&quot;
+        sqlPw = &quot;***&quot;
+        isReadOnly = False
+    Else
+        Return &quot;錯誤：密碼錯誤，拒絕存取。&quot;
+    End If
+
+    &#x27; 2. 動態組合連線字串
+    Dim connStr As String = $&quot;Data Source=pc048000110;Initial Catalog={db};User ID={sqlUser};Password={sqlPw}&quot;
+
+    &#x27; 3. 處理 SQL 指令
+    Dim cleanSql As String = sql.Trim()
+    Dim upperSQL As String = cleanSql.ToUpper()
+
+    &#x27; 唯讀模式的安全檢查
+    If isReadOnly Then
+        Dim forbiddenWords As String() = {&quot;UPDATE&quot;, &quot;DELETE&quot;, &quot;DROP&quot;, &quot;ALTER&quot;, &quot;INSERT&quot;, &quot;TRUNCATE&quot;, &quot;EXEC&quot;, &quot;CREATE&quot;, &quot;GRANT&quot;}
+        For Each word In forbiddenWords
+            If upperSQL.Contains(word) Then
+                Return &quot;錯誤：您的權限僅限查詢 (SELECT)，指令包含禁止字詞 &quot; &amp; word
+            End If
+        Next
+        &#x27; 唯讀模式強制補上 SELECT (如果前端沒傳的話，視你前端邏輯而定)
+        &#x27; If Not upperSQL.StartsWith(&quot;SELECT&quot;) Then cleanSql = &quot;SELECT &quot; &amp; cleanSql
+    End If
+
+    &#x27; 4. 執行資料庫操作
+    Try
+        Using conn As New SqlConnection(connStr)
+            conn.Open()
+            Using cmd As New SqlCommand(cleanSql, conn)
+                &#x27; 判斷是查詢還是異動
+                If upperSQL.StartsWith(&quot;SELECT&quot;) Or upperSQL.StartsWith(&quot;WITH&quot;) Then
+                    &#x27; --- 查詢模式 ---
+                    Dim dt As New DataTable()
+                    Dim adapter As New SqlDataAdapter(cmd)
+                    adapter.Fill(dt)
+
+                    &#x27; 處理二進位圖片
+                    Dim rows As New List(Of Dictionary(Of String, Object))()
+                    For Each dr As DataRow In dt.Rows
+                        Dim row As New Dictionary(Of String, Object)()
+                        For Each col As DataColumn In dt.Columns
+                            Dim cellValue As Object = dr(col)
+                            If Not Convert.IsDBNull(cellValue) AndAlso cellValue.GetType() Is GetType(Byte()) Then
+                                row.Add(col.ColumnName, &quot;data:image/jpeg;base64,&quot; &amp; Convert.ToBase64String(CType(cellValue, Byte())))
+                            Else
+                                row.Add(col.ColumnName, cellValue)
+                            End If
+                        Next
+                        rows.Add(row)
+                    Next
+                    Return JsonConvert.SerializeObject(rows)
+                Else
+                    &#x27; --- 異動模式 (Insert/Update/Delete) ---
+                    Dim affectedRows As Integer = cmd.ExecuteNonQuery()
+                    Return $&quot;SUCCESS: 執行成功，受影響的列數: {affectedRows}&quot;
+                End If
+            End Using
+        End Using
+    Catch ex As Exception
+        Return &quot;錯誤：&quot; &amp; ex.Message
+    End Try
+End Function
+</code></pre></div>
+
+---
+
+### 2. 前端 HTML/JS 修改
+
+前端需要調整的地方是：當後端回傳的是「字串（執行成功訊息）」而不是「資料陣列」時，要能正確顯示在畫面上，而不是嘗試去渲染表格。
+
+<strong>修改 `btnQuery` 的點擊事件邏輯：</strong>
+
+<div class="code-container"><div class="code-header">javascript</div><pre><code>$(&quot;#btnQuery&quot;).click(function () {
+    const sql = $(&quot;#sqlText&quot;).val();
+    const db = $(&quot;#useDatabase&quot;).val();
+    const pwd = $(&quot;#txtPwd&quot;).val();
+
+    $(&quot;#msg&quot;).text(&quot;⏳ 正在處理要求...&quot;);
+
+    // 清空舊表格
+    if (dataTableInstance) {
+        dataTableInstance.destroy();
+        $(&quot;#resultTable&quot;).empty();
+    }
+
+    $.ajax({
+        type: &quot;POST&quot;,
+        url: &quot;https://zen2965.duckdns.org:8888/excelimport/DataService3.aspx/ExecuteSQL3&quot;,
+        data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
+        contentType: &quot;application/json; charset=utf-8&quot;,
+        dataType: &quot;json&quot;,
+        success: function (res) {
+            const rawData = res.d;
+
+            // 1. 檢查是否為錯誤訊息或成功訊息 (不是 JSON 陣列的情況)
+            if (rawData.startsWith(&quot;錯誤：&quot;) || rawData.startsWith(&quot;SUCCESS:&quot;)) {
+                $(&quot;#msg&quot;).html(`&lt;span class=&quot;${rawData.startsWith(&#x27;錯誤&#x27;) ? &#x27;text-danger&#x27; : &#x27;text-success&#x27;}&quot;&gt;${rawData}&lt;/span&gt;`);
+                return;
+            }
+
+            try {
+                const data = JSON.parse(rawData);
+                if (!data || data.length === 0) {
+                    $(&quot;#msg&quot;).text(&quot;⚠ 指令執行成功，但無資料回傳。&quot;);
+                    return;
+                }
+
+                // 2. 正常渲染 DataTables (原程式碼不變)
+                let keys = Object.keys(data[0]);
+                let theadHtml = &quot;&lt;thead&gt;&lt;tr&gt;&quot;;
+                keys.forEach(k =&gt; { theadHtml += `&lt;th&gt;${k}&lt;/th&gt;`; });
+                theadHtml += &quot;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;/tbody&gt;&quot;;
+                $(&quot;#resultTable&quot;).append(theadHtml);
+
+                data.forEach(row =&gt; {
+                    let trHtml = &quot;&lt;tr&gt;&quot;;
+                    keys.forEach(k =&gt; {
+                        let val = row[k] === null ? &quot;&quot; : row[k];
+                        // 圖片處理邏輯... (維持你原本的)
+                        if (typeof val === &#x27;string&#x27; &amp;&amp; val.startsWith(&quot;data:image&quot;)) {
+                            trHtml += `&lt;td&gt;&lt;img src=&quot;${val}&quot; class=&quot;data-img&quot; onclick=&quot;window.open(this.src)&quot;&gt;&lt;/td&gt;`;
+                        } else {
+                            trHtml += `&lt;td&gt;${val}&lt;/td&gt;`;
+                        }
+                    });
+                    trHtml += &quot;&lt;/tr&gt;&quot;;
+                    $(&quot;#resultTable tbody&quot;).append(trHtml);
+                });
+
+                dataTableInstance = $(&#x27;#resultTable&#x27;).DataTable({
+                    &quot;language&quot;: { &quot;url&quot;: &quot;//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json&quot; },
+                    &quot;pageLength&quot;: 50,
+                    &quot;scrollX&quot;: true
+                });
+
+                $(&quot;#msg&quot;).text(&quot;✅ 查詢完成，共 &quot; + data.length + &quot; 筆。&quot;);
+            } catch (err) {
+                $(&quot;#msg&quot;).text(&quot;❌ 發生錯誤: &quot; + rawData);
+            }
+        },
+        error: function (e) {
+            $(&quot;#msg&quot;).text(&quot;❌ 連線失敗，請檢查網路或伺服器。&quot;);
+        }
+    });
+});
+</code></pre></div>
+
+### 3. 注意事項與建議
+
+1.  <strong>SQL 指令提示</strong>：
+    你在前端 HTML 中有一行 `(SELECT 已自動補上)` 的標籤。如果你現在允許 `INSERT/UPDATE`，建議把這個提示改掉，或者讓 `sqlText` 預設是空的，讓使用者自己寫完整的 SQL。
+    *   *範例：* `UPDATE [guestinfo4] SET [name] = &#x27;TEST&#x27; WHERE [id] = 1`
+
+2.  <strong>安全性警告</strong>：
+    開放 `excelsqlall` 執行任意 SQL 指令是非常強大但也極具風險的。如果這是一個對外公開的網頁，任何人只要猜到密碼 `***` 就可以清空你的資料庫。
+    *   <strong>強烈建議</strong>：將此網頁限制在內部網路使用，或加上更強的登入驗證。
+
+3.  <strong>範本庫擴充</strong>：
+    你可以在 `sqlTemplateLibrary` 加入一些常用範本，方便操作：
+    <div class="code-container"><div class="code-header">javascript</div><pre><code>    { cat: &quot;管理類&quot;, title: &quot;更新資料範例&quot;, sql: &quot;UPDATE [資料表] SET [欄位] = &#x27;值&#x27; WHERE 識別碼 = 0&quot; },
+    { cat: &quot;管理類&quot;, title: &quot;刪除資料範例&quot;, sql: &quot;DELETE FROM [資料表] WHERE 識別碼 = 0&quot; }
+    </code></pre></div>
+
+這樣修改後，你的系統就從單純的「報表瀏覽器」進化成「資料庫管理後台」了！</div>
+                    <div class="time">2026-04-08 05:46:01</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">Imports System.Web.Services
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.IO
+Imports Newtonsoft.Json
+Imports Microsoft.Ajax.Utilities
+
+Public Class DataService
+    Inherits System.Web.UI.Page
+
+
+
+    &#x27; 接收一般 GET/POST 請求 (處理下載與上傳)
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
+        Dim action As String = Request.QueryString(&quot;action&quot;)
+
+        &#x27;If action = &quot;download&quot; Then
+        &#x27;    DownloadExcel(Request.QueryString(&quot;sql&quot;), Request.QueryString(&quot;db&quot;))
+        &#x27;ElseIf action = &quot;upload&quot; Then
+        &#x27;    UploadExcel()
+        &#x27;End If
+    End Sub
+
+    &#x27; AJAX 呼叫：執行 SQL 查詢
+    &lt;WebMethod()&gt;
+    Public Shared Function ExecuteSQL(sql As String, db As String, pwd As String) As String
+
+        Dim connStr As String = &quot;&quot;
+        Select Case db
+            Case &quot;stockchangedate&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockchangedate;User ID=excelsql;Password=*****&quot;
+            Case &quot;favor2&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=favor2;User ID=excelsql;Password=*****&quot;
+            Case &quot;stockchange&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockchange;User ID=excelsql;Password=*****&quot;
+            Case &quot;stockprice&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockprice;User ID=excelsql;Password=*****&quot;
+            Case &quot;stockinfo&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockinfo;User ID=excelsql;Password=*****&quot;
+            Case &quot;work&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=work;User ID=excelsql;Password=*****&quot;
+
+            Case &quot;stockchangefour&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockchangefour;User ID=excelsql;Password=*****&quot;
+            Case &quot;fromaccessdatabase&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=fromaccessdatabase;User ID=excelsql;Password=*****&quot;
+            Case &quot;pokopoko&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=pokopoko;User ID=excelsql;Password=*****&quot;
+            Case &quot;wordvoice&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=wordvoice;User ID=excelsql;Password=*****&quot;
+            Case &quot;poemleg&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=poemleg;User ID=excelsql;Password=*****&quot;
+            Case &quot;favor1&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=favor1;User ID=excelsql;Password=*****&quot;
+
+            Case Else
+
+        End Select
+
+
+
+
+        If pwd &lt;&gt; &quot;****&quot; Then
+
+            Return &quot;密碼錯誤&quot;
+
+        Else
+
+            Dim forbiddenWords As String() = {&quot;UPDATE&quot;, &quot;DELETE&quot;, &quot;DROP&quot;, &quot;ALTER&quot;, &quot;INSERT&quot;, &quot;TRUNCATE&quot;, &quot;EXEC&quot;, &quot;CREATE&quot;, &quot;GRANT&quot;}
+            sql = &quot;select &quot; + sql
+            Dim upperSQL As String = sql.ToUpper()
+
+            For Each word In forbiddenWords
+                If upperSQL.Contains(word) Then
+
+                    Return &quot;錯誤：指令包含禁止字詞 &quot; &amp; word
+
+                    GoTo willstop
+
+                End If
+            Next
+
+
+
+            Dim dt As New DataTable()
+
+            Try
+                Using conn As New SqlConnection(connStr)
+                    Dim cmd As New SqlCommand(sql, conn)
+                    Dim adapter As New SqlDataAdapter(cmd)
+                    conn.Open()
+                    adapter.Fill(dt)
+                End Using
+                &#x27; 將結果轉為 JSON 傳回前端
+                Return JsonConvert.SerializeObject(dt)
+            Catch ex As Exception
+                Return &quot;[{&quot;&quot;Error&quot;&quot;:&quot;&quot;&quot; &amp; ex.Message.Replace(&quot;&quot;&quot;&quot;, &quot;&#x27;&quot;) &amp; &quot;&quot;&quot;}]&quot;
+            End Try
+
+            &#x27; 建立一個清單來存放處理過的資料
+            Dim rows As New List(Of Dictionary(Of String, Object))()
+
+            For Each dr As DataRow In dt.Rows
+                Dim row As New Dictionary(Of String, Object)()
+                For Each col As DataColumn In dt.Columns
+                    Dim cellValue As Object = dr(col)
+
+                    &#x27; 【關鍵修正】檢查這是不是圖片/二進位欄位
+                    If Not Convert.IsDBNull(cellValue) AndAlso cellValue.GetType() Is GetType(Byte()) Then
+                        &#x27; 將二進位 Byte() 轉為 Base64 字串
+                        row.Add(col.ColumnName, Convert.ToBase64String(CType(cellValue, Byte())))
+                    Else
+                        &#x27; 一般文字直接加入
+                        row.Add(col.ColumnName, cellValue)
+                    End If
+                Next
+                rows.Add(row)
+            Next
+
+            &#x27; 使用 Newtonsoft.Json 回傳
+            Return Newtonsoft.Json.JsonConvert.SerializeObject(rows)
+
+
+
+
+
+
+        End If
+
+willstop:
+        Return &quot;含禁止字詞&quot;
+
+    End Function
+    Public Shared Function ExecuteSQL1(sql As String, db As String, pwd As String) As String
+
+        Dim connStr As String = &quot;&quot;
+        Select Case db
+            Case &quot;stockchangedate&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockchangedate;User ID=excelsql;Password=*****&quot;
+            Case &quot;favor2&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=favor2;User ID=excelsql;Password=*****&quot;
+            Case &quot;stockchange&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockchange;User ID=excelsql;Password=*****&quot;
+            Case &quot;stockprice&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockprice;User ID=excelsql;Password=*****&quot;
+            Case &quot;stockinfo&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockinfo;User ID=excelsql;Password=*****&quot;
+            Case &quot;work&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=work;User ID=excelsql;Password=*****&quot;
+
+            Case &quot;stockchangefour&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=stockchangefour;User ID=excelsql;Password=*****&quot;
+            Case &quot;fromaccessdatabase&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=fromaccessdatabase;User ID=excelsql;Password=*****&quot;
+            Case &quot;pokopoko&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=pokopoko;User ID=excelsql;Password=*****&quot;
+            Case &quot;wordvoice&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=wordvoice;User ID=excelsql;Password=*****&quot;
+            Case &quot;poemleg&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=poemleg;User ID=excelsql;Password=*****&quot;
+            Case &quot;favor1&quot;
+                connStr = $&quot;Data Source=pc048000110;Initial Catalog=favor1;User ID=excelsql;Password=*****&quot;
+
+            Case Else
+
+        End Select
+
+
+
+
+        If pwd &lt;&gt; &quot;****&quot; Then
+
+            Return &quot;密碼錯誤&quot;
+
+        Else
+
+            Dim forbiddenWords As String() = {&quot;UPDATE&quot;, &quot;DELETE&quot;, &quot;DROP&quot;, &quot;ALTER&quot;, &quot;INSERT&quot;, &quot;TRUNCATE&quot;, &quot;EXEC&quot;, &quot;CREATE&quot;, &quot;GRANT&quot;}
+            &#x27;sql = &quot;select &quot; + sql
+            Dim upperSQL As String = sql.ToUpper()
+
+            For Each word In forbiddenWords
+                If upperSQL.Contains(word) Then
+
+                    Return &quot;錯誤：指令包含禁止字詞 &quot; &amp; word
+
+                    GoTo willstop
+
+                End If
+            Next
+
+
+
+            Dim dt As New DataTable()
+
+            Try
+                Using conn As New SqlConnection(connStr)
+                    Dim cmd As New SqlCommand(sql, conn)
+                    Dim adapter As New SqlDataAdapter(cmd)
+                    conn.Open()
+                    adapter.Fill(dt)
+                End Using
+                &#x27; 將結果轉為 JSON 傳回前端
+                Return JsonConvert.SerializeObject(dt)
+            Catch ex As Exception
+                Return &quot;[{&quot;&quot;Error&quot;&quot;:&quot;&quot;&quot; &amp; ex.Message.Replace(&quot;&quot;&quot;&quot;, &quot;&#x27;&quot;) &amp; &quot;&quot;&quot;}]&quot;
+            End Try
+
+            &#x27; 建立一個清單來存放處理過的資料
+            Dim rows As New List(Of Dictionary(Of String, Object))()
+
+            For Each dr As DataRow In dt.Rows
+                Dim row As New Dictionary(Of String, Object)()
+                For Each col As DataColumn In dt.Columns
+                    Dim cellValue As Object = dr(col)
+
+                    &#x27; 【關鍵修正】檢查這是不是圖片/二進位欄位
+                    If Not Convert.IsDBNull(cellValue) AndAlso cellValue.GetType() Is GetType(Byte()) Then
+                        &#x27; 將二進位 Byte() 轉為 Base64 字串
+                        row.Add(col.ColumnName, Convert.ToBase64String(CType(cellValue, Byte())))
+                    Else
+                        &#x27; 一般文字直接加入
+                        row.Add(col.ColumnName, cellValue)
+                    End If
+                Next
+                rows.Add(row)
+            Next
+
+            &#x27; 使用 Newtonsoft.Json 回傳
+            Return Newtonsoft.Json.JsonConvert.SerializeObject(rows)
+
+
+
+
+
+
+        End If
+
+willstop:
+        Return &quot;含禁止字詞&quot;
+
+    End Function
+
+
+
+
+    &#x27; 處理 Excel 下載 (此處建議沿用你原本的 Excel 產生邏輯)
+    Private Sub DownloadExcel(sql As String, db As String)
+        &#x27; ... 這裡放你原本 Button42 的 NPOI 或 EPPlus 程式碼 ...
+        &#x27; 最後用 Response.BinaryWrite 輸出檔案
+    End Sub
+
+    &#x27; 處理 Excel 上傳
+    Private Sub UploadExcel()
+        Dim file As HttpPostedFile = Request.Files(0)
+        Dim sheetIdx As String = Request.Form(&quot;sheetIdx&quot;)
+        If file IsNot Nothing Then
+            Dim savePath As String = Server.MapPath(&quot;~/Uploads/&quot;) &amp; file.FileName
+            file.SaveAs(savePath)
+            &#x27; ... 這裡執行將 Excel 寫入 SQL 的邏輯 ...
+            Response.Write(&quot;Success&quot;)
+            Response.End()
+        End If
+    End Sub
+
+
+
+
+
+End Class
+為了執存預存程序,原加上 select要先取消,又新增了一個btnQuery1,搭配Public Shared Function ExecuteSQL1(sql As String, db As String, pwd As String) As String,但會報錯:
+main.js:64 Uncaught (in promise) RegisterClientLocalizationsError
+zen2965.duckdns.org:8888/excelimport/DataService.aspx/ExecuteSQL1:1  Failed to load resource: the server responded with a status of 500 ()
+</div>
+                <div class="time">2026-04-11 16:18:52</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Analyzing the SQL Execution</strong>
+
+I&#x27;m currently focused on a web app built on ASP.NET Web Forms, SQL Server, and WebMethods, specifically the new `ExecuteSQL1` function for executing stored procedures. My attention is on the 500 Internal Server Error, and the Register issue. I&#x27;ve deduced that &quot;SELECT&quot; is not desired here. Troubleshooting is underway.
+
+
+<strong>Investigating the CommandType</strong>
+
+I&#x27;m now zeroing in on the `CommandType` property within the SQL command. I&#x27;m considering two potential command types: `StoredProcedure` if the user directly calls a stored procedure, and `Text` if the user is entering `EXEC` statements. I&#x27;m also suspecting issues if the stored procedure doesn&#x27;t return a result set, and I&#x27;ve identified redundant return logic in the code. Additionally, the database connection string construction appears duplicated and manual, which I will review.
+
+
+<strong>Refining the Error Handling</strong>
+
+I&#x27;m now focusing on the 500 error, suspecting unhandled exceptions. I&#x27;ll need to ensure all exceptions are caught and returned as strings. Also, I must ensure that the &quot;forbiddenWords&quot; check, which currently blocks `EXEC MyProc` because it flags DML keywords, doesn&#x27;t interfere with desired stored procedure calls using DML internally. I also need to refactor the code to handle queries and commands separately, and implement the user&#x27;s password requirement using the excelsqlall account.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">發生 500 錯誤通常是因為伺服器端程式碼執行時崩潰（例如：SQL 語法錯誤、連線失敗、或是程式邏輯中斷）。
+
+在你提供的 `ExecuteSQL1` 中，有幾個關鍵問題導致了失敗：
+1.  <strong>重複 Return</strong>：你在 `Return JsonConvert.SerializeObject(dt)` 之後還有處理圖片的程式碼，那些程式碼永遠不會被執行（Dead Code）。
+2.  <strong>預存程序執行方式</strong>：如果你是要執行 `EXEC MyStoreProcedure`，使用 `SqlDataAdapter` 是可以的，但如果預存程序<strong>不回傳表格</strong>（例如只做 Update），`adapter.Fill(dt)` 可能會拋出異常或回傳空的資料集。
+3.  <strong>權限切換</strong>：你希望使用 `excelsqlall` 帳號，但程式碼中目前還是寫死 `excelsql`。
+
+以下是優化後的解決方案，將查詢（Select/預存程序回傳資料）與 異動（Insert/Update/Delete）整合在一起。
+
+### 1. 後端 VB.NET 改寫 (DataService.aspx.vb)
+
+這段代碼整合了你的需求：
+*   支援 <strong>一般查詢</strong> 與 <strong>預存程序</strong> (自動判斷)。
+*   支援 <strong>讀寫帳號切換</strong> (`*****`)。
+*   修正圖片轉換邏輯。
+
+<div class="code-container"><div class="code-header">vbnet</div><pre><code>&lt;WebMethod()&gt;
+Public Shared Function ExecuteSQL(sql As String, db As String, pwd As String) As String
+    &#x27; 1. 決定資料庫帳號與權限
+    Dim dbUser As String = &quot;excelsql&quot;
+    Dim dbPw As String = &quot;*****&quot;
+    Dim isReadOnly As Boolean = True
+
+    If pwd = &quot;*****&quot; Then
+        dbUser = &quot;excelsqlall&quot;
+        dbPw = &quot;*****&quot;
+        isReadOnly = False
+    ElseIf pwd &lt;&gt; &quot;****&quot; Then
+        Return &quot;錯誤：密碼不正確&quot;
+    End If
+
+    &#x27; 2. 建立連線字串
+    Dim connStr As String = $&quot;Data Source=pc048000110;Initial Catalog={db};User ID={dbUser};Password={dbPw}&quot;
+
+    &#x27; 3. 安全性檢查 (唯讀模式下攔截)
+    Dim upperSQL As String = sql.ToUpper().Trim()
+    If isReadOnly Then
+        Dim forbidden As String() = {&quot;UPDATE&quot;, &quot;DELETE&quot;, &quot;DROP&quot;, &quot;ALTER&quot;, &quot;INSERT&quot;, &quot;TRUNCATE&quot;, &quot;CREATE&quot;}
+        For Each word In forbidden
+            If upperSQL.Contains(word) Then Return &quot;錯誤：您的權限禁止執行 &quot; &amp; word
+        Next
+    End If
+
+    &#x27; 4. 執行 SQL
+    Try
+        Using conn As New SqlConnection(connStr)
+            conn.Open()
+            Dim dt As New DataTable()
+            
+            &#x27; 使用 Adapter 以支援回傳資料的 SQL 或 預存程序
+            Using cmd As New SqlCommand(sql, conn)
+                &#x27; 如果指令不包含空格且不是 SELECT 開頭，嘗試視為預存程序
+                If Not sql.Contains(&quot; &quot;) AndAlso Not upperSQL.StartsWith(&quot;SELECT&quot;) Then
+                    cmd.CommandType = CommandType.StoredProcedure
+                End If
+
+                &#x27; 判斷是否為查詢指令
+                If upperSQL.StartsWith(&quot;SELECT&quot;) Or upperSQL.StartsWith(&quot;EXEC&quot;) Or cmd.CommandType = CommandType.StoredProcedure Then
+                    Dim adapter As New SqlDataAdapter(cmd)
+                    adapter.Fill(dt)
+                    
+                    &#x27; 處理圖片與回傳 JSON
+                    Dim rows As New List(Of Dictionary(Of String, Object))()
+                    For Each dr As DataRow In dt.Rows
+                        Dim row As New Dictionary(Of String, Object)()
+                        For Each col As DataColumn In dt.Columns
+                            Dim cellValue As Object = dr(col)
+                            &#x27; 轉換 Base64 圖片
+                            If Not Convert.IsDBNull(cellValue) AndAlso cellValue.GetType() Is GetType(Byte()) Then
+                                row.Add(col.ColumnName, &quot;data:image/jpeg;base64,&quot; &amp; Convert.ToBase64String(CType(cellValue, Byte())))
+                            Else
+                                row.Add(col.ColumnName, cellValue)
+                            End If
+                        Next
+                        rows.Add(row)
+                    Next
+                    
+                    If rows.Count = 0 Then Return &quot;[]&quot; &#x27; 回傳空陣列
+                    Return JsonConvert.SerializeObject(rows)
+                Else
+                    &#x27; 執行 Insert/Update/Delete
+                    Dim affected As Integer = cmd.ExecuteNonQuery()
+                    Return $&quot;SUCCESS: 執行成功，受影響列數：{affected}&quot;
+                End If
+            End Using
+        End Using
+    Catch ex As Exception
+        &#x27; 發生錯誤時回傳錯誤訊息，避免 500 錯誤導致前端崩潰
+        Return &quot;錯誤：&quot; &amp; ex.Message
+    End Try
+End Function
+</code></pre></div>
+
+---
+
+### 2. 前端 JavaScript 修改
+
+為了配合新的按鈕 `btnQuery1` (不帶 SELECT 前綴) 以及處理「非表格」的回傳結果，請修改你的 JS：
+
+<div class="code-container"><div class="code-header">javascript</div><pre><code>$(document).ready(function () {
+    // 綁定兩個按鈕到同一個處理函式，但傳入不同的參數
+    $(&quot;#btnQuery&quot;).click(function() { executeQuery(true); });  // 自動補 SELECT
+    $(&quot;#btnQuery1&quot;).click(function() { executeQuery(false); }); // 原始指令/預存程序
+
+    function executeQuery(autoSelect) {
+        let sql = $(&quot;#sqlText&quot;).val();
+        if (autoSelect) {
+            sql = &quot;SELECT &quot; + sql;
+        }
+
+        const db = $(&quot;#useDatabase&quot;).val();
+        const pwd = $(&quot;#txtPwd&quot;).val();
+
+        $(&quot;#msg&quot;).text(&quot;⏳ 執行中...&quot;);
+
+        if (dataTableInstance) {
+            dataTableInstance.destroy();
+            $(&quot;#resultTable&quot;).empty();
+        }
+
+        $.ajax({
+            type: &quot;POST&quot;,
+            url: &quot;https://zen2965.duckdns.org:8888/excelimport/DataService.aspx/ExecuteSQL&quot;,
+            data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
+            contentType: &quot;application/json; charset=utf-8&quot;,
+            dataType: &quot;json&quot;,
+            success: function (res) {
+                const dataStr = res.d;
+
+                // 1. 檢查是否為錯誤或成功文字訊息
+                if (dataStr.startsWith(&quot;錯誤：&quot;)) {
+                    $(&quot;#msg&quot;).html(`&lt;span class=&quot;text-danger&quot;&gt;${dataStr}&lt;/span&gt;`);
+                    return;
+                }
+                if (dataStr.startsWith(&quot;SUCCESS:&quot;)) {
+                    $(&quot;#msg&quot;).html(`&lt;span class=&quot;text-success&quot;&gt;${dataStr}&lt;/span&gt;`);
+                    return;
+                }
+
+                // 2. 解析 JSON
+                try {
+                    const data = JSON.parse(dataStr);
+                    if (data.length === 0) {
+                        $(&quot;#msg&quot;).text(&quot;✅ 指令執行成功，但無回傳資料。&quot;);
+                        return;
+                    }
+
+                    // 3. 渲染 DataTables (你原本的邏輯)
+                    renderDataTable(data);
+                    $(&quot;#msg&quot;).text(`✅ 查詢完成，共 ${data.length} 筆資料。`);
+                } catch (e) {
+                    $(&quot;#msg&quot;).text(&quot;❌ 解析失敗：&quot; + dataStr);
+                }
+            },
+            error: function (xhr) {
+                $(&quot;#msg&quot;).text(&quot;❌ 伺服器錯誤 (500)，請檢查 SQL 語法或資料庫連線。&quot;);
+                console.log(xhr.responseText);
+            }
+        });
+    }
+
+    function renderDataTable(data) {
+        let keys = Object.keys(data[0]);
+        let thead = &quot;&lt;thead&gt;&lt;tr&gt;&quot; + keys.map(k =&gt; `&lt;th&gt;${k}&lt;/th&gt;`).join(&#x27;&#x27;) + &quot;&lt;/tr&gt;&lt;/thead&gt;&quot;;
+        let tbody = &quot;&lt;tbody&gt;&quot;;
+        
+        data.forEach(row =&gt; {
+            tbody += &quot;&lt;tr&gt;&quot;;
+            keys.forEach(k =&gt; {
+                let val = row[k] || &quot;&quot;;
+                if (typeof val === &quot;string&quot; &amp;&amp; val.startsWith(&quot;data:image&quot;)) {
+                    tbody += `&lt;td&gt;&lt;img src=&quot;${val}&quot; class=&quot;data-img&quot; onclick=&quot;window.open(this.src)&quot;&gt;&lt;/td&gt;`;
+                } else {
+                    tbody += `&lt;td&gt;${val}&lt;/td&gt;`;
+                }
+            });
+            tbody += &quot;&lt;/tr&gt;&quot;;
+        });
+        tbody += &quot;&lt;/tbody&gt;&quot;;
+        
+        $(&quot;#resultTable&quot;).append(thead + tbody);
+        dataTableInstance = $(&#x27;#resultTable&#x27;).DataTable({
+            &quot;language&quot;: { &quot;url&quot;: &quot;//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json&quot; },
+            &quot;pageLength&quot;: 50,
+            &quot;scrollX&quot;: true
+        });
+    }
+});
+</code></pre></div>
+
+### 為什麼之前的 `ExecuteSQL1` 會報 500 錯誤？
+
+1.  <strong>JSON 格式混亂</strong>：你原有的程式碼在 `ExecuteSQL1` 裡面有兩個 `Return`。ASP.NET 在序列化 JSON 時，如果遇到程式碼邏輯在 Return 後面還有動作，或者引用的 `Newtonsoft.Json` 版本衝突，會導致 WebMethod 崩潰。
+2.  <strong>SQL 錯誤</strong>：如果你的 `sql` 是 `EXEC myProc` 但 `myProc` 內部發生錯誤（例如參數不足），`adapter.Fill(dt)` 會拋出例外。如果後端沒有 `Try...Catch` 並捕捉訊息，伺服器就會丟出 500。
+3.  <strong>DataTable 序列化</strong>：直接對 `DataTable` 進行 `JsonConvert.SerializeObject` 有時會因為欄位類型（如圖片的 `Byte[]`）導致序列化失敗。我在優化版中手動轉成 `List(Of Dictionary)` 是最穩定的做法。
+
+### 使用建議
+*   <strong>一般查詢</strong>：繼續用舊按鈕（自動加 SELECT）。
+*   <strong>預存程序</strong>：輸入 `EXEC YourProcName &#x27;Param1&#x27;`，點擊新按鈕。
+*   <strong>修改資料</strong>：輸入 `UPDATE Table SET Col=1 WHERE ID=10`，點擊新按鈕（記得密碼要改用 `*****`）。</div>
+                    <div class="time">2026-04-11 16:19:00</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">錯誤：結構描述 &#x27;dbo&#x27;，資料庫 &#x27;stockprice&#x27;，物件 &#x27;myequityselfselect2&#x27; 沒有 EXECUTE 權限。 
+是那有問題?</div>
+                <div class="time">2026-04-12 02:04:16</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Analyzing Access Permissions</strong>
+
+I&#x27;m currently focused on an error message indicating a lack of EXECUTE permission for &#x27;myequityselfselect2&#x27; within the &#x27;dbo&#x27; schema of the &#x27;stockprice&#x27; database. My primary concern is pinpointing the cause of this access restriction. I&#x27;m moving toward identifying where the permission is assigned and resolving the access issue. I am exploring potential database user roles to check the permission assignments for said roles.
+
+
+<strong>Pinpointing Permission Issues</strong>
+
+I&#x27;ve zeroed in on the core of the problem: a SQL Server permission error. The `excelsqlall` user, employed by the `ExecuteSQL` WebMethod, lacks EXECUTE rights for the `myequityselfselect2` stored procedure. I&#x27;ve confirmed it&#x27;s not a code issue. I am checking the current security configuration within SQL Server Management Studio. I have identified the ideal solution, which is to grant execute permission to the specific user. I&#x27;m exploring the best practice of this approach.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">這個錯誤並非程式碼（VB.NET 或 JavaScript）寫錯，而是 <strong>SQL Server 資料庫內部的權限設定問題</strong>。
+
+雖然你已經建立了 `excelsqlall` 這個帳號，但預設情況下，新帳號沒有權限去「執行 (EXECUTE)」資料庫裡的預存程序（Stored Procedure）。
+
+### 解決方法
+
+你需要開啟 <strong>SQL Server Management Studio (SSMS)</strong>，連線到資料庫伺服器，然後針對該資料庫執行以下 SQL 指令來賦予權限：
+
+#### 方案一：只給予「特定」預存程序的執行權限（最安全）
+如果你只想讓這個帳號執行 `myequityselfselect2`，請執行：
+<div class="code-container"><div class="code-header">sql</div><pre><code>USE [stockprice];
+GO
+GRANT EXECUTE ON [dbo].[myequityselfselect2] TO [excelsqlall];
+GO
+</code></pre></div>
+
+#### 方案二：給予該資料庫「所有」預存程序的執行權限（最方便，推薦你的管理後台使用）
+如果你希望這個帳號以後在這個資料庫（stockprice）裡可以執行任何現有或未來的預存程序，請執行：
+<div class="code-container"><div class="code-header">sql</div><pre><code>USE [stockprice];
+GO
+GRANT EXECUTE TO [excelsqlall];
+GO
+</code></pre></div>
+
+#### 方案三：檢查帳號是否具備資料讀寫權限
+既然你希望這個帳號可以做 `INSERT`, `UPDATE`, `DELETE`，建議確認它是否有這些權限：
+<div class="code-container"><div class="code-header">sql</div><pre><code>USE [stockprice];
+GO
+-- 給予讀取權限
+ALTER ROLE [db_datareader] ADD MEMBER [excelsqlall];
+-- 給予寫入/修改權限
+ALTER ROLE [db_datawriter] ADD MEMBER [excelsqlall];
+GO
+</code></pre></div>
+
+---
+
+### 為什麼會發生這個問題？
+1. <strong>安全性機制</strong>：SQL Server 對於「查詢 (Select)」與「執行 (Execute)」是分開控管的。
+2. <strong>結構描述 (Schema) 限制</strong>：物件屬於 `dbo` 這個結構描述，如果 `excelsqlall` 沒有被明確授權，它就無法觸碰 `dbo` 下的程式化物件。
+
+### 額外提醒
+如果你的系統會橫跨多個資料庫（如 `stockinfo`, `favor2` 等），你必須<strong>針對每一個資料庫</strong>都執行一次上述的 `GRANT EXECUTE` 指令，因為權限是跟隨資料庫的。</div>
+                    <div class="time">2026-04-12 02:04:21</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">如何賦與資料庫的使用權限,比如常用的查詢等功能</div>
+                <div class="time">2026-04-12 04:16:09</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Defining User Permissions</strong>
+
+I&#x27;m currently focused on defining user permissions for the Excel SQL Data Center. My plan is to create two distinct roles, `excelsql` for read-only access and `excelsqlall` for full read/write/execute capabilities, within the ASP.NET web application. The goal is to grant database usage permissions, especially for common functions like querying, to authorized users. I&#x27;ve encountered a &quot;Permission denied&quot; error, which has clarified the next step.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">要賦予 SQL Server 資料庫的使用權限，最標準且有效率的方式是透過 <strong>SSMS (SQL Server Management Studio)</strong> 執行 T-SQL 指令。
+
+根據您的需求（一個唯讀帳號 `excelsql`，一個可增刪改查的帳號 `excelsqlall`），您可以依照以下步驟進行設定：
+
+---
+
+### 1. 基礎權限設定（最常用的功能）
+
+請在 SSMS 打開新查詢視窗，並確保左上角的資料庫選到正確的目標（例如 `stockprice`），然後執行：
+
+#### A. 針對唯讀帳號 (`excelsql`)
+這個帳號只能 `SELECT` 資料，不能改動。
+<div class="code-container"><div class="code-header">sql</div><pre><code>-- 1. 加入讀取者角色 (允許所有 Table 和 View 的 SELECT)
+ALTER ROLE [db_datareader] ADD MEMBER [excelsql];
+
+-- 2. (選配) 如果你有預存程序也想讓唯讀帳號執行
+GRANT EXECUTE TO [excelsql];
+</code></pre></div>
+
+#### B. 針對全權限帳號 (`excelsqlall`)
+這個帳號需要增、刪、改、查，以及執行預存程序。
+<div class="code-container"><div class="code-header">sql</div><pre><code>-- 1. 加入讀取者角色
+ALTER ROLE [db_datareader] ADD MEMBER [excelsqlall];
+
+-- 2. 加入寫入者角色 (允許 INSERT, UPDATE, DELETE)
+ALTER ROLE [db_datawriter] ADD MEMBER [excelsqlall];
+
+-- 3. 賦予執行權限 (允許執行所有 Stored Procedures)
+GRANT EXECUTE TO [excelsqlall];
+</code></pre></div>
+
+---
+
+### 2. 進階權限控制 (針對特定物件)
+
+如果您不希望給予「整庫」的權限，而是只想針對特定表或功能：
+
+*   <strong>只允許查詢特定資料表：</strong>
+    <div class="code-container"><div class="code-header">sql</div><pre><code>    GRANT SELECT ON [dbo].[MyTable] TO [excelsql];
+    </code></pre></div>
+*   <strong>只允許修改特定資料表：</strong>
+    <div class="code-container"><div class="code-header">sql</div><pre><code>    GRANT UPDATE, INSERT ON [dbo].[MyTable] TO [excelsqlall];
+    </code></pre></div>
+*   <strong>允許建立/刪除資料表 (謹慎使用)：</strong>
+    如果你的 SQL 指令包含 `CREATE TABLE` 或 `DROP TABLE`，該帳號需要加入 `db_ddladmin` 角色：
+    <div class="code-container"><div class="code-header">sql</div><pre><code>    ALTER ROLE [db_ddladmin] ADD MEMBER [excelsqlall];
+    </code></pre></div>
+
+---
+
+### 3. 如何一次處理多個資料庫？
+
+因為您的系統涉及多個資料庫（`stockinfo`, `stockchange`, `favor2` 等），您必須<strong>切換資料庫</strong>重複執行上述指令。
+
+<strong>範例模板：</strong>
+<div class="code-container"><div class="code-header">sql</div><pre><code>USE [stockprice]; 
+ALTER ROLE [db_datareader] ADD MEMBER [excelsqlall];
+ALTER ROLE [db_datawriter] ADD MEMBER [excelsqlall];
+GRANT EXECUTE TO [excelsqlall];
+GO
+
+USE [stockinfo];
+ALTER ROLE [db_datareader] ADD MEMBER [excelsqlall];
+ALTER ROLE [db_datawriter] ADD MEMBER [excelsqlall];
+GRANT EXECUTE TO [excelsqlall];
+GO
+-- 依此類推...
+</code></pre></div>
+
+---
+
+### 4. 使用圖形化介面 (SSMS GUI) 設定
+
+如果您不想寫 Code，也可以這樣操作：
+
+1.  在 SSMS 左側展開 <strong>[安全性]</strong> -&gt; <strong>[登入]</strong>。
+2.  對著 `excelsqlall` 按 <strong>右鍵 -&gt; 內容</strong>。
+3.  點擊左側的 <strong>[使用者對應]</strong>。
+4.  在右側上方勾選你想授權的資料庫（例如 `stockprice`）。
+5.  在右側下方勾選權限：
+    *   `db_datareader` (查詢)
+    *   `db_datawriter` (增刪改)
+    *   如果要執行預存程序，則需在該資料庫的 <strong>[安全性]</strong> -&gt; <strong>[使用者]</strong> 內找到該帳號，點開 [內容] -&gt; [安全性] 手動勾選 <strong>Execute</strong> 權限。
+
+### 常見問題檢查 (Checklist)
+*   <strong>登入失敗？</strong> 檢查該帳號是否已設定為 SQL Server 驗證，且密碼正確。
+*   <strong>無法連接資料庫？</strong> 檢查「使用者對應」中，該帳號是否有對應到該資料庫。
+*   <strong>執行失敗？</strong> 確定你使用的是 `sysadmin` 等級的帳號（例如 `sa`）來執行這些授權指令。</div>
+                    <div class="time">2026-04-12 04:16:14</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">使用者 &#x27;excelsqlall&#x27; 的登入失敗</div>
+                <div class="time">2026-04-12 05:43:35</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Analyzing Login Failure</strong>
+
+I&#x27;m currently investigating a SQL Server login failure. The user &#x27;excelsqlall&#x27; is encountering an issue when attempting to connect. They&#x27;re using a newly configured account with the password &#x27;*****&#x27; through an ASP.NET application. I am keen to understand the root cause of the connection issues.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">「使用者 &#x27;excelsqlall&#x27; 的登入失敗」通常有幾個核心原因。請依照以下步驟逐一檢查，這通常能解決 95% 的問題：
+
+### 步驟 1：檢查 SQL Server 驗證模式 (最常見原因)
+SQL Server 預設只允許「Windows 驗證」。若要使用 `excelsqlall` 這種自訂帳號，必須開啟「混合模式」。
+
+1. 打開 <strong>SSMS (SQL Server Management Studio)</strong>。
+2. 在左側伺服器名稱上點擊 <strong>右鍵 -&gt; 內容 (Properties)</strong>。
+3. 點擊左邊的 <strong>安全性 (Security)</strong> 分頁。
+4. 確保選中 <strong>「SQL Server 及 Windows 驗證模式」</strong> (SQL Server and Windows Authentication mode)。
+5. <strong>重要：</strong> 修改後必須<strong>重新啟動 SQL Server 服務</strong>才會生效。
+
+### 步驟 2：確保登入名稱存在並啟用
+有時候帳號雖然建立了，但被停用或密碼策略導致鎖定。請執行以下 SQL 指令來重新修正帳號：
+
+<div class="code-container"><div class="code-header">sql</div><pre><code>-- 1. 確保登入名稱存在，並強制設定密碼，取消密碼過期檢查
+ALTER LOGIN [excelsqlall] WITH PASSWORD = &#x27;*****&#x27;, 
+      CHECK_POLICY = OFF, 
+      CHECK_EXPIRATION = OFF;
+
+-- 2. 解除鎖定並啟用
+ALTER LOGIN [excelsqlall] ENABLE;
+GO
+</code></pre></div>
+
+### 步驟 3：確保使用者已對應到資料庫
+「登入名稱 (Login)」是伺服器層級的，「使用者 (User)」是資料庫層級的。兩者必須連結。
+
+請針對你代碼中提到的<strong>每一個資料庫</strong>執行以下動作（以 `stockprice` 為例）：
+
+<div class="code-container"><div class="code-header">sql</div><pre><code>USE [stockprice];
+GO
+-- 如果資料庫內還沒有這個使用者，就建立它
+IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = &#x27;excelsqlall&#x27;)
+BEGIN
+    CREATE USER [excelsqlall] FOR LOGIN [excelsqlall];
+END
+
+-- 賦予權限
+ALTER ROLE [db_datareader] ADD MEMBER [excelsqlall];
+ALTER ROLE [db_datawriter] ADD MEMBER [excelsqlall];
+GRANT EXECUTE TO [excelsqlall];
+GO
+</code></pre></div>
+*(請記得對 `stockinfo`, `favor2` 等其他資料庫也執行一遍)*
+
+### 步驟 4：檢查連線字串 (VB.NET 代碼)
+請檢查你程式碼中組合連線字串的地方。確保沒有多餘的空格或拼錯字。
+
+在你的 `ExecuteSQL` 函式中：
+<div class="code-container"><div class="code-header">vbnet</div><pre><code>&#x27; 確保這行組合出來的字串是正確的
+Dim connStr As String = $&quot;Data Source=pc048000110;Initial Catalog={db};User ID={dbUser};Password={dbPw}&quot;
+</code></pre></div>
+*提示：如果你的 SQL Server 是安裝在「具名執行個體」（例如 `PC名稱\SQLEXPRESS`），則 `Data Source` 必須包含該名稱。*
+
+### 步驟 5：測試手動登入
+測試帳號最快的方法：
+1. 開啟 SSMS。
+2. 斷開目前連線，重新點擊「連線」。
+3. 驗證改選為 <strong>「SQL Server 驗證」</strong>。
+4. 輸入 `excelsqlall` 和 `*****`。
+5. <strong>如果這裡連不進去，表示 SQL Server 本身的帳號設定還沒弄好。</strong>
+
+### 常見錯誤代碼參考：
+*   <strong>錯誤狀態 5 (State 5)：</strong> 密碼錯誤。
+*   <strong>錯誤狀態 8 (State 8)：</strong> 密碼正確，但帳號被停用。
+*   <strong>錯誤狀態 1 (State 1)：</strong> 通常是驗證模式沒開（需執行步驟 1）。
+
+<strong>建議：</strong> 先執行 <strong>步驟 2</strong> 的 SQL 指令，這通常能解決大部分因為密碼政策導致的「登入失敗」。</div>
+                    <div class="time">2026-04-12 05:43:39</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">原參照的url: &quot;https://zen2965.duckdns.org:8888/excelimport/DataService2.aspx/ExecuteSQL&quot;,但測試期間要如何更改,先抓同專案內的,要正式發怖再改回來
+</div>
+                <div class="time">2026-04-12 06:46:10</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Considering URL Switch</strong>
+
+I&#x27;m currently focused on transitioning the AJAX URL. The initial setup pointed towards a remote production instance at `https://zen2965.duckdns.org:8888...`. Now I am considering switching to a local project URL for development and testing. This shift should streamline the development workflow.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">在開發與測試期間，最推薦的做法是使用 <strong>「相對路徑」</strong>，這樣程式碼無論是在你本機執行，還是發佈到伺服器，都不需要手動改來改去。
+
+以下提供三種方法，你可以根據需求選擇：
+
+### 方法一：使用相對路徑 (最推薦)
+如果你的 HTML 檔案與 `DataService.aspx` 都在同一個專案或資料夾結構下，直接把 URL 改成相對路徑。
+
+<div class="code-container"><div class="code-header">javascript</div><pre><code>// 原本是：https://zen2965.duckdns.org:8888/excelimport/DataService.aspx/ExecuteSQL
+// 改成：
+url: &quot;DataService.aspx/ExecuteSQL&quot;, 
+</code></pre></div>
+*   <strong>優點</strong>：在本機測試時它會抓 `http://localhost:埠號/DataService.aspx`，發佈後會自動抓正式網域。
+
+---
+
+### 方法二：動態偵測環境 (最聰明)
+利用 JavaScript 自動判斷目前的網址。如果是 `localhost` 就用本地路徑，否則用正式網址。
+
+<div class="code-container"><div class="code-header">javascript</div><pre><code>const isLocal = window.location.hostname === &quot;localhost&quot; || window.location.hostname === &quot;127.0.0.1&quot;;
+
+const serviceUrl = isLocal 
+    ? &quot;DataService.aspx/ExecuteSQL&quot;  // 本機開發用的路徑
+    : &quot;https://zen2965.duckdns.org:8888/excelimport/DataService.aspx/ExecuteSQL&quot;; // 正式環境
+
+$.ajax({
+    type: &quot;POST&quot;,
+    url: serviceUrl, // 使用動態變數
+    // ... 其他設定
+});
+</code></pre></div>
+
+---
+
+### 方法三：手動註解切換 (最直接)
+如果你不習慣自動判斷，可以用註解的方式在開發與發佈間切換。
+
+<div class="code-container"><div class="code-header">javascript</div><pre><code>$.ajax({
+    type: &quot;POST&quot;,
+    // 測試環境 (本機)
+    url: &quot;DataService.aspx/ExecuteSQL&quot;, 
+    
+    // 正式環境 (發佈前解除註解，並把上面的註解掉)
+    // url: &quot;https://zen2965.duckdns.org:8888/excelimport/DataService.aspx/ExecuteSQL&quot;, 
+    
+    data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
+    // ...
+});
+</code></pre></div>
+
+---
+
+### ⚠️ 特別注意：500 錯誤與跨網域 (CORS)
+
+1.  <strong>同源政策</strong>：如果你本機的 HTML 是直接點開檔案 (`file:///C:/...`) 或是執行在不同的埠號，去呼叫正式網域 `https://zen2965.duckdns.org...`，會因為 <strong>CORS</strong> 政策被瀏覽器擋下來。
+2.  <strong>Web.config 設定</strong>：如果你在測試時遇到「無法連線」，請確認你的 `DataService.aspx` 所在的專案中，`Web.config` 有開啟 ScriptService 支援：
+    <div class="code-container"><div class="code-header">xml</div><pre><code>    &lt;system.web.extensions&gt;
+      &lt;scripting&gt;
+        &lt;webServices&gt;
+          &lt;!-- 允許從腳本呼叫 --&gt;
+          &lt;jsonSerialization maxJsonLength=&quot;50000000&quot;/&gt;
+        &lt;/webServices&gt;
+      &lt;/scripting&gt;
+    &lt;/system.web.extensions&gt;
+    </code></pre></div>
+
+<strong>建議做法：</strong>
+先試用 <strong>方法一</strong>。只要你的 HTML 頁面跟 `.aspx` 服務是在同一個 Visual Studio 專案中啟動的，相對路徑通常是解決 500 錯誤與路徑問題最快的方法。</div>
+                    <div class="time">2026-04-12 06:46:13</div>
+                </div>
+                
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">錯誤：執行逾時到期。在作業完成之前超過逾時等待的時間，或是伺服器未回應。 警告: 彙總或其他 SET 作業已刪除 Null 值。
+如何增加時間免得逾時</div>
+                <div class="time">2026-04-12 07:55:12</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Diagnosing the Timeout</strong>
+
+I&#x27;m zeroing in on the &quot;Execution Timeout Expired&quot; error. It appears an SQL command is timing out, likely a stored procedure or complex query, exceeding the default. I need to understand what&#x27;s causing the bottleneck, considering the warning about null values being eliminated. This hints at potential issues with aggregation or set operations within the SQL command.
+
+
+<strong>Addressing the Timeout Configuration</strong>
+
+I&#x27;ve homed in on configuring the timeout limits, understanding it involves the frontend, backend, and web server. The most immediate fix is adjusting the `SqlCommand.CommandTimeout` in the VB.NET backend, increasing it significantly. There&#x27;s also the frontend JavaScript `$.ajax` timeout property to ensure it aligns with the backend. Finally, the `Web.config` settings for script execution also need attention for completeness.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">這個逾時錯誤通常是因為 SQL 查詢太複雜、資料量太大，或者是預存程序執行了大量的運算，超過了系統預設的 <strong>30 秒</strong> 限制。
+
+要解決這個問題，你需要從 <strong>後端程式碼</strong>、<strong>前端 AJAX</strong> 以及 <strong>Web.config 佈署設定</strong> 三個地方同時增加逾時時間。
+
+### 1. 後端 VB.NET 增加 SQL 指令逾時 (最關鍵)
+
+在 `SqlCommand` 物件中，預設的 `CommandTimeout` 是 30 秒。請將其改為 300 秒（5 分鐘）或更長。
+
+修改你的 `ExecuteSQL` 函式：
+
+<div class="code-container"><div class="code-header">vbnet</div><pre><code>&#x27; 在 Using cmd As New SqlCommand(sql, conn) 區塊內
+Using cmd As New SqlCommand(sql, conn)
+    &#x27; --- 加入這行：設定逾時時間為 300 秒 (5 分鐘) ---
+    cmd.CommandTimeout = 300 
+    
+    If Not sql.Contains(&quot; &quot;) AndAlso Not upperSQL.StartsWith(&quot;SELECT&quot;) Then
+        cmd.CommandType = CommandType.StoredProcedure
+    End If
+    &#x27; ... 其餘程式碼不變
+End Using
+</code></pre></div>
+
+---
+
+### 2. 前端 JavaScript AJAX 增加逾時
+
+即便後端改了，如果前端 AJAX 預設等待時間太短，瀏覽器也會主動中斷連線。
+
+<div class="code-container"><div class="code-header">javascript</div><pre><code>$.ajax({
+    type: &quot;POST&quot;,
+    url: &quot;DataService.aspx/ExecuteSQL&quot;,
+    data: JSON.stringify({ sql: sql, db: db, pwd: pwd }),
+    contentType: &quot;application/json; charset=utf-8&quot;,
+    dataType: &quot;json&quot;,
+    // --- 加入這行：設定前端等待時間 (單位為毫秒，300000 = 5 分鐘) ---
+    timeout: 300000, 
+    success: function (res) {
+        // ... 原本的處理邏輯
+    },
+    error: function (xhr, status, error) {
+        if(status === &quot;timeout&quot;) {
+            $(&quot;#msg&quot;).text(&quot;❌ 伺服器運算時間太長，已逾時。&quot;);
+        } else {
+            $(&quot;#msg&quot;).text(&quot;❌ 發生錯誤：&quot; + error);
+        }
+    }
+});
+</code></pre></div>
+
+---
+
+### 3. Web.config 增加請求存取時間
+
+如果你的查詢會運行超過 90 秒，ASP.NET 伺服器本身的請求監控可能會強制中斷它。請在 `Web.config` 的 `&lt;system.web&gt;` 區段加入 `executionTimeout`。
+
+<div class="code-container"><div class="code-header">xml</div><pre><code>&lt;configuration&gt;
+  &lt;system.web&gt;
+    &lt;!-- executionTimeout 單位為秒，這裡設定為 300 秒 --&gt;
+    &lt;httpRuntime targetFramework=&quot;4.7.2&quot; executionTimeout=&quot;300&quot; /&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;
+</code></pre></div>
+
+---
+
+### 4. 關於「警告: 彙總或其他 SET 作業已刪除 Null 值」
+
+這個警告通常發生在你的 SQL 語法中有 `SUM()`, `AVG()`, `MAX()` 等彙總運算，而資料列中含有 `NULL`。這<strong>通常不是</strong>導致逾時的主因，但會佔用回應訊息空間。
+
+<strong>解決方法：</strong>
+在你的 SQL 指令或預存程序的最開頭加上這兩行，可以隱藏這些警告並加速執行：
+
+<div class="code-container"><div class="code-header">sql</div><pre><code>SET ANSI_WARNINGS OFF;
+SET NOCOUNT ON;
+</code></pre></div>
+
+---
+
+### 總結建議
+
+1.  <strong>優先修改後端</strong>：`cmd.CommandTimeout = 300` 是最直接的解決辦法。
+2.  <strong>檢查 SQL 效率</strong>：如果一個查詢需要跑超過 30 秒，通常代表該資料表缺少 <strong>「索引 (Index)」</strong>。建議檢查 SQL 中的 `WHERE` 條件欄位是否有建立索引，這能讓 30 秒的查詢變成 1 秒。
+3.  <strong>大數據回傳</strong>：如果你回傳的資料高達幾萬筆，除了逾時，還可能遇到 `MaxJsonLength` 的限制。如果有此情況，請在 `Web.config` 增加 JSON 長度上限。</div>
+                    <div class="time">2026-04-12 07:55:17</div>
+                </div>
+                
+        </div>
+        <div style="text-align:center; padding: 50px; color: #999; font-size: 0.8rem;">--- 對話結束 ---</div>
+    </body>
+    </html>
+    

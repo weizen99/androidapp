@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Hub Pro | 全方位數據管理門戶</title>
+    
+    <!-- 引入 Bootstrap 5 與 Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --top-nav-height: 60px;
+            --accent-color: #00d2ff;
+            --sidebar-bg: #1e293b;
+            --main-bg: #0f172a;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background: var(--main-bg);
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+        }
+
+        /* 頂部導航欄 */
+        .top-navbar {
+            height: var(--top-nav-height);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1040;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* 漢堡選單按鈕 (手機版專用) */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        /* 左側側邊欄 */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--top-nav-height));
+            position: fixed;
+            left: 0;
+            top: var(--top-nav-height);
+            background: var(--sidebar-bg);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            z-index: 1050;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .nav-category {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+            margin: 20px 25px 8px;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            padding: 12px 25px;
+            margin: 2px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--accent-color);
+        }
+
+        /* 右側主內容區塊 */
+        .main-container {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--top-nav-height);
+            height: calc(100vh - var(--top-nav-height));
+            width: calc(100% - var(--sidebar-width));
+            background: #fff;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        #contentFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* 手機版遮罩 */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1045;
+            backdrop-filter: blur(2px);
+        }
+
+        /* 載入中動畫 */
+        .loader-wrapper {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        /* 響應式微調 */
+        @media (max-width: 992px) {
+            .menu-toggle { display: block; }
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .main-container {
+                margin-left: 0;
+                width: 100%;
+            }
+            .nav-link { padding: 15px 25px; } /* 手機版加大觸控區 */
+            
+            /* 手機隱藏部分不重要資訊 */
+            .top-navbar .bi-clock, #currentTime { display: none; }
+            .top-navbar h4 { font-size: 1rem; }
+        }
+
+        /* 美化捲軸 */
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- 手機版遮罩層 -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- 頂部導航欄 -->
+    <header class="top-navbar">
+        <div class="d-flex align-items-center">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="bi bi-list"></i>
+            </button>
+            <h4 class="m-0 fw-bold text-white"><i class="bi bi-grid-1x2-fill text-info me-2"></i>數據管理門戶</h4>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <!-- 快速工具 -->
+            <div class="dropdown">
+                <button class="btn btn-dark dropdown-toggle btn-sm border-secondary" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-tools"></i>快速工具
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow">
+                    <li><a class="dropdown-item" href="#" onclick="loadPage('https://zen2965.duckdns.org:8888/Mvc%20web/pricepicking.aspx')"><i class="bi bi-cpu me-2"></i>MVC網頁</a></li> 
+                    <li><a class="dropdown-item" href="#" onclick="loadPage('https://zen2965.duckdns.org:8888/excelimport/excelimport3')"><i class="bi bi-file-earmark-excel me-2"></i>ExcelSQL美化</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" onclick="loadPage('https://zen2965.duckdns.org:8888/excelimport/message3.html')"><i class="bi bi-envelope me-2"></i>與我聯絡</a></li>
+                </ul>
+            </div>
+
+            <!-- 另開新頁 -->
+            <div class="dropdown">
+                <button class="btn btn-dark dropdown-toggle btn-sm border-secondary" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-box-arrow-up-right"></i>另開新頁
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow" style="max-height: 80vh; overflow-y: auto;">
+<li><a class="dropdown-item" href="https://weizen99.github.io/androidapp/map.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>定位建檔資料庫</a></li>
+
+                    <li><a class="dropdown-item" href="http://www.hacker1.somee.com/fourword.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>成語查詢somee</a></li>
+
+                    <li><a class="dropdown-item" href="http://www.hacker1.somee.com/mapsql2.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>景點座標somee</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/androidapp/message6s.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>影音管理系統</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/message6_1.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>影音youtube專用</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/showimage/image_api2.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>圖片藝廊中心</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/voiceinput1.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>Ai語音輸入</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/tour.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>Ai語音聊天</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/messageword01.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>我的最愛查詢</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/message4.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>專業留言系統本地</a></li>
+
+                    <li><a class="dropdown-item" href="http://www.hacker1.somee.com/guestmessage1.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>專業留言系統somee</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>WebApi彙總</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/excelsql2.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>Excel SQL 查詢</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/trend4stock2.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>Obv多空淨額選股票</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/googlesheet.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>讀取Google試算表</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/messageword05.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>自製股票自選股</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/fish/index2.htm" onclick="loadPage('')"><i class="bi bi-command me-2"></i>上慶外網</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965.duckdns.org:88888/showimage/image_api.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>影音管理系統全</a></li>
+
+<li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/showimage/TravelPlanner.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>AI 智旅管家</a></li>
+
+<li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/mylink.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>手機mylink</a></li>
+
+<li><a class="dropdown-item" href="https://zen2965.duckdns.org:8888/showimage/bookkeeping.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>雲端記帳</a></li>
+
+
+
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="px-3 py-1 small text-secondary">更多系統請在側邊欄選擇...</li>
+                </ul>
+            </div>
+
+
+<!-- 內部免費 -->
+            <div class="dropdown">
+                <button class="btn btn-dark dropdown-toggle btn-sm border-secondary" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-box-arrow-up-right"></i>內部免費
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow" style="max-height: 80vh; overflow-y: auto;">
+<li><a class="dropdown-item" href="https://weizen99.github.io/androidapp/map.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>定位建檔資料庫</a></li>
+
+                    <li><a class="dropdown-item" href="http://www.hacker1.somee.com/fourword.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>成語查詢somee</a></li>
+
+                    <li><a class="dropdown-item" href="http://www.hacker1.somee.com/mapsql2.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>景點座標somee</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/androidapp/message6s.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>影音管理系統</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/message6_1.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>影音youtube專用</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/showimage/image_api2.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>圖片藝廊中心</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/voiceinput1.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>Ai語音輸入</a></li>
+
+                    <li><a class="dropdown-item" href="https://zen2965home.synology.me/androidapp/tour.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>Ai語音聊天</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/mymvc/messageword01.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>我的最愛查詢</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/excelimport/message4.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>專業留言系統本地</a></li>
+
+                    <li><a class="dropdown-item" href="http://www.hacker1.somee.com/guestmessage1.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>專業留言系統somee</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/androidapp/basicinfotable2.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>WebApi彙總</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/excelimport/excelsql2.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>Excel SQL 查詢</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/mymvc/trend4stock2.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>Obv多空淨額選股票</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/excelimport/googlesheet.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>讀取Google試算表</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/mymvc/messageword05.aspx" onclick="loadPage('')"><i class="bi bi-command me-2"></i>自製股票自選股</a></li>
+
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/fish/index2.htm" onclick="loadPage('')"><i class="bi bi-command me-2"></i>上慶外網</a></li>
+
+                    <li><a class="dropdown-item" href="https://192.168.0.199:8888/showimage/image_api.html" onclick="loadPage('')"><i class="bi bi-command me-2"></i>影音管理系統全</a></li>
+
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="px-3 py-1 small text-secondary">更多系統請在側邊欄選擇...</li>
+                </ul>
+            </div>
+
+
+<!-- 看股票 -->
+            <div class="dropdown">
+                <button class="btn btn-dark dropdown-toggle btn-sm border-secondary" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-box-arrow-up-right"></i>看股票
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow" style="max-height: 80vh; overflow-y: auto;">
+<li><a class="dropdown-item" href="https://www.wantgoo.com/global" onclick="loadPage('')"><i class="bi bi-command me-2"></i>玩股網</a></li>
+
+                    <li><a class="dropdown-item" href="https://stock.wespai.com/pick" onclick="loadPage('')"><i class="bi bi-command me-2"></i>檢股網</a></li>
+
+                    <li><a class="dropdown-item" href="https://statementdog.com/" onclick="loadPage('')"><i class="bi bi-command me-2"></i>財務狗</a></li>
+
+                    <li><a class="dropdown-item" href="https://www.ansforce.com/" onclick="loadPage('')"><i class="bi bi-command me-2"></i>知識力平台</a></li>
+
+                    <li><a class="dropdown-item" href="https://ic.tpex.org.tw/" onclick="loadPage('')"><i class="bi bi-command me-2"></i>產業價值鏈資訊平台</a></li>
+
+                    <li><a class="dropdown-item" href="https://www.cmoney.tw/finance/1536/technicalanalysis" onclick="loadPage('')"><i class="bi bi-command me-2"></i>理財寶</a></li>
+
+                    <li><a class="dropdown-item" href="https://www.cmoney.tw/forum/popular/buzz?tab=popular" onclick="loadPage('')"><i class="bi bi-command me-2"></i>股票爆料同學會</a></li>
+
+                    
+
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="px-3 py-1 small text-secondary">更多系統請在側邊欄選擇...</li>
+                </ul>
+            </div>
+
+
+
+            <span class="text-secondary small">|</span>
+            <div class="text-white-50 small" id="clockBox">
+                <i class="bi bi-clock me-1"></i><span id="currentTime"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 左側側邊欄 -->
+    <aside class="sidebar" id="sidebar">
+        <div class="nav-category">核心控制台</div>
+
+
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/androidapp/message6s.html', this)"><i class="bi bi-camera-reels"></i>影音管理系統</a>
+        <a class="nav-link" onclick="loadPage('https://zen2965home.synology.me/androidapp/message6_1.html', this)"><i class="bi bi-camera-reels"></i>影音youtube系統</a>
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/showimage/image_api2.html', this)"><i class="bi bi-images"></i>圖片藝廊中心</a>
+
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/excelimport/excelsql2.html', this)"><i class="bi bi-database-fill"></i>Excel SQL 查詢</a>
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/androidapp/basicinfotable2.html', this)"><i class="bi bi-plug-fill"></i>WebApi 彙總</a>
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/fishnew5/favorites2', this)"><i class="bi bi-bookmark-star-fill"></i>網站簡介系統</a>
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/excelimport/message4.html', this)"><i class="bi bi-chat-left-dots-fill"></i>專業留言系統</a>
+
+        <div class="nav-category">數據分析</div>
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/mymvc/trend4stock2.aspx', this)"><i class="bi bi-graph-up"></i>Obv 選股系統</a>
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/mymvc/messageword05.aspx', this)"><i class="bi bi-star-fill"></i>股票自選股</a>
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/mymvc/messageword01.aspx', this)"><i class="bi bi-heart-fill"></i>我的最愛查詢</a>
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/excelimport/googlesheet.html', this)"><i class="bi bi-google"></i> Google 試算表</a>
+
+        <div class="nav-category">AI 與 外部資源</div>
+        <a class="nav-link" onclick="loadPage('https://zen2965home.synology.me/androidapp/voiceinput1.html', this)"><i class="bi bi-mic-fill"></i>Ai 語音輸入</a>
+        <a class="nav-link" onclick="loadPage('https://zen2965home.synology.me/androidapp/tour.html', this)"><i class="bi bi-robot"></i>Ai 語音聊天</a>
+        <a class="nav-link" onclick="loadPage('https://sachi.zen2965.workers.dev/', this)"><i class="bi bi-globe"></i> Cloudflare 導航</a>
+        <a class="nav-link" onclick="loadPage('https://weizen99.github.io/androidapp/map.html', this)"><i class="bi bi-geo-alt-fill"></i>地圖定位建檔</a>
+
+<a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/showimage/TravelPlanner.html', this)"><i class="bi bi-geo-alt-fill"></i>AI 智旅管家</a>
+
+<a class="nav-link" onclick="loadPage('https://zen2965home.synology.me/androidapp/mylink.html', this)"><i class="bi bi-geo-alt-fill"></i>手機mylink</a>
+
+<a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888/showimage/bookkeeping.html', this)"><i class="bi bi-geo-alt-fill"></i>雲端記帳</a>
+
+
+        <div class="nav-category">系統支援</div>
+        <a class="nav-link" onclick="loadPage('https://zen2965.duckdns.org:8888//mymvc/sop.aspx', this)"><i class="bi bi-info-circle-fill"></i> 技術支援</a>
+    </aside>
+
+    <!-- 右側視窗 -->
+    <main class="main-container">
+        <!-- 載入動畫 -->
+        <div class="loader-wrapper" id="loader">
+            <div class="spinner-border text-info" role="status"></div>
+        </div>
+        <!-- 核心 Iframe -->
+        <iframe src="https://zen2965.duckdns.org:8888/excelimport/excelsql2.html" id="contentFrame" name="contentFrame"></iframe>
+    </main>
+
+    <!-- 核心腳本 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 1. 頁面載入邏輯
+        function loadPage(url, element) {
+            $('#loader').fadeIn(100);
+            $('#contentFrame').attr('src', url);
+
+            if (element) {
+                $('.nav-link').removeClass('active');
+                $(element).addClass('active');
+            }
+
+            // 如果是手機版，點選後自動關閉選單
+            if ($(window).width() <= 992) {
+                toggleSidebar();
+            }
+        }
+
+        // 2. 側邊欄開關邏輯
+        function toggleSidebar() {
+            const sidebar = $('#sidebar');
+            const overlay = $('#sidebarOverlay');
+            
+            if (sidebar.hasClass('mobile-open')) {
+                sidebar.removeClass('mobile-open');
+                overlay.fadeOut(300);
+            } else {
+                sidebar.addClass('mobile-open');
+                overlay.fadeIn(300);
+            }
+        }
+
+        // 3. Iframe 載入監聽
+        $('#contentFrame').on('load', function() {
+            $('#loader').fadeOut(200);
+        });
+
+        // 4. 時鐘功能
+        function updateTime() {
+            const now = new Date();
+            $('#currentTime').text(now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        $(document).ready(function() {
+            console.log("Portal Optimized for Mobile.");
+        });
+    </script>
+</body>
+</html>

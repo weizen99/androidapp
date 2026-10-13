@@ -1,0 +1,478 @@
+
+    <!DOCTYPE html>
+    <html lang="zh-TW">
+    <head>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --user-bg: #f0f4f9;
+                --model-bg: #ffffff;
+                --thought-bg: #fffbe6;
+                --code-bg: #1e1e1e;
+                --text-color: #1f1f1f;
+                --accent-color: #1a73e8;
+            }
+            body {
+                font-family: 'Noto Sans TC', sans-serif;
+                background-color: #f7f9fc;
+                color: var(--text-color);
+                line-height: 1.6;
+                margin: 0;
+                padding: 0;
+            }
+            .header {
+                background: white;
+                padding: 20px 50px;
+                border-bottom: 1px solid #e0e4e9;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            .header h1 { margin: 0; font-size: 1.5rem; color: var(--accent-color); }
+
+            .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+
+            .message-row { display: flex; flex-direction: column; margin-bottom: 40px; }
+
+            .role-badge {
+                font-size: 0.8rem;
+                font-weight: 700;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            .user-row .role-badge { color: #0d6efd; align-self: flex-end; }
+            .model-row .role-badge { color: #198754; align-self: flex-start; }
+
+            .bubble {
+                max-width: 90%;
+                padding: 16px 24px;
+                border-radius: 20px;
+                position: relative;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                white-space: pre-wrap;
+            }
+            .user-bubble {
+                background-color: var(--user-bg);
+                align-self: flex-end;
+                border-bottom-right-radius: 4px;
+            }
+            .model-bubble {
+                background-color: var(--model-bg);
+                align-self: flex-start;
+                border-bottom-left-radius: 4px;
+                border: 1px solid #e3e3e3;
+            }
+
+            .thought-container {
+                background-color: var(--thought-bg);
+                border-radius: 12px;
+                padding: 15px;
+                margin-bottom: 15px;
+                border-left: 4px solid #fadb14;
+                font-size: 0.9rem;
+                color: #856404;
+                align-self: flex-start;
+                max-width: 90%;
+            }
+            .thought-title { font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+
+            .code-container {
+                background: var(--code-bg);
+                border-radius: 10px;
+                margin: 15px 0;
+                overflow: hidden;
+            }
+            .code-header {
+                background: #333;
+                color: #aaa;
+                padding: 5px 15px;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                border-bottom: 1px solid #444;
+            }
+            pre { margin: 0; padding: 15px; overflow-x: auto; }
+            code { font-family: 'JetBrains Mono', monospace; color: #d4d4d4; font-size: 0.9rem; }
+
+            .time { font-size: 0.7rem; color: #9ca3af; margin-top: 8px; }
+            .user-row .time { text-align: right; }
+        </style>
+        <title>Gemini 紀錄檢視器 - 專業版</title>
+    </head>
+    <body>
+        <div class="header"><span style="font-size: 1.5rem;">📁</span><h1>Cloud AI Studio 歷史紀錄</h1></div>
+        <div class="container">
+    
+            <div class="message-row user-row">
+                <div class="role-badge">👤 USER</div>
+                <div class="bubble user-bubble">範本沒有出現
+&lt;%@ Page Language=&quot;vb&quot; AutoEventWireup=&quot;false&quot; CodeBehind=&quot;gridview_template.aspx.vb&quot; Inherits=&quot;excelimport.gridview_template&quot; %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head runat=&quot;server&quot;&gt;
+    &lt;title&gt;ASP.NET GridView 專業範本&lt;/title&gt;
+    &lt;!-- 引入 Bootstrap 5 與 DataTables CSS --&gt;
+    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot; /&gt;
+    &lt;link href=&quot;https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css&quot; rel=&quot;stylesheet&quot; /&gt;
+    
+    &lt;style&gt;
+        /* 凍結表頭的樣式 */
+        .dataTables_scrollHead { background-color: #343a40 !important; }
+        .dataTables_scrollHead th { color: white !important; white-space: nowrap; }
+        .table-container { padding: 20px; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body class=&quot;bg-light&quot;&gt;
+    &lt;form id=&quot;form1&quot; runat=&quot;server&quot;&gt;
+        &lt;div class=&quot;container mt-5&quot;&gt;
+            &lt;div class=&quot;table-container&quot;&gt;
+                &lt;h2 class=&quot;mb-4&quot;&gt;ASP.NET 數據管理 (分頁/凍結/排序/查詢)&lt;/h2&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+            &lt;div class=&quot;sql-box&quot;&gt;
+        &lt;!-- 範本載入區 --&gt;
+        &lt;div class=&quot;template-section&quot;&gt;
+            &lt;div class=&quot;row g-2&quot;&gt;
+                &lt;div class=&quot;col-sm-3&quot;&gt;
+
+                    &lt;label class=&quot;form-label fw-bold&quot;&gt;🔍 搜尋範本：&lt;/label&gt;
+                    &lt;input type=&quot;text&quot; id=&quot;templateSearch&quot; class=&quot;form-control&quot; placeholder=&quot;輸入關鍵字...&quot;&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;col-sm-9&quot;&gt;
+                    &lt;label class=&quot;form-label fw-bold&quot;&gt;📑 選擇 50+ 組 SQL 範本：&lt;/label&gt;
+                    &lt;select id=&quot;sqlTemplates&quot; class=&quot;form-select&quot;&gt;
+                        &lt;option value=&quot;&quot;&gt;-- 請選擇範本 --&lt;/option&gt;
+                    &lt;/select&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;row g-3&quot;&gt;
+            &lt;div class=&quot;col-sm-2&quot;&gt;
+                &lt;label class=&quot;fw-bold text-danger&quot;&gt;密碼：&lt;/label&gt;
+                &lt;input type=&quot;password&quot; id=&quot;txtPwd&quot; class=&quot;form-control&quot; value=&quot;2157&quot;&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;col-sm-3&quot;&gt;
+                &lt;label class=&quot;fw-bold&quot;&gt;資料庫：&lt;/label&gt;
+                &lt;asp:DropDownList ID=&quot;useDatabase&quot; runat=&quot;server&quot; Height=&quot;40px&quot; class=&quot;form-control&quot;&gt;
+                    &lt;asp:ListItem Value=&quot;stockchangedate&quot;&gt;stockchangedate&lt;/asp:ListItem&gt;                   
+                    &lt;asp:ListItem Value=&quot;stockchange&quot;&gt;stockchange&lt;/asp:ListItem&gt;
+                    &lt;asp:ListItem Value=&quot;fromaccessdatabase&quot;&gt;fromaccessdatabase&lt;/asp:ListItem&gt;
+                    &lt;asp:ListItem Value=&quot;stockprice&quot;&gt;stockprice&lt;/asp:ListItem&gt;
+                    &lt;asp:ListItem Value=&quot;stockinfo&quot;&gt;stockinfo&lt;/asp:ListItem&gt;
+                    &lt;asp:ListItem Value=&quot;work&quot;&gt;work&lt;/asp:ListItem&gt;
+                   
+        
+                 &lt;/asp:DropDownList&gt;
+
+            &lt;/div&gt;
+         
+            &lt;div class=&quot;col-sm-7 d-flex align-items-end&quot;&gt;
+           
+                &lt;asp:Button ID=&quot;btnQuery&quot; class=&quot;btn btn-primary w-100 fw-bold&quot; runat=&quot;server&quot; Text=&quot;🚀 執行 查詢&quot; /&gt;
+            &lt;/div&gt;
+
+            &lt;div class=&quot;col-12 sm-3&quot;&gt;
+                &lt;label class=&quot;fw-bold&quot;&gt;SQL 指令 (SELECT 已自動補上)：&lt;/label&gt;&lt;br/&gt;              
+             
+                &lt;asp:TextBox ID=&quot;sqlText&quot; runat=&quot;server&quot; TextMode=&quot;MultiLine&quot; Rows=&quot;8&quot; CssClass=&quot;sql-box mb-3&quot; placeholder=&quot;請在此輸入 SQL 指令...&quot; Width=&quot;1472px&quot;&gt;top 100 * from chips5 order by 日期 desc,漲幅 desc&lt;/asp:TextBox&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id=&quot;msg&quot; class=&quot;status-msg sm-3 text-primary&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- 表格顯示區 --&gt;
+    &lt;div class=&quot;table-wrapper&quot;&gt;
+        &lt;table id=&quot;resultTable&quot; class=&quot;table table-bordered table-hover table-sm w-100&quot;&gt;
+            &lt;!-- DataTables 會動態產生內容 --&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+&lt;%--&lt;/div&gt;--%&gt;
+        &lt;asp:SqlDataSource ID=&quot;SqlDataSource1&quot; runat=&quot;server&quot; ConnectionString=&quot;&lt;%$ ConnectionStrings:favor2ConnectionString %&gt;&quot; ProviderName=&quot;&lt;%$ ConnectionStrings:favor2ConnectionString.ProviderName %&gt;&quot; SelectCommand=&quot;select top 200 * from stockgod&quot;&gt;&lt;/asp:SqlDataSource&gt;
+        &lt;!-- JS 腳本 --&gt;
+        &lt;script src=&quot;https://code.jquery.com/jquery-3.6.0.min.js&quot;&gt;&lt;/script&gt;
+        &lt;script src=&quot;https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js&quot;&gt;&lt;/script&gt;
+        &lt;script src=&quot;https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js&quot;&gt;&lt;/script&gt;
+
+        &lt;script&gt;
+
+
+            $(document).ready(function () {
+                const sql = $(&quot;#sqlText&quot;).val();
+                const db = $(&quot;#useDatabase&quot;).val();
+                const pwd = $(&quot;#txtPwd&quot;).val();
+               
+
+                // --- 初始化範本選單 ---
+                function loadTemplates(filter = &quot;&quot;) {
+                    const $select = $(&quot;#sqlTemplates&quot;).empty().append(&#x27;&lt;option value=&quot;&quot;&gt;-- 請選擇範本 --&lt;/option&gt;&#x27;);
+                    const filtered = sqlTemplateLibrary.filter(t =&gt; t.title.includes(filter) || t.cat.includes(filter));
+                    let lastCat = &quot;&quot;;
+                    let $group = null;
+                    filtered.forEach(t =&gt; {
+                        if (t.cat !== lastCat) {
+                            lastCat = t.cat;
+                            $group = $(`&lt;optgroup label=&quot;【${lastCat}】&quot;&gt;&lt;/optgroup&gt;`).appendTo($select);
+                        }
+                        $group.append(`&lt;option value=&quot;${t.sql}&quot;&gt;${t.title}&lt;/option&gt;`);
+                    });
+                }
+                loadTemplates();
+                $(&quot;#templateSearch&quot;).on(&quot;input&quot;, function () { loadTemplates($(this).val()); });
+                $(&quot;#sqlTemplates&quot;).on(&quot;change&quot;, function () { if ($(this).val()) $(&quot;#sqlText&quot;).val($(this).val()); });
+
+            });
+            bindDataTable();
+            function bindDataTable() {
+                var table = $(&#x27;#GridView1&#x27;);
+                if (table.find(&#x27;tr&#x27;).length &gt; 0) {
+                    // 關鍵：如果 GridView 沒有產生 thead，這段會幫忙修正
+                    if (table.find(&#x27;thead&#x27;).length == 0) {
+                        table.prepend($(&quot;&lt;thead&gt;&lt;/thead&gt;&quot;).append(table.find(&quot;tr:first&quot;)));
+                    }
+
+                    table.DataTable({
+                        &quot;language&quot;: { &quot;url&quot;: &quot;//cdn.datatables.net/plug-ins/1.11.5/i18n/zh-HANT.json&quot; },
+                        &quot;scrollY&quot;: &quot;400px&quot;,      // 凍結表頭的高度
+                        &quot;scrollX&quot;: true,         // 水平捲動
+                        &quot;scrollCollapse&quot;: true,
+                        &quot;paging&quot;: true,          // 分頁啟動
+                        &quot;pageLength&quot;: 10,        // 每頁 10 筆
+                        &quot;order&quot;: [[0, &quot;asc&quot;]],   // 預設排序
+                        &quot;searching&quot;: true,       // 查詢啟動
+                        &quot;destroy&quot;: true          // 避免重複初始化
+                    });
+                }
+            }
+
+            // 如果你有使用 UpdatePanel，這段能保證局部刷新後功能不失靈
+            if (typeof (Sys) !== &#x27;undefined&#x27;) {
+                var prm = Sys.WebForms.PageRequestManager.getInstance();
+                prm.add_endRequest(bindDataTable);
+            }
+        &lt;/script&gt;
+                &lt;asp:GridView ID=&quot;GridView1&quot; runat=&quot;server&quot;&gt;&lt;/asp:GridView&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</div>
+                <div class="time">2026-04-10 05:53:47</div>
+            </div>
+            
+                <div class="message-row model-row">
+                    <div class="role-badge">🧠思維過程 (THOUGHT)</div>
+                    <div class="thought-container">
+                        <div class="thought-title">Gemini 的思考路徑：</div>
+                        <strong>Debugging Template Display</strong>
+
+I&#x27;m currently focused on debugging why the SQL templates aren&#x27;t appearing in the dropdown. The `loadTemplates()` function is definitely being called, as verified by placement inside `$(document).ready()`. This doesn&#x27;t seem to be the source of the problem, so I must examine the function itself. I need to trace the data flow from the VB.NET code.
+
+
+<strong>Analyzing Data Flow</strong>
+
+I&#x27;ve pinpointed the central issue: `sqlTemplateLibrary` is undefined, preventing the template dropdown from populating. This missing array represents the data source. I&#x27;m focusing on defining this array and ensuring it&#x27;s populated correctly. Additionally, I need to restructure the initialization sequence to guarantee everything runs after the DOM is ready, specifically the DataTables binding. I&#x27;m also addressing the `GridView1` rendering for proper DataTables functionality. Finally, I&#x27;ll need to update the logic for when a template is selected.
+
+
+
+                    </div>
+                </div>
+                
+                <div class="message-row model-row">
+                    <div class="role-badge">🤖 GEMINI</div>
+                    <div class="bubble model-bubble">範本沒有出現的主要原因是：<strong>你的 JavaScript 程式碼中參考了一個名為 `sqlTemplateLibrary` 的變數，但在程式碼中並沒有定義（宣告）這個陣列。</strong>
+
+除此之外，還有一些 ASP.NET ID 轉換的問題。以下是修正後的完整程式碼與說明：
+
+### 修正重點：
+1.  <strong>新增 `sqlTemplateLibrary` 數據來源</strong>：定義範本清單。
+2.  <strong>ClientIDMode=&quot;Static&quot;</strong>：在 ASP.NET 控制項加上這個屬性，確保 JavaScript 可以直接用 `id` 抓到控制項（否則 ID 會變成 `ctl00_sqlText` 之類的）。
+3.  <strong>將初始化邏輯收納</strong>：確保 `bindDataTable` 在文件載入後執行。
+
+<div class="code-container"><div class="code-header">html</div><pre><code>&lt;%@ Page Language=&quot;vb&quot; AutoEventWireup=&quot;false&quot; CodeBehind=&quot;gridview_template.aspx.vb&quot; Inherits=&quot;excelimport.gridview_template&quot; %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head runat=&quot;server&quot;&gt;
+    &lt;title&gt;ASP.NET GridView 專業範本&lt;/title&gt;
+    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot; /&gt;
+    &lt;link href=&quot;https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css&quot; rel=&quot;stylesheet&quot; /&gt;
+    
+    &lt;style&gt;
+        .dataTables_scrollHead { background-color: #343a40 !important; }
+        .dataTables_scrollHead th { color: white !important; white-space: nowrap; }
+        .table-container { padding: 20px; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .sql-box-container { padding: 20px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 10px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body class=&quot;bg-light&quot;&gt;
+    &lt;form id=&quot;form1&quot; runat=&quot;server&quot;&gt;
+        &lt;div class=&quot;container mt-5&quot;&gt;
+            &lt;div class=&quot;table-container&quot;&gt;
+                &lt;h2 class=&quot;mb-4&quot;&gt;ASP.NET 數據管理 (分頁/凍結/排序/查詢)&lt;/h2&gt;
+                
+                &lt;!-- 範本載入區 --&gt;
+                &lt;div class=&quot;sql-box-container&quot;&gt;
+                    &lt;div class=&quot;row g-2 mb-3&quot;&gt;
+                        &lt;div class=&quot;col-sm-3&quot;&gt;
+                            &lt;label class=&quot;form-label fw-bold&quot;&gt;🔍 搜尋範本：&lt;/label&gt;
+                            &lt;input type=&quot;text&quot; id=&quot;templateSearch&quot; class=&quot;form-control&quot; placeholder=&quot;輸入關鍵字...&quot;&gt;
+                        &lt;/div&gt;
+                        &lt;div class=&quot;col-sm-9&quot;&gt;
+                            &lt;label class=&quot;form-label fw-bold&quot;&gt;📑 選擇 50+ 組 SQL 範本：&lt;/label&gt;
+                            &lt;select id=&quot;sqlTemplates&quot; class=&quot;form-select&quot;&gt;
+                                &lt;option value=&quot;&quot;&gt;-- 請選擇範本 --&lt;/option&gt;
+                            &lt;/select&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class=&quot;row g-3&quot;&gt;
+                        &lt;div class=&quot;col-sm-2&quot;&gt;
+                            &lt;label class=&quot;fw-bold text-danger&quot;&gt;密碼：&lt;/label&gt;
+                            &lt;asp:TextBox ID=&quot;txtPwd&quot; runat=&quot;server&quot; CssClass=&quot;form-control&quot; TextMode=&quot;Password&quot; Text=&quot;2157&quot; ClientIDMode=&quot;Static&quot;&gt;&lt;/asp:TextBox&gt;
+                        &lt;/div&gt;
+                        &lt;div class=&quot;col-sm-3&quot;&gt;
+                            &lt;label class=&quot;fw-bold&quot;&gt;資料庫：&lt;/label&gt;
+                            &lt;asp:DropDownList ID=&quot;useDatabase&quot; runat=&quot;server&quot; CssClass=&quot;form-select&quot; ClientIDMode=&quot;Static&quot;&gt;
+                                &lt;asp:ListItem Value=&quot;stockchangedate&quot;&gt;stockchangedate&lt;/asp:ListItem&gt;                   
+                                &lt;asp:ListItem Value=&quot;stockchange&quot;&gt;stockchange&lt;/asp:ListItem&gt;
+                                &lt;asp:ListItem Value=&quot;fromaccessdatabase&quot;&gt;fromaccessdatabase&lt;/asp:ListItem&gt;
+                                &lt;asp:ListItem Value=&quot;stockprice&quot;&gt;stockprice&lt;/asp:ListItem&gt;
+                                &lt;asp:ListItem Value=&quot;stockinfo&quot;&gt;stockinfo&lt;/asp:ListItem&gt;
+                                &lt;asp:ListItem Value=&quot;work&quot;&gt;work&lt;/asp:ListItem&gt;
+                            &lt;/asp:DropDownList&gt;
+                        &lt;/div&gt;
+                        &lt;div class=&quot;col-sm-7 d-flex align-items-end&quot;&gt;
+                            &lt;asp:Button ID=&quot;btnQuery&quot; class=&quot;btn btn-primary w-100 fw-bold&quot; runat=&quot;server&quot; Text=&quot;🚀 執行 查詢&quot; OnClick=&quot;btnQuery_Click&quot; /&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class=&quot;col-12 mt-3&quot;&gt;
+                            &lt;label class=&quot;fw-bold&quot;&gt;SQL 指令 (SELECT 已自動補上)：&lt;/label&gt;
+                            &lt;asp:TextBox ID=&quot;sqlText&quot; runat=&quot;server&quot; TextMode=&quot;MultiLine&quot; Rows=&quot;5&quot; CssClass=&quot;form-control mt-1&quot; 
+                                ClientIDMode=&quot;Static&quot; placeholder=&quot;請在此輸入 SQL 指令...&quot;&gt;top 100 * from chips5 order by 日期 desc, 漲幅 desc&lt;/asp:TextBox&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div id=&quot;msg&quot; class=&quot;status-msg mt-3 text-primary&quot;&gt;&lt;/div&gt;
+
+                &lt;!-- 表格顯示區 --&gt;
+                &lt;div class=&quot;mt-4&quot;&gt;
+                    &lt;asp:GridView ID=&quot;GridView1&quot; runat=&quot;server&quot; CssClass=&quot;table table-bordered table-hover table-sm w-100&quot; ClientIDMode=&quot;Static&quot;&gt;
+                    &lt;/asp:GridView&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;script src=&quot;https://code.jquery.com/jquery-3.6.0.min.js&quot;&gt;&lt;/script&gt;
+        &lt;script src=&quot;https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js&quot;&gt;&lt;/script&gt;
+        &lt;script src=&quot;https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js&quot;&gt;&lt;/script&gt;
+
+        &lt;script&gt;
+            // <strong>* 這裡必須定義範本資料陣列 </strong>*
+            const sqlTemplateLibrary = [
+                { cat: &quot;常用查詢&quot;, title: &quot;最近 100 筆籌碼資料&quot;, sql: &quot;top 100 * from chips5 order by 日期 desc&quot; },
+                { cat: &quot;常用查詢&quot;, title: &quot;漲幅大於 5% 的股票&quot;, sql: &quot;* from chips5 where 漲幅 &gt; 5 order by 漲幅 desc&quot; },
+                { cat: &quot;庫存管理&quot;, title: &quot;查詢目前庫存&quot;, sql: &quot;* from inventory where stock_qty &gt; 0&quot; },
+                { cat: &quot;分析報表&quot;, title: &quot;每月成交統計&quot;, sql: &quot;month(日期), sum(成交量) from history group by month(日期)&quot; },
+                // ... 你可以在這裡放 50 組
+            ];
+
+            $(document).ready(function () {
+                // --- 初始化範本選單 ---
+                function loadTemplates(filter = &quot;&quot;) {
+                    const $select = $(&quot;#sqlTemplates&quot;).empty().append(&#x27;&lt;option value=&quot;&quot;&gt;-- 請選擇範本 --&lt;/option&gt;&#x27;);
+                    
+                    // 篩選資料
+                    const filtered = sqlTemplateLibrary.filter(t =&gt; 
+                        t.title.toLowerCase().includes(filter.toLowerCase()) || 
+                        t.cat.toLowerCase().includes(filter.toLowerCase())
+                    );
+
+                    let lastCat = &quot;&quot;;
+                    let $group = null;
+
+                    filtered.forEach(t =&gt; {
+                        if (t.cat !== lastCat) {
+                            lastCat = t.cat;
+                            $group = $(`&lt;optgroup label=&quot;【${lastCat}】&quot;&gt;&lt;/optgroup&gt;`).appendTo($select);
+                        }
+                        $group.append(`&lt;option value=&quot;${t.sql}&quot;&gt;${t.title}&lt;/option&gt;`);
+                    });
+                }
+
+                // 初始載入
+                loadTemplates();
+
+                // 搜尋功能
+                $(&quot;#templateSearch&quot;).on(&quot;input&quot;, function () { 
+                    loadTemplates($(this).val()); 
+                });
+
+                // 選擇範本後填入內容
+                $(&quot;#sqlTemplates&quot;).on(&quot;change&quot;, function () { 
+                    const val = $(this).val();
+                    if (val) {
+                        $(&quot;#sqlText&quot;).val(val); 
+                    }
+                });
+
+                // 初始化 DataTable
+                bindDataTable();
+            });
+
+            function bindDataTable() {
+                var table = $(&#x27;#GridView1&#x27;);
+                // 檢查是否有資料行 (包含 header)
+                if (table.find(&#x27;tr&#x27;).length &gt; 1) {
+                    if (table.find(&#x27;thead&#x27;).length == 0) {
+                        // 將第一行 tr 移入 thead
+                        var header = table.find(&#x27;tr:first&#x27;).detach();
+                        table.prepend($(&quot;&lt;thead&gt;&lt;/thead&gt;&quot;).append(header));
+                    }
+
+                    table.DataTable({
+                        &quot;language&quot;: { &quot;url&quot;: &quot;https://cdn.datatables.net/plug-ins/1.11.5/i18n/zh-HANT.json&quot; },
+                        &quot;scrollY&quot;: &quot;400px&quot;,
+                        &quot;scrollX&quot;: true,
+                        &quot;scrollCollapse&quot;: true,
+                        &quot;paging&quot;: true,
+                        &quot;pageLength&quot;: 10,
+                        &quot;destroy&quot;: true
+                    });
+                }
+            }
+
+            // UpdatePanel 支援
+            if (typeof (Sys) !== &#x27;undefined&#x27;) {
+                var prm = Sys.WebForms.PageRequestManager.getInstance();
+                prm.add_endRequest(bindDataTable);
+            }
+        &lt;/script&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>
+
+### 為什麼之前的沒反應？
+
+1.  <strong>`sqlTemplateLibrary` 未定義</strong>：瀏覽器執行到 `sqlTemplateLibrary.filter` 時會報錯（你可以按 F12 打開 Console 看到紅色錯誤訊息），這會導致後面的 JS 完全停止執行。
+2.  <strong>ID 抓不到</strong>：ASP.NET 的 `&lt;asp:TextBox ID=&quot;sqlText&quot;&gt;` 在渲染成 HTML 時，ID 會變成像 `MainContent_sqlText`。我在控制項加上了 `ClientIDMode=&quot;Static&quot;`，這樣 JS 才能用 `$(&quot;#sqlText&quot;)` 準確抓到。
+3.  <strong>DataTable 初始化順序</strong>：`bindDataTable()` 必須在 `$(document).ready()` 裡面執行，確保 DOM 已經載入。
+4.  <strong>GridView 結構</strong>：ASP.NET GridView 預設不會產生 `&lt;thead&gt;` 標籤，而 DataTables 強烈建議有 `&lt;thead&gt;`。我在 JS 裡加了一段 `if (table.find(&#x27;thead&#x27;).length == 0)` 來動態修正結構。
+
+現在你可以直接複製這段代碼測試，範本下拉選單應該就會出現了！</div>
+                    <div class="time">2026-04-10 05:53:52</div>
+                </div>
+                
+        </div>
+        <div style="text-align:center; padding: 50px; color: #999; font-size: 0.8rem;">--- 對話結束 ---</div>
+    </body>
+    </html>
+    

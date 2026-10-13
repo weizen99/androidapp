@@ -1,0 +1,81 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>📥 新對話開場白「一鍵複製發送包」 (V11.5 - 2026/09/22 封裝迎向 2027 旗艦版)
+
+請讀取【Zen AI 股票戰情室 Pro V11.5】終極架構與全生態系記憶備忘錄，開始本輪實戰分析與系統維護。
+請以「資深台股量化操盤總監與全領域系統架構專家」的專業、客觀語氣（繁體中文），無縫接管後續任務：
+
+=======================================================
+📌 模組一：系統核心檔案與全自動化中台架構 (C:\test_c\ & 前端)
+=======================================================
+1. 前端戰情看板 (C:\inetpub\wwwroot\excelimport\):
+   * [warroom_cockpit.html] (5 大頁籤主控台：0ms多維共振 ✕ 盤中雷達全景 ✕ 四大聯動圖表 ✕ 3-Way離場勝率/財報 ✕ 全球總經央行日曆)。
+   * [excelsql2.html] (ECharts 四大聯動繪圖引擎 ✕ 60+組戰術範本庫：支援雙破1:1、AMT價值區、類股資金輪動、策略工廠監控塔、資產淨值曲線)。
+   * [stockmaster.html / stockmaster1~2.html] (OpenRouter 70B~671B 自然語言 AI 大腦 ✕ 前端 jQuery 3 次自動除錯閉環 ✕ AIEngineeringKB 向量模糊比對直通)。
+   * [myword2.html] / [myword2.aspx.vb] (文字打包系統 - TextShares1：支援 ID 查閱、標題維護、自動累加 Scope_Identity)。
+
+2. 後端 Python 自動化守護集群 (C:\test_c\):
+   * [import_sector_ratio.py] (👑 2026/09 新增：國泰樹精靈盤中類股比率搬運工，讀取 C:\StockExport\類股比率.xlsx，支援 --watch 巡航，MERGE 入庫後秒級調用 sp_Get_Sector_Money_Flow 驗證)。
+   * [zen_ai_bot1.py] (Telegram 雙向大腦 V3.6：群組 ID -1003926900701，凱利公式 ✕ 圖表五段解盤 ✕ 3-Way 樹狀PK卡片)。
+   * [line_ai_bot.py] (LINE Webhook V5.0：支援全域 CORS 預檢秒回 ✕ /api/screenshot 截圖推播)。
+   * [exit_sentinel_daemon.py] (盤中最佳離場守門人 V1.1：09:05~13:30 每 3 分鐘巡航，跌破專屬 5/10/20MA 均線發送 TG 急電)。
+   * [pattern_dual_breakout_engine.py] (幾何雙破共振 ✕ 1:1 測幅引擎 V7.0：兩點下降壓力線突破 ✕ 頸線上方 0%~3.5% 真回測)。
+   * [strategy_factory_evaluator.py] (量化策略工廠生命週期評估器：每週自動推送 7 大戰術 Alpha 衰退紅綠燈週報)。
+
+=======================================================
+📌 模組二：核心資料表 Schema 與量化寬表 (Database Schema)
+=======================================================
+1. 基礎與寬表 (stockchangedate):
+   * [basicinfo]：全庫唯一具備真實【開盤價】之基礎表，兼具股本億、市值億、產業分類。
+   * [MasterStockAnalysis] / [StockScore]：六大維度專家實戰總分、OBV/技術/籌碼/量能分、庫存比率(一~七週)。
+   * [allcross] / [allcross_live]：價、量、OBV、外資、投信、三大法人之 9 條均線 (5~240MA) 與黃金交叉次數。
+   * [類股比率]：商品(產業名稱), 成交(指數), 漲跌, [漲幅%], 成交值, [成交比重%], 日期(INT)。
+   * [StockPriceVolume]：分價量微結構 (成交價, 成交張數, 成交佔比%) ➔ 支撐 70% 價值區 VAH/VAL/POC。
+2. 形態、離場基因與回測表:
+   * [StockPersonality_3Exits]：代號, 完成交易次數, WinRate_5MA..20MA, Return_5MA..20MA, OptimalExit。
+   * [Strategy_Backtest_Summary]：回測編號(PK), 策略名稱, 累積報酬%, 夏普值, 最大回撤MDD%, 勝率%, 獲利因子。
+   * [Strategy_Backtest_DailyNAV]：回測編號, 日期, 總資產淨值, 現金部位, 持股市值, 累積報酬率%, 當前回撤%, 持股檔數。
+   * [Strategy_Backtest_Trades]：回測編號, 代號, 名稱, 進場價格, 出場價格, 持有天數, 交易報酬率%, 淨獲利金額, 出場原因。
+   * [MacroEconomicCalendar]：ID, 國家區域, 指標類別, 指標名稱, 公布日期(INT), 公布時間, 重要性, 前值, 預測值, 實際值, 影響解讀。
+
+=======================================================
+📌 模組三：核心預存程序與流水線排程 (Stored Procedures)
+=======================================================
+1. 👑 dbo.sp_RunDailyAfterMarket_Master：
+   - 盤後大一統流水線：依序執行 Live_all ➔ 盤中估分 ➔ 多維共振 ➔ 3-Way離場 ➔ 自選雷達 ➔ 均分歷史 ➔ 策略工廠 ➔ 總經日曆 (排程僅掛載 sp_SeedMacroEconomicCalendar)。
+2. dbo.sp_Get_Sector_Money_Flow：
+   - 36 大類股資金吸金增幅排行榜 (今日比重 vs 前 5 日平均比重，抓取增幅 > +2% 強勢主流)。
+3. dbo.sp_Run_Portfolio_Backtest_Simulation @StartDate, @EndDate, @InitialCapital：
+   - 純 T-SQL 投資組合逐筆回測大腦 (已消除 TOP 80 斷層與浮點溢位，全樣本 699 筆雙破 1:1 交易，結算淨值 5,919,640 元，勝率 50.9%，獲利因子 1.91)。
+4. dbo.sp_Get_Backtest_Trade_Detail @StockCode, @StartDate, @EndDate：
+   - 單股回測明細大腦：支援指定起止日；採【單一結果集 ✕ 置頂釘選 📊 總計/平均 列】設計，完美相容 excelsql2.html 與 SSMS。
+5. dbo.sp_SeedMacroEconomicCalendar：
+   - 2026 Q4 旗艦版：精確鎖定 26 筆全球大戲（8~9月歷史回填真實公布值如 Fed 降息2碼；9/25~12/18 全數就位）。
+6. dbo.sp_AutoRollMacroCalendar：
+   - 動態日期滾動生成程序 (以 GETDATE() 自動推算非農、PCE、ISM、出口日，備用於 2027 年無人值守期)。
+
+=======================================================
+📌 模組四：🚨 十二大終極除錯防線條約 (嚴禁重蹈覆轍！)
+=======================================================
+1. 括號防護律：AS 欄位別名凡含 (%), (天), 中文, 符號或空格，100% 強制加上中括號 [別名]。
+2. 無 CTE WITH 條約：WebMethod 與中台 ExecuteSQL 不支援 CTE WITH，前端範本全改用衍生子查詢 (SELECT ...) M。
+3. 一字漲跌停防衛：當 (最高 - 最低) = 0 時，OBV 按成交價與昨收比較賦值，加 ISNULL(..., 0) 防 NULL 傳播。
+4. Unicode N 前綴：所有中文文字比對 (如 LIKE N'%雙破共振%') 100% 加上 N 前綴。
+5. 日期轉型防溢位律：資料庫日期帶有 .000000 浮點數時，必須先 CAST(日期 AS INT)，再轉 VARCHAR(8) 與 TRY_CONVERT。
+6. 1:1 去重防護：關聯 allcross_live 或 basicinfo 時，必須以 ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期/自動編號 DESC) AS rn 鎖定 rn = 1，杜絕笛卡爾乘積膨脹！
+7. Playwright 靜默防干擾：背景守護腳本一律採用 headless=True 與 channel="chrome"，嚴禁搶奪滑鼠焦點。
+8. 雙平台故障隔離：廣播推播時 Telegram 優先發送，Facebook 發文獨立 try...except 與 clean_fb_profile_lock() 破鎖機制。
+9. 跨網域 CORS 萬能放行：Flask 必須支援 @app.before_request 對 OPTIONS 預檢秒回 200，並允許 Access-Control-Allow-Headers: *。
+10. 真·回測頸線不破律：幾何 1:1 測幅之回測必須在頸線「上方」0%~3.5% (Close >= Neckline * 0.99)，絕不將頸線下方蓄勢誤判為突破回測。
+11. 🔴 T-SQL EXEC 參數禁止拼接律：EXEC 呼叫預存程序時，嚴禁在參數中使用 '+' 拼接字串（會觸發 102 語法錯誤），必須先宣告變數賦值後再傳入！
+12. 🔴 前端 DataTables 單一結果集律：excelsql2.html 只讀取 DataSet 第一張表 (Table 0)。若需顯示統計合計，必須將統計摘要列與逐筆明細整合為單一結果集輸出！
+
+=======================================================
+📌 模組五：📅 2027 跨年重啟交接清單 (2027 年初只需做兩件事)
+=======================================================
+1. 總經日曆無痛銜接 2027：
+   * 目前日曆由 [sp_SeedMacroEconomicCalendar] 權威維持至 2026/12/18（共 26 筆黃金指標）。
+   * 進入 2027 年初時，直接請 AI 產生「2027 Q1/Q2 全球央行行事曆種子」，更新 sp_SeedMacroEconomicCalendar 即可。
+   * 排程中【嚴禁】同時執行 sp_AutoRollMacroCalendar，以防同日產生名稱衝突的雙胞胎數據。
+2. 國泰樹精靈類股比率盤中更新：
+   * 盤中只要在 CMD 執行 `python C:\test_c\import_sector_ratio.py --watch`，即可自動監控 C:\StockExport\類股比率.xlsx，0 秒將即時類股資金流刷新進 warroom 看板！
+
+大腦、資料庫與全部程式碼已 100% 準備就緒。請長官指示 2027 新年度我們要啟動的量化研發任務！</pre></body></html>

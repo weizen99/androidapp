@@ -1,0 +1,3576 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>圖文排版示例</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous" />
+    <link href="Content/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/trontastic/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column; /* 改成垂直方向 */
+            gap: 30px; /* 上下兩欄之間的距離 */
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .row {
+            display: flex;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .media-container {
+            width: 600px;
+            height: 800px; /* 根據需求調整高度 */
+            background-color: #f0f0f0;
+            border-radius: 40px;
+            overflow: hidden;
+            margin-right: 25px; /* 左右欄位之間各留25px，共50px */
+        }
+
+        .message-container {
+            flex-grow: 1; /* 占據右欄的全部空間 */
+            padding-right: 40px;
+            margin-left: 25px; /* 左右欄位之間各留25px，共50px */
+        }
+
+        .media-info {
+            padding: 40px;
+            margin-top: 5px;
+        }
+
+        .media {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 確保整個影片顯示在指定大小內 */
+        }
+
+	.media {
+   	 background: #000 url('play-icon.png') no-repeat center;
+    	background-size: 50px;
+	}
+
+
+        aside {
+            width: 600px;
+            float: left;
+            height: 1000px;
+            /* background-color:#FFFFCC;background-image:url(pokepic/p1.jpg);background-repeat:no-repeat;
+          background-size:"10% 10%"; */
+            background-color: #FFFFCC;
+        }
+
+
+        /* <link rel="stylesheet" type="text/css" href="css/color.css" /> */
+        h1#text1 {
+            margin: 0px;
+            padding: 0px;
+            top: 15px;
+            position: absolute;
+            font-size: 40px;
+            color: #FF0000;
+            margin-left: 50px;
+        }
+
+        h1#text2 {
+            margin: 0px;
+            padding: 5px;
+            position: absolute;
+            font-size: 30px;
+            color: #FFFFFF;
+            top: 30px;
+            margin-left: 50px;
+            z-index: 1;
+            filter: glow(color=#ff0000, strength=5);
+            text-shadow: 5px 5px 5px #FF0000;
+        }
+
+        .consection {
+            display: block;
+            border: 0px #330000 solid;
+            width: 600px;
+            left: 30px;
+            top: 60px;
+            margin: auto;
+            padding: 30px;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 16px;
+        }
+
+        .ptest {
+            color: saddlebrown;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        .ptest1 {
+            color: blue;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        .ptest2 {
+            color: red;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        .ptest3 {
+            color: green;
+            font-family: "標楷體", Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+        a:hover {
+            border: 3px green solid;
+            text-decoration: none;
+        }
+
+        /* <link rel="stylesheet" href="css/color.css" /> */
+
+        /* @import url(css/color.css); */
+
+        /* a:link, a:visited {
+            border-style: solid;
+            border-width: 5px;
+            border-color: transparent;
+            }
+            a:hover {border:3px red;text-decoration:none;background-color: green;};
+        */
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark ptest2">
+        <a class="navbar-brand" href="https://sachi.zen2965.workers.dev/">首頁</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        常用連結
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item  disabled" href="https://zen2965.duckdns.org:8888/Book_Sample/testviedo1.html">短視頻留存</a>
+                        <a class="dropdown-item  disabled" href="https://zen2965.duckdns.org:8888/Book_Sample/testviedo.html">短影片</a>
+                        <a class="dropdown-item  disabled" href="https://zen2965.duckdns.org:8888/Book_Sample/testpic.html">圖片類1</a>
+                        
+
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdowntotol99" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        另類用法
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                        <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/mymvc/messageword01.aspx">我的最愛資料庫(本地電腦)</a>
+                        <a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/excelsql.html">搭配留言的select</a>
+			<a class="dropdown-item" href="https://zen2965.duckdns.org:8888/excelimport/message3.html">留言有聲書(本地電腦)</a>
+
+
+                    </div>
+                </li>
+
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        空白
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                        <a class="dropdown-item" href="">空白</a>
+
+
+
+
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        空白
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="">空白</a>
+
+
+
+
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        空白
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="">空白</a>
+
+                        <div class="dropdown-divider"></div>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown5" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        空白
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href=">空白</a>
+
+                        <div class="dropdown-divider"></div>
+
+
+                    </div>
+                </li>
+
+
+            </ul>
+        </div>
+    </nav>
+    <br /><br />
+    <div class="container">
+
+     
+ <!-- 第 1 筆 - #清洁妙招 #生活小妙招 #卫生间清洁 #卫生间 #污渍轻松去除 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/#清洁妙招 #生活小妙招 #卫生间清洁 #卫生间 #污渍轻松去除.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>#清洁妙招 #生活小妙招 #卫生间清洁 #卫生间 #污渍轻松去除</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+
+
+
+ <!-- 第 3333 筆 - excel刪除空白資料列(最後一道手續完成,才能匯入到資料庫) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio/excel刪除空白資料列(最後一道手續完成,才能匯入到資料庫).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>excel刪除空白資料列(最後一道手續完成,才能匯入到資料庫)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+
+
+
+
+
+
+
+            
+        <!-- 第 2 筆 - #生活小妙招 #生活小技巧 #生活小窍门 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/#生活小妙招 #生活小技巧 #生活小窍门.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>#生活小妙招 #生活小技巧 #生活小窍门</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 3 筆 - 10000000_522341222298871_9064572427632848562_n -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/10000000_522341222298871_9064572427632848562_n.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>10000000_522341222298871_9064572427632848562_n</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 4 筆 - 1543100.t -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/1543100.t.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>1543100.t</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 5 筆 - 168356.t -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/168356.t.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>168356.t</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+
+
+ 
+
+
+
+
+
+
+
+
+            
+        <!-- 第 6 筆 - 197237546_1128964554238242_545777383417838155_n -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/197237546_1128964554238242_545777383417838155_n.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>197237546_1128964554238242_545777383417838155_n</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 7 筆 - 2020年北新運動會 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/2020年北新運動會.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>2020年北新運動會</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 8 筆 - 233382.t -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/233382.t.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>233382.t</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 9 筆 - 2504.t -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/2504.t.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>2504.t</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 10 筆 - 278686562_540867150721465_8845147927268066913_n -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/278686562_540867150721465_8845147927268066913_n.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>278686562_540867150721465_8845147927268066913_n</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 11 筆 - 325551.t -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/325551.t.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>325551.t</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 12 筆 - 37670.t -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/37670.t.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>37670.t</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 13 筆 - 602479270.612005 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/602479270.612005.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>602479270.612005</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 14 筆 - 602852689.046255 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/602852689.046255.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>602852689.046255</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 15 筆 - 6053.t -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/6053.t.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>6053.t</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 16 筆 - 622515998.636876 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/622515998.636876.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>622515998.636876</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 17 筆 - kitchen space design _  #shorts #housedesign -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/kitchen space design _  #shorts #housedesign.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>kitchen space design _  #shorts #housedesign</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 18 筆 - Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 19 筆 - Modern Talking - Brother Louie (Official Music Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - Brother Louie (Official Music Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - Brother Louie (Official Music Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 20 筆 - Modern Talking - Cheri Cheri Lady (Official Music Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - Cheri Cheri Lady (Official Music Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - Cheri Cheri Lady (Official Music Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 21 筆 - Modern Talking - Geronimo's Cadillac (Official Music Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - Geronimo's Cadillac (Official Music Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - Geronimo's Cadillac (Official Music Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 22 筆 - Modern Talking - You're My Heart, You're My Soul (Official Music Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - You're My Heart, You're My Soul (Official Music Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - You're My Heart, You're My Soul (Official Music Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 23 筆 - Small bedroom design _ smal l room design _  #house  #shorts -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Small bedroom design _ smal l room design _  #house  #shorts.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Small bedroom design _ smal l room design _  #house  #shorts</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 24 筆 - y2mate.com - 看見台灣之美_u5Rjaj1d5P4_1080p -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/y2mate.com - 看見台灣之美_u5Rjaj1d5P4_1080p.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>y2mate.com - 看見台灣之美_u5Rjaj1d5P4_1080p</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 25 筆 - 三生石下 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/三生石下.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>三生石下</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 26 筆 - 傷心的緣 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/傷心的緣.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>傷心的緣</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 27 筆 - 土味情話 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/土味情話.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>土味情話</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 28 筆 - 大衣腰带系法#生活小妙招#生活小妙招#生活窍门#生活小技巧 每日更新 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/大衣腰带系法#生活小妙招#生活小妙招#生活窍门#生活小技巧 每日更新.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>大衣腰带系法#生活小妙招#生活小妙招#生活窍门#生活小技巧 每日更新</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 29 筆 - 小技巧大妙用 #shorts -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/小技巧大妙用 #shorts.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>小技巧大妙用 #shorts</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 30 筆 - 心肝無人疼 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/心肝無人疼.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>心肝無人疼</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 31 筆 - 撩妹高手 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/撩妹高手.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>撩妹高手</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 32 筆 - 撩妹高手2 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/撩妹高手2.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>撩妹高手2</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 33 筆 - 撩妹高手3 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/撩妹高手3.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>撩妹高手3</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 34 筆 - 撩妹高手4 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/撩妹高手4.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>撩妹高手4</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 35 筆 - 撩妹高手5 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/撩妹高手5.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>撩妹高手5</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 36 筆 - 撩妹高手6 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/撩妹高手6.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>撩妹高手6</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 37 筆 - 春風戀情 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/春風戀情.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>春風戀情</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 38 筆 - 毛筆小天才 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/毛筆小天才.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>毛筆小天才</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 39 筆 - 用一生等待 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/用一生等待.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>用一生等待</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 40 筆 - 老閣主的話 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/老閣主的話.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>老閣主的話</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 41 筆 - 花式撩妹 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/花式撩妹.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>花式撩妹</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 42 筆 - 薛丁山片頭片尾 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/薛丁山片頭片尾.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>薛丁山片頭片尾</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 43 筆 - 顏詠潔公車一日行 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/顏詠潔公車一日行.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>顏詠潔公車一日行</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 44 筆 - 顏詠潔拆解電風扇 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/顏詠潔拆解電風扇.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>顏詠潔拆解電風扇</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+
+
+<!-- 第 1 筆 - (K)蔡秋鳳-一段情04遺憾(蔡秋鳳蔡小虎) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/(K)蔡秋鳳-一段情04遺憾(蔡秋鳳蔡小虎).mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>(K)蔡秋鳳-一段情04遺憾(蔡秋鳳蔡小虎)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 2 筆 - (KTV)(台語)蔡秋鳳-看破 (上豪) 1 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/(KTV)(台語)蔡秋鳳-看破 (上豪) 1.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>(KTV)(台語)蔡秋鳳-看破 (上豪) 1</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 3 筆 - (台語對唱KTV)蔡秋鳳_翁立友-相信我 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/(台語對唱KTV)蔡秋鳳_翁立友-相信我.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>(台語對唱KTV)蔡秋鳳_翁立友-相信我</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 4 筆 - 1009雨水我問你-KTV蔡秋鳳-醉英雄-超級賣 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/1009雨水我問你-KTV蔡秋鳳-醉英雄-超級賣.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>1009雨水我問你-KTV蔡秋鳳-醉英雄-超級賣</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 5 筆 - 2010謝金燕《嗶嗶嗶》台妹電音新舞曲 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/2010謝金燕《嗶嗶嗶》台妹電音新舞曲.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>2010謝金燕《嗶嗶嗶》台妹電音新舞曲</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 6 筆 - KTV-蔡秋鳳+陳冠蒲-越頭看 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/KTV-蔡秋鳳+陳冠蒲-越頭看.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>KTV-蔡秋鳳+陳冠蒲-越頭看</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 7 筆 - KTV-蔡秋鳳-金包銀 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/KTV-蔡秋鳳-金包銀.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>KTV-蔡秋鳳-金包銀</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 8 筆 - KTV-高向鵬-方瑞娥-一生只有你 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/KTV-高向鵬-方瑞娥-一生只有你.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>KTV-高向鵬-方瑞娥-一生只有你</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 9 筆 - 台語歌曲-蔡秋鳳-算命(台語KTV) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/台語歌曲-蔡秋鳳-算命(台語KTV).mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>台語歌曲-蔡秋鳳-算命(台語KTV)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 10 筆 - 姐姐-謝金燕-跳針舞曲(MV) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/姐姐-謝金燕-跳針舞曲(MV).MPG" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>姐姐-謝金燕-跳針舞曲(MV)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 11 筆 - 蔡秋鳳&陳雷-無情的人 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/蔡秋鳳&陳雷-無情的人.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>蔡秋鳳&陳雷-無情的人</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 12 筆 - 蔡秋鳳+蔡小虎 - 恩愛 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/蔡秋鳳+蔡小虎 - 恩愛.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>蔡秋鳳+蔡小虎 - 恩愛</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 13 筆 - 蔡秋鳳+蔡義德-請你聽我講 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/蔡秋鳳+蔡義德-請你聽我講.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>蔡秋鳳+蔡義德-請你聽我講</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 14 筆 - 蔡秋鳳-問韓信( KTV) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/蔡秋鳳-問韓信( KTV).mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>蔡秋鳳-問韓信( KTV)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 15 筆 - 蔡秋鳳-問韓信-03-相思情vs陳隨意 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/蔡秋鳳-問韓信-03-相思情vs陳隨意.MPG" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>蔡秋鳳-問韓信-03-相思情vs陳隨意</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 16 筆 - 蔡秋鳳-女人啊女人 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/蔡秋鳳-女人啊女人.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>蔡秋鳳-女人啊女人</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 17 筆 - 蔡秋鳳-爽到你艱苦到我 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/蔡秋鳳-爽到你艱苦到我.mpg" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>蔡秋鳳-爽到你艱苦到我</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 18 筆 - 謝金燕官方HD「姐姐」跳針舞曲MV大首播 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/謝金燕官方HD「姐姐」跳針舞曲MV大首播.MPG" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>謝金燕官方HD「姐姐」跳針舞曲MV大首播</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+
+
+ <!-- 第 1 筆 - HITA - 赤伶「情字難落墨，她唱須以血來和。」[ High Quality Lyrics ][ Chinese Style ] tk推薦 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/HITA - 赤伶「情字難落墨，她唱須以血來和。」[ High Quality Lyrics ][ Chinese Style ] tk推薦.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>HITA - 赤伶「情字難落墨，她唱須以血來和。」[ High Quality Lyrics ][ Chinese Style ] tk推薦</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 2 筆 - Krewella - Come And Get It (Razihel Remix) [Free] -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Krewella - Come And Get It (Razihel Remix) [Free].mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Krewella - Come And Get It (Razihel Remix) [Free]</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 3 筆 - LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 4 筆 - MV花僮《渡我不渡她》，歌声凄美伤感，听入了心 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/MV花僮《渡我不渡她》，歌声凄美伤感，听入了心.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>MV花僮《渡我不渡她》，歌声凄美伤感，听入了心</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 5 筆 - NightCore Alibi (Krewella)（附中文翻譯） -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/NightCore Alibi (Krewella)（附中文翻譯）.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>NightCore Alibi (Krewella)（附中文翻譯）</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 6 筆 - pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 7 筆 - PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 8 筆 - Skillet - _Feel Invincible_ [Official Music Video] -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Skillet - _Feel Invincible_ [Official Music Video].mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Skillet - _Feel Invincible_ [Official Music Video]</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 9 筆 - Sold Out《無畏向前》中文翻譯 Hawk Nelson__當鼓點落下時，你我都回不了頭了 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Sold Out《無畏向前》中文翻譯 Hawk Nelson__當鼓點落下時，你我都回不了頭了.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Sold Out《無畏向前》中文翻譯 Hawk Nelson__當鼓點落下時，你我都回不了頭了</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 10 筆 - Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版- -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版-.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版-</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 11 筆 - 《2021抖音合集》 一月份热门歌曲总结 最火最热门洗脑抖音歌曲【動態歌詞】循环播放 ！ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《2021抖音合集》 一月份热门歌曲总结 最火最热门洗脑抖音歌曲【動態歌詞】循环播放 ！.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《2021抖音合集》 一月份热门歌曲总结 最火最热门洗脑抖音歌曲【動態歌詞】循环播放 ！</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 12 筆 - 《伯虎说》—伯爵 Johnny_唐伯虎 Annie （无rap版）附带歌词「明月万年无前身，照见古今独醒人，公子王孙何必问，虚度我青春。」 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《伯虎说》—伯爵 Johnny_唐伯虎 Annie （无rap版）附带歌词「明月万年无前身，照见古今独醒人，公子王孙何必问，虚度我青春。」.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《伯虎说》—伯爵 Johnny_唐伯虎 Annie （无rap版）附带歌词「明月万年无前身，照见古今独醒人，公子王孙何必问，虚度我青春。」</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 13 筆 - 《可可托海的牧羊人》的真正原唱，配上“原生态”的丁真，超美 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《可可托海的牧羊人》的真正原唱，配上“原生态”的丁真，超美.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《可可托海的牧羊人》的真正原唱，配上“原生态”的丁真，超美</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 14 筆 - 《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV- -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV-.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV-</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 15 筆 - 《时之歌-花与焰的狂想诗》OP《黑焰》完整版公布！Song of Time Opening Full Version! -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《时之歌-花与焰的狂想诗》OP《黑焰》完整版公布！Song of Time Opening Full Version!.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《时之歌-花与焰的狂想诗》OP《黑焰》完整版公布！Song of Time Opening Full Version!</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 16 筆 - 《海底》凤凰传奇 “眼泪没有声音，但我想抱紧你”《为歌而赞》CUT _浙江卫视官方HD_ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《海底》凤凰传奇 “眼泪没有声音，但我想抱紧你”《为歌而赞》CUT _浙江卫视官方HD_.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《海底》凤凰传奇 “眼泪没有声音，但我想抱紧你”《为歌而赞》CUT _浙江卫视官方HD_</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 17 筆 - 《犬夜叉》主题曲《穿越时空的思念》钢琴版 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《犬夜叉》主题曲《穿越时空的思念》钢琴版.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《犬夜叉》主题曲《穿越时空的思念》钢琴版</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 18 筆 - 《起风了》张含韵、余笛、闫永强 — 当流行音乐、美声与民乐相结合，给你全新的视听感受！【SMG上海东方卫视音乐频道】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《起风了》张含韵、余笛、闫永强 — 当流行音乐、美声与民乐相结合，给你全新的视听感受！【SMG上海东方卫视音乐频道】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《起风了》张含韵、余笛、闫永强 — 当流行音乐、美声与民乐相结合，给你全新的视听感受！【SMG上海东方卫视音乐频道】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 19 筆 - 『六兆年と一夜物語』【鹿乃(かの)】中日字幕 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/『六兆年と一夜物語』【鹿乃(かの)】中日字幕.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>『六兆年と一夜物語』【鹿乃(かの)】中日字幕</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 20 筆 - 【identity v-第五人格歌舞动画】决死行进 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【identity v-第五人格歌舞动画】决死行进.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【identity v-第五人格歌舞动画】决死行进</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 21 筆 - 【】歌ってみた 疑心暗鬼 葛葉 にじさん【】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【】歌ってみた 疑心暗鬼 葛葉 にじさん【】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【】歌ってみた 疑心暗鬼 葛葉 にじさん【】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 22 筆 - 【みうめ・メイリア・217】桃源恋歌-Tougen Renka- OFFiCiAL -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【みうめ・メイリア・217】桃源恋歌-Tougen Renka- OFFiCiAL.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【みうめ・メイリア・217】桃源恋歌-Tougen Renka- OFFiCiAL</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 23 筆 - 【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 24 筆 - 【オリジナルMV】アウトサイダー _ ChroNoiR【cover】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【オリジナルMV】アウトサイダー _ ChroNoiR【cover】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【オリジナルMV】アウトサイダー _ ChroNoiR【cover】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 25 筆 - 【三無Cover】木蘭行【忘川風華錄】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【三無Cover】木蘭行【忘川風華錄】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【三無Cover】木蘭行【忘川風華錄】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 26 筆 - 【三無翻唱】十二鎮魂歌 【Official Video HD】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【三無翻唱】十二鎮魂歌 【Official Video HD】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【三無翻唱】十二鎮魂歌 【Official Video HD】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 27 筆 - 【三無翻唱】陰陽先生 【Official Video】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【三無翻唱】陰陽先生 【Official Video】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【三無翻唱】陰陽先生 【Official Video】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 28 筆 - 【中文字幕】Aldnoah Zero OST - aLIEz -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【中文字幕】Aldnoah Zero OST - aLIEz.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【中文字幕】Aldnoah Zero OST - aLIEz</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 29 筆 - 【合唱】敗北の少年【8人＋α】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【合唱】敗北の少年【8人＋α】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【合唱】敗北の少年【8人＋α】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 30 筆 - 【姐姐们的舞台】《#大碗宽面》在线吸粉，姐姐们全组Slay有女团范儿！《#乘风破浪的姐姐》Sisters Who Make Waves【湖南卫视官方HD】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【姐姐们的舞台】《#大碗宽面》在线吸粉，姐姐们全组Slay有女团范儿！《#乘风破浪的姐姐》Sisters Who Make Waves【湖南卫视官方HD】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【姐姐们的舞台】《#大碗宽面》在线吸粉，姐姐们全组Slay有女团范儿！《#乘风破浪的姐姐》Sisters Who Make Waves【湖南卫视官方HD】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 31 筆 - 【小魂_哦漏_吾恩_妖扬_KBShinya】【盗墓笔记】我们（群像同人） -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【小魂_哦漏_吾恩_妖扬_KBShinya】【盗墓笔记】我们（群像同人）.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【小魂_哦漏_吾恩_妖扬_KBShinya】【盗墓笔记】我们（群像同人）</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 32 筆 - 【抖音DJ版】阿悠悠 - 舊夢一場【動態歌詞】「早知驚鴻一場 何必情深一往」♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【抖音DJ版】阿悠悠 - 舊夢一場【動態歌詞】「早知驚鴻一場 何必情深一往」♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【抖音DJ版】阿悠悠 - 舊夢一場【動態歌詞】「早知驚鴻一場 何必情深一往」♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 33 筆 - 【抖音】等什麼君 - 赤伶「情字難落墨 她唱須以血來和」【動態歌詞】♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【抖音】等什麼君 - 赤伶「情字難落墨 她唱須以血來和」【動態歌詞】♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【抖音】等什麼君 - 赤伶「情字難落墨 她唱須以血來和」【動態歌詞】♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 34 筆 - 【时之歌Project】【特别曲】扭转晨星的舵轮 (Full Ver)【12人战斗曲】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【时之歌Project】【特别曲】扭转晨星的舵轮 (Full Ver)【12人战斗曲】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【时之歌Project】【特别曲】扭转晨星的舵轮 (Full Ver)【12人战斗曲】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 35 筆 - 【时之歌Project】【特别曲】风不定【人衣大人】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【时之歌Project】【特别曲】风不定【人衣大人】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【时之歌Project】【特别曲】风不定【人衣大人】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 36 筆 - 【狂徒】「O2O男團」两攻戲腔原key高音炸裂翻唱【Allen&Mini兔feat.司斓】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【狂徒】「O2O男團」两攻戲腔原key高音炸裂翻唱【Allen&Mini兔feat.司斓】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【狂徒】「O2O男團」两攻戲腔原key高音炸裂翻唱【Allen&Mini兔feat.司斓】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 37 筆 - 【王者之歌】王者荣耀·100英雄群像献礼歌《百战成诗》 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【王者之歌】王者荣耀·100英雄群像献礼歌《百战成诗》.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【王者之歌】王者荣耀·100英雄群像献礼歌《百战成诗》</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 38 筆 - 【第五人格手書】監管者們的GOGO幽靈船 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【第五人格手書】監管者們的GOGO幽靈船.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【第五人格手書】監管者們的GOGO幽靈船</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 39 筆 - 【綜漫高燃AMV】這首BGM有毒 當FADE遇見這些旋律 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【綜漫高燃AMV】這首BGM有毒 當FADE遇見這些旋律.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【綜漫高燃AMV】這首BGM有毒 當FADE遇見這些旋律</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 40 筆 - 【纯享】谁的DNA动了！詹雯婷张远 热血演绎《火影忍者》主题曲《青鸟》，太燃了！ 《我们的歌4》Singing with legends S4 EP12【东方卫视官方频道】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【纯享】谁的DNA动了！詹雯婷张远 热血演绎《火影忍者》主题曲《青鸟》，太燃了！ 《我们的歌4》Singing with legends S4 EP12【东方卫视官方频道】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【纯享】谁的DNA动了！詹雯婷张远 热血演绎《火影忍者》主题曲《青鸟》，太燃了！ 《我们的歌4》Singing with legends S4 EP12【东方卫视官方频道】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 41 筆 - 【纯享】黄霄雲再唱励志“神曲”《星辰大海》，我的梦想又回来了！Huang Xiaoyun - _Stars and Sea_ _ 流淌的歌声S3EP3 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【纯享】黄霄雲再唱励志“神曲”《星辰大海》，我的梦想又回来了！Huang Xiaoyun - _Stars and Sea_ _ 流淌的歌声S3EP3.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【纯享】黄霄雲再唱励志“神曲”《星辰大海》，我的梦想又回来了！Huang Xiaoyun - _Stars and Sea_ _ 流淌的歌声S3EP3</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 42 筆 - 【纯享版】周深挑战二次元神曲《达拉崩吧》解锁魔性舞步 《歌手·当打之年》Singer 2020【湖南卫视官方HD】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【纯享版】周深挑战二次元神曲《达拉崩吧》解锁魔性舞步 《歌手·当打之年》Singer 2020【湖南卫视官方HD】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【纯享版】周深挑战二次元神曲《达拉崩吧》解锁魔性舞步 《歌手·当打之年》Singer 2020【湖南卫视官方HD】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 43 筆 - 【肥皂菌】万神纪 Deities of Cathaysia【官方高清Official HD】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【肥皂菌】万神纪 Deities of Cathaysia【官方高清Official HD】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【肥皂菌】万神纪 Deities of Cathaysia【官方高清Official HD】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 44 筆 - 【西瓜JUN】原创《彼岸》   等一句带我回家 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【西瓜JUN】原创《彼岸》   等一句带我回家.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【西瓜JUN】原创《彼岸》   等一句带我回家</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 45 筆 - 【食物语一周年】《一载百味》九位古风大佬献唱 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【食物语一周年】《一载百味》九位古风大佬献唱.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【食物语一周年】《一载百味》九位古风大佬献唱</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 46 筆 - にじさんじ - Virtual to LIVE [Official Music Video] -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/にじさんじ - Virtual to LIVE [Official Music Video].mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>にじさんじ - Virtual to LIVE [Official Music Video]</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 47 筆 - アンノウン・マザーグース_wowaka (covered by ハッピートリガー) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/アンノウン・マザーグース_wowaka (covered by ハッピートリガー).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>アンノウン・マザーグース_wowaka (covered by ハッピートリガー)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 48 筆 - サマータイムレコード _じん （covered by AXF） -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/サマータイムレコード _じん （covered by AXF）.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>サマータイムレコード _じん （covered by AXF）</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 49 筆 - フォニイ _ 不破湊 Cover -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/フォニイ _ 不破湊 Cover.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>フォニイ _ 不破湊 Cover</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 50 筆 - 一百万个可能 张含韵  ( 张涵韵  zhang han yun) 【 在一瞬间 有一百万个可能 】 轻柔版 好听 高音品質 动态歌词lyrics -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/一百万个可能 张含韵  ( 张涵韵  zhang han yun) 【 在一瞬间 有一百万个可能 】 轻柔版 好听 高音品質 动态歌词lyrics.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>一百万个可能 张含韵  ( 张涵韵  zhang han yun) 【 在一瞬间 有一百万个可能 】 轻柔版 好听 高音品質 动态歌词lyrics</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 51 筆 - 一首好聽的古風音樂《紅塵皆過客》我願從此羽化作仙，情不再留戀 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/一首好聽的古風音樂《紅塵皆過客》我願從此羽化作仙，情不再留戀.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>一首好聽的古風音樂《紅塵皆過客》我願從此羽化作仙，情不再留戀</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 52 筆 - 七音盒 - 云深不知处【古风推荐】『动态歌词 _ 完整高清音质 一首超好听的古风歌曲』Qi Yin He - Yun Shen Bu Zhi Chu -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/七音盒 - 云深不知处【古风推荐】『动态歌词 _ 完整高清音质 一首超好听的古风歌曲』Qi Yin He - Yun Shen Bu Zhi Chu.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>七音盒 - 云深不知处【古风推荐】『动态歌词 _ 完整高清音质 一首超好听的古风歌曲』Qi Yin He - Yun Shen Bu Zhi Chu</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 53 筆 - 下山 要不要買菜【創作MV】chinese danceChinese elegant classical woman -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/下山 要不要買菜【創作MV】chinese danceChinese elegant classical woman.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>下山 要不要買菜【創作MV】chinese danceChinese elegant classical woman</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 54 筆 - 九九八十一-八人混音(易言_樊棋_南久_雙笙_湊詩_小魂_特曼_裂天) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/九九八十一-八人混音(易言_樊棋_南久_雙笙_湊詩_小魂_特曼_裂天).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>九九八十一-八人混音(易言_樊棋_南久_雙笙_湊詩_小魂_特曼_裂天)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 55 筆 - 九九八十一-八人混音-易言樊棋南久雙笙湊詩小魂特曼裂天- -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/九九八十一-八人混音-易言樊棋南久雙笙湊詩小魂特曼裂天-.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>九九八十一-八人混音-易言樊棋南久雙笙湊詩小魂特曼裂天-</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 56 筆 - 人间惊鸿客 _ 人間驚鴻客 - 叶里【叹人间 一去风流唯少年】古风 中国风 中文歌曲 华语歌曲 抖音 _ Chinese Song, Chinese Music -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/人间惊鸿客 _ 人間驚鴻客 - 叶里【叹人间 一去风流唯少年】古风 中国风 中文歌曲 华语歌曲 抖音 _ Chinese Song, Chinese Music.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>人间惊鸿客 _ 人間驚鴻客 - 叶里【叹人间 一去风流唯少年】古风 中国风 中文歌曲 华语歌曲 抖音 _ Chinese Song, Chinese Music</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 57 筆 - 全世界最火的BGM【戰歌】Victory -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/全世界最火的BGM【戰歌】Victory.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>全世界最火的BGM【戰歌】Victory</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 58 筆 - 再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 59 筆 - 初音未來-甩蔥歌-Ievan polkka- 中文空耳版 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/初音未來-甩蔥歌-Ievan polkka- 中文空耳版.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>初音未來-甩蔥歌-Ievan polkka- 中文空耳版</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 60 筆 - 半生雪 - 是七叔呢 (1小时，单曲循环)『半生风雪 吹不散花落时节的眼泪』【動態歌詞_Lyrics Video】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/半生雪 - 是七叔呢 (1小时，单曲循环)『半生风雪 吹不散花落时节的眼泪』【動態歌詞_Lyrics Video】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>半生雪 - 是七叔呢 (1小时，单曲循环)『半生风雪 吹不散花落时节的眼泪』【動態歌詞_Lyrics Video】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 61 筆 - 吳青峰〈起風了〉（電視劇【加油，你是最棒的】主題曲） -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/吳青峰〈起風了〉（電視劇【加油，你是最棒的】主題曲）.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>吳青峰〈起風了〉（電視劇【加油，你是最棒的】主題曲）</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 62 筆 - 周深到底有多强？才会憋出这8个神级现场，真是好听到单曲循环！ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/周深到底有多强？才会憋出这8个神级现场，真是好听到单曲循环！.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>周深到底有多强？才会憋出这8个神级现场，真是好听到单曲循环！</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 63 筆 - 哈尼克孜「MV」- 闻人听書 (被稱為千年一遇美女的新疆四美，一跳「一梦敦煌」便把萬千男士迷死！) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/哈尼克孜「MV」- 闻人听書 (被稱為千年一遇美女的新疆四美，一跳「一梦敦煌」便把萬千男士迷死！).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>哈尼克孜「MV」- 闻人听書 (被稱為千年一遇美女的新疆四美，一跳「一梦敦煌」便把萬千男士迷死！)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 64 筆 - 回小仙 - 醒不来的梦「你是我触碰不到的风，醒不来的梦」【動態歌詞_pīn yīn gē cí】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/回小仙 - 醒不来的梦「你是我触碰不到的风，醒不来的梦」【動態歌詞_pīn yīn gē cí】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>回小仙 - 醒不来的梦「你是我触碰不到的风，醒不来的梦」【動態歌詞_pīn yīn gē cí】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 65 筆 - 夢然 (Mira) - 少年 『我還是從前那個少年 沒有一絲絲改變』【動態歌詞】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/夢然 (Mira) - 少年 『我還是從前那個少年 沒有一絲絲改變』【動態歌詞】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>夢然 (Mira) - 少年 『我還是從前那個少年 沒有一絲絲改變』【動態歌詞】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 66 筆 - 大籽《白月光与朱砂痣》完整版MV -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/大籽《白月光与朱砂痣》完整版MV.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>大籽《白月光与朱砂痣》完整版MV</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 67 筆 - 小樂哥 - 执迷不悟（DJ版）『我對你又何止是執迷不悟，眼淚偶爾會莫名的光顧。』【動態歌詞Lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/小樂哥 - 执迷不悟（DJ版）『我對你又何止是執迷不悟，眼淚偶爾會莫名的光顧。』【動態歌詞Lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>小樂哥 - 执迷不悟（DJ版）『我對你又何止是執迷不悟，眼淚偶爾會莫名的光顧。』【動態歌詞Lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 68 筆 - 山水組合 - 你莫走『妹兒丫頭你莫走，唱首歌歌兒把你留。』【動態歌詞Lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/山水組合 - 你莫走『妹兒丫頭你莫走，唱首歌歌兒把你留。』【動態歌詞Lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>山水組合 - 你莫走『妹兒丫頭你莫走，唱首歌歌兒把你留。』【動態歌詞Lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 69 筆 - 张含韵唱歌到底有多好听？现场一首《起风了》，听的骨头都酥了！ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/张含韵唱歌到底有多好听？现场一首《起风了》，听的骨头都酥了！.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>张含韵唱歌到底有多好听？现场一首《起风了》，听的骨头都酥了！</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 70 筆 - 据说日本假唱犯法，才逼出了这5个神级现场！每首都能血洗全网 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/据说日本假唱犯法，才逼出了这5个神级现场！每首都能血洗全网.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>据说日本假唱犯法，才逼出了这5个神级现场！每首都能血洗全网</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 71 筆 - 明星冒充选手参加选秀，专门“忽悠”导师，林俊杰：骗人！ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/明星冒充选手参加选秀，专门“忽悠”导师，林俊杰：骗人！.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>明星冒充选手参加选秀，专门“忽悠”导师，林俊杰：骗人！</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 72 筆 - 是七叔呢 - 半生雪【動態歌詞】「半生風雪 吹不散歲月留下的眼淚」♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/是七叔呢 - 半生雪【動態歌詞】「半生風雪 吹不散歲月留下的眼淚」♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>是七叔呢 - 半生雪【動態歌詞】「半生風雪 吹不散歲月留下的眼淚」♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 73 筆 - 是七叔呢 - 踏山河【動態歌詞】「長槍刺破雲霞 放下一生牽掛」♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/是七叔呢 - 踏山河【動態歌詞】「長槍刺破雲霞 放下一生牽掛」♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>是七叔呢 - 踏山河【動態歌詞】「長槍刺破雲霞 放下一生牽掛」♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 74 筆 - 本草纲目 周杰伦 -歌词版- -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/本草纲目 周杰伦 -歌词版-.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>本草纲目 周杰伦 -歌词版-</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 75 筆 - 棄佛入魔 - 殘雪『佛前一跪多年佛不憐心，卻讓我走入絕境，那我成魔只為換一份安寧』【動態歌詞】混剪自：花千骨 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/棄佛入魔 - 殘雪『佛前一跪多年佛不憐心，卻讓我走入絕境，那我成魔只為換一份安寧』【動態歌詞】混剪自：花千骨.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>棄佛入魔 - 殘雪『佛前一跪多年佛不憐心，卻讓我走入絕境，那我成魔只為換一份安寧』【動態歌詞】混剪自：花千骨</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 76 筆 - 機動戦士ガンダムSEED Full Ending あんなに一緒だったのに -ReTracks by See-Saw 中日歌詞 (1) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/機動戦士ガンダムSEED Full Ending あんなに一緒だったのに -ReTracks by See-Saw 中日歌詞 (1).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>機動戦士ガンダムSEED Full Ending あんなに一緒だったのに -ReTracks by See-Saw 中日歌詞 (1)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 77 筆 - 溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 78 筆 - 火影忍者疾風傳 片頭曲3-青鳥（原聲 完整版）Naruto Shippuden opening3 - Blue Bird -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/火影忍者疾風傳 片頭曲3-青鳥（原聲 完整版）Naruto Shippuden opening3 - Blue Bird.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>火影忍者疾風傳 片頭曲3-青鳥（原聲 完整版）Naruto Shippuden opening3 - Blue Bird</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 79 筆 - 燕無歇  蔣雪兒【創作MV】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/燕無歇  蔣雪兒【創作MV】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>燕無歇  蔣雪兒【創作MV】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 80 筆 - 王忻辰&苏星婕 - 清空【DJ版】♪ KarenDaidai -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/王忻辰&苏星婕 - 清空【DJ版】♪ KarenDaidai.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>王忻辰&苏星婕 - 清空【DJ版】♪ KarenDaidai</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 81 筆 - 第五人格：三周年贺曲《初愿》PV！长风起于毫末，多谢三载同行者！【小砸墨】IdentityV -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/第五人格：三周年贺曲《初愿》PV！长风起于毫末，多谢三载同行者！【小砸墨】IdentityV.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>第五人格：三周年贺曲《初愿》PV！长风起于毫末，多谢三载同行者！【小砸墨】IdentityV</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 82 筆 - 等什么君   凉夜横塘【歌词字幕  完整版高清无损音质】♫「夜未央，星汉西流荡至苍茫」 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/等什么君   凉夜横塘【歌词字幕  完整版高清无损音质】♫「夜未央，星汉西流荡至苍茫」.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>等什么君   凉夜横塘【歌词字幕  完整版高清无损音质】♫「夜未央，星汉西流荡至苍茫」</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 83 筆 - 等什么君歌曲 等什么君误红妆 辞九门回忆 赤伶  等什么君 关山酒 【合辑】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/等什么君歌曲 等什么君误红妆 辞九门回忆 赤伶  等什么君 关山酒 【合辑】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>等什么君歌曲 等什么君误红妆 辞九门回忆 赤伶  等什么君 关山酒 【合辑】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 84 筆 - 等什麼君 - 慕夏【動態歌詞】「姻緣樹下共求月老 執手暮暮朝朝」♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/等什麼君 - 慕夏【動態歌詞】「姻緣樹下共求月老 執手暮暮朝朝」♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>等什麼君 - 慕夏【動態歌詞】「姻緣樹下共求月老 執手暮暮朝朝」♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 85 筆 - 等什麼君 - 春庭雪【原唱：橙翼】【動態歌詞】「我心匪石不可轉 我心匪席不可卷」♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/等什麼君 - 春庭雪【原唱：橙翼】【動態歌詞】「我心匪石不可轉 我心匪席不可卷」♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>等什麼君 - 春庭雪【原唱：橙翼】【動態歌詞】「我心匪石不可轉 我心匪席不可卷」♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 86 筆 - 等什麼君 - 辭九門回憶『戲子多秋，可憐一處情深舊。』【動態歌詞Lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/等什麼君 - 辭九門回憶『戲子多秋，可憐一處情深舊。』【動態歌詞Lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>等什麼君 - 辭九門回憶『戲子多秋，可憐一處情深舊。』【動態歌詞Lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 87 筆 - 等什麼君 - 關山酒(女聲版)『我自關山點酒，千秋皆入喉。』【動態歌詞Lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/等什麼君 - 關山酒(女聲版)『我自關山點酒，千秋皆入喉。』【動態歌詞Lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>等什麼君 - 關山酒(女聲版)『我自關山點酒，千秋皆入喉。』【動態歌詞Lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 88 筆 - 等什麼君Cover - 青絲【動態歌詞】「君不見妾起舞翩翩 君不見妾鼓瑟綿綿」♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/等什麼君Cover - 青絲【動態歌詞】「君不見妾起舞翩翩 君不見妾鼓瑟綿綿」♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>等什麼君Cover - 青絲【動態歌詞】「君不見妾起舞翩翩 君不見妾鼓瑟綿綿」♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 89 筆 - 胡歌 - 美麗的神話『卻連一句我愛你都 不能說出口』【動態歌詞Lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/胡歌 - 美麗的神話『卻連一句我愛你都 不能說出口』【動態歌詞Lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>胡歌 - 美麗的神話『卻連一句我愛你都 不能說出口』【動態歌詞Lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 90 筆 - 花僮 - 浪子闲话「我饮过风咽过沙，浪子无钱逛酒家。」♪ KarenDaidai -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/花僮 - 浪子闲话「我饮过风咽过沙，浪子无钱逛酒家。」♪ KarenDaidai.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>花僮 - 浪子闲话「我饮过风咽过沙，浪子无钱逛酒家。」♪ KarenDaidai</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 91 筆 - 花粥 - 歸去來兮『此去必經年，荒野寒暑換紅顏』【中文動態歌詞Lycris】完整版 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/花粥 - 歸去來兮『此去必經年，荒野寒暑換紅顏』【中文動態歌詞Lycris】完整版.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>花粥 - 歸去來兮『此去必經年，荒野寒暑換紅顏』【中文動態歌詞Lycris】完整版</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 92 筆 - 蔡依林 Jolin Tsai《說愛你》-feat.G.E.M.鄧紫棋- Official Live Music Video (1) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/蔡依林 Jolin Tsai《說愛你》-feat.G.E.M.鄧紫棋- Official Live Music Video (1).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>蔡依林 Jolin Tsai《說愛你》-feat.G.E.M.鄧紫棋- Official Live Music Video (1)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 93 筆 - 豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 94 筆 - 買辣椒也用券 - 起風了 (新版)【動態歌詞Lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/買辣椒也用券 - 起風了 (新版)【動態歌詞Lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>買辣椒也用券 - 起風了 (新版)【動態歌詞Lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 95 筆 - 踏山河  是七叔呢【創作MV】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/踏山河  是七叔呢【創作MV】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>踏山河  是七叔呢【創作MV】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 96 筆 - 这才是《错位时空》真正的原唱，动人的旋律，感人的歌词，太好听 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/这才是《错位时空》真正的原唱，动人的旋律，感人的歌词，太好听.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>这才是《错位时空》真正的原唱，动人的旋律，感人的歌词，太好听</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 97 筆 - 阿肆 - 熱愛105°C的你【動態歌詞】「Super Idol的笑容 都沒你的甜」♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/阿肆 - 熱愛105°C的你【動態歌詞】「Super Idol的笑容 都沒你的甜」♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>阿肆 - 熱愛105°C的你【動態歌詞】「Super Idol的笑容 都沒你的甜」♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 98 筆 - 飞兰 我只凝望着你 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/飞兰 我只凝望着你.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>飞兰 我只凝望着你</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+
+
+<!-- 第 1 筆 - Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - Atlantis Is Calling (S.O.S. For Love) (Official Music Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 2 筆 - Modern Talking - Back For Good 98_ Mix (Hard Qoo Mix) 摩登語錄 80_s 經典迪斯可連續舞曲 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - Back For Good 98_ Mix (Hard Qoo Mix) 摩登語錄 80_s 經典迪斯可連續舞曲.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - Back For Good 98_ Mix (Hard Qoo Mix) 摩登語錄 80_s 經典迪斯可連續舞曲</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 3 筆 - Modern Talking - Cheri Cheri Lady (Official Music Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - Cheri Cheri Lady (Official Music Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - Cheri Cheri Lady (Official Music Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 4 筆 - Modern Talking - Geronimo_s Cadillac (Official Music Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - Geronimo_s Cadillac (Official Music Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - Geronimo_s Cadillac (Official Music Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 5 筆 - Modern Talking - Space Mix _98 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - Space Mix _98.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - Space Mix _98</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 6 筆 - Modern Talking - You Can Win If You Want (Rockpop Music Hall 29.06.1985) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - You Can Win If You Want (Rockpop Music Hall 29.06.1985).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - You Can Win If You Want (Rockpop Music Hall 29.06.1985)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 7 筆 - Modern Talking - You_re My Heart, You_re My Soul (Official Music Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Modern Talking - You_re My Heart, You_re My Soul (Official Music Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Modern Talking - You_re My Heart, You_re My Soul (Official Music Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 8 筆 - ❤ Modern Talking ❤  Brother Louie ❤ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/❤ Modern Talking ❤  Brother Louie ❤.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>❤ Modern Talking ❤  Brother Louie ❤</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+
+
+
+        <!-- 第 1 筆 - Bananarama - Venus (Official Video) -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Bananarama - Venus (Official Video).mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Bananarama - Venus (Official Video)</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 2 筆 - Circle In The Sand《沙灘上的圈圈》~ Belinda Carlisle中英歌詞 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Circle In The Sand《沙灘上的圈圈》~ Belinda Carlisle中英歌詞.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Circle In The Sand《沙灘上的圈圈》~ Belinda Carlisle中英歌詞</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 3 筆 - DJ版伤感情歌配音《梦中的你和我》歌声旋律劲爆动感，深情感人【林林苑爱音乐】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/DJ版伤感情歌配音《梦中的你和我》歌声旋律劲爆动感，深情感人【林林苑爱音乐】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>DJ版伤感情歌配音《梦中的你和我》歌声旋律劲爆动感，深情感人【林林苑爱音乐】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 4 筆 - Kylie Minogue - I Should Be So Lucky - Official Video -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Kylie Minogue - I Should Be So Lucky - Official Video.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Kylie Minogue - I Should Be So Lucky - Official Video</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 5 筆 - Kylie Minogue - The Loco-Motion -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Kylie Minogue - The Loco-Motion.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Kylie Minogue - The Loco-Motion</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 6 筆 - 《你是我的格桑花》演唱：梁红-audioonly -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《你是我的格桑花》演唱：梁红-audioonly.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《你是我的格桑花》演唱：梁红-audioonly</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 7 筆 - 人生就是一場自渡 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/人生就是一場自渡.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>人生就是一場自渡</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 8 筆 - 人生須自渡 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/人生須自渡.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>人生須自渡</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 9 筆 - 你不配 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/你不配.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>你不配</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 10 筆 - 假如爱有天意 - 李健 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/假如爱有天意 - 李健.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>假如爱有天意 - 李健</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 11 筆 - 做個生活強者 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/做個生活強者.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>做個生活強者</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 12 筆 - 北山的風吹不到南山尾 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/北山的風吹不到南山尾.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>北山的風吹不到南山尾</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 13 筆 - 大明風華bgm｜背景音樂｜初心｜電視劇【高清】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/大明風華bgm｜背景音樂｜初心｜電視劇【高清】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>大明風華bgm｜背景音樂｜初心｜電視劇【高清】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 14 筆 - 天使的翅膀完整 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/天使的翅膀完整.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>天使的翅膀完整</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 15 筆 - 對著月亮許個願 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/對著月亮許個願.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>對著月亮許個願</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 16 筆 - 徐誉滕  天使的翅膀 高清 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/徐誉滕  天使的翅膀 高清.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>徐誉滕  天使的翅膀 高清</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 17 筆 - 我就是那麼可愛 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/我就是那麼可愛.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>我就是那麼可愛</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 18 筆 - 抖音TikTok神曲 - 科目三 (一笑江湖) [科目三完整版] -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/抖音TikTok神曲 - 科目三 (一笑江湖) [科目三完整版].mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>抖音TikTok神曲 - 科目三 (一笑江湖) [科目三完整版]</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 19 筆 - 杏花落 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/杏花落.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>杏花落</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 20 筆 - 狂浪 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/狂浪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>狂浪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 21 筆 - 留點金錢養老吧 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/留點金錢養老吧.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>留點金錢養老吧</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 22 筆 - 祝福送給有綠的人 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/祝福送給有綠的人.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>祝福送給有綠的人</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 23 筆 - 等一個人到來 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/等一個人到來.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>等一個人到來</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 24 筆 - 聞人聽書_ - 一笑江湖『江湖一笑 浪滔滔』【動態歌詞Lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/聞人聽書_ - 一笑江湖『江湖一笑 浪滔滔』【動態歌詞Lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>聞人聽書_ - 一笑江湖『江湖一笑 浪滔滔』【動態歌詞Lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 25 筆 - 花姐 _ 狂浪 _ (DJ V1) _ (1080P)KTV -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/花姐 _ 狂浪 _ (DJ V1) _ (1080P)KTV.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>花姐 _ 狂浪 _ (DJ V1) _ (1080P)KTV</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 26 筆 - 表演 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/表演.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>表演</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 27 筆 - 賽馬 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/賽馬.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>賽馬</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 28 筆 - 负我不负她 -  赵洋 _Fu wo bu fu ta  - Zhao yang -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/负我不负她 -  赵洋 _Fu wo bu fu ta  - Zhao yang.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>负我不负她 -  赵洋 _Fu wo bu fu ta  - Zhao yang</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 29 筆 - 高勝美 ~ 緣 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/高勝美 ~ 緣.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>高勝美 ~ 緣</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+
+
+        <!-- 第 1 筆 - LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>LBI利比 - 小城夏天『橘黃色的日落 吞沒在海平線』【Lyrics Video】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 2 筆 - pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪ -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>pro - 等不來花開「我們的愛 就像秋葉等不到花開」【動態歌詞PinyinLyrics】♪</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 3 筆 - PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>PSY -ft. HYUNA- - 오빤 딱 내 스타일 MV</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 4 筆 - Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版- -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版-.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>Song Voyage Chicken Attack 雞雞攻擊 -中文翻譯版-</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 5 筆 - 《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV- -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV-.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>《孤勇者》（《英雄聯盟：雙城之戰》動畫劇集中文主題曲）陳奕迅 Eason Chan -Official MV-</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 6 筆 - 【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【みうめ・メイリア・217】極楽浄土-Gokuraku Jodo- OFFiCiAL</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 7 筆 - 【中文字幕】Aldnoah Zero OST - aLIEz -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/【中文字幕】Aldnoah Zero OST - aLIEz.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>【中文字幕】Aldnoah Zero OST - aLIEz</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 8 筆 - 再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>再見莫妮卡 - 彭席彥 Franky弗蘭奇『一個人想想想想到心痛「怎麽能夠不懂」，情緒一點點點點到失控「變得有恃無恐」』【動態歌詞】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 9 筆 - 初音未來-甩蔥歌-Ievan polkka- 中文空耳版 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/初音未來-甩蔥歌-Ievan polkka- 中文空耳版.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>初音未來-甩蔥歌-Ievan polkka- 中文空耳版</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 10 筆 - 本草纲目 周杰伦 -歌词版- -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/本草纲目 周杰伦 -歌词版-.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>本草纲目 周杰伦 -歌词版-</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 11 筆 - 溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>溫奕心 - 一路生花『我希望許過的願望一路生花，護送那時的夢抵擋過風沙。』【動態歌詞VietsubPinyin Lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 12 筆 - 豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>豆包 - 作酒 -DJ默涵版- 「我用山川作酒 敬你旷世温柔」【动态歌词 lyrics】</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+
+
+        <!-- 第 1 筆 - 下定決心忘記你 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/下定決心忘記你.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>下定決心忘記你</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 2 筆 - 冬天戀愛最適合 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/冬天戀愛最適合.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>冬天戀愛最適合</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 3 筆 - 分手以後誰還記得誰 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/分手以後誰還記得誰.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>分手以後誰還記得誰</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 4 筆 - 喝下人生兩杯酒 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/喝下人生兩杯酒.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>喝下人生兩杯酒</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 5 筆 - 城市霓虹點亮夜的黑 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/城市霓虹點亮夜的黑.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>城市霓虹點亮夜的黑</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 6 筆 - 好歹攏是命 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/好歹攏是命.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>好歹攏是命</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 7 筆 - 情緣 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/情緣.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>情緣</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 8 筆 - 美麗的蝴蝶 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/美麗的蝴蝶.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>美麗的蝴蝶</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+            
+        <!-- 第 9 筆 - 輕鬆行走人世間 -->
+        <div class="row">
+            <div class="media-container">
+                <video src="vedio1/輕鬆行走人世間.mp4" class="media" controls preload="none"></video>
+                <div class="media-info">
+                    <h3></h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="message-container">
+                <h2>輕鬆行走人世間</h2>
+                <p>等待播放時不佔用流量</p>
+            </div>
+        </div>
+
+
+
+        
+
+
+
+       
+
+
+
+
+        <!-- 依此類推 -->
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+</body>
+</html>

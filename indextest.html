@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的寶可夢 & 生活門戶</title>
+    <!-- 引入 Bootstrap 5 & Google Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pk-red: #ee1515;
+            --pk-blue: #2a75bb;
+            --pk-yellow: #ffcb05;
+            --dark-bg: #212529;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding-top: 70px;
+        }
+
+        /* 頂部標題裝飾 */
+        .hero-section {
+            background: linear-gradient(135deg, var(--pk-red) 0%, #b30000 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            border-radius: 0 0 50px 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .hero-title {
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+
+        /* 卡片樣式 */
+        .feature-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .card-header-pk {
+            background: transparent;
+            border-bottom: 2px solid #eee;
+            font-weight: bold;
+            color: var(--pk-red);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header-pk i {
+            margin-right: 10px;
+        }
+
+        /* 連結樣式 */
+        .list-group-item {
+            border: none;
+            padding: 10px 15px;
+            transition: background 0.2s;
+        }
+
+        .list-group-item:hover {
+            background-color: #fff9e6;
+        }
+
+        .list-group-item a {
+            text-decoration: none;
+            color: #444;
+            display: block;
+        }
+
+        .list-group-item a:hover {
+            color: var(--pk-blue);
+        }
+
+        /* 標籤徽章 */
+        .badge-new {
+            background-color: var(--pk-red);
+            font-size: 0.7rem;
+            vertical-align: middle;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 30px 0;
+            background: var(--dark-bg);
+            color: #888;
+            text-align: center;
+        }
+
+        /* 手機版調整 */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 導航列 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#"><i class="fas fa-gamepad me-2 text-warning"></i>工具門戶</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">切換版本</a>
+                    <ul class="dropdown-menu shadow">
+                        <li><a class="dropdown-item" href="#">響應式網頁版</a></li>
+                        <li><a class="dropdown-item" href="#">WebSQL 查詢</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">下載 App 專區</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="#stock">股票資訊</a></li>
+                <li class="nav-item"><a class="nav-link" href="#entertainment">追劇網站</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- 主視覺區 -->
+<header class="hero-section text-center">
+    <div class="container">
+        <h1 class="hero-title display-4">寶可夢抓寶工具箱</h1>
+        <p class="lead">更省時的移動，更精準的資訊</p>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row g-4">
+        
+        <!-- 寶可夢核心工具 -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card feature-card">
+                <div class="card-header card-header-pk">
+                    <i class="fas fa-ghost"></i> 寶可夢抓寶助手
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item"><a href="https://twpkinfo.com/ipoke.aspx"><i class="fas fa-crosshairs me-2 text-danger"></i>寶可夢資訊站 (抓高IV)</a></div>
+                    <div class="list-group-item"><a href="https://twpkinfo.com/igym.aspx"><i class="fas fa-khanda me-2 text-primary"></i>團體戰及道館名稱</a></div>
+                    <div class="list-group-item"><a href="https://pokemon.gameinfo.io/zh-tw/pokemon/149-dragonite"><i class="fas fa-bolt me-2 text-warning"></i>最佳技能查詢</a></div>
+                    <div class="list-group-item"><a href="http://www.sachi.somee.com/mapsql"><i class="fas fa-map-marked-alt me-2 text-success"></i>24H 座標地圖 (外部)</a></div>
+                    <div class="list-group-item"><a href="pokepic/伊布進化.html"><i class="fas fa-paw me-2"></i>伊布進化攻略</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 股票投資區 -->
+        <div class="col-lg-4 col-md-6" id="stock">
+            <div class="card feature-card">
+                <div class="card-header card-header-pk text-primary">
+                    <i class="fas fa-chart-line"></i> 股票投資工具
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item"><a href="stock1.html">股票資訊 (手機優化版)</a></div>
+                    <div class="list-group-item"><a href="https://zen2965.duckdns.org:8888/fishnew5/trend">綜合查詢 (趨勢圖)</a></div>
+                    <div class="list-group-item"><a href="https://zen2965.duckdns.org:8888/fishnew5/poem1_stockchips">投信外資籌碼分析</a></div>
+                    <div class="list-group-item"><a href="https://www.wantgoo.com/global">玩股網 全球股市</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 生活與影視 -->
+        <div class="col-lg-4 col-md-6" id="entertainment">
+            <div class="card feature-card">
+                <div class="card-header card-header-pk text-success">
+                    <i class="fas fa-play-circle"></i> 影視娛樂 & 生活
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item"><a href="https://gimy.tv/"><i class="fas fa-tv me-2"></i>Gimy 追劇首選</a></div>
+                    <div class="list-group-item"><a href="http://www01.eyny.com/video.php"><i class="fas fa-film me-2"></i>伊莉影視</a></div>
+                    <div class="list-group-item"><a href="http://vigor.enjoy101.org/"><i class="fas fa-broadcast-tower me-2"></i>Vigor 網路電視</a></div>
+                    <div class="list-group-item"><a href="https://www.taiwanstat.com/realtime/rain/"><i class="fas fa-cloud-showers-heavy me-2"></i>台灣即時雨量</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 系統消息 & 外部資源 -->
+        <div class="col-lg-8">
+            <div class="card feature-card">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold border-bottom pb-2"><i class="fas fa-bullhorn text-danger me-2"></i>最新公告 & 資料庫</h5>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <p class="text-muted small">1. 已增加全國景點座標<br>2. 增加外部 Somee 備用站點</p>
+                            <ul class="ps-3 small">
+                                <li><a href="fourword.html" class="text-decoration-none">WebSQL 成語查詢</a></li>
+                                <li><a href="tablesort/youbike.html" class="text-decoration-none">YouBike 大台北座標</a></li>
+                                <li><a href="https://zen2965home.synology.me/androidapp/index.html" class="text-decoration-none">Synology 加密首頁</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-grid gap-2">
+                                <a href="pokepic/address_rwd.zip" class="btn btn-outline-danger btn-sm"><i class="fas fa-download me-1"></i> 斗南座標 App 下載</a>
+                                <a href="pokepic/_SQL樞紐分析選股_12219119.zip" class="btn btn-outline-primary btn-sm"><i class="fas fa-download me-1"></i> 樞紐分析 App 下載</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 本機開發/導航區 -->
+        <div class="col-lg-4">
+            <div class="card feature-card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold border-bottom border-secondary pb-2">快速導航</h5>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <a href="#" class="badge bg-secondary text-decoration-none p-2">斗南附近座標</a>
+                        <a href="#" class="badge bg-secondary text-decoration-none p-2">景點導航</a>
+                        <a href="#" class="badge bg-secondary text-decoration-none p-2">自製影片</a>
+                        <a href="#" class="badge bg-secondary text-decoration-none p-2">成語測驗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <p>歡迎光臨我的工具入口站</p>
+        <p class="small">© 2023 抓寶助手服務網 | 建議使用 Chrome 瀏覽器獲得最佳體驗</p>
+    </div>
+</footer>
+
+<!-- 引入 Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
