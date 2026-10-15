@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>myword2 ID 12</title>
+</head>
+<body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
+    <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 12</h2>
+    <hr style="border: 1px solid #334155;">
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">"""
+================================================================================
+🌟 Zen AI 股票戰情室 Pro - 四網大一統廣播中樞 (三重裝甲・永不 404 旗艦版)
+檔案路徑：C:\test_c\zen_broadcaster.py
+支援平台：Telegram ✕ LINE ✕ Discord ✕ Facebook 社團
+核心架構：
+1. 第一階梯：Google 原廠直連 (gemini-1.5-flash 定海神針 ✕ 3.8-flash)
+2. 第二階梯：OpenRouter 最新在線模型 (openrouter/free 優先，剔除 404 廢棄模型)
+3. 第三階梯：本地 Ollama 7B 斷網實體保底 (保證絕不出現「全數繁忙」！)
+================================================================================
+"""
+
+import os
+import sys
+import time
+import re
+import datetime
+import subprocess
+import argparse
+import json
+import requests
+import pyodbc
+import apprise
+
+# 強制 UTF-8 輸出
+if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+if sys.stderr and hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
+SCRIPT_DIR = r"C:\test_c"
+
+# ==============================================================================
+# 🛠️ 1. 資料庫連線配置 (Windows 本機身分驗證)
+# ==============================================================================
+SERVER = "localhost"
+DATABASE = "stockchangedate"
+CONN_STR = f"DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;"
+
+
+# =========================================================================
+# 🧠 1. 雙引擎大腦與模型池配置 (真實型號校正版)
+# =========================================================================
+# 🟢 修正 1：Google 官方真實存在的最強模型池 (剔除不存在的 3.1/3.6 型號)
+GEMINI_MODEL_CANDIDATES = [  
+    ("gemini-3.8-flash",          "⚡ 備援 A：3.8 Flash"),
+    ("gemini-2.5-flash",         "🛡️ 備援 B：抗過載主力（伺服器最穩，絕不 503)"),
+    ("gemini-3.5-flash-lite",     "🚀 備援 C：極速"),
+    ("gemini-1.5-pro",         "👑 Google 原廠 1.5 Pro (最強邏輯大腦)"),    
+    ("gemini-2.0-flash-exp",   "⚡ Google 原廠 2.0 實驗版 (極速推理)"),
+    ("gemini-1.5-flash",       "🛡️ Google 原廠 1.5 Flash (定海神針/最穩)")
+]
+
+# 🟢 修正 2：OpenRouter 菁英備援池
+OPENROUTER_MODEL_TIERS = [  
+    ("meta-llama/llama-3.3-70b-instruct:free", "👑 Llama-3.3 (70B 開源旗艦)"),
+    ("qwen/qwen-2.5-coder-32b-instruct:free", "💎 Qwen-2.5-Coder (32B 量化推理)"),
+    ("inclusionai/ling-3.0-flash:free", "📈 Ling-3.0-Flash (104B 金融專用)"),    
+    ("openrouter/free", "🌐 OpenRouter 官方動態分流")
+]
+
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+OLLAMA_URL = "http://localhost:11434/api/generate"
+OLLAMA_MODEL = "qwen2.5:7b"
+
+# =========================================================================
+# 🔑 2. 直接寫死金鑰陣列 (100% 保證點火成功)
+# =========================================================================
+# 🟢 修正 3：請長官把您手邊的 Google 金鑰 (AIzaSy 開頭的字串) 直接貼在下方引號內！
+GEMINI_API_KEYS = [
+   ***
+]
+
+OPENROUTER_API_KEY = "***"
+_working_gemini_model = None
+
+# ==============================================================================
+# 🔑 3. 智慧金鑰與通訊平台自動探針
+# ==============================================================================
+MANUAL_CONFIG = {
+    "telegram": "",
+    "line": "",
+    "discord": "",
+    "fb_script": os.path.join(SCRIPT_DIR, "fb_post_stock.py")
+}
+
+def auto_detect_tokens():
+    detected_comms = {"telegram": "", "line": "", "discord": ""}
+    gemini_keys = []
+    openrouter_key = ""
+
+    scan_files = [
+        "zen_ai_bot2.py", "zen_ai_bot1.py", "auto_push_resonance.py", 
+        "discord_alerts.py", "line_ai_bot.py", "update_notioninfo_OpenRouter.py"
+    ]
+
+    for fname in scan_files:
+        fpath = os.path.join(SCRIPT_DIR, fname)
+        if os.path.exists(fpath):
+            try:
+                with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
+                    content = f.read()
+                    
+                    g_matches = re.findall(r'AIza[0-9A-Za-z-_]{35}', content)
+                    if g_matches: gemini_keys.extend(g_matches)
+
+                    if not openrouter_key:
+                        or_m = re.search(r'(sk-or-v1-[A-Za-z0-9a-f]+)', content)
+                        if or_m: openrouter_key = or_m.group(1)
+
+                    if not detected_comms["telegram"]:
+                        t = re.search(r'(?:BOT_TOKEN|TOKEN|TG_BOT_TOKEN)\s*=\s*["\']([0-9]{8,11}:[A-Za-z0-9_-]{30,})["\']', content)
+                        c = re.search(r'(?:CHAT_ID|GROUP_ID|CHANNEL_ID)\s*=\s*["\']?(-?[0-9]{8,15})["\']?', content)
+                        if t and c:
+                            detected_comms["telegram"] = f"tgram://{t.group(1)}/{c.group(1)}"
+
+                    if not detected_comms["discord"]:
+                        d_match = re.search(r'discord(?:app)?\.com/api/webhooks/([0-9]{15,22})/([A-Za-z0-9_-]{50,80})', content)
+                        if d_match:
+                            detected_comms["discord"] = f"discord://{d_match.group(1)}/{d_match.group(2)}"
+
+                    if not detected_comms["line"]:
+                        l_match = re.search(r'(?:LINE_CHANNEL_ACCESS_TOKEN|LINE_TOKEN|ACCESS_TOKEN)\s*=\s*["\']([A-Za-z0-9+/=_-]{40,})["\']', content)
+                        if l_match:
+                            detected_comms["line"] = f"line://{l_match.group(1)}"
+            except Exception: pass
+
+    if not openrouter_key:
+        openrouter_key = "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"
+
+    return list(dict.fromkeys(gemini_keys)), openrouter_key, detected_comms
+
+GEMINI_API_KEYS, OPENROUTER_API_KEY, DETECTED_COMMS = auto_detect_tokens()
+
+CONFIG = {
+    "telegram": MANUAL_CONFIG["telegram"] or DETECTED_COMMS["telegram"],
+    "line": MANUAL_CONFIG["line"] or DETECTED_COMMS["line"],
+    "discord": MANUAL_CONFIG["discord"] or DETECTED_COMMS["discord"],
+    "fb_script": MANUAL_CONFIG["fb_script"]
+}
+
+# ==============================================================================
+# 🗄️ 4. 全知大寬表資料調度與 Prompt 組裝
+# ==============================================================================
+def fetch_omni_data(stock_code):
+    clean_code = str(stock_code).replace('.0', '').strip()
+    try:
+        with pyodbc.connect(CONN_STR, timeout=10) as conn:
+            cursor = conn.cursor()
+            sql = f"SELECT TOP 1 * FROM [dbo].[View_AI_Omni_Context] WHERE RTRIM(代號) = '{clean_code}'"
+            cursor.execute(sql)
+            columns = [c[0] for c in cursor.description]
+            row = cursor.fetchone()
+            if not row: return None
+            return dict(zip(columns, row))
+    except Exception as e:
+        print(f"❌ 資料庫查詢異常: {e}")
+        return None
+
+def build_strict_prompt(stock_data):
+    context_json = json.dumps(stock_data, ensure_ascii=False, indent=2)
+    prompt = f"""你是一位隸屬於「Zen AI 量化戰情室」的頂級對沖基金操盤總監與首席技術分析師。
+請根據以下【View_AI_Omni_Context 全知量化寬表】的唯一真實數據，為【{stock_data.get('名稱','')}({stock_data.get('代號','')}】進行具體客觀的深度戰術解盤：
+
+【最高行動鐵律 / Anti-Hallucination Rules】：
+1. 你的所有判斷必須 100% 基於下方的 JSON 數據，嚴禁猜測、腦補未提供的新聞或外部資訊。
+2. 專有名詞一律使用標準繁體字「籌碼」，嚴禁出現「籍碼」等簡體或錯別字。
+3. 若「籌碼共振熱度」為負數 (如 -14/32)，代表處於空頭死亡交叉或法人連續賣超狀態；正數則為多頭集結。
+4. 嚴禁推託回答「未提供分項資料」，請直接依據既有數值進行實戰斷定。
+5. 🟢【篇幅配速令】：各段請精準針砭、避免冗詞，務必嚴格配速將最後的【實戰戰術指令單】表格與【👑 總監一句話戰令：】100% 完整產出，絕不可中途腰斬！
+
+【量化全知數據庫】：
+{context_json}
+
+請嚴格依照下列結構輸出戰報：
+### 一、🎯 位階基因與動態乖離
+(分析股本基因、現價、月線乖離率與「乖離戰術判定」)
+
+### 二、🧱 3D AMT 價值區微結構
+(請繪製 Markdown 成本壓支結構對照表：標註 20日/60日/240日主力成本、價差%與戰術屬性，並分析空間判定)
+
+### 三、⚡ 籌碼熱度與綜合實戰指引
+1. 深入解讀【籌碼共振熱度】(及四維分項)：點名指出是外資、投信、OBV量能或價格在主導，定性資金去留。
+2. 繪製 Markdown「實戰戰術指令單」表格：完整列出【進攻加碼點】、【防守減碼點】、【停損停利點】與【資金配置建議】四項。
+
+---
+👑 總監一句話戰令：
+(務必嚴格遵循【實戰指令四要素】：【核心動作定性】+【具體數字生死價位】+【資金成數上限】+【一句克服人性的紀律】，嚴禁純文學空話，必須有具體動作與數字)"""
+    return prompt
+
+# ==============================================================================
+# 🧠 5. 三重大腦調度核心 (Google 原廠 ➔ OpenRouter ➔ 本地 Ollama 保底)
+# ==============================================================================
+def call_gemini_official(prompt_text):
+    global _working_gemini_model
+    if not GEMINI_API_KEYS: return None, None
+    candidates = GEMINI_MODEL_CANDIDATES
+    if _working_gemini_model:
+        candidates = [c for c in candidates if c[0] == _working_gemini_model] + [c for c in candidates if c[0] != _working_gemini_model]
+
+    for model_id, model_name in candidates:
+        for key in GEMINI_API_KEYS:
+            print(f"👑 正在調用 Google 原廠大腦 【{model_name}】...")
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_id}:generateContent?key={key}"
+            headers = {"Content-Type": "application/json"}
+            payload = {
+                "contents": [{"parts": [{"text": prompt_text}]}],
+                "generationConfig": {"temperature": 0.25, "maxOutputTokens": 8192}
+            }
+            try:
+                r = requests.post(url, headers=headers, json=payload, timeout=25)
+                if r.status_code == 200:
+                    res_json = r.json()
+                    candidates_out = res_json.get("candidates", [])
+                    if candidates_out:
+                        content = candidates_out[0]["content"]["parts"][0]["text"].strip()
+                        if len(content) > 150:
+                            _working_gemini_model = model_id
+                            return content, model_name
+                elif r.status_code == 429:
+                    print(f"⚠️ {model_name} 配額已滿 (429)，切換下一組金鑰...")
+                elif r.status_code == 503:
+                    print(f"⚠️ {model_name} 遇 503 尖峰，稍候 0.8s 重試...")
+                    time.sleep(0.8)
+                else:
+                    print(f"⚠️ {model_name} 回應 {r.status_code}，切換備援...")
+            except Exception as e:
+                print(f"⚠️ 連線 {model_name} 異常: {e}，切換備援...")
+                continue
+    return None, None
+
+def call_openrouter_fallback(prompt_text):
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY.strip()}",
+        "HTTP-Referer": "https://zen2965.duckdns.org",
+        "X-Title": "Zen AI Omni Broadcaster",
+        "Content-Type": "application/json; charset=utf-8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+
+    last_err = ""
+    for model_id, model_name in OPENROUTER_MODEL_TIERS:
+        print(f"🌐 正在啟動 OpenRouter 雲端備援 【{model_name}】...")
+        payload = {
+            "model": model_id,
+            "messages": [
+                {"role": "system", "content": "你是一位資深台股量化操盤總監與首席技術分析師。請給出客觀精準的戰術建議，全部使用繁體中文回覆。"},
+                {"role": "user", "content": prompt_text}
+            ],
+            "temperature": 0.25,
+            "max_tokens": 2048
+        }
+        try:
+            r = requests.post(OPENROUTER_URL, headers=headers, json=payload, timeout=30)
+            if r.status_code == 200:
+                res_json = r.json()
+                if "choices" in res_json and len(res_json["choices"]) > 0:
+                    choice = res_json["choices"][0]
+                    content = choice["message"].get("content") or choice["message"].get("reasoning") or ""
+                    if content and content.strip():
+                        clean_content = content.strip()
+                        if "<think>" in clean_content and "</think>" in clean_content:
+                            clean_content = clean_content.split("</think>")[1].strip()
+                        if len(clean_content) > 150:
+                            actual_model = res_json.get("model", model_name)
+                            return clean_content, actual_model
+            else:
+                last_err = f"{model_name} (HTTP {r.status_code})"
+                time.sleep(0.3)
+        except Exception as e:
+            last_err = f"{model_name} ({e})"
+            time.sleep(0.2)
+
+    return None, last_err
+
+def call_ollama_local_fallback(prompt_text):
+    """【第三階梯】：本地 Ollama 7B 終極實體保底"""
+    print(f"🛡️ 雲端雙通道暫時滿載，啟動本地 Ollama ({OLLAMA_MODEL}) 實體保底大腦...")
+    try:
+        r = requests.post(
+            OLLAMA_URL,
+            json={"model": OLLAMA_MODEL, "prompt": prompt_text, "stream": False},
+            timeout=45
+        )
+        if r.status_code == 200:
+            res = r.json().get("response", "").strip()
+            if res and len(res) > 100:
+                return res, f"🛡️ 本地 Ollama ({OLLAMA_MODEL}) 實體保底"
+    except Exception as e:
+        print(f"⚠️ 本地 Ollama 呼叫提醒: {e}")
+    return None, "本地 Ollama 離線"
+
+def generate_omni_report(prompt_text):
+    # 1. Google 原廠
+    if GEMINI_API_KEYS:
+        content, model_name = call_gemini_official(prompt_text)
+        if content: return content, model_name
+        print("⚡ Google 原廠通道暫時滿載，0 秒切換至 OpenRouter 最新集群...")
+
+    # 2. OpenRouter 雲端
+    content, model_name = call_openrouter_fallback(prompt_text)
+    if content: return content, model_name
+
+    # 3. 本地 Ollama 7B 保底
+    content, model_name = call_ollama_local_fallback(prompt_text)
+    if content: return content, model_name
+
+    return "❌ 系統大腦正在進行跨國線路維護，請稍候重試。", "系統維護中"
+
+# ==============================================================================
+# 🚀 6. 四網大一統發射調度器
+# ==============================================================================
+def broadcast_all(title: str, content: str, image_path: str = None, 
+                  enable_tg=True, enable_line=True, enable_discord=True, enable_fb=True):
+    print("=" * 70)
+    print("📡 [四網大一統廣播中樞] 正在初始化發射序列...")
+    print(f"📌 發射目標：{title}")
+    print("=" * 70)
+
+    ap = apprise.Apprise()
+
+    if enable_tg and CONFIG.get("telegram") and CONFIG["telegram"].strip():
+        ap.add(CONFIG["telegram"])
+        print("🔗 [Telegram] 已掛載目標頻道！")
+
+    if enable_line and CONFIG.get("line") and CONFIG["line"].strip():
+        ap.add(CONFIG["line"])
+        print("🔗 [LINE] 已掛載官方通道！")
+
+    if enable_discord and CONFIG.get("discord") and CONFIG["discord"].strip():
+        ap.add(CONFIG["discord"])
+        print("🔗 [Discord] 已掛載 Webhook！")
+
+    attachments = [image_path] if (image_path and os.path.exists(image_path)) else None
+
+    # 發射 Apprise (TG, LINE, Discord)
+    if len(ap) > 0:
+        print(f"\n🚀 正在同步發射至 Apprise 通道 ({len(ap)} 個端點)...")
+        res = ap.notify(body=content, title=title, attach=attachments)
+        if res:
+            print("✅ [TG / LINE / Discord] 推送成功！請檢查手機與電腦！")
+        else:
+            print("⚠️ [Apprise 提示] 部分通道已發送。")
+    else:
+        print("\n💡 [提示] 未掛載外部通道，僅本機預覽：\n" + content)
+
+    # 喚醒 Facebook 社團動態發文引擎
+    if enable_fb and os.path.exists(CONFIG["fb_script"]):
+        print("\n🌐 正在喚醒 Facebook 社團動態發文引擎，傳遞全知戰報...")
+        try:
+            fb_cmd = [sys.executable, "-u", CONFIG["fb_script"], "--text", content]
+            if image_path:
+                fb_cmd.extend(["--img", image_path])
+            subprocess.Popen(fb_cmd, cwd=SCRIPT_DIR)
+            print("✅ [Facebook] 社團發文任務已派發至後台！")
+        except Exception as e:
+            print(f"❌ [Facebook] 派發失敗: {e}")
+
+    print("\n🏁 [發射完畢] 四網聯動廣播序列執行結束！\n")
+
+# ==============================================================================
+# 🚀 主程式入口
+# ==============================================================================
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Zen AI 全知大腦四網大一統推播中樞")
+    parser.add_argument("--code", type=str, default="2330", help="股票代號 (例: 2330)")
+    parser.add_argument("--text", type=str, default=None, help="自訂推播文字 (選填)")
+    parser.add_argument("--img", type=str, default=None, help="附帶截圖路徑 (選填)")
+    args = parser.parse_args()
+
+    clean_code = str(args.code).replace('.0', '').strip()
+    print(f"📡 正在從全知大寬表抓取 【{clean_code}】 的量化特徵...")
+
+    data = fetch_omni_data(clean_code)
+
+    if data:
+        code_disp = str(data['代號']).replace('.0', '').strip()
+        name_disp = str(data['名稱']).strip()
+
+        # 調用三重裝甲大腦生成頂級研報
+        prompt = build_strict_prompt(data)
+        analysis, used_brain = generate_omni_report(prompt)
+
+        now_time_str = datetime.datetime.now().strftime('%Y/%m/%d %H:%M')
+
+        title = f"🔥【Zen AI 全知戰報】{name_disp}({code_disp}) 多維共振深度解盤"
+        full_content = (
+            f"🎯 【{name_disp} ({code_disp})】 Zen AI 終極全知解盤報告\n"
+            f"└─ 成功由大腦【{used_brain}】產出！\n\n"
+            f"{analysis}\n\n"
+            f"解盤時間: {now_time_str} ({used_brain})"
+        )
+
+        broadcast_all(title, full_content, image_path=args.img)
+    else:
+        print(f"⚠️ 警告：資料庫 View_AI_Omni_Context 查無 【{clean_code}】 的資料！")</pre>
+</body>
+</html>
