@@ -1,4 +1,114 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>20261011 stockchangedate
+<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>20261015
+👑 第一戰區：核心大腦與全知解盤部隊 (AI Explainers)
+這是戰情室的靈魂，負責調用 Google 原廠、OpenRouter 與本地 Ollama 產出戰略報告。
+1. ai_omni_explainer.py (第 100 號部隊：全知大滿貫解盤)
+用途：讀取 SQL View_AI_Omni_Context 大寬表，調用三重大腦（Google 原廠 ➔ OpenRouter ➔ Ollama），產出包含「3D AMT 價值區、籌碼共振熱度、總監一句話戰令」的旗艦級雙表格戰報。
+參數：
+--code <股號>：指定目標股票代號（例如 2330）。
+實戰打法：
+code
+Cmd
+python ai_omni_explainer.py --code 3443
+2. chart_explain.py (本地 Ollama 伏兵解盤 ＋ 雙模截圖)
+用途：【圖文一體化模組】。抓取 60M 伏兵特徵、3-Way 離場勝率，調用本機 Ollama (qwen2.5:7b) 產出解盤文字；並同步指揮 Playwright 截下雙 Y 軸圖表，最後將圖文合併推播至 LINE / TG。
+萬能參數 (自動正則解析，順序不拘)：
+股號 (4~6碼數字)：如 2454。
+起日 (8碼數字)：如 20260401（圖表起算日）。
+目標ID：如 Ubeef... (LINE ID) 或 -100... (TG 群組)。
+模式：live (強制盤中)、post (強制盤後)。若未填寫則由時鐘決定 (auto)。
+實戰打法：
+code
+Cmd
+python chart_explain.py 2454 20260401 live
+📸 第二戰區：視覺 RPA 與截圖部隊 (Vision & Screenshot)
+完全降服 Playwright 無頭瀏覽器，支援「物理強制鎖定」盤中或盤後模式的截圖樞紐。
+3. chart_screenshot.py (大一統雙模高解析截圖核心)
+用途：開啟隱形瀏覽器，精準填入股號與起日，依照指令物理點擊 id='btn_query_live' (盤中) 或 id='btn_query_post' (盤後)，淨化畫面後截圖並推播。
+萬能參數 (與 chart_explain.py 相同)：
+股號 (4~6碼)
+起日 (8碼)
+--mode live 或 --mode post (決定截圖模式)
+實戰打法：
+code
+Cmd
+python chart_screenshot.py 3017 20260101 --mode post
+4. chart_screenshot_live.py / chart_screenshot_post.py (母艦卡片專用薄腳本)
+用途：為 99 部隊母艦的 UI 卡片分流設計的捷徑腳本。它們內部只有 3 行程式碼，負責將接收到的參數強行掛上 --mode live 或 --mode post 後，轉發給核心的 chart_screenshot.py。
+參數：繼承自母艦的輸入框（股號與起日）。
+📡 第三戰區：指揮中樞與四網廣播部隊 (Command & Broadcaster)
+5. zen_broadcaster.py (四網大一統廣播中樞)
+用途：自動穿透掃描 zen_ai_bot1.py 獲取最新金鑰與 Token。讀取大寬表特徵，指揮大腦生成戰報後，透過 Apprise 同步發射至 Telegram、LINE、Discord，並喚醒 Facebook 發文引擎。
+參數：
+--code <股號>：必填，生成該股戰報。
+--text <文字>：選填，若有填則不呼叫 AI，直接廣播這段文字。
+--img <路徑>：選填，附加圖片廣播。
+實戰打法：
+code
+Cmd
+python zen_broadcaster.py --code 2317
+6. fb_post_stock.py (Facebook 社團發文引擎)
+用途：掛載 C:\test_c\chrome_profile 固化 Session（免登入/破除安全沙盒），利用 Playwright 原生 JS 穿透半透明遮罩，將戰報與圖片發布至 FB 社團。
+參數：
+--text <文字>：要發布的內文。
+--img <圖片路徑>：要附帶的圖片。
+實戰打法 (通常由 zen_broadcaster.py 在背景自動呼叫)：
+code
+Cmd
+python fb_post_stock.py --text "測試發文" --img "C:\test_c\static\chart_2330.png"
+7. master_cockpit.py (99 部隊母艦)
+用途：啟動 Port 8550 (Flet UI 雷達大屏) 與 Port 8551 (跨域火控 API)。具備 STOCK_ARG_ROUTER 參數拆解矩陣，將頂部輸入框的 2454 20260401 live 自動分配給上述各腳本。
+參數：無（直接執行常駐）。
+🤖 第四戰區：雙向火控機器人與 API 中台 (Bots & APIs)
+8. zen_ai_bot1.py (旗艦純英數機器人 ✕ Port 5000 API)
+用途 A (Telegram 監聽)：提供純英數零切換火控（如 3443?, 3443B, ?），指揮全域戰報與四網廣播。
+用途 B (本機 API 中台)：啟動 Flask 監聽 http://127.0.0.1:5000，搭載 CORS 與 PNA 穿透裝甲，專門接收網頁端 excelsql2.html 點擊的【一鍵截圖】與【右側四大推播按鈕】。
+參數：無（背景常駐）。
+9. zen_ai_bot2.py (傳統經典版機器人)
+用途：保留給習慣使用中文指令（如 2317說明R、2317圖）的操作模式。會自動避開 ? 與 B 等新版指令以防搶話。
+參數：無（背景常駐）。
+🧰 第五戰區：雲端同步與系統維運 (Sync & Maintenance)
+10. sync_myword_history.py (GitHub 獨立歷史快照同步)
+用途：透過 Playwright 開啟本機 HTTPS 打包系統 (myword2.html?id=X)，擷取動態渲染文字。產出帶有時間戳的純淨 HTML，並自動 git push 上雲端（防覆蓋、不組合）。
+參數：
+[id...] (無限個整數)：指定要抓取的 ID。若不輸入，預設抓取 1 ~ 15。
+實戰打法：
+code
+Cmd
+python sync_myword_history.py 8 10 12
+11. sync_myword_to_github.py (GitHub 舊版大合併同步)
+用途：將 ID 1~8 抓下來後，合併成一個 50 萬字的 myword_all.html 巨型檔案推上 GitHub。
+參數：無。
+12. test_api_keys.py (金鑰全面健康檢查)
+用途：地毯式掃描 zen_ai_bot1.py 與 ai_omni_explainer.py，找出所有 AQ.、AIza 與 OpenRouter 金鑰，並實時對 Google/OpenRouter 伺服器進行 Ping 測試，回報 200 OK / 503 / 401 狀態。
+參數：無。
+實戰打法：
+code
+Cmd
+python test_api_keys.py
+💡 總監實戰速查表 (Cheat Sheet)
+長官若要在終端機 (CMD) 手動對單一股票發動終極打擊，請記住這三招最常用的指令：
+手動出大滿貫文字戰報 (打向四網)：
+python zen_broadcaster.py --code 3443
+手動出盤後高解析截圖 (只推 LINE/TG)：
+python chart_screenshot.py 3443 20260101 post
+手動備份指定打包文檔至 GitHub：
+python sync_myword_history.py 10
+
+
+
+python test_api_keys.py   # 🏆 本工具為【Zen AI 金鑰全面健康檢查 V3.0】# 支援：Google 原廠全新 AQ. 格式與舊版 AIza 格式、OpenRouter 多模型連線檢測
+sync_myword_to_github.py  (推送至github: range(1, 6) myword_1.htm ...myword_6.htm  myword_all.html(合併全部))
+sync_myword_history.py 10  (id=10)  一鍵獨立歷史同步.bat
+line_ai_bot1.py (excelsql2內的截圖等更新 live 或 post
+zen_ai_bot1.py (telegram 3443? 3443?1 ...)
+zen_broadcaster.py --code 3443
+ai_omni_explainer.py --code 2317
+master_cockpit.py 與機房級隱形無人值守   
+   * start_zen_core.bat：自動釋放 8550 埠 (防 Errno 10048)，以 start /B 背景靜默執行母艦與 ngrok。
+   * silent_run.vbs：以純英文檔名呼叫批次檔 (0 參數徹底隱藏黑視窗)，置入 shell:startup 達成開機全自動常駐。
+   * 一鍵停止母艦.bat：隨時一鍵強制終止背景母艦與 ngrok。
+
+20261011 stockchangedate
 SELECT          ROUTINE_SCHEMA, ROUTINE_NAME, ROUTINE_TYPE, CREATED, LAST_ALTERED
 FROM              INFORMATION_SCHEMA.ROUTINES
 WHERE          (ROUTINE_TYPE = 'PROCEDURE')

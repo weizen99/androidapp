@@ -1,5 +1,402 @@
 <!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'> // --- 範本資料庫 ---
    const sqlTemplateLibrary = [
+             {
+                cat: "籌碼類-三大法人分歧", title: "🏦 自營商三腳鼎分歧 (三方共識 ✕ 自營商避險對作)", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+FROM (
+    SELECT
+        RTRIM(N.代號) AS 代號, RTRIM(N.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業,
+        N.成交價 AS 現價, N.漲幅 AS [今日漲幅%], N.總量 AS [成交量(張)],
+
+        N.外資10日合計 AS [外資10日],
+        N.投信10日合計 AS [投信10日],
+        N.自營商10日合計 AS [自營商10日],
+        N.法人10日合計 AS [法人10日],
+
+        N.外資3日合計 AS [外資3日],
+        N.投信3日合計 AS [投信3日],
+        N.自營商3日合計 AS [自營商3日],
+
+        CASE
+            WHEN N.外資10日合計 > 0 AND N.投信10日合計 > 0 AND N.自營商10日合計 > 0
+                THEN N'👑 三方共識齊買'
+            WHEN N.外資10日合計 > 0 AND N.投信10日合計 > 0 AND N.自營商10日合計 < 0
+                THEN N'⚠️ 土洋買 ✕ 自營商賣 (避險壓頂)'
+            WHEN N.投信10日合計 > 0 AND N.自營商10日合計 > 0 AND N.外資10日合計 < 0
+                THEN N'🔄 內資吃貨 ✕ 外資倒貨'
+            WHEN N.外資10日合計 > 0 AND N.自營商10日合計 > 0 AND N.投信10日合計 < 0
+                THEN N'🌎 外資＋自營 ✕ 投信退場'
+            WHEN N.外資10日合計 < 0 AND N.投信10日合計 < 0 AND N.自營商10日合計 > 0
+                THEN N'🔻 自營商獨買 (法人撤退)'
+            ELSE N'⭐ 分歧'
+        END AS [三方診斷],
+
+        CAST(
+            (CASE WHEN N.外資10日合計 > 0 THEN 25 WHEN N.外資10日合計 < 0 THEN -25 ELSE 0 END)
+          + (CASE WHEN N.投信10日合計 > 0 THEN 25 WHEN N.投信10日合計 < 0 THEN -25 ELSE 0 END)
+          + (CASE WHEN N.自營商10日合計 > 0 THEN 20 WHEN N.自營商10日合計 < 0 THEN -20 ELSE 0 END)
+          + (CASE WHEN N.法人10日合計 > 0 THEN 20 ELSE 0 END)
+          AS INT) AS [三方分],
+
+        ROUND(M.專家實戰總分, 2) AS 專家分, M.具體概念 AS [熱門題材]
+    FROM threemasternumber N
+    LEFT JOIN MasterStockAnalysis M
+           ON RTRIM(M.代號) = RTRIM(N.代號)
+          AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+    WHERE N.日期 = (SELECT MAX(日期) FROM threemasternumber)
+      AND N.成交價 >= 10 AND N.總量 >= 1000
+) T
+ORDER BY T.[三方分] DESC, T.[法人10日] DESC, T.[外資10日] DESC
+
+/*
+建議分類(cat)：籌碼類-三大法人分歧
+建議標題(title)：🏦 自營商三腳鼎分歧 (三方共識 ✕ 自營商避險對作)
+
+戰略意義：
+1. 既有範本只看投信與外資，從來沒有用過 threemasternumber 的「自營商」欄位。
+   本支把三方（外資/投信/自營商）的 3 日與 10 日買賣超並排，一次看清誰在買、誰在對作。
+2. 解鎖欄位：外資3日/10日合計、投信3日/10日合計、自營商3日/10日合計、法人3日/10日合計。
+3. 判讀心法：
+   - 三方都買 ＝ 最強共識（👑），實測榜首幾乎是金融股（元大金/玉山金/凱基金/中信金/合庫金）
+   - 投信＋外資買、自營商賣 ＝ 自營商（多為避險/當沖）與中長線法人對作，上方有短線賣壓（⚠️）
+   - 只有自營商獨買、外資投信都賣 ＝ 法人撤退，別接刀（🔻）
+   - 用「3日」對照「10日」＝ 看買超是加速還是退潮
+4. 三方分是「有號共識分」（滿分 90、最低 -50），排序自然把強共識排前面。
+
+想只看自營商對作（分歧名單），把外層改成：
+   WHERE T.[三方診斷] LIKE N'%⚠️%' COLLATE Latin1_General_100_BIN2
+（emoji 過濾一定要加 COLLATE，否則等於沒過濾，見 01 檔的踩坑記錄。）
+*/
+` },
+
+            {
+                cat: "盤中60M-多頭排列與收盤位置", title: "🕐 60M 多頭排列 ✕ 小時K棒收盤位置 (排列漂亮但收低=假突破)", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+FROM (
+    SELECT
+        RTRIM(CAST(S.代號 AS nvarchar(20))) AS 代號, RTRIM(S.名稱) AS 名稱,
+        RTRIM(B.產業分類) AS 產業,
+        B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)],
+
+        S.收盤價 AS [60M收盤],
+        S.SMA5 AS [SMA5], S.SMA20 AS [SMA20], S.SMA35 AS [SMA35], S.SMA60 AS [SMA60],
+
+        CAST(ROUND((S.收盤價 - S.最低價) / NULLIF(S.最高價 - S.最低價, 0) * 100, 1)
+             AS DECIMAL(5,1)) AS [收盤位置%],
+
+        CAST(
+            (CASE WHEN S.SMA5 > S.SMA10 THEN 1 ELSE 0 END)
+          + (CASE WHEN S.SMA10 > S.SMA20 THEN 1 ELSE 0 END)
+          + (CASE WHEN S.SMA20 > S.SMA35 THEN 1 ELSE 0 END)
+          + (CASE WHEN S.SMA35 > S.SMA60 THEN 1 ELSE 0 END)
+          + (CASE WHEN S.SMA60 > S.SMA120 THEN 1 ELSE 0 END)
+          AS INT) AS [排列分],
+
+        CASE
+            WHEN S.SMA5 > S.SMA10 AND S.SMA10 > S.SMA20
+                 AND S.SMA20 > S.SMA35 AND S.SMA35 > S.SMA60
+                 AND (S.收盤價 - S.最低價) / NULLIF(S.最高價 - S.最低價, 0) >= 0.8
+                THEN N'👑 完美多頭 ✕ 收在最高'
+            WHEN S.SMA5 > S.SMA20 AND S.SMA20 > S.SMA60
+                 AND (S.收盤價 - S.最低價) / NULLIF(S.最高價 - S.最低價, 0) >= 0.6
+                THEN N'🔥 多頭排列 ✕ 高收'
+            WHEN S.SMA5 > S.SMA20 AND S.SMA20 > S.SMA60
+                 AND (S.收盤價 - S.最低價) / NULLIF(S.最高價 - S.最低價, 0) < 0.4
+                THEN N'⚠️ 排列漂亮但收低 (假突破風險)'
+            WHEN S.SMA5 < S.SMA20 AND S.SMA20 < S.SMA60
+                THEN N'🔻 空頭排列'
+            ELSE N'⭐ 整理中'
+        END AS [60M診斷],
+
+        ROUND(M.專家實戰總分, 2) AS 專家分, M.具體概念 AS [熱門題材]
+    FROM (
+        SELECT 代號, 名稱, 收盤價, 最高價, 最低價,
+               SMA5, SMA10, SMA20, SMA35, SMA60, SMA120,
+               ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn
+        FROM stockchange.dbo.Stock60M
+    ) S
+    LEFT JOIN stockchange.dbo.basicinfo B
+           ON RTRIM(B.代號) = RTRIM(CAST(S.代號 AS nvarchar(20)))
+    LEFT JOIN MasterStockAnalysis M
+           ON RTRIM(M.代號) = RTRIM(CAST(S.代號 AS nvarchar(20)))
+          AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+    WHERE S.rn = 1
+      AND B.成交價 >= 10 AND B.總量 >= 1000
+) T
+ORDER BY T.[排列分] DESC, T.[收盤位置%] DESC, T.[成交量(張)] DESC
+
+/*
+建議分類(cat)：盤中60M-多頭排列與收盤位置
+建議標題(title)：🕐 60M 多頭排列 ✕ 小時K棒收盤位置 (排列漂亮但收低=假突破)
+
+戰略意義：
+1. 既有 60M 範本只用 K/D/OSC/DIF，從來沒用過 Stock60M 的均線群（SMA35/60/120/240）
+   與 K 棒本身（開盤/最高/最低/收盤）。
+2. 解鎖欄位：SMA10/SMA35/SMA60/SMA120、開盤價、最高價、最低價、收盤價。
+3. 核心做法：兩個獨立訊號相乘 ——
+   - 排列分（0~5）：SMA5>SMA10>SMA20>SMA35>SMA60>SMA120 成立幾個
+   - 收盤位置%（0~100）：收盤價落在當根 60 分 K 的 (最高-最低) 區間位置
+   排列漂亮但「收在區間下緣」＝ 假突破/上方有賣壓（⚠️）；排列＋收在最高＝買方完全掌控（👑）。
+4. 實測分布（前 100）：👑 15、🔥 15、⭐ 50、⚠️ 20 —— 各類都看得到。
+
+注意：Stock60M 只有約 1,069 檔有 60 分資料（不是全市場）；其「代號」是 int、
+「日期」是 date、每天 5 根（最新一根為 13:00）。本支以每檔最新一根為準，
+流動性門檻用當日 basicinfo 的總量 >= 1000。
+*/
+` },
+
+            {
+                cat: "基本面-杜邦拆解與槓桿風險", title: "🏛️ 杜邦拆解 ✕ 槓桿風險 (高 ROE 是真本事還是舉債撐的)", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+-- ⚠ 同上：排序不以 emoji 為條件，避免定序把 emoji 視為可忽略字元
+FROM (
+    SELECT
+        RTRIM(S.代號) AS 代號, RTRIM(S.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業,
+        B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)],
+        S.日期 AS [財報季],
+
+        S.ROE AS [ROE%],
+        S.ROA AS [ROA%],
+        CASE WHEN S.ROA > 0 THEN CAST(ROUND(S.ROE / S.ROA, 2) AS DECIMAL(9,2)) ELSE NULL END AS [權益乘數],
+        S.負債比率 AS [負債比率%],
+        CAST(ROUND(S.負債比率 - S.負債比率上季, 2) AS DECIMAL(9,2)) AS [負債季變動],
+        S.毛利率 AS [毛利率%],
+        S.營業利益率 AS [營業利益率%],
+        S.稅後純益率上季 AS [稅後純益率%],
+        S.EPS累計 AS [EPS累計],
+
+        CASE
+            WHEN S.ROE >= 15 AND S.負債比率 <= 40 AND S.ROA > 0 AND S.ROE / S.ROA <= 2.5
+                THEN N'👑 真優質 (高 ROE ✕ 低槓桿 ✕ 高資產效率)'
+            WHEN S.ROE >= 15 AND S.負債比率 < S.負債比率上季
+                 AND NOT (S.ROA > 0 AND S.ROE / S.ROA >= 3)
+                THEN N'📉 高 ROE ＋ 去槓桿 (體質改善)'
+            WHEN S.ROE >= 15 AND S.負債比率 >= 60
+                THEN N'⚠️ 槓桿撐出的 ROE (負債 >= 60%)'
+            WHEN S.ROE >= 15 AND S.ROA > 0 AND S.ROE / S.ROA >= 3
+                THEN N'⚠️ 權益乘數過高 (ROE 靠舉債放大)'
+            WHEN S.ROE >= 15
+                THEN N'⭐ 高 ROE (結構待細看)'
+            WHEN S.ROE < 0
+                THEN N'🔻 虧損'
+            ELSE N'一般'
+        END AS [杜邦診斷],
+
+        V.本益比近四季 AS [PE(倍)],
+        V.股價淨值比 AS [PB(倍)],
+        V.現金殖利率 AS [殖利率%],
+        ROUND(M.專家實戰總分, 2) AS 專家分, M.具體概念 AS [熱門題材]
+    FROM (
+        SELECT 代號, 名稱, 日期, ROE, ROA, 負債比率, 負債比率上季, 稅後純益率上季,
+               毛利率, 營業利益率, EPS累計,
+               ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 日期 DESC) AS rn
+        FROM financesum
+    ) S
+    LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(B.代號) = RTRIM(S.代號)
+    LEFT JOIN MasterStockAnalysis M
+           ON RTRIM(M.代號) = RTRIM(S.代號)
+          AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+    LEFT JOIN value V
+           ON RTRIM(V.代號) = RTRIM(S.代號)
+          AND V.日期 = (SELECT MAX(日期) FROM value)
+    WHERE S.rn = 1
+      AND B.成交價 >= 10 AND B.總量 >= 1000
+      AND S.ROE IS NOT NULL
+) T
+ORDER BY
+    CASE
+        WHEN T.[ROE%] >= 15 AND T.[負債比率%] <= 40 AND T.[權益乘數] <= 2.5 THEN 0
+        WHEN T.[ROE%] >= 15 AND T.[負債季變動] < 0
+             AND (T.[權益乘數] IS NULL OR T.[權益乘數] < 3) THEN 1
+        WHEN T.[ROE%] >= 15 AND (T.[負債比率%] >= 60 OR T.[權益乘數] >= 3) THEN 3
+        WHEN T.[ROE%] >= 15 THEN 2
+        WHEN T.[ROE%] < 0 THEN 5
+        ELSE 4
+    END ASC,
+    T.[ROE%] DESC
+
+/*
+建議分類(cat)：基本面-杜邦拆解與槓桿風險
+建議標題(title)：🏛️ 杜邦拆解 ✕ 槓桿風險 (高 ROE 是真本事還是舉債撐的)
+
+戰略意義：
+1. 既有範本的基本面只用毛利率、營業利益率、EPS —— ROE / ROA / 負債比率
+   這三個欄位在 237 支範本裡是零使用。本支把它們接上，等於補上「獲利品質」這一層。
+2. 解鎖欄位：ROE、ROA、負債比率、負債比率上季、稅後純益率上季、EPS累計上季。
+3. 核心做法：用 ROE / ROA 推估權益乘數（槓桿倍數），把 ROE 拆成
+   「資產效率」與「舉債放大」兩個來源：
+   - ROE >= 15 且 負債 <= 40% 且 權益乘數 <= 2.5 ＝ 真本事（👑）
+   - 負債 >= 60% 或 權益乘數 >= 3 ＝ ROE 是借錢放大的，風險高（⚠️）
+   - 負債比率低於上季 ＝ 正在去槓桿，體質改善（📉）
+4. 實測分布（前 100 名）：👑 32 檔、📉 22 檔、⭐ 21 檔、⚠️ 20 檔、一般 5 檔。
+   合理性驗證：台積電 ROE 35.39%、ROA 23.49%、權益乘數 1.51、負債 30.94% → 歸類 👑 真優質。
+
+注意：financesum 的日期是季別（如 202602 代表 2026 第 2 季），本支以每檔最新一季為準。
+財報有落後性，建議與 ① 或 ② 的即時籌碼交叉看。
+*/
+  ` },
+
+            {
+                cat: "外資籌碼-成本線乖離", title: "🌎 外資成本線乖離 ✕ 連買天反轉 (法人成本護體 ✕ 賣超轉買)", sql: ` /*資料庫:stockchangedate*/ TOP 100 T.*
+-- ⚠ 同上：排序不以 emoji 為條件，避免定序把 emoji 視為可忽略字元
+FROM (
+    SELECT
+        RTRIM(F.代號) AS 代號, RTRIM(F.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業,
+        F.成交價 AS 現價, F.漲幅 AS [今日漲幅%], F.總量 AS [成交量(張)],
+
+        F.持股成本 AS [外資持股成本],
+        F.持股比率 AS [外資持股比率%],
+        CAST(ROUND((F.成交價 - F.持股成本) / NULLIF(F.持股成本, 0) * 100, 2) AS DECIMAL(9,2)) AS [距外資成本%],
+        F.連買天 AS [外資連買天數],
+        F.連買張 AS [外資連買張數],
+        F.買賣超億元5日 AS [外資5日買超億],
+        F.買賣超億元20日 AS [外資20日買超億],
+        F.買賣超億元60日 AS [外資60日買超億],
+
+        CASE
+            WHEN F.連買天 >= 3 AND (F.成交價 - F.持股成本) / NULLIF(F.持股成本, 0) * 100 BETWEEN -3 AND 8
+                THEN N'👑 成本護體 (外資連買 ✕ 貼近成本)'
+            WHEN F.連買天 >= 1 AND F.買賣超億元5日 > 0 AND F.買賣超億元20日 < 0
+                THEN N'🔄 賣超轉買 (波段趨勢可能反轉)'
+            WHEN F.連買天 >= 3 AND (F.成交價 - F.持股成本) / NULLIF(F.持股成本, 0) * 100 > 20
+                THEN N'⚠️ 乖離過大 (外資帳面大賺，提防調節)'
+            WHEN F.連買天 < 0 AND F.買賣超億元5日 < 0
+                THEN N'🔻 外資連賣倒貨中'
+            ELSE N'⭐ 中性'
+        END AS [外資診斷],
+
+        CAST(
+            (CASE WHEN F.連買天 >= 10 THEN 30 WHEN F.連買天 >= 5 THEN 22
+                  WHEN F.連買天 >= 3 THEN 15 WHEN F.連買天 >= 1 THEN 8 ELSE 0 END)
+          + (CASE WHEN F.成交價 >= F.持股成本
+                   AND (F.成交價 - F.持股成本) / NULLIF(F.持股成本, 0) * 100 <= 8 THEN 30
+                  WHEN F.成交價 >= F.持股成本 THEN 15 ELSE 0 END)
+          + (CASE WHEN F.買賣超億元5日 > 0 THEN 15 ELSE 0 END)
+          + (CASE WHEN F.買賣超億元20日 > 0 THEN 15 ELSE 0 END)
+          + (CASE WHEN F.持股比率 >= 20 THEN 10 WHEN F.持股比率 >= 10 THEN 6 ELSE 0 END)
+          AS INT) AS [外資分],
+
+        ROUND(M.專家實戰總分, 2) AS 專家分, M.具體概念 AS [熱門題材]
+    FROM Foreigner F
+    LEFT JOIN MasterStockAnalysis M
+           ON RTRIM(M.代號) = RTRIM(F.代號)
+          AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+    WHERE F.日期 = (SELECT MAX(日期) FROM Foreigner)
+      AND F.持股成本 > 0 AND F.成交價 >= 10 AND F.總量 >= 1000
+) T
+ORDER BY
+    CASE
+        WHEN T.[外資連買天數] >= 3 AND T.[距外資成本%] BETWEEN -3 AND 8 THEN 0
+        WHEN T.[外資連買天數] >= 1 AND T.[外資5日買超億] > 0 AND T.[外資20日買超億] < 0 THEN 1
+        WHEN T.[外資連買天數] >= 3 AND T.[距外資成本%] > 20 THEN 3
+        WHEN T.[外資連買天數] < 0 AND T.[外資5日買超億] < 0 THEN 4
+        ELSE 2
+    END ASC,
+    T.[外資分] DESC, T.[外資連買天數] DESC, T.[外資5日買超億] DESC
+
+/*
+建議分類(cat)：外資籌碼-成本線乖離
+建議標題(title)：🌎 外資成本線乖離 ✕ 連買天反轉 (法人成本護體 ✕ 賣超轉買)
+
+戰略意義：
+1. 既有範本用 investment 表的「投信持股成本」，卻從來沒有用過 Foreigner 表的「外資持股成本」
+   —— 整張表在範本庫裡是零引用。本支把它接上。
+2. 解鎖欄位：持股成本、持股比率、連買天（可為負＝連賣）、連買張、
+   買賣超億元1日/5日/10日/20日/60日。
+3. 判讀心法：
+   - 外資連買 >= 3 天 ＋ 現價貼近外資成本（-3% ~ +8%）＝ 與法人同一成本線進場（👑）
+   - 5 日買超轉正但 20 日仍為負 ＝ 賣超轉買，波段趨勢可能反轉（🔄）
+   - 連買 >= 3 天但乖離 > 20% ＝ 外資帳面大賺，提防調節（⚠️）
+   - 連買天 < 0 且 5 日買超 < 0 ＝ 外資倒貨中（🔻）
+4. 實測分布：👑 57 檔、🔄 43 檔（前 100 名）。
+
+注意：持股成本是長期累積的均價，個股可能出現極端乖離（實測最大 +907%），
+故本支以「連買天 >= 3」為主判準，避免用到陳舊成本。
+*/
+ ` },
+
+
+            {
+                cat: "籌碼類-吸籌與空方背離", title: "🏦 籌碼吸籌 ✕ 借券空方背離 (集中度雙升 ✕ 空方退場 ✕ 大戶加碼)", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+-- ⚠ 排序刻意不用 emoji LIKE：本庫定序會把 emoji 視為可忽略字元，
+--   若真要過濾 emoji 欄位，必須寫 LIKE N'%👑%' COLLATE Latin1_General_100_BIN2
+FROM (
+    SELECT
+        RTRIM(C.代號) AS 代號, RTRIM(C.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業,
+        C.成交價 AS 現價, C.漲幅 AS [今日漲幅%], C.總量 AS [成交量(張)],
+
+        C.籌碼集中度20日 AS [集中度20日],
+        C.籌碼集中度60日 AS [集中度60日],
+        C.主力買賣超合計20日 AS [主力20日買賣超],
+        C.大戶持股週增減 AS [大戶週增減%],
+        C.買賣家數差為負的天數近20天 AS [家數差為負天數],
+
+        C.借券賣出增減20日 AS [借券賣出20日增減],
+        CAST(ROUND(C.借券賣出增減20日 * 100.0 / NULLIF(C.成交量合計20日, 0), 2) AS DECIMAL(9,2)) AS [借券變動佔量比%],
+
+        CASE
+            WHEN C.籌碼集中度20日 > 0 AND C.籌碼集中度60日 > 0
+                 AND C.借券賣出增減20日 <= 0 AND C.大戶持股週增減 > 0
+                THEN N'👑 真吸籌 (集中度雙升 ✕ 空方退場 ✕ 大戶加碼)'
+            WHEN C.借券賣出增減20日 < 0 AND C.籌碼集中度20日 > 0
+                THEN N'🚀 空方回補 (借券20日轉減)'
+            WHEN C.籌碼集中度20日 > 0 AND C.借券賣出增減20日 > 0
+                THEN N'⚠️ 假拉抬 (集中度升但借券同步增)'
+            WHEN C.籌碼集中度20日 <= 0 AND C.借券賣出增減20日 > 0
+                THEN N'🔻 籌碼渙散 ＋ 空方加壓'
+            ELSE N'⭐ 中性'
+        END AS [籌碼診斷],
+
+        CAST(
+            (CASE WHEN C.籌碼集中度20日 >= 15 THEN 25 WHEN C.籌碼集中度20日 > 0 THEN 15 ELSE 0 END)
+          + (CASE WHEN C.籌碼集中度60日 >= 10 THEN 25 WHEN C.籌碼集中度60日 > 0 THEN 15 ELSE 0 END)
+          + (CASE WHEN C.大戶持股週增減 >= 1 THEN 20 WHEN C.大戶持股週增減 > 0 THEN 12 ELSE 0 END)
+          + (CASE WHEN C.借券賣出增減20日 < 0 THEN 20 ELSE 0 END)
+          + (CASE WHEN C.主力買賣超合計20日 > 0 THEN 15 ELSE 0 END)
+          + (CASE WHEN C.買賣家數差為負的天數近20天 >= 15 THEN 20
+                  WHEN C.買賣家數差為負的天數近20天 >= 10 THEN 12 ELSE 0 END)
+          AS INT) AS [吸籌分],
+
+        ROUND(M.專家實戰總分, 2) AS 專家分, M.具體概念 AS [熱門題材]
+    FROM Chips C
+    LEFT JOIN MasterStockAnalysis M
+           ON RTRIM(M.代號) = RTRIM(C.代號)
+          AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+    WHERE C.日期 = (SELECT MAX(日期) FROM Chips)
+      AND C.成交價 >= 10 AND C.總量 >= 1000
+) T
+ORDER BY
+    CASE
+        WHEN T.[集中度20日] > 0 AND T.[集中度60日] > 0
+             AND T.[借券賣出20日增減] <= 0 AND T.[大戶週增減%] > 0 THEN 0
+        WHEN T.[借券賣出20日增減] < 0 AND T.[集中度20日] > 0 THEN 1
+        WHEN T.[集中度20日] > 0 AND T.[借券賣出20日增減] > 0 THEN 3
+        WHEN T.[集中度20日] <= 0 AND T.[借券賣出20日增減] > 0 THEN 4
+        ELSE 2
+    END ASC,
+    T.[吸籌分] DESC, T.[集中度20日] DESC, T.[大戶週增減%] DESC
+
+/*
+建議分類(cat)：籌碼類-吸籌與空方背離
+建議標題(title)：🏦 籌碼吸籌 ✕ 借券空方背離 (集中度雙升 ✕ 空方退場 ✕ 大戶加碼)
+
+戰略意義：
+1. 本支是整個範本庫第一支納入「空方力道」的掃描。既有範本只看多方的集中度與法人買超，
+   完全沒有借券（放空）資料 —— 所以無法分辨「集中度上升」是真吸籌還是出貨前的假拉抬。
+2. 解鎖 Chips 表的 11 個從未被使用的欄位：籌碼集中度20日/60日、主力買賣超合計20日、
+   買賣家數差20日集中比率、借券賣出增減20日、大戶持股週增減、買超/賣超合計20日、
+   成交量合計20日、買賣家數差為負的天數近20天。
+3. 判讀心法：
+   - 集中度上升 ＋ 借券賣出同步減少 ＝ 空方收手，主力真吸籌（👑）
+   - 集中度上升 ＋ 借券賣出同步增加 ＝ 上方有人放空，提防假拉抬（⚠️）
+   - 買賣家數差為負的天數多 ＝ 賣方家數多但股價撐住，籌碼往大戶集中
+4. 吸籌分滿分 125，實測最高 125（擎邦）。
+
+想改看哪一種診斷，把外層改成（注意 emoji 必須加 COLLATE，否則等於沒過濾）：
+   WHERE T.[籌碼診斷] LIKE N'%⚠️%' COLLATE Latin1_General_100_BIN2
+其他可調門檻：C.總量 >= 1000、C.成交價 >= 10、吸籌分 >= 100
+*/
+` },
+
+
+
             {
                 cat: "新Ai解盤資料", title: "全知大寬表與量化特徵工程解盤", sql: `/*資料庫:stockchangedate*/TOP 50 
 資料日期, 代號, 名稱, 成交價, 股本基因標籤, 月線乖離率, 乖離戰術判定, 短線20日主力成本, 波段60日主力成本,
@@ -1136,7 +1533,7 @@ EXEC stockchangedate.dbo.sp_Get_Market_Gravity_Tower;
 FROM stockchangedate.dbo.Strategy_Backtest_Summary
 ORDER BY 回測編號 DESC;`
             },
-           
+
             {
                 cat: "資產曲線-績效複盤",
                 title: "📈 每日資產淨值曲線數據 (可直接在圖表繪製平滑複利曲線)",
@@ -1155,8 +1552,8 @@ WHERE N.回測編號 = (
 )
 ORDER BY N.日期 ASC;`
             },
-           
-{
+
+            {
                 cat: "資產曲線-績效複盤",
                 title: "📋 歷史逐筆交易明細表 (進出場價格 ✕ 持有天數 ✕ 淨損益)",
                 sql: `/*資料庫:stockchangedate*/TOP 100
@@ -1321,6 +1718,94 @@ ORDER BY P.風報比 DESC, P.潛在上漲空間_百分比 DESC;
 3. 自動依「形態深度」計算 1:1 等距測幅目標價，讓您在進場第一秒就掌握停利目標與風報比！
 */`
             },
+
+            {
+                cat: "幾何形態-等距測幅", title: "👑 W底等底部型態", sql: `/*資料庫:stockchangedate*/ TOP 100
+    R.代號, RTRIM(M.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業,
+    R.現價, R.底部低點, R.底部天數, R.頸線,
+    R.底部盤整天數,
+    CAST(ROUND(R.底部盤整天數 * 100.0 / NULLIF(R.底部天數, 0), 1) AS DECIMAL(5,1)) AS [盤整佔比%],
+    R.觸頸次數,
+    CAST(ROUND((R.頸線 - R.底部低點) / R.頸線 * 100, 1) AS DECIMAL(6,1)) AS [底部深度%],
+    CAST(ROUND((R.現價 - R.頸線) / R.頸線 * 100, 2) AS DECIMAL(6,2)) AS [距頸線%],
+    CAST(R.頸線 + (R.頸線 - R.底部低點) AS DECIMAL(10,2)) AS [1比1目標],
+    CAST(ROUND((R.頸線 + (R.頸線 - R.底部低點) - R.現價) / R.現價 * 100, 1) AS DECIMAL(6,1)) AS [潛在空間%],
+    R.近10日最低 AS 回測最低,
+    CASE WHEN R.近10日最低 >= R.頸線 * 0.96 AND R.現價 >= R.頸線 * 0.98
+              AND R.近10日最高 > R.頸線
+         THEN N'✅ 突破後回測不破'
+         WHEN R.現價 >= R.頸線 * 0.98 AND R.近10日最高 > R.頸線
+         THEN N'⚠️ 突破後跌破頸線'
+         WHEN R.現價 >= R.頸線 * 0.94
+         THEN N'⏳ 蓄勢待突破'
+         ELSE N'— 離頸線尚遠' END AS 頸線狀態,
+    M.盤中總量 AS 量, M.專家實戰總分 AS 專家分, M.週k9
+FROM (
+    SELECT Z.代號,
+           MAX(Z.現價) AS 現價,
+           MAX(Z.底部低點) AS 底部低點,
+           MAX(Z.低點位置) AS 底部天數,
+           MAX(Z.頸線) AS 頸線,
+           MAX(Z.近10日最低) AS 近10日最低,
+           MAX(Z.近10日最高) AS 近10日最高,
+           SUM(CASE WHEN Z.C <= Z.頸線 * 0.98 AND Z.rn <= Z.低點位置 THEN 1 ELSE 0 END) AS 底部盤整天數,
+           SUM(CASE WHEN Z.C >= Z.頸線 * 0.95 AND Z.rn <= Z.低點位置 THEN 1 ELSE 0 END) AS 觸頸次數
+    FROM (
+        SELECT 代號, C, rn, 低點位置,
+               MAX(CASE WHEN rn = 1 THEN C END) OVER (PARTITION BY 代號) AS 現價,
+               MAX(CASE WHEN 低rank = 1 THEN C END) OVER (PARTITION BY 代號) AS 底部低點,
+               MAX(CASE WHEN rn < 低點位置 AND rn > 10 THEN C END) OVER (PARTITION BY 代號) AS 頸線,
+               MIN(CASE WHEN rn <= 10 THEN C END) OVER (PARTITION BY 代號) AS 近10日最低,
+               MAX(CASE WHEN rn <= 10 THEN C END) OVER (PARTITION BY 代號) AS 近10日最高
+        FROM (
+            SELECT 代號, C, rn, 低rank,
+                   MAX(CASE WHEN 低rank = 1 THEN rn END) OVER (PARTITION BY 代號) AS 低點位置
+            FROM (
+                SELECT 代號, C, rn,
+                       ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY C ASC, rn DESC) AS 低rank
+                FROM (
+                    SELECT RTRIM(代號) AS 代號, 盤中現價 AS C, 日期,
+                           ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 日期 DESC) AS rn
+                    FROM MasterStockAnalysis
+                    WHERE 盤中現價 IS NOT NULL AND 盤中現價 > 0
+                ) D WHERE rn <= 360
+            ) A
+        ) B
+    ) Z
+    GROUP BY Z.代號
+) R
+JOIN MasterStockAnalysis M ON RTRIM(M.代號) = R.代號
+     AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+WHERE R.近10日最高 IS NOT NULL
+  AND R.頸線 > 0 AND R.底部低點 > 0
+  AND M.盤中總量 >= 500
+  AND R.現價 >= 10
+  AND R.底部天數 >= 20
+  AND (R.頸線 - R.底部低點) / R.頸線 BETWEEN 0.08 AND 0.70
+  AND (R.現價 - R.頸線) / R.頸線 BETWEEN -0.08 AND 0.15
+  -- 【選項】只要反覆磨頸線的（突破機率高）
+  AND R.觸頸次數 >= 20
+
+-- 【選項】只要大底（盤整超過 100 天）
+  AND R.底部盤整天數 >= 100
+
+-- 【選項】排除長期趨勢股（低點早於回看期）
+  AND R.底部天數 < 350
+
+-- 【選項】只要貼著頸線 3% 以內（準備發動）
+  AND (R.現價 - R.頸線) / R.頸線 BETWEEN -0.03 AND 0.03
+
+-- 【選項】排序改成「觸頸次數」優先（磨越久越前面）
+--ORDER BY R.觸頸次數 DESC
+ORDER BY CASE
+             WHEN R.近10日最低 >= R.頸線 * 0.96 AND R.現價 >= R.頸線 * 0.98
+                  AND R.近10日最高 > R.頸線 THEN 0
+             WHEN R.現價 >= R.頸線 * 0.94 THEN 1
+             ELSE 2
+         END ASC,
+         R.底部盤整天數 DESC,
+         R.底部天數 DESC,
+         CAST(ROUND((R.頸線 + (R.頸線 - R.底部低點) - R.現價) / R.現價 * 100, 1) AS DECIMAL(6,1)) DESC` },
 
 
             {
@@ -1832,7 +2317,7 @@ ORDER BY V.成交價 DESC;
 若 獲利籌碼比例 > 80% 且 現價 > VWAP，代表全市場主力散戶幾乎全數賺錢，沒有上檔套牢賣壓，是標準的主升段控盤黑馬！
 */` },
 
-     
+
 
             {
                 cat: "基本面-雙料雙冠王",
@@ -1874,7 +2359,7 @@ WHERE V.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysi
 ORDER BY V.營收年增率 DESC, V.營收月增率 DESC;`
             },
 
-          
+
 
             {
                 cat: "基本面-營收動能",
@@ -1969,7 +2454,7 @@ WHERE I.rn = 1
 ORDER BY I.年成長 DESC, I.月變動 DESC;`
             },
 
-           
+
 
             {
                 cat: "基本面-EPS獲利質變", title: "👑 半年報賺贏去年 ✕ 三率雙升 ✕ 60M進場與外資空間", sql: `/*資料庫:stockchangedate*/-- 🟢 ① 即時行情、籌碼與換手動能
@@ -2113,8 +2598,8 @@ WHERE (
 ORDER BY F.今年累計EPS DESC, [超越去年全年%] DESC;` },
 
 
-        {
-            cat: "基本面-EPS獲利質變", title: "👑 半年報賺贏去年 ✕ 三率雙升", sql: `/*資料庫:stockchangedate*/
+            {
+                cat: "基本面-EPS獲利質變", title: "👑 半年報賺贏去年 ✕ 三率雙升", sql: `/*資料庫:stockchangedate*/
 F.代號,
 F.名稱,
 -- 🟢 basicinfo 即時行情、量能、股本與週轉率
@@ -2303,7 +2788,7 @@ FROM dbo.MacroEconomicCalendar
 WHERE [公布日期] >= CAST(CONVERT(VARCHAR(8), GETDATE(), 112) AS INT)
 ORDER BY [公布日期] ASC, [公布時間] ASC;`
             },
-           
+
             {
                 cat: "5MA金叉進場,最適合的離場條件", title: "離場三條件PK(5 10 20ma),勝率及報酬期望值by資料表+實戰總分", sql: ` /*資料庫:stockchangedate*/ M.名稱, M.代號, M.產業分類, M.股本億, M.日期, M.盤中現價, M.盤中漲幅, M.盤中總量, M.專家實戰總分, 
                             S.完成交易次數, S.WinRate_5MA AS [5MA離場_勝率%], S.Return_5MA AS [5MA離場_期望值%], 
@@ -7166,7 +7651,7 @@ FOR JSON PATH` },
             { cat: "自選股", title: "四季紅", sql: `* FROM incomechar` },
             { cat: "自選股", title: "黃金交金叉", sql: `* FROM incomechar19` },
             { cat: "自選股", title: "所有自選股資訊", sql: ` * from textmsg where 識別碼 >= 21` },
-       
+                 
 
         ];     
 </pre></body></html>
