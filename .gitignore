@@ -1,0 +1,11 @@
+# 忽略 Visual Studio 暫存垃圾
+.vs/
+*.vsidx
+*.suo
+
+# 忽略超過 50MB 的超大歷史檔案 (防 GitHub 拒收)
+5.html
+6.html
+
+# 忽略照片快取
+photos/*.jpg
