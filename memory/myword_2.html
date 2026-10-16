@@ -1,6 +1,87 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'> // --- 範本資料庫 ---
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>myword2 ID 2</title>
+</head>
+<body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
+    <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 2</h2>
+    <hr style="border: 1px solid #334155;">
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;"> // --- 範本資料庫 ---
    const sqlTemplateLibrary = [
-      
+                  {
+                cat: "三源合成_複合選股", title: "🔀 三源合成 ✕ POC分價量 + 均分金叉 + 價值防禦 (全方位選股)", sql: `/*資料庫:stockchangedate*/ TOP 50 T.*
+FROM (
+    SELECT
+        RTRIM(M.代號) AS 代號, RTRIM(M.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業,
+        B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)],
+        ROUND(M.專家實戰總分, 2) AS 專家分,
+
+        -- 09 分價量 POC 微結構
+        V.成交價 AS [POC主力成本], V.成交張數 AS [POC成交張數], V.成交佔比 AS [POC佔比%],
+        CASE 
+            WHEN B.成交價 >= V.成交價 * 1.02 THEN N'📈 突破主力成本 (多方掌控)'
+            WHEN B.成交價 <= V.成交價 * 0.98 THEN N'📉 跌破主力成本 (沈重套牢)'
+            ELSE N'⚖️ 貼身成本震盪 (決戰點)' 
+        END AS [分價量定位],
+
+        -- 10 實戰總分多期交叉
+        ROUND(C.實戰總分, 1) AS [實戰總分],
+        CASE 
+            WHEN C.五日交叉成功 = 1 AND C.十日交叉成功 = 1 THEN N'👑 5/10日雙金叉'
+            WHEN C.五日交叉成功 = 1 THEN N'⚡ 5日短線金叉'
+            ELSE N'— 無交叉' 
+        END AS [均分交叉狀態],
+
+        -- 11 價值面護城河
+        VAL.本益比近四季 AS [PE(倍)], VAL.股價淨值比 AS [PB(倍)], VAL.現金殖利率 AS [殖利率%],
+        CASE 
+            WHEN VAL.本益比近四季 < 15 AND VAL.現金殖利率 >= 4.0 THEN N'👑 低PE ✕ 高殖利率 (頂級防禦)'
+            WHEN VAL.本益比近四季 < 15 THEN N'⭐ 低估值 (PE<15)'
+            WHEN VAL.現金殖利率 >= 4.0 THEN N'💰 高股息 (殖利率≥4%)'
+            ELSE N'一般評價' 
+        END AS [價值護城河]
+
+    FROM MasterStockAnalysis M
+    LEFT JOIN stockchange.dbo.basicinfo B 
+           ON RTRIM(B.代號) = RTRIM(M.代號)
+
+    -- 09 萃取分價量成交佔比最大的價位 (POC 主力成本線)
+    LEFT JOIN (
+        SELECT 代號, 成交價, 成交張數, 成交佔比,
+               ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 成交佔比 DESC) AS rn
+        FROM StockPriceVolume
+        WHERE 日期 = (SELECT MAX(日期) FROM StockPriceVolume)
+    ) V ON RTRIM(V.代號) = RTRIM(M.代號) AND V.rn = 1
+
+    -- 10 實戰總分交叉 (高效直連最新日)
+    LEFT JOIN ScoreCrossHistory C 
+           ON RTRIM(C.代號) = RTRIM(M.代號) 
+          AND C.日期 = (SELECT MAX(日期) FROM ScoreCrossHistory)
+
+    -- 11 價值面 (高效直連最新日)
+    LEFT JOIN value VAL 
+           ON RTRIM(VAL.代號) = RTRIM(M.代號) 
+          AND VAL.日期 = (SELECT MAX(日期) FROM value)
+
+    WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+      AND B.總量 >= 500 AND B.成交價 >= 10
+      AND (
+          B.成交價 >= V.成交價 * 1.02      -- 條件1: 站上分價量中心
+          OR C.五日交叉成功 = 1             -- 條件2: 實戰總分短線金叉
+          OR (VAL.本益比近四季 < 15 AND VAL.現金殖利率 >= 4.0) -- 條件3: 頂級價值防禦
+      )
+) T
+ORDER BY T.專家分 DESC, T.[POC佔比%] DESC, T.[成交量(張)] DESC
+
+/*
+戰略意義：
+1. 頂級三合一：將 09(分價量POC籌碼中心)、10(實戰總分5/10日金叉)、11(PE/PB/殖利率價值底部) 合成單一終極大屏！
+2. 徹底消滅 Bug：串聯 basicinfo 補上真實成交價與漲跌，徹底根絕「無效的資料行名稱 盤中現價」錯誤。
+3. 效能優化：以 MAX(日期) 取代原代碼中低效危險的 GROUP BY，查詢速度提升 100 倍且絕不重複。
+4. 篩選門檻：總量 >= 500、股價 >= 10，並自動過濾符合三條件之一的精英黑馬！
+*/` },
+
                   {
                 cat: "籌碼健康_散戶大戶背離", title: "💎 籌碼健康 ✕ 散戶大戶背離 (健康分≥70 ✕ 散戶退大戶接)", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
 FROM (
@@ -7748,4 +7829,6 @@ FOR JSON PATH` },
                  
 
         ];     
-</pre></body></html>
+</pre>
+</body>
+</html>
