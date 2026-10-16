@@ -1,6 +1,100 @@
 <!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'> // --- 範本資料庫 ---
    const sqlTemplateLibrary = [
-             {
+      
+                  {
+                cat: "籌碼健康_散戶大戶背離", title: "💎 籌碼健康 ✕ 散戶大戶背離 (健康分≥70 ✕ 散戶退大戶接)", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+FROM (
+    SELECT
+        RTRIM(W.代號) AS 代號, RTRIM(W.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業,
+        B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)],
+        W.籌碼健康分, RTRIM(W.診斷狀態) AS 診斷,
+        CAST(W.[散戶變動%] AS DECIMAL(6,2)) AS [散戶變動%],
+        CAST(W.[特大戶變動%] AS DECIMAL(6,2)) AS [特大戶變動%],
+        CAST(W.[中實戶變動%] AS DECIMAL(6,2)) AS [中實戶變動%],
+        ROUND(M.專家實戰總分, 2) AS 專家分, M.週k9 AS [週K9]
+    FROM WeeklyChipAudit W
+    LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(B.代號) = RTRIM(W.代號)
+    LEFT JOIN MasterStockAnalysis M ON RTRIM(M.代號) = RTRIM(W.代號)
+         AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+    WHERE W.更新日期 = (SELECT MAX(更新日期) FROM WeeklyChipAudit)
+      AND W.籌碼健康分 >= 70
+      AND W.[散戶變動%] <= -2.0
+      AND W.[特大戶變動%] >= 1.0
+      AND B.總量 >= 500 AND B.成交價 >= 10
+) T
+ORDER BY T.籌碼健康分 DESC, T.[特大戶變動%] DESC, T.[成交量(張)] DESC
+
+/*
+戰略意義：
+1. 使用 WeeklyChipAudit 籌碼健檢表，解鎖「籌碼健康分」與散戶/特大戶週變動。
+2. 核心邏輯：健康分 ≥ 70 ＋ 散戶變動 ≤ -2% ＋ 特大戶變動 ≥ +1%，代表籌碼由散戶弱手流向大戶強手。
+3. 補上 M.盤中總量 >= 500 與 成交價 >= 10，徹底過濾無量冷門殭屍股。
+*/
+` },
+
+            {
+                cat: "股性出場_最佳天數與勝率", title: "🏃 股性出場 ✕ 5MA勝率≥60% (高勝率離場基因庫)", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+FROM (
+    SELECT
+        RTRIM(P.代號) AS 代號, RTRIM(P.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業,
+        B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)],
+        CAST(P.WinRate_5MA * 100.0 AS DECIMAL(5,1)) AS [5MA勝率%],
+        CAST(P.Return_5MA AS DECIMAL(6,2)) AS [5MA期望報酬%],
+        CAST(P.WinRate_10MA * 100.0 AS DECIMAL(5,1)) AS [10MA勝率%],
+        CAST(P.Return_10MA AS DECIMAL(6,2)) AS [10MA期望報酬%],
+        RTRIM(P.OptimalExit) AS [最佳出場策略],
+        P.完成交易次數 AS [歷史樣本數],
+        ROUND(M.專家實戰總分, 2) AS 專家分
+    FROM StockPersonality_3Exits P
+    LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(B.代號) = RTRIM(P.代號)
+    LEFT JOIN MasterStockAnalysis M ON RTRIM(M.代號) = RTRIM(P.代號)
+         AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+    WHERE P.更新日期 = (SELECT MAX(更新日期) FROM StockPersonality_3Exits)
+      AND P.WinRate_5MA >= 0.60
+      AND P.完成交易次數 >= 20
+      AND B.總量 >= 500 AND B.成交價 >= 10
+) T
+ORDER BY T.[5MA勝率%] DESC, T.[5MA期望報酬%] DESC, T.[成交量(張)] DESC
+
+/*
+戰略意義：
+1. 解鎖 StockPersonality_3Exits，將戰情三室的離場勝率基因庫直接搬到 SQL 掃描。
+2. 補上 LEFT JOIN 帶出「現價」與「盤中總量」，勝率直接乘上 100 顯示為易讀的百分比 (如 65.5%)。
+3. 核心邏輯：5MA 勝率 ≥ 60% 且歷史交易次數 ≥ 20 次，鎖定短波段一擊必殺之高勝率標的。
+*/` },
+
+            {
+                cat: "多因子共振_DimABCD", title: "👑 多因子共振 ✕ DimA~D 全維度爆發 (3維/4維頂級黑馬)", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+FROM (
+    SELECT
+        RTRIM(R.代號) AS 代號, RTRIM(R.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業,
+        B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)],
+        R.HitCount AS [共振維度],
+        RTRIM(R.ResonanceTag) AS [共振標籤],
+        R.DimA_DualMomentum AS [A_雙動能], RTRIM(R.DimA_Status) AS [A狀態],
+        R.DimB_OBVStar AS [B_OBV星], RTRIM(R.DimB_Status) AS [B狀態],
+        R.DimC_PriceStar AS [C_價格星], RTRIM(R.DimC_Status) AS [C狀態],
+        R.DimD_RainbowScore AS [D_彩虹分], RTRIM(R.DimD_Status) AS [D狀態],
+        ROUND(M.專家實戰總分, 2) AS 專家分, M.具體概念 AS [熱門題材]
+    FROM ResonanceMultiFactor_Snapshot R
+    LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(B.代號) = RTRIM(R.代號)
+    LEFT JOIN MasterStockAnalysis M ON RTRIM(M.代號) = RTRIM(R.代號)
+         AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+    WHERE R.日期 = (SELECT MAX(日期) FROM ResonanceMultiFactor_Snapshot)
+      AND R.HitCount >= 3
+      AND R.DimA_DualMomentum >= 1
+      AND B.總量 >= 500 AND B.成交價 >= 10
+) T
+ORDER BY T.[共振維度] DESC, T.[D_彩虹分] DESC, T.[今日漲幅%] DESC
+
+/*
+戰略意義：
+1. 完整對齊戰情一室核心引擎！解鎖 ResonanceMultiFactor_Snapshot 每日盤中快照。
+2. 補上「現價」與「今日漲幅%」，排序以 HitCount (4維/3維) 優先，再比彩虹共振總分。
+3. 嚴格鎖定 HitCount >= 3 且 DimA (雙動能) 翻正，抓出真正的起漲黑馬龍頭。
+*/` },
+
+ {
                 cat: "籌碼類-三大法人分歧", title: "🏦 自營商三腳鼎分歧 (三方共識 ✕ 自營商避險對作)", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
 FROM (
     SELECT
