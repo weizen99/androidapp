@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>myword2 ID 14</title>
+</head>
+<body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
+    <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 14</h2>
+    <hr style="border: 1px solid #334155;">
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">
+Imports System.Web.Services
+Imports System.Data
+Imports System.Data.SqlClient
+Imports Newtonsoft.Json
+Public Class myword2
+    Inherits System.Web.UI.Page
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
+    End Sub
+
+    ' =========================================================================
+    ' 1. 取得全量歷史選單清單 (包含 ID, 說明, 日期)
+    ' =========================================================================
+    <WebMethod()>
+    Public Shared Function GetAllTextSharesList() As String
+        Dim connStr As String = "Data Source=pc048000110;Initial Catalog=stockchangedate;Trusted_Connection=yes"
+        Dim dt As New DataTable()
+        Dim sql As String = "SELECT [ID], ISNULL([說明], N'無說明') AS [說明], [日期] FROM [dbo].[TextShares2] ORDER BY [ID] DESC"
+
+        Try
+            Using conn As New SqlConnection(connStr)
+                Using cmd As New SqlCommand(sql, conn)
+                    Using da As New SqlDataAdapter(cmd)
+                        da.Fill(dt)
+                    End Using
+                End Using
+            End Using
+
+            Dim list As New List(Of Dictionary(Of String, Object))()
+            For Each dr As DataRow In dt.Rows
+                Dim dict As New Dictionary(Of String, Object) From {
+                    {"id", Convert.ToInt32(dr("ID"))},
+                    {"title", dr("說明").ToString().Trim()},
+                    {"date", If(IsDBNull(dr("日期")), "", Convert.ToDateTime(dr("日期")).ToString("yyyy/MM/dd"))}
+                }
+                list.Add(dict)
+            Next
+
+            Return JsonConvert.SerializeObject(list)
+
+        Catch ex As Exception
+            Return "[{""id"":0,""title"":""讀取失敗: " & ex.Message.Replace("""", "'") & """,""date"":""""}]"
+        End Try
+    End Function
+
+    ' =========================================================================
+    ' 2. 讀取單筆紀錄 (傳回 ID, 說明, Content, 日期)
+    ' =========================================================================
+    <WebMethod()>
+    Public Shared Function GetTextShare(ByVal id As Integer) As String
+        Dim connStr As String = "Data Source=pc048000110;Initial Catalog=stockchangedate;Trusted_Connection=yes"
+        Dim dt As New DataTable()
+        Dim sql As String = "SELECT [ID], ISNULL([說明], N'') AS [說明], ISNULL([Content], N'') AS [Content], [日期] FROM [dbo].[TextShares2] WHERE [ID] = @ID"
+
+        Try
+            Using conn As New SqlConnection(connStr)
+                Using cmd As New SqlCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("@ID", id)
+                    Using da As New SqlDataAdapter(cmd)
+                        da.Fill(dt)
+                    End Using
+                End Using
+            End Using
+
+            If dt.Rows.Count = 0 Then
+                Return "{""status"":""error"",""message"":""查無 ID " & id & " 的紀錄""}"
+            End If
+
+            Dim row = dt.Rows(0)
+            Dim res As New Dictionary(Of String, Object) From {
+                {"status", "success"},
+                {"id", Convert.ToInt32(row("ID"))},
+                {"title", row("說明").ToString()},
+                {"content", row("Content").ToString()},
+                {"date", If(IsDBNull(row("日期")), "", Convert.ToDateTime(row("日期")).ToString("yyyy-MM-dd HH:mm:ss"))}
+            }
+
+            Return JsonConvert.SerializeObject(res)
+
+        Catch ex As Exception
+            Return "{""status"":""error"",""message"":""" & ex.Message.Replace("""", "\""") & """}"
+        End Try
+    End Function
+
+    ' =========================================================================
+    ' 3. 儲存/更新/新增紀錄 (若 id > 0 執行 UPDATE；若 id = 0 執行 INSERT)
+    ' =========================================================================
+    <WebMethod()>
+    Public Shared Function SaveTextShare(ByVal id As Integer, ByVal title As String, ByVal content As String) As String
+        Dim connStr As String = "Data Source=pc048000110;Initial Catalog=stockchangedate;Trusted_Connection=yes"
+        Dim targetId As Integer = id
+
+        Try
+            Using conn As New SqlConnection(connStr)
+                conn.Open()
+
+                If id > 0 Then
+                    ' 情況 A：更新既有 ID 的 [說明] 與 [Content]
+                    Dim sqlUpdate As String = "UPDATE [dbo].[TextShares2] SET [說明] = @Title, [Content] = @Content, [日期] = GETDATE() WHERE [ID] = @ID"
+                    Using cmd As New SqlCommand(sqlUpdate, conn)
+                        cmd.Parameters.AddWithValue("@Title", If(String.IsNullOrEmpty(title), DBNull.Value, title))
+                        cmd.Parameters.AddWithValue("@Content", If(String.IsNullOrEmpty(content), DBNull.Value, content))
+                        cmd.Parameters.AddWithValue("@ID", id)
+                        cmd.ExecuteNonQuery()
+                    End Using
+                Else
+                    ' 情況 B：新增紀錄，並自動傳回新產生的 Identity ID
+                    Dim sqlInsert As String = "INSERT INTO [dbo].[TextShares2] ([說明], [Content], [日期]) VALUES (@Title, @Content, GETDATE()); SELECT SCOPE_IDENTITY();"
+                    Using cmd As New SqlCommand(sqlInsert, conn)
+                        cmd.Parameters.AddWithValue("@Title", If(String.IsNullOrEmpty(title), DBNull.Value, title))
+                        cmd.Parameters.AddWithValue("@Content", If(String.IsNullOrEmpty(content), DBNull.Value, content))
+                        targetId = Convert.ToInt32(cmd.ExecuteScalar())
+                    End Using
+                End If
+            End Using
+
+            Dim res As New Dictionary(Of String, Object) From {
+                {"status", "success"},
+                {"id", targetId},
+                {"message", If(id > 0, "ID " & id & " 紀錄修訂儲存成功！", "已成功建立新筆紀錄 (新 ID: " & targetId & ")！")}
+            }
+
+            Return JsonConvert.SerializeObject(res)
+
+        Catch ex As Exception
+            Return "{""status"":""error"",""message"":""" & ex.Message.Replace("""", "\""") & """}"
+        End Try
+    End Function
+
+End Class
+
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字打包系統 - 高級版 (支援說明編輯)</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- SweetAlert2 提示框 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            background-color: #0c1827;
+            color: #cbd5e1;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            padding: 15px;
+        }
+
+        .custom-card {
+            background: #111d2e;
+            border: 1px solid #1e2e42;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            padding: 20px;
+        }
+
+        .form-control, .form-select {
+            background-color: #080f1a !important;
+            border: 1px solid #1b2a3f !important;
+            color: #51e5ff !important;
+            font-family: font-monospace, monospace;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #00f2fe !important;
+                box-shadow: 0 0 8px rgba(0, 242, 254, 0.4) !important;
+            }
+
+        .btn-custom-blue {
+            background-color: #0284c7;
+            border-color: #0284c7;
+            color: white;
+            font-weight: bold;
+        }
+
+            .btn-custom-blue:hover {
+                background-color: #0369a1;
+                color: white;
+            }
+
+        .btn-custom-green {
+            background-color: #10b981;
+            border-color: #10b981;
+            color: white;
+            font-weight: bold;
+        }
+
+            .btn-custom-green:hover {
+                background-color: #059669;
+                color: white;
+            }
+
+        /* 深藍選單列 */
+        .custom-navbar {
+            background-color: #213c5a !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+        }
+
+            .custom-navbar .navbar-brand {
+                color: #ffffff !important;
+                font-size: 1.2rem;
+            }
+
+            .custom-navbar .nav-link {
+                color: rgba(255,255,255,0.85) !important;
+                margin-left: 10px;
+            }
+
+                .custom-navbar .nav-link:hover {
+                    color: #51e5ff !important;
+                }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部導航列 -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">📦 文字打包系統 Pro (TextShares1)</a>
+            <div class="navbar-nav ms-auto fw-bold">
+                <a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/stockmaster.html" target="_blank">📈 股票戰情室</a>
+                <a class="nav-link" href="https://zen2965.duckdns.org:8888/excelimport/excelsql2.html" target="_blank">📊 SQL數據中心</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="custom-card">
+
+            <!-- 1. 選擇紀錄下拉選單 -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-info">🆔 當前紀錄 ID：</label>
+                    <input type="text" id="txtID" class="form-control text-center text-warning fw-bold" value="0" readonly>
+                </div>
+                <div class="col-md-9">
+                    <label class="form-label fw-bold text-info">📑 快速選擇歷史打包紀錄 (ID + 說明)：</label>
+                    <select id="ddlShareList" class="form-select">
+                        <option value="0">-- 載入中... --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 2. 說明/標題 編輯輸入框 (全新加入) -->
+            <div class="mb-3">
+                <label class="form-label fw-bold text-info">📌 紀錄說明 / 摘要標題 (說明)：</label>
+                <input type="text" id="txtTitle" class="form-control fw-bold" placeholder="請輸入本筆紀錄的說明或摘要標題 (例如: 2026/08/21 雙Y軸極致版備忘錄)...">
+            </div>
+
+            <!-- 3. 打包內文 (Content) 編輯區 -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="form-label fw-bold text-info mb-0">📄 打包內文 (Content / SQL / Markdown)：</label>
+                    <span id="lblDate" class="badge bg-secondary">更新時間: -</span>
+                </div>
+                <textarea id="txtContent" class="form-control" rows="14" placeholder="請貼入或編輯打包內容..."></textarea>
+            </div>
+
+            <!-- 4. 操作按鈕列 -->
+            <div class="d-flex flex-wrap gap-2 justify-content-between">
+                <div class="d-flex gap-2">
+                    <button type="button" id="btnSave" class="btn btn-custom-blue">💾 儲存修訂 (更新當前 ID)</button>
+                    <button type="button" id="btnNew" class="btn btn-custom-green">➕ 新增為新紀錄 (New ID)</button>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" id="btnCopy" class="btn btn-outline-info">📋 複製內文</button>
+                    <button type="button" id="btnClear" class="btn btn-outline-secondary">🧹 清空輸入框</button>
+                    <button type="button" id="btnReload" class="btn btn-outline-warning">🔄 重新整理下拉選單</button>
+                </div>
+            </div>
+
+            <div id="msgStatus" class="mt-3 font-monospace fw-bold"></div>
+
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://zen2965.duckdns.org:8888/excelimport/myword2.aspx";
+
+        $(document).ready(function () {
+            // 1. 初始化載入下拉選單清單
+            loadSharesList();
+
+            // 2. 檢測網址 URL 參數 ?id=XX
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetId = urlParams.get('id');
+            if (targetId) {
+                setTimeout(function () {
+                    loadSingleShare(targetId);
+                }, 500);
+            }
+
+            // 3. 下拉選單切換觸發載入
+            $("#ddlShareList").on("change", function () {
+                const id = $(this).val();
+                if (id && id !== "0") {
+                    loadSingleShare(id);
+                }
+            });
+
+            // 4. 儲存按鈕 (更新既有 ID)
+            $("#btnSave").click(function () {
+                const id = parseInt($("#txtID").val()) || 0;
+                saveShareData(id);
+            });
+
+            // 5. 新增按鈕 (建新 ID)
+            $("#btnNew").click(function () {
+                saveShareData(0); // 傳入 0 代表建立新紀錄
+            });
+
+            // 6. 清空按鈕
+            $("#btnClear").click(function () {
+                $("#txtID").val("0");
+                $("#txtTitle").val("");
+                $("#txtContent").val("");
+                $("#lblDate").text("更新時間: -");
+                $("#ddlShareList").val("0");
+                showMsg("已清空編輯區，可輸入內容後點擊【➕ 新增為新紀錄】。", "text-info");
+            });
+
+            // 7. 一鍵複製按鈕
+            $("#btnCopy").click(function () {
+                const content = $("#txtContent").val();
+                if (!content) {
+                    Swal.fire('提示', '內文為空，無法複製！', 'warning');
+                    return;
+                }
+                navigator.clipboard.writeText(content).then(function () {
+                    Swal.fire({
+                        title: '已複製到剪貼簿！',
+                        icon: 'success',
+                        toast: true,
+                        position: 'top-end',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                });
+            });
+
+            // 8. 重新載入按鈕
+            $("#btnReload").click(function () {
+                loadSharesList();
+            });
+        });
+
+        // 載入下拉選單
+        function loadSharesList() {
+            showMsg("⏳ 正在讀取歷史紀錄清單...", "text-primary");
+            $.ajax({
+                type: "POST",
+                url: API_URL + "/GetAllTextSharesList",
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) {
+                    try {
+                        const rawJson = typeof res.d === "string" ? res.d : JSON.stringify(res.d);
+                        // 防範控制字元
+                        const cleanedJson = rawJson.replace(/[\u0000-\u001F\u007F-\u009F]/g, function (ch) {
+                            if (ch === '\n') return '\\n';
+                            if (ch === '\r') return '\\r';
+                            if (ch === '\t') return '\\t';
+                            return '';
+                        });
+                        const list = JSON.parse(cleanedJson);
+
+                        const $select = $("#ddlShareList").empty().append('<option value="0">-- 請選擇歷史紀錄 --</option>');
+                        list.forEach(item => {
+                            const titleSnippet = item.title ? item.title.substring(0, 45) : '無說明';
+                            $select.append(`<option value="${item.id}">[ID ${item.id}] ${titleSnippet} (${item.date})</option>`);
+                        });
+
+                        const currentId = $("#txtID").val();
+                        if (currentId && currentId !== "0") {
+                            $select.val(currentId);
+                        }
+
+                        showMsg(`✅ 已成功加載 ${list.length} 筆紀錄清單！`, "text-success");
+                    } catch (e) {
+                        showMsg("❌ 解析清單失敗：" + e.message, "text-danger");
+                    }
+                },
+                error: function (xhr) {
+                    showMsg("❌ 伺服器連線失敗，請檢查 API！", "text-danger");
+                }
+            });
+        }
+
+        // 讀取單筆紀錄
+        function loadSingleShare(id) {
+            showMsg(`⏳ 正在載入 ID: ${id} ...`, "text-primary");
+            $.ajax({
+                type: "POST",
+                url: API_URL + "/GetTextShare",
+                data: JSON.stringify({ id: parseInt(id) }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) {
+                    try {
+                        const rawJson = typeof res.d === "string" ? res.d : JSON.stringify(res.d);
+                        const cleanedJson = rawJson.replace(/[\u0000-\u001F\u007F-\u009F]/g, function (ch) {
+                            if (ch === '\n') return '\\n';
+                            if (ch === '\r') return '\\r';
+                            if (ch === '\t') return '\\t';
+                            return '';
+                        });
+                        const data = JSON.parse(cleanedJson);
+
+                        if (data.status === "success") {
+                            $("#txtID").val(data.id);
+                            $("#txtTitle").val(data.title || "");
+                            $("#txtContent").val(data.content || "");
+                            $("#lblDate").text("更新時間: " + (data.date || "無"));
+                            $("#ddlShareList").val(data.id);
+                            showMsg(`✅ ID ${data.id} 載入成功！`, "text-success");
+                        } else {
+                            showMsg("⚠️ " + data.message, "text-danger");
+                        }
+                    } catch (e) {
+                        showMsg("❌ 解析單筆紀錄失敗：" + e.message, "text-danger");
+                    }
+                },
+                error: function () {
+                    showMsg("❌ 載入單筆紀錄時伺服器連線失敗！", "text-danger");
+                }
+            });
+        }
+
+        // 儲存/更新/新增紀錄
+        function saveShareData(id) {
+            const title = $("#txtTitle").val().trim();
+            const content = $("#txtContent").val();
+
+            if (!title) {
+                Swal.fire('提示', '請輸入「說明/摘要標題」！', 'warning');
+                return;
+            }
+
+            const actionName = (id > 0) ? `更新 ID ${id}` : "建立新紀錄";
+            showMsg(`⏳ 正在執行 ${actionName} ...`, "text-primary");
+
+            $.ajax({
+                type: "POST",
+                url: API_URL + "/SaveTextShare",
+                data: JSON.stringify({ id: id, title: title, content: content }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) {
+                    try {
+                        const data = typeof res.d === "string" ? JSON.parse(res.d) : res.d;
+                        if (data.status === "success") {
+                            $("#txtID").val(data.id);
+                            Swal.fire('成功', data.message, 'success');
+                            showMsg(`🎉 ${data.message} (ID: ${data.id})`, "text-success");
+                            loadSharesList(); // 重新整理下拉選單
+                        } else {
+                            Swal.fire('錯誤', data.message, 'error');
+                            showMsg("❌ " + data.message, "text-danger");
+                        }
+                    } catch (e) {
+                        showMsg("❌ 處理儲存回應失敗：" + e.message, "text-danger");
+                    }
+                },
+                error: function () {
+                    showMsg("❌ 儲存失敗，請檢查後台網路連線！", "text-danger");
+                }
+            });
+        }
+
+        function showMsg(msg, cssClass) {
+            $("#msgStatus").attr("class", "mt-3 font-monospace fw-bold " + cssClass).text(msg);
+        }
+    </script>
+</body>
+</html></pre>
+</body>
+</html>
