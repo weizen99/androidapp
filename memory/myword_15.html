@@ -7,6 +7,553 @@
 <body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
     <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 15</h2>
     <hr style="border: 1px solid #334155;">
-    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">空白</pre>
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">"""
+================================================================================
+🌟 Zen AI 99 部隊大一統中樞指揮母艦 V4.0 (三屏火控聯動旗艦版)
+檔案路徑：C:\test_c\master_cockpit.py
+核心亮點：
+1. 內建 Port 8551 API 伺服器，專門接收戰情三室 (TradingView) 的遙控發射指令！
+2. 頂部新增【四網大一統廣播火控台】，母艦上直接打代號秒發 TG/LINE/FB！
+================================================================================
+"""
+
+import flet as ft
+import subprocess
+import threading
+import os
+import sys
+import time
+import json
+from http.server import HTTPServer, BaseHTTPRequestHandler  # 👈 確保這行在 class 上面！
+import urllib.parse
+from quant_arsenal_modal import open_quant_arsenal_dialog
+
+
+SCRIPT_DIR = r"C:\test_c"
+MASTER_PASSWORD = "2157"
+
+# =========================================================================
+# 📡 戰情三室實體按鈕直連 API (Port 8551，支援 CORS 跨域)
+# =========================================================================
+class MiniBroadcasterHandler(BaseHTTPRequestHandler):
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', '*')
+        self.end_headers()
+
+    def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path.startswith('/api/broadcast'):
+            params = urllib.parse.parse_qs(parsed.query)
+            code = params.get('code', ['2330'])[0]
+            print(f"\n📡 [戰情三室 API 喚醒] 收到遙控推播指令: 標的【{code}】！")
+            
+            # 異步執行廣播
+            subprocess.Popen([sys.executable, "-u", os.path.join(SCRIPT_DIR, "zen_broadcaster.py"), "--code", code], cwd=SCRIPT_DIR)
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "ok", "code": code}).encode('utf-8'))
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+def start_mini_api_server():
+    try:
+        httpd = HTTPServer(('0.0.0.0', 8551), MiniBroadcasterHandler)
+        print("📡 [Zen API] 戰情三室遙控中樞已啟動於 Port 8551...")
+        httpd.serve_forever()
+    except Exception as e:
+        print(f"⚠️ Port 8551 API 啟動略過: {e}")
+
+# 背景啟動 API 伺服器
+threading.Thread(target=start_mini_api_server, daemon=True).start()
+
+# =========================================================================
+# 🌟 99 支部隊全編制陣列清冊
+# =========================================================================
+PYTHON_SCRIPTS = [  
+# 🎮 【免密碼開放體驗專區】
+{"name": "量化範本核武發射艙", "file": "quant_master_launcher.py", "cat": "開放體驗", "desc": "💎【核武庫閉環】動態調度 QuantSqlTemplates 範本 ✕ 0.1秒光速出表 ✕ 全知戰報四網齊發", "daemon": False, "sandbox": True},
+    {"name": "四網大一統廣播發射", "file": "zen_broadcaster.py", "cat": "開放體驗", "desc": "📡【四網齊發】讀取上方輸入框股號，同步發送 TG/LINE/FB", "daemon": False, "sandbox": True},
+    {"name": "一鍵全知量化解盤", "file": "ai_omni_explainer.py", "cat": "開放體驗", "desc": "🧠【第100號王牌】全知寬表 ✕ 雙表格戰令 ✕ 零幻覺深度戰報", "daemon": False, "sandbox": True},
+    {"name": "08:30 盤前晨會作戰晨報", "file": "auto_push_morning_brief.py", "cat": "開放體驗", "desc": "🌅【晨會作戰】每日 08:30 盤前廣播全景", "daemon": False, "sandbox": True},
+    
+   {
+        "name": "Playwright 盤中即時高解析截圖",
+        "file": "chart_screenshot_live.py",
+        "cat": "開放體驗",
+        "desc": "🔥【盤中即時】強制點擊盤中即時隨動，帶出今日最新跳動 K 棒",
+        "daemon": False,
+        "sandbox": True
+    },
+    {
+        "name": "Playwright 盤後歷史高解析截圖",
+        "file": "chart_screenshot_post.py",
+        "cat": "開放體驗",
+        "desc": "🌙【盤後歷史】強制點擊盤後歷史，支援輸入自訂起日 (如 2330 20260101)",
+        "daemon": False,
+        "sandbox": True
+    },
+
+
+    {"name": "本地 Ollama 伏兵解盤測試", "file": "chart_explain.py", "cat": "開放體驗", "desc": "🤖【本地AI】呼叫本機 Qwen 7B 產出解盤 例:2330 20260101 live(post)", "daemon": False, "sandbox": True},
+    {"name": "AMT 70% 價值區突圍回測", "file": "amt_strategy_backtest.py", "cat": "開放體驗", "desc": "🏆【策略2】70% VAH 突圍量化引擎與績效", "daemon": False, "sandbox": True},
+    {"name": "每日 8 大社群爆款貼文草稿庫", "file": "daily_post_generator.py", "cat": "開放體驗", "desc": "📝【文案大腦】籌碼鎖碼 ✕ 財報王者 ✕ 暴漲回測", "daemon": False, "sandbox": True},
+    {"name": "幾何形態相似度 1:1 測幅", "file": "pattern_scanner_1to1.py", "cat": "開放體驗", "desc": "📐【形態學】幾何形態匹配 ✕ 1:1 測幅引擎", "daemon": False, "sandbox": True},
+    {"name": "全市場最強暴漲黑馬回測", "file": "top_momentum_backtest.py", "cat": "開放體驗", "desc": "🐎【動能戰術】全市場最強暴漲黑馬 ✕ 均線離場", "daemon": False, "sandbox": True},
+    {"name": "全球總經日曆即時抓取", "file": "sync_macro_calendar.py", "cat": "開放體驗", "desc": "🌐【宏觀日曆】美聯儲利率決議 ✕ 非農", "daemon": False, "sandbox": True},
+    {"name": "全目錄 99 支腳本自動盤點", "file": "scan_all_scripts.py", "cat": "開放體驗", "desc": "🔍【系統巡邏】全目錄 Python 腳本分析", "daemon": False, "sandbox": True},
+   
+     # 🤖 【社群廣播與雙向 AI 通訊軍 (18 支)】
+    {"name": "Telegram 雙向操盤機器人 V3.6", "file": "zen_ai_bot1.py", "cat": "社群與AI", "desc": "📱 Gemini 4金鑰輪詢池 ✕ 實戰雙向解盤 (常駐主力)", "daemon": True, "sandbox": False},
+    {"name": "Telegram 雙向備援機器人", "file": "zen_ai_bot2.py", "cat": "社群與AI", "desc": "📱 雙向分流抗 503 備援中樞", "daemon": True, "sandbox": False},
+    {"name": "Telegram 基礎版機器人", "file": "zen_ai_bot.py", "cat": "社群與AI", "desc": "📱 Telegram 雙向對話基礎核心 (已對齊 LINE 指令)", "daemon": True, "sandbox": False},
+    {"name": "LINE Webhook 轉接與推播中台", "file": "line_ai_bot.py", "cat": "社群與AI", "desc": "💬 OpenRouter 頂級大模型 ✕ LINE 實戰數據卡片推播", "daemon": True, "sandbox": False},
+    {"name": "LINE 官方金鑰專用中台 1", "file": "line_ai_bot1.py", "cat": "社群與AI", "desc": "💬 LINE 官方通道分流節點 1", "daemon": True, "sandbox": False},
+    {"name": "LINE 官方金鑰專用中台 2", "file": "line_ai_bot2.py", "cat": "社群與AI", "desc": "💬 LINE 官方通道分流節點 2", "daemon": True, "sandbox": False},
+    {"name": "LINE 警報即時通知中樞", "file": "line_alerts .py", "cat": "社群與AI", "desc": "💬 對齊真實官方金鑰之警報快速發送器", "daemon": False, "sandbox": False},
+    {"name": "Facebook 社團自動解盤 V11.0", "file": "fb_comment_responder.py", "cat": "社群與AI", "desc": "🌐 Post ID 唯一防重複 ✕ 注入 CB 套利 Top 3", "daemon": False, "sandbox": False},
+    {"name": "Facebook 社團自動解盤 (歷史版)", "file": "fb_comment_responder - 20260910.py", "cat": "社群與AI", "desc": "🌐 FB 社團解盤 20260910 歷史穩定版本", "daemon": False, "sandbox": False},
+    {"name": "Facebook 一鍵圖文發文工具", "file": "fb_post_stock.py", "cat": "社群與AI", "desc": "🌐 單一精選個股圖文一鍵直送 Facebook 社團", "daemon": False, "sandbox": False},
+    {"name": "Facebook 發文獨立除錯工具", "file": "test_fb_post.py", "cat": "社群與AI", "desc": "🌐 測試 FB 登入狀態與 Token 有效性", "daemon": False, "sandbox": False},
+    {"name": "Facebook 永久免登入固化", "file": "login_fb_clean.py", "cat": "社群與AI", "desc": "🌐 真實 Chrome Profile Cookie 永久固化防掉線", "daemon": False, "sandbox": False},
+    {"name": "Facebook 輔助登入工具", "file": "login_fb.py", "cat": "社群與AI", "desc": "🌐 手動輔助登入與 Session 提取", "daemon": False, "sandbox": False},
+    {"name": "每日 13:35 盤後雙平台廣播", "file": "auto_push_resonance.py", "cat": "社群與AI", "desc": "🌐 TG ✕ FB 雙平台故障隔離 ✕ 自動破鎖大廣播", "daemon": False, "sandbox": False},
+    {"name": "每日 13:35 廣播 (備援版)", "file": "auto_push_resonance - 複製.py", "cat": "社群與AI", "desc": "🌐 盤後多維共振廣播備援複本", "daemon": False, "sandbox": False},
+    {"name": "Discord Webhook 警報通知", "file": "discord_alerts.py", "cat": "社群與AI", "desc": "🎮 Discord 伺服器自訂 Webhook 即時警報廣播", "daemon": False, "sandbox": False},
+    {"name": "Discord Webhook 警報節點 1", "file": "discord_alerts1.py", "cat": "社群與AI", "desc": "🎮 Discord 頻道備援廣播節點", "daemon": False, "sandbox": False},
+    {"name": "LINE 雙通道警報器 (Yahoo 聯動)", "file": "autorunyahoo1.py", "cat": "社群與AI", "desc": "💬 盤後行情 ✕ LINE/Discord 雙通道觸發器", "daemon": False, "sandbox": False},
+
+    # 🏭 【量化策略工廠與回測體系 (8 支)】
+    {"name": "雙引擎總報酬存股 DRIP 回測", "file": "dividend_strategy_backtest.py", "cat": "策略工廠", "desc": "🏆【策略3】農夫底倉 50% ✕ 每年7月股息複利回測", "daemon": False, "sandbox": False},
+    {"name": "雙破共振：壓力線 ✕ 頸線不破", "file": "pattern_dual_breakout_engine.py", "cat": "策略工廠", "desc": "🏆【策略1】下降壓力線 ✕ 頸線上次回測 0~3.5% 突破", "daemon": False, "sandbox": False},
+    {"name": "幾何鏡像對稱 ✕ 1:1 測幅", "file": "pattern_symmetry_engine.py", "cat": "策略工廠", "desc": "🏆 幾何鏡像對稱 ✕ 三級尺度等距測幅引擎 V2.0", "daemon": False, "sandbox": False},
+    {"name": "投資組合歷史資產淨值曲線回測", "file": "portfolio_equity_backtest.py", "cat": "策略工廠", "desc": "📈 多策略組合資產 NAV 曲線試算 (供戰情二室畫圖)", "daemon": False, "sandbox": False},
+    {"name": "策略工廠 Alpha 衰退每週評估器", "file": "strategy_factory_evaluator.py", "cat": "策略工廠", "desc": "📊 7 大戰術勝率、賠率、夏普值生命週期監控塔", "daemon": False, "sandbox": False},
+    {"name": "盤中最佳離場守門人守護進程", "file": "exit_sentinel_daemon.py", "cat": "策略工廠", "desc": "🛡️ 盤中即時監控專屬最佳 5/10/20MA 破線警戒 (常駐)", "daemon": True, "sandbox": False},
+    {"name": "幾何雙破共振 1:1 測幅回測", "file": "breakout_backtest.py", "cat": "策略工廠", "desc": "🏆 雙破共振歷史回測模擬引擎", "daemon": False, "sandbox": False},
+    {"name": "戰情二室圖形更新批次檔", "file": "戰情二室圖形更新.bat", "cat": "策略工廠", "desc": "⚡ 一鍵依序執行策略 2 與策略 3 回測數據展期", "daemon": False, "sandbox": False},
+
+    # 📡 【數據採集與爬蟲部隊 (17 支)】
+    {"name": "玩股網三大法人與期貨同步", "file": "sync_stock_threemaster.py", "cat": "數據採集", "desc": "📡 外資、投信、自營商期現貨數據精準清洗寫入", "daemon": False, "sandbox": False},
+    {"name": "雙軌分價量表建檔器 V4.0", "file": "sync_daily_price_volume.py", "cat": "數據採集", "desc": "📡 TPEx 全上市櫃分價量表 ✕ 70% 價值區 VAH/VAL/POC", "daemon": False, "sandbox": False},
+    {"name": "分價量表建檔測試版 V3.3", "file": "sync_daily_price_volumetest.py", "cat": "數據採集", "desc": "📡 32 大類股測試建檔節點", "daemon": False, "sandbox": False},
+    {"name": "Yahoo 盤中分價量表擷取器", "file": "fetch_yahoo_price_volume.py", "cat": "數據採集", "desc": "📡 上市/上櫃分價量即時穿透爬蟲", "daemon": False, "sandbox": False},
+    {"name": "近 20 天歷史分價量表初始化", "file": "init_price_volume_history.py", "cat": "數據採集", "desc": "📡 初次建置全市場分價量歷史寬表", "daemon": False, "sandbox": False},
+    {"name": "分價量表區間全自動批次回補", "file": "backfill_price_volume_range.py", "cat": "數據採集", "desc": "📡 指定起訖日區間歷史分價量修復引擎", "daemon": False, "sandbox": False},
+    {"name": "玩股網 20 檔高配息 ETF 入庫", "file": "sync_etf_wantgoo.py", "cat": "數據採集", "desc": "📡 官方直連高配息 ETF 殖利率、折溢價全解析", "daemon": False, "sandbox": False},
+    {"name": "玩股網 ETF 匯入 (單次清空)", "file": "sync_etf_wantgoo1.py", "cat": "數據採集", "desc": "📡 玩股網 ETF 覆蓋式匯入節點", "daemon": False, "sandbox": False},
+    {"name": "玩股網 ETF 歷史累積匯入", "file": "sync_etf_wantgoodate.py", "cat": "數據採集", "desc": "📡 累積寫入 ETF_DailyPriceDate 歷史表", "daemon": False, "sandbox": False},
+    {"name": "衍生性商品 ✕ ETF 智慧採集", "file": "sync_market_derivatives.py", "cat": "數據採集", "desc": "📡 可轉債 (CB)、個股期貨、反一智慧採集 V2.5", "daemon": False, "sandbox": False},
+    {"name": "FactSet 分析師外資預估採集", "file": "facset.py", "cat": "數據採集", "desc": "📡 2026~2027 FactSet 共識 EPS 與目標價清洗", "daemon": False, "sandbox": False},
+    {"name": "盤後大一統籌碼採集 (標準版)", "file": "autorunyahoo.py", "cat": "數據採集", "desc": "📡 Windows 本地驗證盤後個股行情", "daemon": False, "sandbox": False},
+    {"name": "盤後籌碼採集 (雙通道擴充)", "file": "autorunyahoo2.py", "cat": "數據採集", "desc": "📡 盤後分點進出備援採集點", "daemon": False, "sandbox": False},
+    {"name": "通用數值抓取器", "file": "catchdata.py", "cat": "數據採集", "desc": "📡 自訂數值解析與格式標準化", "daemon": False, "sandbox": False},
+    {"name": "AirLLM 70B 極限顯存測試", "file": "test_airllm.py", "cat": "數據採集", "desc": "🧪 本地 8GB 顯存跑 70B 大模型壓力測試", "daemon": False, "sandbox": False},
+
+    # 📥 【Excel 與核心資料庫匯入 (10 支)】
+    {"name": "營收月報 Excel 自動化增量匯入", "file": "import_incomesum.py", "cat": "資料庫匯入", "desc": "📥 incomesum 營收月增年增自動對齊入庫 V1.1", "daemon": False, "sandbox": False},
+    {"name": "理財寶/CMoney 財報無痛增量", "file": "import_financesum.py", "cat": "資料庫匯入", "desc": "📥 financesum 三率季增與 EPS 寬表更新", "daemon": False, "sandbox": False},
+    {"name": "36大類股資金輪動比率盤中匯入", "file": "import_sector_ratio.py", "cat": "資料庫匯入", "desc": "📥 類股比率盤中自動化匯入與資金流更新", "daemon": False, "sandbox": False},
+    {"name": "50+ 組 SQL 範本 Playwright 導入", "file": "import_all_templates.py", "cat": "資料庫匯入", "desc": "📥 自動將最新量化 SQL 範本打入 excelsql2 系統", "daemon": False, "sandbox": False},
+    {"name": "SQL 範本動態導入備援節點", "file": "import_all_templates1.py", "cat": "資料庫匯入", "desc": "📥 SQL 範本批次同步工具 1", "daemon": False, "sandbox": False},
+    {"name": "自動化多表匯入核心", "file": "AutoImporter.py", "cat": "資料庫匯入", "desc": "📥 外部來源多表資料批次搬運", "daemon": False, "sandbox": False},
+    {"name": "財務記帳與交易簿記更新", "file": "Bookkeeping.py", "cat": "資料庫匯入", "desc": "📥 實體交易部位與出入金記錄同步", "daemon": False, "sandbox": False},
+    {"name": "通用格式轉檔工具", "file": "convert.py", "cat": "資料庫匯入", "desc": "📥 資料夾資料結構統一轉換", "daemon": False, "sandbox": False},
+    {"name": "自選股清單 JSON 生成器", "file": "myfavor.py", "cat": "資料庫匯入", "desc": "📥 自選股分群組 JSON 格式打包", "daemon": False, "sandbox": False},
+
+    # 🧠 【本地 AI 與產業基因庫 (8 支)】
+    {"name": "Ollama 概念股自動填補器 (標準)", "file": "ConceptAutoFiller.py", "cat": "本地AI與基因", "desc": "🧠 本地 Qwen 自動分析補全個股產業概念標籤", "daemon": False, "sandbox": False},
+    {"name": "概念股增量填補器", "file": "ConceptAutoFiller_Incremental.py", "cat": "本地AI與基因", "desc": "🧠 僅針對新上市或無概念股進行增量探針", "daemon": False, "sandbox": False},
+    {"name": "概念股全面重洗刷新器", "file": "ConceptAutoFiller_Refresh.py", "cat": "本地AI與基因", "desc": "🧠 全市場概念股標籤全面覆蓋重掃", "daemon": False, "sandbox": False},
+    {"name": "概念股智慧升級補全器", "file": "ConceptAutoFiller_Upgrade.py", "cat": "本地AI與基因", "desc": "🧠 偵測需補全或升級的產業概念標籤", "daemon": False, "sandbox": False},
+    {"name": "Ollama 5線程產業基因標籤庫", "file": "update_notioninfo.py", "cat": "本地AI與基因", "desc": "🧠 5 線程極速為全個股賦予 10~15 個戰術基因標籤", "daemon": False, "sandbox": False},
+    {"name": "OpenRouter 頂級大模型基因庫", "file": "update_notioninfo_OpenRouter.py", "cat": "本地AI與基因", "desc": "🧠 OpenRouter 70B~120B 多模型產業基因升級", "daemon": False, "sandbox": False},
+    {"name": "SQL AI Agent 自動循環分析", "file": "sql_agent_loop.py", "cat": "本地AI與基因", "desc": "🧠 本地 Ollama 直連 SQL Server 執行自動除錯與問答", "daemon": False, "sandbox": False},
+    {"name": "提示詞與循環工程核心", "file": "loop_engineer.py", "cat": "本地AI與基因", "desc": "🧠 操盤提示詞演進與自動自我反思測試", "daemon": False, "sandbox": False},
+
+    # 🛠️ 【周邊輔助與外部自動化工具 (28 支)】
+    {"name": "AutoHotkey 外部排程掛載", "file": "Autohotkeyrun.py", "cat": "輔助與周邊", "desc": "🛠️ AHK 腳本自動喚醒中繼站", "daemon": False, "sandbox": False},
+    {"name": "AHK 樹狀排程發射器 0", "file": "autohotkeyruntree.py", "cat": "輔助與周邊", "desc": "🛠️ 多任務階層式 AHK 派發核心", "daemon": False, "sandbox": False},
+    {"name": "AHK 樹狀排程發射器 1", "file": "autohotkeyruntree1.py", "cat": "輔助與周邊", "desc": "🛠️ Windows 權限通道 AHK 派發 1", "daemon": False, "sandbox": False},
+    {"name": "AHK 樹狀排程發射器 2", "file": "autohotkeyruntree2.py", "cat": "輔助與周邊", "desc": "🛠️ Windows 權限通道 AHK 派發 2", "daemon": False, "sandbox": False},
+    {"name": "AHK 樹狀排程發射器 3", "file": "autohotkeyruntree3.py", "cat": "輔助與周邊", "desc": "🛠️ Windows 權限通道 AHK 派發 3", "daemon": False, "sandbox": False},
+    {"name": "Word 表格數據抓取器 3", "file": "my3.py", "cat": "輔助與周邊", "desc": "🛠️ Word 文件表格數據自動萃取入庫 3", "daemon": False, "sandbox": False},
+    {"name": "Word 表格數據抓取器 4", "file": "my4.py", "cat": "輔助與周邊", "desc": "🛠️ Word 文件表格數據自動萃取入庫 4", "daemon": False, "sandbox": False},
+    {"name": "Word 字體與排版引擎", "file": "myword.py", "cat": "輔助與周邊", "desc": "🛠️ 戰報專用自訂字體解析工具", "daemon": False, "sandbox": False},
+    {"name": "HTML 轉手機 App 路徑轉換器", "file": "changetoapp.py", "cat": "輔助與周邊", "desc": "🛠️ 本地 HTML 路徑轉換為 App 支援格式", "daemon": False, "sandbox": False},
+    {"name": "手機瀏覽介面適配器", "file": "phone.py", "cat": "輔助與周邊", "desc": "🛠️ Webview 手機版版面路徑轉換", "daemon": False, "sandbox": False},
+    {"name": "靜態 HTML 自動生成器", "file": "generate_html.py", "cat": "輔助與周邊", "desc": "🛠️ 批次生成靜態目錄清單", "daemon": False, "sandbox": False},
+
+    {"name": "GPS 藍牙 COM3 設定工具 1", "file": "gps - 01com3.py", "cat": "輔助與周邊", "desc": "🛰️ 藍牙 COM3 埠 GPS 訊號注入 1", "daemon": False, "sandbox": False},
+    {"name": "GPS 藍牙 COM3 設定工具 2", "file": "gps-02com3.py", "cat": "輔助與周邊", "desc": "🛰️ 藍牙 COM3 埠 GPS 訊號注入 2", "daemon": False, "sandbox": False},
+    {"name": "GPS USB 模式權限工具", "file": "gps - 03usb.py", "cat": "輔助與周邊", "desc": "🛰️ USB 連線模式 GPS 裝置權限重置", "daemon": False, "sandbox": False},
+    {"name": "GPS Joystick 搖桿地圖載入", "file": "gps-gpsjoystick..py", "cat": "輔助與周邊", "desc": "🛰️ GPS Joystick 自動化地圖載入", "daemon": False, "sandbox": False},
+    {"name": "GPS ADB 無線模式 (5037埠)", "file": "gps.py", "cat": "輔助與周邊", "desc": "🛰️ 無線 ADB 5037 埠虛擬 GPS 注入", "daemon": False, "sandbox": False},
+    {"name": "GPS 三模式控制中樞", "file": "gps1 - 三模式.py", "cat": "輔助與周邊", "desc": "🛰️ USB / 藍牙 / 無線三模式 GPS 控制", "daemon": False, "sandbox": False},
+    {"name": "GPS 連動 Map 地圖渲染", "file": "gps1 - 連動map地圖.py", "cat": "輔助與周邊", "desc": "🛰️ GPS 與本地地圖畫面同步連動", "daemon": False, "sandbox": False},
+    {"name": "GPS 控制重啟引擎", "file": "gps1.py", "cat": "輔助與周邊", "desc": "🛰️ 強制重啟 5037 埠並重置連線", "daemon": False, "sandbox": False},
+    {"name": "GPS IIS 伺服器掛載版", "file": "gps_iis.py", "cat": "輔助與周邊", "desc": "🛰️ 透過本機 IIS 伺服器遠端發送 GPS 座標", "daemon": False, "sandbox": False},
+    {"name": "GPS IIS 純無線版 (無USB)", "file": "gps_iisnousb.py", "cat": "輔助與周邊", "desc": "🛰️ 純 Wi-Fi 環境 IIS GPS 廣播中繼", "daemon": False, "sandbox": False},
+    {"name": "GPS 固定座標鎖定器", "file": "gps固定位置.py", "cat": "輔助與周邊", "desc": "🛰️ 鎖定特定經緯度避免漂移", "daemon": False, "sandbox": False},
+
+    {"name": "NAS 影音路徑萃取器 1", "file": "vedio1.py", "cat": "輔助與周邊", "desc": "🎬 本機影音目錄多媒體掃描 1", "daemon": False, "sandbox": False},
+    {"name": "NAS 影音子目錄遞迴掃描 2", "file": "vedio2.py", "cat": "輔助與周邊", "desc": "🎬 走訪底層所有子資料夾建立清冊", "daemon": False, "sandbox": False},
+    {"name": "NAS 遠端路徑連接器 3", "file": "vedio3.py", "cat": "輔助與周邊", "desc": "🎬 weizen_ds215 遠端磁碟自動掛載", "daemon": False, "sandbox": False},
+    {"name": "NAS 播放 HTML 封裝器 4", "file": "vedio4.py", "cat": "輔助與周邊", "desc": "🎬 生成串流播放 HTML 檔案 4", "daemon": False, "sandbox": False},
+    {"name": "NAS 播放 HTML 封裝器 5", "file": "vedio5.py", "cat": "輔助與周邊", "desc": "🎬 生成串流播放 HTML 檔案 5", "daemon": False, "sandbox": False},
+    {"name": "NAS 連結匯出 CSV 工具", "file": "vediolink.py", "cat": "輔助與周邊", "desc": "🎬 批次抓取 mp4 影片連結並導出 CSV", "daemon": False, "sandbox": False},
+]
+
+
+RUNNING_PROCESSES = {}
+LOG_HISTORY = []
+
+def main(page: ft.Page):
+    page.title = "🌟 Zen AI 99 部隊大一統中樞指揮母艦"
+    page.theme_mode = ft.ThemeMode.DARK
+    page.bgcolor = "#080f1a"
+    page.padding = 10
+    page.scroll = ft.ScrollMode.AUTO
+
+    lock_status_icon = ft.Icon(ft.Icons.LOCK, color="#ef4444", size=22, tooltip="實戰武器已鎖定")
+    
+    commander_key_input = ft.TextField(
+        password=True,
+        can_reveal_password=True,
+        hint_text="🔑 輸入長官授權密碼...",
+        dense=True,
+        expand=True,
+        height=38,
+        bgcolor="#0c1827",
+        border_color="#1e293b",
+        focused_border_color="#eab308",
+        color="#e2e8f0"
+    )
+
+    filter_switch = ft.Switch(label="🎯 關鍵戰報", value=True)
+
+    console_column = ft.Column(spacing=2, scroll=ft.ScrollMode.AUTO)
+    console_container = ft.Container(
+        content=console_column,
+        bgcolor="#0c1827",
+        border=ft.Border.all(1, "#1e293b"),
+        border_radius=8,
+        padding=10,
+        height=240
+    )
+
+    def evaluate_critical_info(raw_text):
+        if "收到用戶指令" in raw_text or "用戶" in raw_text: return True, "#c084fc"
+        if any(w in raw_text for w in ["🚨", "❌", "錯誤", "error", "exception", "traceback", "409", "conflict", "終止"]): return True, "#ef4444"
+        if any(w in raw_text for w in ["✅", "🏁", "成功", "完成", "更新", "報酬率", "勝率", "年化", "授權通過", "沙盒體驗啟動"]): return True, "#22c55e"
+        if any(w in raw_text for w in ["🚀", "📡", "發射指令", "進程已鎖定", "安全核准"]): return True, "#38bdf8"
+        if any(w in raw_text for w in ["🔥", "⭐", "突破", "金叉", "共振", "解盤", "伏兵", "🎮", "晨會", "晨報"]): return True, "#facc15"
+        return False, "#64748b"
+
+    def log(msg):
+        is_crit, color = evaluate_critical_info(msg)
+        LOG_HISTORY.append((msg, is_crit, color))
+        if not filter_switch.value or is_crit:
+            console_column.controls.append(ft.Text(msg, color=color, size=11, font_family="Consolas"))
+            page.update()
+            try: console_column.scroll_to(offset=-1, duration=100)
+            except Exception: pass
+
+    def show_alert(msg, color="#ef4444"):
+        try:
+            snack = ft.SnackBar(ft.Text(msg, color="#ffffff"), bgcolor=color)
+            if hasattr(page, "open"): page.open(snack)
+            else:
+                page.snack_bar = snack
+                page.snack_bar.open = True
+                page.update()
+        except Exception: pass
+
+    def on_key_change(e):
+        if e.control.value == MASTER_PASSWORD:
+            lock_status_icon.icon = ft.Icons.LOCK_OPEN
+            lock_status_icon.color = "#22c55e"
+            log("🔓 [安全核准] 指揮官身分驗證通過！實戰權限已全面解鎖！")
+            show_alert("🔓 指揮官身分驗證成功！作戰權限已解鎖！", color="#22c55e")
+        else:
+            lock_status_icon.icon = ft.Icons.LOCK
+            lock_status_icon.color = "#ef4444"
+        page.update()
+
+    commander_key_input.on_change = on_key_change
+
+    def clear_console(e):
+        LOG_HISTORY.clear()
+        console_column.controls.clear()
+        log("📡 [終端已重置] 等待戰情指令...")
+
+    def scroll_to_terminal(e):
+        try: page.scroll_to(offset=99999, duration=300)
+        except Exception: pass
+
+    # 🚀 核心執行器
+    def run_script(file_name, is_sandbox, status_btn):
+        if not is_sandbox:
+            if commander_key_input.value != MASTER_PASSWORD:
+                log(f"🚨 [安全防禦攔截] 【{file_name}】為指揮官專屬作戰武器！未授權操作已被拒絕！")
+                show_alert("⚠️ 這是指揮官專屬作戰武器！請先輸入長官密碼！", color="#ef4444")
+                return
+
+        if file_name in RUNNING_PROCESSES:
+            log(f"🛑 [強制煞車] 正在終止: {file_name} ...")
+            try: RUNNING_PROCESSES[file_name].terminate()
+            except Exception: pass
+            return
+
+        def worker():
+            full_path = os.path.join(SCRIPT_DIR, file_name)
+            if is_sandbox: log(f"\n🎮 [沙盒體驗啟動] 正在喚醒免密碼體驗程式: {file_name} ...")
+            else: log(f"\n🚀 [實戰指令發射] 正在以無緩衝管道喚醒作戰部隊: {file_name} ...")
+            
+            if status_btn:
+                status_btn.text = "🛑 強制終止"
+                status_btn.bgcolor = "#ef4444"
+                page.update()
+
+            env = os.environ.copy()
+            env["PYTHONUNBUFFERED"] = "1"
+
+            try:
+                # =========================================================================
+                # 🚀【全域雷達目標自動注入矩陣 - 終極無敵防錯強化版】
+                # =========================================================================
+                # 1. 智慧攔截：虛擬路由 (免多建檔案！自動分流盤中 live 與盤後 post)
+                script_target_path = full_path
+                forced_mode = None
+                if file_name == "chart_screenshot_live.py":
+                    script_target_path = full_path.replace("chart_screenshot_live.py", "chart_screenshot.py")
+                    forced_mode = "live"
+                elif file_name == "chart_screenshot_post.py":
+                    script_target_path = full_path.replace("chart_screenshot_post.py", "chart_screenshot.py")
+                    forced_mode = "post"
+
+                # 2. 初始化指令              
+               # =========================================================================
+                # 🚀【全域雷達目標自動注入 - 終極大滿貫版 (股號 + 起日 + 盤中/盤後模式)】
+                # =========================================================================
+                cmd = [sys.executable, "-u", full_path] if file_name.endswith(".py") else [full_path]
+
+                STOCK_ARG_ROUTER = {
+                    "ai_omni_explainer.py": "--code",
+                    "zen_broadcaster.py": "--code",
+                    "chart_screenshot.py": "--stock",
+                    "chart_screenshot_live.py": "--stock",
+                    "chart_screenshot_post.py": "--stock",
+                    "chart_explain.py": "--code",
+                    "top_momentum_backtest.py": "--code",
+                }
+
+                if file_name in STOCK_ARG_ROUTER:
+                    target_flag = STOCK_ARG_ROUTER[file_name]
+                    raw_input_text = broadcast_code_input.value.strip() if broadcast_code_input.value else ""
+                    
+                    import re
+                    # 1. 提取 4~6 碼股號 (若沒輸入則預設 2330)
+                    stock_match = re.search(r'\b\d{4,6}\b', raw_input_text)
+                    target_code = stock_match.group(0) if stock_match else "2330"
+                    cmd.extend([target_flag, target_code])
+
+                    # 2. 提取 8 碼自訂起日 (如 20260401)
+                    date_match = re.search(r'\b(20\d{6})\b', raw_input_text)
+                    if date_match:
+                        cmd.extend(["--start", date_match.group(1)])
+
+                    # 3. 🌟【核心補強】：提取 live (盤中) 或 post (盤後) 模式
+                    raw_lower = raw_input_text.lower()
+                    mode_flag = ""
+                    if "live" in raw_lower:
+                        cmd.extend(["--mode", "live"])
+                        mode_flag = " [模式: 強制盤中live]"
+                    elif "post" in raw_lower:
+                        cmd.extend(["--mode", "post"])
+                        mode_flag = " [模式: 強制盤後post]"
+
+                    log(f"🎯 全域雷達鎖定：已為【{file_name}】注入目標參數 {target_flag} {target_code}" + (f" 起日:{date_match.group(1)}" if date_match else "") + mode_flag)
+                # =========================================================================
+
+                process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    cwd=SCRIPT_DIR,
+                    env=env,
+                    shell=False
+                )
+
+                RUNNING_PROCESSES[file_name] = process
+                log(f"📡 [進程已鎖定] {file_name} 啟動成功，PID: {process.pid}")
+
+                for line in iter(process.stdout.readline, ''):
+                    if line:
+                        log(f"[{file_name}] {line.strip()}")
+                
+                process.wait()
+                log(f"🏁 [{file_name}] 進程結束，Exit Code: {process.returncode}\n")
+            except Exception as ex:
+                log(f"❌ 執行異常: {ex}\n")
+            finally:
+                if file_name in RUNNING_PROCESSES:
+                    del RUNNING_PROCESSES[file_name]
+                if status_btn:
+                    status_btn.text = "🎮 立即試玩" if is_sandbox else "立即發射"
+                    status_btn.bgcolor = "#10b981" if is_sandbox else "#0284c7"
+                    page.update()
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    # 🚀 陣地二：母艦視覺化四網廣播火控列
+    broadcast_code_input = ft.TextField(
+        hint_text="輸入股號 (如 2454)...", dense=True, width=180, height=38,
+        bgcolor="#0c1827", border_color="#8b5cf6", focused_border_color="#a855f7", color="#e2e8f0"
+    )
+
+    def on_click_broadcast(e):
+        target_code = broadcast_code_input.value.strip() or "2330"
+        if commander_key_input.value != MASTER_PASSWORD:
+            log(f"🚨 [安全防禦] 四網大一統廣播需長官授權密碼！")
+            show_alert("⚠️ 四網廣播為最高作戰指令，請先輸入長官密碼！", color="#ef4444")
+            return
+        
+        log(f"\n🚀 [母艦火控開火] 正在為【{target_code}】派發四網大一統廣播任務 (TG/LINE/DC/FB)...")
+        # 直接呼叫 zen_broadcaster.py
+        def b_worker():
+            env = os.environ.copy()
+            env["PYTHONUNBUFFERED"] = "1"
+            p = subprocess.Popen([sys.executable, "-u", os.path.join(SCRIPT_DIR, "zen_broadcaster.py"), "--code", target_code], 
+                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace", cwd=SCRIPT_DIR, env=env)
+            for line in iter(p.stdout.readline, ''):
+                if line: log(f"[zen_broadcaster] {line.strip()}")
+            p.wait()
+            log(f"🏁 [四網廣播] 發射結束！\n")
+        threading.Thread(target=b_worker, daemon=True).start()
+
+    broadcast_control_bar = ft.Container(
+        content=ft.Row([
+            ft.Icon(ft.Icons.CELL_TOWER, color="#c084fc", size=20),
+            ft.Text("四網廣播火控台:", size=13, weight=ft.FontWeight.BOLD, color="#c084fc"),
+            broadcast_code_input,
+            ft.Button("🚀 四網齊發 (TG/LINE/FB)", bgcolor="#7c3aed", color="#ffffff", on_click=on_click_broadcast)
+        ], alignment=ft.MainAxisAlignment.START),
+        padding=8, bgcolor="#17152b", border_radius=8, border=ft.Border.all(1, "#6d28d9")
+    )
+
+    cards_container = ft.ResponsiveRow([])
+    current_filter = {"cat": "全部", "query": ""}
+
+    def build_cards():
+        cards_container.controls.clear()
+        query = current_filter["query"].lower()
+        selected_cat = current_filter["cat"]
+
+        filtered_list = []
+        for s in PYTHON_SCRIPTS:
+            cat_match = s.get("sandbox", False) if selected_cat == "開放體驗" else (True if selected_cat == "全部" else s["cat"] == selected_cat)
+            query_match = (query in s["name"].lower()) or (query in s["file"].lower()) or (query in s["desc"].lower())
+            if cat_match and query_match:
+                filtered_list.append(s)
+
+        for item in filtered_list:
+            f = item["file"]
+            is_daemon = item.get("daemon", False)
+            is_sandbox = item.get("sandbox", False)
+            is_running = f in RUNNING_PROCESSES
+
+            btn_text = "🛑 強制終止" if is_running else ("🎮 立即試玩" if is_sandbox else "立即發射")
+            btn_color = "#ef4444" if is_running else ("#10b981" if is_sandbox else "#0284c7")
+            btn_icon = ft.Icons.STOP if is_running else ft.Icons.PLAY_ARROW
+
+            btn = ft.Button(btn_text, icon=btn_icon, bgcolor=btn_color, color="#ffffff")
+            btn.on_click = (lambda itm=item, btn_ref=btn: lambda e: run_script(itm["file"], itm.get("sandbox", False), btn_ref))()
+
+            badge_text = "🟢 免密開放" if is_sandbox else "🔒 需授權"
+            badge_color = "#059669" if is_sandbox else "#d97706"
+            safe_padding = ft.Padding.symmetric(horizontal=6, vertical=2) if hasattr(ft, "Padding") else 4
+
+            card = ft.Card(
+                content=ft.Container(
+                    content=ft.Column([
+                        ft.Row([
+                            ft.Icon(ft.Icons.SPORTS_ESPORTS if is_sandbox else ft.Icons.TERMINAL, color="#38bdf8", size=16),
+                            ft.Text(item["name"], weight=ft.FontWeight.BOLD, color="#e2e8f0", size=13),
+                            ft.Container(content=ft.Text(badge_text, size=9, color="#ffffff", weight=ft.FontWeight.BOLD), bgcolor=badge_color, padding=safe_padding, border_radius=4)
+                        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                        ft.Row([ft.Text("檔案:", size=11, color="#94a3b8"), ft.Text(item["file"], size=12, color="#38bdf8", font_family="Consolas", weight=ft.FontWeight.BOLD)], spacing=4),
+                        ft.Text(item["desc"], size=12.5, color="#f1f5f9", weight=ft.FontWeight.W_500, max_lines=2, overflow=ft.TextOverflow.ELLIPSIS),
+                        btn
+                    ]),
+                    padding=10, bgcolor="#111b2b", border_radius=8, border=ft.Border.all(1, "#059669" if is_sandbox else "#1e293b")
+                )
+            )
+            cards_container.controls.append(ft.Container(card, col={"xs": 12, "sm": 6, "md": 4, "lg": 3}))
+
+        page.update()
+
+    def on_search_change(e):
+        current_filter["query"] = e.control.value
+        build_cards()
+
+    search_box = ft.TextField(
+        hint_text="🔍 搜尋 99 支部隊 (如: 晨報, 2330, screenshot, backtest)...", prefix_icon=ft.Icons.SEARCH,
+        bgcolor="#0c1827", border_color="#1e293b", focused_border_color="#38bdf8", color="#e2e8f0", height=40, on_change=on_search_change, expand=True
+    )
+
+    categories = [("🌟 全部", "全部"), ("🎮 開放體驗", "開放體驗"), ("🤖 社群與AI", "社群與AI"), ("🏭 策略工廠", "策略工廠"), ("📡 數據採集", "數據採集")]
+    cat_bar = ft.Row(scroll=ft.ScrollMode.AUTO, spacing=6)
+
+    def select_category(cat_val):
+        current_filter["cat"] = cat_val
+        render_cat_bar()
+        build_cards()
+
+    def render_cat_bar():
+        cat_bar.controls.clear()
+        for label, val in categories:
+            is_active = (current_filter["cat"] == val)
+            btn_bg = "#059669" if val == "開放體驗" and is_active else ("#064e3b" if val == "開放體驗" else ("#0284c7" if is_active else "#111b2b"))
+            btn_color = "#ffffff" if is_active else ("#6ee7b7" if val == "開放體驗" else "#94a3b8")
+            btn = ft.Button(label, bgcolor=btn_bg, color=btn_color, on_click=lambda e, c=val: select_category(c))
+            cat_bar.controls.append(btn)
+        page.update()
+
+    top_header_row = ft.ResponsiveRow([
+        ft.Container(ft.Row([ft.Icon(ft.Icons.SATELLITE_ALT, color="#38bdf8", size=24), ft.Text("Zen AI 99 部隊大一統母艦", size=18, weight=ft.FontWeight.BOLD, color="#38bdf8")]), col={"xs": 12, "md": 6}),
+        ft.Container(ft.Row([ft.Button("⬇️ 直達終端", icon=ft.Icons.ARROW_DOWNWARD, bgcolor="#1e293b", color="#38bdf8", on_click=scroll_to_terminal), lock_status_icon, commander_key_input]), col={"xs": 12, "md": 6})
+    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
+
+    terminal_header_row = ft.ResponsiveRow([
+        ft.Container(ft.Row([ft.Icon(ft.Icons.MONITOR_HEART, color="#22c55e", size=16), ft.Text("📡 即時輸出終端 (Live Telemetry)", size=14, weight=ft.FontWeight.BOLD, color="#38bdf8")]), col={"xs": 12, "sm": 6}),
+        ft.Container(ft.Row([filter_switch, ft.Button("清空", icon=ft.Icons.CLEAR_ALL, bgcolor="#334155", color="#ffffff", on_click=clear_console)], alignment=ft.MainAxisAlignment.END), col={"xs": 12, "sm": 6})
+    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
+
+    page.add(
+        top_header_row, ft.Divider(color="#1e293b", height=5),
+        ft.Row([search_box]), broadcast_control_bar, cat_bar, ft.Divider(color="#1e293b", height=5),
+        cards_container, ft.Divider(color="#1e293b", height=5),
+        terminal_header_row, console_container
+    )
+
+    render_cat_bar()
+    build_cards()
+
+if __name__ == "__main__":
+    if hasattr(ft, "run"):
+        try: ft.run(main, host="0.0.0.0", port=8550, view=ft.AppView.WEB_BROWSER)
+        except TypeError: ft.run(main, host="0.0.0.0", port=8550)
+    else:
+        ft.app(target=main, host="0.0.0.0", port=8550, view=ft.AppView.WEB_BROWSER)</pre>
 </body>
 </html>
