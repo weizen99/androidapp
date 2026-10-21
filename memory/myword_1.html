@@ -1,4 +1,13 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>所有常用資料表欄位來了,請查收
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>myword2 ID 1</title>
+</head>
+<body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
+    <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 1</h2>
+    <hr style="border: 1px solid #334155;">
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">所有常用資料表欄位來了,請查收
 
 stockchangedate資料庫
 
@@ -541,99 +550,12 @@ ORDER BY   成交價 DESC
 20261008	5274	信驊	17485	[小型輕盈飆股]	-7.27%	[空頭弱勢，月線之下]	18602.9	16676.2	11753.2	[突破一年與一季均價，萬里無雲主升段]	價格:2 | OBV:-2 | 外資:-2 | 投信:-4	-6/32
 
 
-View_AI_Omni_Context更新:
-
-USE [stockchangedate]
-GO
-
-IF OBJECT_ID('dbo.View_AI_Omni_Context', 'V') IS NOT NULL
-    DROP VIEW [dbo].[View_AI_Omni_Context];
-GO
-
-CREATE VIEW [dbo].[View_AI_Omni_Context] AS
-WITH 
-LatestDate AS (
-    SELECT MAX(日期) as MaxDate FROM [dbo].[allcross]
-),
-HistData AS (
-    SELECT 
-        代號, 
-        成交價, 
-        ISNULL(總量, 0) AS Vol,
-        (最高 + 最低 + 成交價) / 3.0 AS TP,
-        ROW_NUMBER() OVER(PARTITION BY 代號 ORDER BY 日期 DESC) as rn
-    FROM [dbo].[amountchange]
-),
-AmtAgg AS (
-    SELECT 
-        代號,
-        SUM(CASE WHEN rn <= 20 THEN TP * Vol ELSE 0 END) / NULLIF(SUM(CASE WHEN rn <= 20 THEN Vol ELSE 0 END), 0) AS POC_20,
-        SUM(CASE WHEN rn <= 60 THEN TP * Vol ELSE 0 END) / NULLIF(SUM(CASE WHEN rn <= 60 THEN Vol ELSE 0 END), 0) AS POC_60,
-        SUM(CASE WHEN rn <= 240 THEN TP * Vol ELSE 0 END) / NULLIF(SUM(CASE WHEN rn <= 240 THEN Vol ELSE 0 END), 0) AS POC_240
-    FROM HistData
-    WHERE rn <= 240
-    GROUP BY 代號
-),
-BaseData AS (
-    SELECT 
-        a.日期 AS 資料日期,
-        a.代號, 
-        b.名稱, 
-        ISNULL(b.股本億, 10) AS 股本億,
-        a.成交價, 
-        a.price_ma20,
-        -- 🟢 核心補齊：四維獨立金叉分項（避免 AI 抱怨缺乏分項）
-        ISNULL(a.成交價黃金交叉次數, 0) AS 價格金叉分,
-        ISNULL(a.obv黃金交叉次數, 0) AS OBV金叉分,
-        ISNULL(a.外資黃金交叉次數, 0) AS 外資金叉分,
-        ISNULL(a.投信黃金交叉次數, 0) AS 投信金叉分,
-        (ISNULL(a.成交價黃金交叉次數, 0) + ISNULL(a.obv黃金交叉次數, 0) + ISNULL(a.外資黃金交叉次數, 0) + ISNULL(a.投信黃金交叉次數, 0)) AS 籌碼共振總分,
-        ROW_NUMBER() OVER(PARTITION BY a.代號 ORDER BY a.日期 DESC) as dedup_rn
-    FROM [dbo].[allcross] a
-    INNER JOIN [dbo].[basicinfo] b ON RTRIM(a.代號) = RTRIM(b.代號)
-    WHERE a.日期 = (SELECT MaxDate FROM LatestDate)
-)
-SELECT 
-    b.資料日期,
-    b.代號,
-    b.名稱,
-    b.成交價,
-    
-    CASE 
-        WHEN b.股本億 > 500 THEN '[巨型權值股]'
-        WHEN b.股本億 > 50  THEN '[中型主力股]'
-        ELSE '[小型輕盈飆股]'
-    END AS 股本基因標籤,
-
-    CAST(ROUND(((b.成交價 - b.price_ma20) / NULLIF(b.price_ma20, 0)) * 100, 2) AS VARCHAR) + '%' AS 月線乖離率,
-    
-    CASE 
-        WHEN b.成交價 < b.price_ma20 THEN '[空頭弱勢，月線之下]'
-        WHEN ((b.成交價 - b.price_ma20) / NULLIF(b.price_ma20, 0)) > 0.3 AND b.股本億 <= 50 THEN '[小型飆股軋空主升段 (容忍高乖離)]'
-        WHEN ((b.成交價 - b.price_ma20) / NULLIF(b.price_ma20, 0)) > 0.15 AND b.股本億 > 500 THEN '[大型權值股短線過熱警告]'
-        ELSE '[波段多頭健康發動區]'
-    END AS 乖離戰術判定,
-
-    CAST(ROUND(agg.POC_20, 2) AS VARCHAR) AS 短線20日主力成本,
-    CAST(ROUND(agg.POC_60, 2) AS VARCHAR) AS 波段60日主力成本,
-    CAST(ROUND(agg.POC_240, 2) AS VARCHAR) AS 長線一年期主力成本,
-    
-    CASE 
-        WHEN b.成交價 > agg.POC_240 AND b.成交價 > agg.POC_60 THEN '[突破一年與一季均價，萬里無雲主升段]'
-        WHEN b.成交價 > agg.POC_20 AND b.成交價 < agg.POC_60 THEN '[短線轉強，但面臨季線套牢反壓]'
-        WHEN b.成交價 < agg.POC_240 THEN '[長線空頭深水區，上檔重重賣壓]'
-        ELSE '[價值區間箱型震盪]'
-    END AS 三維AMT空間判定,
-
-    -- 🟢 核心補齊：四維分項明確揭露
-    '價格:' + CAST(b.價格金叉分 AS VARCHAR) + 
-    ' | OBV:' + CAST(b.OBV金叉分 AS VARCHAR) + 
-    ' | 外資:' + CAST(b.外資金叉分 AS VARCHAR) + 
-    ' | 投信:' + CAST(b.投信金叉分 AS VARCHAR) AS 四維金叉分項明細,
-
-    CAST(b.籌碼共振總分 AS VARCHAR) + '/32' AS 籌碼共振熱度
-
-FROM BaseData b
-LEFT JOIN AmtAgg agg ON b.代號 = agg.代號
-WHERE b.dedup_rn = 1;
-GO</pre></body></html>
+SELECT          TemplateID, Category, Title, StrategyDesc, CorrectSQL, Unlocks, TargetDB, SortOrder, IsActive, UsageCount, 
+                            LastUsedDate, CreatedAt, UpdatedAt
+FROM              QuantSqlTemplates
+WHERE          (TemplateID = 151)
+TemplateID	Category	Title	StrategyDesc	CorrectSQL	Unlocks	TargetDB	SortOrder	IsActive	UsageCount	LastUsedDate	CreatedAt	UpdatedAt
+151	核心選股	09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。	--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`cat: "產業類選股", title: "【核心選股】2026 頂級題材 + 強勢共振", sql: `TOP 10cat: "產業類選股", title: "【題材疊加王】多重概念 + 高勝率回測", sql: `TOP 100-- 第一層：先找出符合 3 項以上的股票，並聯集寬表抓取產業分類--群聚效應」 (Cluster Effect)：	/*資料庫:stockchange*/top 100 I.名稱, I.代號, I.漲幅, I.成交價, M.專家實戰總分, M.實戰標籤 FROM dbo.basicinfo I INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號) WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)               AND I.漲幅 < -4.5 -- 單日跌幅過大，通常是主力出貨或利空 ORDER BY I.漲幅 ASC  /*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。 --09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。 --11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/		stockchange	1080	1	5	2026-10-21 12:07:33.043	2026-10-20 16:32:05.117	2026-10-21 09:24:22.633
+</pre>
+</body>
+</html>
