@@ -34,7 +34,7 @@
 </div>
 <div id="map" style="height: 500px; width: 96%; margin-top: 10px;"></div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDystbcXoiY4Gdk22iOK_DZe0BoCSaRyk4&callback&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=__GOOGLE_API_KEY_PLACEHOLDER__&callback&callback=initMap" async defer></script>
 
 <script>
     let map, userMarker, lastManualMarker = null;
