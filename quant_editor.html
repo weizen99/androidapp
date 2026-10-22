@@ -1,0 +1,495 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Zen AI 量化範本開發旗艦艙</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            height: 100vh;
+            gap: 15px;
+            overflow: hidden;
+        }
+
+        /* 📜 左側清單面板 */
+        .sidebar {
+            width: 350px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 15px;
+            background: #0f172a;
+            border-bottom: 1px solid #334155;
+        }
+
+            .sidebar-header h2 {
+                margin: 0;
+                font-size: 1.15rem;
+                color: #f59e0b;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+        .search-box {
+            width: 100%;
+            padding: 8px 12px;
+            margin-top: 10px;
+            background: #090d16;
+            border: 1px solid #38bdf8;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+            .search-box:focus {
+                outline: none;
+                box-shadow: 0 0 8px rgba(56,189,248,0.5);
+            }
+
+        .template-list {
+            flex: 1;
+            overflow-y: auto;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .template-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #334155;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .template-item:hover, .template-item.active {
+                background: #0284c7;
+                border-left: 4px solid #facc15;
+            }
+
+        .t-cat {
+            font-size: 0.75rem;
+            color: #fcd34d;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .t-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        /* 💻 右側主區域 (編輯區 + 結果區) */
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+
+        /* 上半部：編輯器 */
+        .editor-panel {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 0.55;
+            overflow-y: auto;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+
+            .editor-header h2 {
+                margin: 0;
+                color: #38bdf8;
+                font-size: 1.2rem;
+            }
+
+        .btn-group button {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-new {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-save {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-run {
+            background: #f59e0b;
+            color: #000;
+            box-shadow: 0 0 10px rgba(245,158,11,0.4);
+        }
+
+        .btn-group button:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .form-group label {
+                font-size: 0.8rem;
+                color: #94a3b8;
+                margin-bottom: 4px;
+                font-weight: bold;
+            }
+
+        .form-control {
+            background: #0f172a;
+            border: 1px solid #475569;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: #38bdf8;
+            }
+
+        .sql-editor {
+            flex: 1;
+            min-height: 200px;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 1.05rem;
+            line-height: 1.4;
+            color: #38bdf8;
+            background: #090d16;
+            border: 1px solid #38bdf8;
+            padding: 12px;
+            resize: vertical;
+        }
+
+        /* 下半部：執行結果區 */
+        .result-panel {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            flex: 0.45;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .result-header {
+            padding: 10px 15px;
+            background: #0f172a;
+            border-bottom: 1px solid #334155;
+            font-weight: bold;
+            color: #22c55e;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .result-body {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+            background: #0b1120;
+        }
+
+        /* 戰情報表表格樣式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #e2e8f0;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        thead {
+            background: #334155;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th, td {
+            border: 1px solid #475569;
+            padding: 6px 10px;
+            text-align: left;
+        }
+
+        th {
+            color: #f8fafc;
+            font-weight: bold;
+        }
+
+        tbody tr:hover {
+            background: #1e293b;
+        }
+
+        .loading {
+            color: #facc15;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            padding: 20px;
+            font-family: Consolas;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 左側導覽列 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>🗄️ 量化範本庫</h2>
+            <input type="text" id="searchInput" class="search-box" placeholder="🔍 搜尋關鍵字..." oninput="filterList()">
+        </div>
+        <ul class="template-list" id="templateList">
+            <li class="loading">📡 資料庫連線中...</li>
+        </ul>
+    </div>
+
+    <!-- 右側主區域 -->
+    <div class="main-panel">
+        <!-- 編輯器 -->
+        <div class="editor-panel">
+            <div class="editor-header">
+                <h2 id="editorTitle">📝 準備就緒</h2>
+                <div class="btn-group">
+                    <button class="btn-new" onclick="createNew()">➕ 新增</button>
+                    <button class="btn-save" onclick="saveTemplate()">💾 儲存入庫</button>
+                    <button class="btn-run" onclick="executeCurrentSQL()" id="btnRun">🚀 測試執行此範本</button>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group" style="flex: 0.2;">
+                    <label>ID</label>
+                    <input type="text" id="t_id" class="form-control" readonly style="background: #334155; color: #94a3b8;">
+                </div>
+                <div class="form-group" style="flex: 0.3;">
+                    <label>分類 (Category)</label>
+                    <input type="text" id="t_cat" class="form-control">
+                </div>
+                <div class="form-group" style="flex: 0.5;">
+                    <label>權重 (SortOrder)</label>
+                    <input type="number" id="t_sort" class="form-control" value="100">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>標題 (Title)</label>
+                <input type="text" id="t_title" class="form-control">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>戰略意義 (StrategyDesc)</label>
+                <input type="text" id="t_desc" class="form-control">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>💻 T-SQL 查詢語句 (CorrectSQL)</label>
+                <textarea id="t_sql" class="form-control sql-editor" spellcheck="false"></textarea>
+            </div>
+        </div>
+
+        <!-- 執行結果表格 -->
+        <div class="result-panel">
+            <div class="result-header" id="resHeader">📊 動態實戰結果區 (請點擊上方火箭發射)</div>
+            <div class="result-body" id="resBody">
+                <div style="color:#64748b; padding:20px; text-align:center;">等待接收指令...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allData = [];
+
+        // 1. 呼叫 ASP.NET 後端 WebMethod
+        async function callApi(methodName, payload = {}) {
+            try {
+                const response = await fetch(`quant_editor.aspx/${methodName}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                return JSON.parse(result.d); // ASP.NET 回傳值包在 d 裡面
+            } catch (err) {
+                console.error("API 錯誤:", err);
+                return { status: "error", message: "網路通訊異常" };
+            }
+        }
+
+        // 2. 載入清單
+        async function loadTemplates() {
+            const res = await callApi("GetTemplates");
+            if (res.status === 'success') {
+                allData = res.data;
+                renderList(allData);
+                if(allData.length > 0) selectTemplate(allData[0].TemplateID);
+            } else {
+                document.getElementById('templateList').innerHTML = `<li class="error-msg">讀取失敗：${res.message}</li>`;
+            }
+        }
+
+        function renderList(list) {
+            const ul = document.getElementById('templateList');
+            ul.innerHTML = list.map(t => `
+                <li class="template-item" id="li_${t.TemplateID}" onclick="selectTemplate(${t.TemplateID})">
+                    <span class="t-cat">[${t.TemplateID}] ${t.Category} (權重:${t.SortOrder})</span>
+                    <span class="t-title">${t.Title}</span>
+                </li>
+            `).join('');
+        }
+
+        function filterList() {
+            const kw = document.getElementById('searchInput').value.toLowerCase();
+            renderList(allData.filter(t => t.Title.toLowerCase().includes(kw) || t.Category.toLowerCase().includes(kw)));
+        }
+
+        function selectTemplate(id) {
+            document.querySelectorAll('.template-item').forEach(el => el.classList.remove('active'));
+            const li = document.getElementById('li_' + id);
+            if (li) li.classList.add('active');
+
+            const t = allData.find(x => x.TemplateID === id);
+            if (t) {
+                document.getElementById('editorTitle').innerText = `📝 編輯 [${id}] 號範本`;
+                document.getElementById('t_id').value = t.TemplateID;
+                document.getElementById('t_cat').value = t.Category;
+                document.getElementById('t_sort').value = t.SortOrder;
+                document.getElementById('t_title').value = t.Title;
+                document.getElementById('t_desc').value = t.StrategyDesc || "";
+                document.getElementById('t_sql').value = t.CorrectSQL;
+
+                // 清空結果區
+                document.getElementById('resHeader').innerText = `📊 動態實戰結果區 - 待命`;
+                document.getElementById('resBody').innerHTML = `<div style="color:#64748b; padding:20px; text-align:center;">已載入範本，點擊 [🚀 測試執行] 檢視成果...</div>`;
+            }
+        }
+
+        function createNew() {
+            document.querySelectorAll('.template-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('editorTitle').innerText = `✨ 新增量化範本`;
+            document.getElementById('t_id').value = "0";
+            document.getElementById('t_cat').value = "新戰術分類";
+            document.getElementById('t_sort').value = "100";
+            document.getElementById('t_title').value = "";
+            document.getElementById('t_desc').value = "";
+            document.getElementById('t_sql').value = "/*資料庫:stockchangedate*/ TOP 100 T.*\nFROM (\n    SELECT \n\n) T\nORDER BY ...";
+        }
+
+        // 3. 儲存入庫
+        async function saveTemplate() {
+            const payload = {
+                id: document.getElementById('t_id').value,
+                category: document.getElementById('t_cat').value,
+                title: document.getElementById('t_title').value,
+                desc: document.getElementById('t_desc').value,
+                sqlCode: document.getElementById('t_sql').value,
+                sortOrder: parseInt(document.getElementById('t_sort').value) || 100
+            };
+
+            if (!payload.title || !payload.sqlCode) { alert("⚠️ 標題與 SQL 為必填！"); return; }
+
+            const res = await callApi("SaveTemplate", payload);
+            if (res.status === 'success') {
+                alert("✅ 儲存成功！");
+                loadTemplates();
+            } else { alert("❌ 儲存失敗：" + res.message); }
+        }
+
+        // 4. 🚀 殺手級：直接執行預存程序並繪製動態表格！
+        async function executeCurrentSQL() {
+            const tid = document.getElementById('t_id').value;
+            if (!tid || tid === "0") { alert("⚠️ 請先儲存範本後再執行測試！"); return; }
+
+            const resBody = document.getElementById('resBody');
+            const resHeader = document.getElementById('resHeader');
+
+            resHeader.innerText = `⏳ 正在運算 [ID: ${tid}]，請稍候...`;
+            resBody.innerHTML = `<div class="loading">⚡ SQL 引擎全速運算中...</div>`;
+
+            const res = await callApi("ExecuteSQL", { id: parseInt(tid) });
+
+            if (res.status === 'success') {
+                const rows = res.data;
+                resHeader.innerText = `✅ 運算完成！共擷取 ${rows.length} 筆黑馬標的`;
+
+                if (rows.length === 0) {
+                    resBody.innerHTML = `<div style="color:#94a3b8; padding:20px; text-align:center;">此條件下無符合結果</div>`;
+                    return;
+                }
+
+                // 動態產生表格 Header
+                const columns = Object.keys(rows[0]);
+                let tableHtml = `<table><thead><tr>`;
+                columns.forEach(col => { tableHtml += `<th>${col}</th>`; });
+                tableHtml += `</tr></thead><tbody>`;
+
+                // 動態產生表格內容
+                rows.forEach(row => {
+                    tableHtml += `<tr>`;
+                    columns.forEach(col => {
+                        let val = row[col];
+                        if (val === null) val = "";
+                        tableHtml += `<td>${val}</td>`;
+                    });
+                    tableHtml += `</tr>`;
+                });
+                tableHtml += `</tbody></table>`;
+                resBody.innerHTML = tableHtml;
+            } else {
+                resHeader.innerText = `❌ 執行異常`;
+                resBody.innerHTML = `<div class="error-msg">語法錯誤或崩潰：<br>${res.message}</div>`;
+            }
+        }
+
+        window.onload = loadTemplates;
+    </script>
+</body>
+</html>
