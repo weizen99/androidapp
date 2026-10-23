@@ -9,3 +9,5 @@
 
 # 忽略照片快取
 photos/*.jpg
+
+zen_secrets.py
