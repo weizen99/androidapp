@@ -7,6 +7,446 @@
 <body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
     <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 14</h2>
     <hr style="border: 1px solid #334155;">
-    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">空白</pre>
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;"># -*- coding: utf-8 -*-
+"""
+================================================================================
+👑【Zen AI 股票戰情室】AI 總參謀長深度解盤引擎 (ai_chief_of_staff.py) Pro V16.3
+1. 支援 zen_secrets.py 之 3 支 GEMINI_API_KEYS 自動輪詢與防 429 熔斷切換
+2. 完美對齊 myword_2.html 權威量化陣地 ✕ View_AI_Omni_Context
+3. 前端大屏 Markdown 專業排版 ✕ Telegram 旗艦推播
+================================================================================
+"""
+
+import os
+import sys
+import json
+import html
+import requests
+import pyodbc
+from datetime import datetime
+
+# -----------------------------------------------------------------------------
+# 0. 金庫金鑰安全提取 (支援 5 支 GEMINI_API_KEYS 自動滿額掛載與防熔斷)
+# -----------------------------------------------------------------------------
+GEMINI_API_KEYS = []
+TELEGRAM_BOT_TOKEN = ""
+TELEGRAM_CHAT_ID = ""
+
+try:
+    import zen_secrets
+    # 自動加載所有有效 Gemini 金鑰 (過濾空值與未填寫之佔位符)
+    if hasattr(zen_secrets, "GEMINI_API_KEYS") and isinstance(zen_secrets.GEMINI_API_KEYS, list):
+        GEMINI_API_KEYS = [
+            k.strip() for k in zen_secrets.GEMINI_API_KEYS 
+            if isinstance(k, str) and len(k.strip()) > 25 and "PLACEHOLDER" not in k.upper()
+        ]
+    elif hasattr(zen_secrets, "GEMINI_API_KEY") and zen_secrets.GEMINI_API_KEY:
+        GEMINI_API_KEYS = [zen_secrets.GEMINI_API_KEY.strip()]
+        
+    # Telegram 設定相容讀取
+    TELEGRAM_BOT_TOKEN = getattr(zen_secrets, "TELEGRAM_BOT_TOKEN", "") or getattr(zen_secrets, "TG_BOT_TOKEN", "")
+    TELEGRAM_CHAT_ID = getattr(zen_secrets, "TELEGRAM_CHAT_ID", "") or getattr(zen_secrets, "TG_CHAT_ID", "")
+except ImportError:
+    pass
+
+# 環境變數兜底
+if not GEMINI_API_KEYS and os.getenv("GEMINI_API_KEY"):
+    GEMINI_API_KEYS = [os.getenv("GEMINI_API_KEY")]
+if not TELEGRAM_BOT_TOKEN:
+    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+if not TELEGRAM_CHAT_ID:
+    TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+
+# 系統路徑
+DB_CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=stockchangedate;Trusted_Connection=yes;'
+OUTPUT_HTML_PATH = r"C:\inetpub\wwwroot\excelimport\ai_chief_briefing.html"
+NEWS_JSON_PATH = r"C:\inetpub\wwwroot\excelimport\daily_tech_finance.json"
+
+def get_db_connection():
+    return pyodbc.connect(DB_CONN_STR)
+
+# -----------------------------------------------------------------------------
+# 1. 量化情報層：myword_2.html 權威「專家分 ✕ 法人共振 ✕ 主力成本」
+# -----------------------------------------------------------------------------
+def fetch_quant_candidates():
+    print("[1/4] 啟動量化雷達，萃取 Master 核心候選標的...")
+    sql = """
+    SELECT TOP 10
+        RTRIM(M.代號) AS 代號, 
+        RTRIM(M.名稱) AS 名稱,
+        ISNULL(B.成交價, 0) AS 現價, 
+        ISNULL(B.漲幅, 0) AS 今日漲幅, 
+        ISNULL(B.總量, 0) AS 成交量,
+        RTRIM(M.產業分類) AS 產業, 
+        ISNULL(B.股本億, 0) AS 股本億,
+        ROUND(M.專家實戰總分, 2) AS 專家分,
+        ISNULL(N.外資3日合計, 0) AS 外資3日,
+        ISNULL(N.投信3日合計, 0) AS 投信3日,
+        ISNULL(V.本益比近四季, 0) AS 本益比,
+        ISNULL(O.短線20日主力成本, 0) AS 主力成本,
+        ISNULL(RTRIM(O.乖離戰術判定), N'貼近成本') AS 乖離判定,
+        ISNULL(RTRIM(O.三維AMT空間判定), N'常態空間') AS 空間判定,
+        ISNULL(RTRIM(M.具體概念), N'權值動能') AS 熱門題材
+    FROM MasterStockAnalysis M
+    JOIN stockchange.dbo.basicinfo B ON RTRIM(M.代號) = RTRIM(B.代號)
+    LEFT JOIN (
+        SELECT 代號, 外資3日合計, 投信3日合計,
+               ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 日期 DESC) AS rn
+        FROM threemasternumber
+    ) N ON RTRIM(N.代號) = RTRIM(M.代號) AND N.rn = 1
+    LEFT JOIN (
+        SELECT 代號, 本益比近四季,
+               ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 日期 DESC) AS rn
+        FROM value
+    ) V ON RTRIM(V.代號) = RTRIM(M.代號) AND V.rn = 1
+    LEFT JOIN View_AI_Omni_Context O ON RTRIM(M.代號) = RTRIM(O.代號) 
+         AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context)
+    WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis)
+      AND B.總量 >= 500 AND B.成交價 >= 12
+      AND (ISNULL(N.投信3日合計, 0) > 0 OR ISNULL(N.外資3日合計, 0) > 0)
+    ORDER BY M.專家實戰總分 DESC, (ISNULL(N.投信3日合計, 0) * 2 + ISNULL(N.外資3日合計, 0)) DESC;
+    """
+    candidates = []
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+            for r in rows:
+                candidates.append({
+                    "code": str(r[0]).strip(),
+                    "name": str(r[1]).strip(),
+                    "price": float(r[2]),
+                    "change_pct": float(r[3]),
+                    "volume": int(r[4]),
+                    "industry": str(r[5]).strip(),
+                    "capital": float(r[6]),
+                    "expert_score": float(r[7]),
+                    "foreign_3d": float(r[8]),
+                    "trust_3d": float(r[9]),
+                    "pe": float(r[10]),
+                    "main_cost": float(r[11]),
+                    "bias_status": str(r[12]).strip(),
+                    "amt_space": str(r[13]).strip(),
+                    "concepts": str(r[14]).strip()
+                })
+        print(f" -> 成功萃取 {len(candidates)} 檔具備專家分與法人動能之核心標的。")
+    except Exception as e:
+        print(f" [!] 量化數據獲取失敗: {e}")
+    return candidates
+
+# -----------------------------------------------------------------------------
+# 2. 宏觀情報層
+# -----------------------------------------------------------------------------
+def fetch_morning_news():
+    print("[2/4] 調閱宏觀焦點與產業新聞...")
+    news_items = []
+    
+    if os.path.exists(NEWS_JSON_PATH):
+        try:
+            with open(NEWS_JSON_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                news_items = data.get("items", [])[:10]
+            if news_items:
+                print(f" -> 成功自快取載入 {len(news_items)} 條科技財經情報。")
+                return news_items
+        except Exception:
+            pass
+
+    try:
+        sql = """
+        SELECT TOP 5 國家區域, 指標名稱, 重要性, 影響解讀
+        FROM MacroEconomicCalendar
+        ORDER BY 公布日期 DESC, 重要性 DESC;
+        """
+        with get_db_connection() as conn:
+            cur = conn.cursor()
+            cur.execute(sql)
+            for r in cur.fetchall():
+                news_items.append({
+                    "title": f"【{r[0]}】{r[1]} ({r[2]})",
+                    "summary": str(r[3]).strip() if r[3] else "重大總體經濟政策指引"
+                })
+        if news_items:
+            print(f" -> 成功自 MacroEconomicCalendar 調閱 {len(news_items)} 則總經動態。")
+            return news_items
+    except Exception:
+        pass
+
+    return [
+        {"title": "美股AI與半導體巨頭拉升，伺服器與高頻寬記憶體需求強勁", "summary": "算力基礎建設投資持續擴張，外資主力資金集中回流高成長供應鏈。"},
+        {"title": "聯準會利率政策平穩，本土投信法人展開作帳與換股操作", "summary": "低基期、貼近主力成本且技術面完成築底標的成為防禦首選。"}
+    ]
+
+# -----------------------------------------------------------------------------
+# 3. 大模型論證：精確追蹤執掌模型與金鑰節點
+# -----------------------------------------------------------------------------
+def generate_chief_analysis(candidates, news_list):
+    print("[3/4] AI 總參謀長啟動大模型雙因子交叉論證大腦...")
+    
+    prompt = f"""
+你是一位身價百億的頂級避險基金操盤總監 (Zen AI 總參謀長)。
+請根據我所提供的【今日量化選股清單】與【宏觀產業情報】，進行嚴格的「雙因子共振解盤 (Quant + Macro Catalyst)」。
+
+【今日量化多頭標的 (含主力成本、AMT空間、法人買超、專家分、具體概念)】：
+{json.dumps(candidates, ensure_ascii=False, indent=2)}
+
+【宏觀產業與新聞情報】：
+{json.dumps(news_list, ensure_ascii=False, indent=2)}
+
+請輸出避險基金內部最高規格的《每日戰術作戰指令書》，結構必須包含：
+1. 🎯 【大盤多空定調與風控方針】：多空位階判定、建議持股水位(%)、大盤關鍵防守節奏。
+2. 🔥 【共振狙擊黑馬 (選出 2~4 檔最契合標的)】：
+   - 標的名稱與代號
+   - 共振理由 (結合投信/外資3日買超、專家分、具體概念與宏觀新聞題材的契合度)
+   - 實戰策略 (進場防守區間、停損點位、第一/第二波段目標停利點、參考主力成本)。
+3. ⚠️ 【今日盤中禁手與特情預警】：明確列出何種盤況（如早盤急拉追高、跌破主力成本線）絕對不可開倉。
+
+請使用俐落、精闢、震撼專業的金融操盤語言直接輸出指令。
+"""
+
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.3}
+    }
+
+    # 1. 優先嘗試 Google Gemini 陣列 (Header 認證)
+    models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
+    
+    for idx, key in enumerate(GEMINI_API_KEYS, start=1):
+        masked_key = f"{key[:8]}...{key[-4:]}"
+        headers = {
+            "Content-Type": "application/json",
+            "x-goog-api-key": key
+        }
+        
+        for model in models_to_try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+            try:
+                t0 = datetime.now()
+                resp = requests.post(url, headers=headers, json=payload, timeout=25)
+                if resp.status_code == 200:
+                    cost_sec = (datetime.now() - t0).total_seconds()
+                    result = resp.json()
+                    text = result["candidates"][0]["content"]["parts"][0]["text"]
+                    
+                    # 注入模型執掌簽名
+                    badge = f"> 🧠 **解盤執掌大腦**：`Google {model}` ✕ 金鑰節點 `#{idx} ({masked_key})` ✕ 耗時 `{cost_sec:.1f}s`\n\n"
+                    full_text = badge + text
+                    print(f" -> 恭喜！由 [{model}] 於金鑰 [#{idx}] 執掌解盤完成！")
+                    return full_text
+            except Exception:
+                pass
+                
+    # 2. 終極救援：OpenRouter
+    openrouter_key = getattr(sys.modules.get('zen_secrets'), 'OPENROUTER_API_KEY', '')
+    if openrouter_key:
+        print("[!] 啟動【OpenRouter 備援大腦】接管作戰...")
+        or_url = "https://openrouter.ai/api/v1/chat/completions"
+        or_headers = {
+            "Authorization": f"Bearer {openrouter_key}",
+            "Content-Type": "application/json"
+        }
+        or_payload = {
+            "model": "deepseek/deepseek-chat",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.3
+        }
+        try:
+            t0 = datetime.now()
+            r = requests.post(or_url, headers=or_headers, json=or_payload, timeout=35)
+            if r.status_code == 200:
+                cost_sec = (datetime.now() - t0).total_seconds()
+                text = r.json()["choices"][0]["message"]["content"]
+                badge = f"> 🧠 **解盤執掌大腦**：`OpenRouter DeepSeek-V3` ✕ 備援接管通道 ✕ 耗時 `{cost_sec:.1f}s`\n\n"
+                print(" -> 【OpenRouter 備援通道】解盤成功！")
+                return badge + text
+        except Exception as e:
+            print(f" [!] OpenRouter 備援失敗: {e}")
+
+    return "【警告】所有 AI 運算通道均受到歸戶配額或權限限制，請檢查 API 帳戶餘額。"
+
+# -----------------------------------------------------------------------------
+# 4. 生成 HTML 戰情大屏看板 (支援 Markdown 前端高質感渲染)
+# -----------------------------------------------------------------------------
+def build_html_briefing(analysis_text, candidates):
+    os.makedirs(os.path.dirname(OUTPUT_HTML_PATH), exist_ok=True)
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # 將原始 Markdown 文本轉為 JSON 安全字串傳入 JS
+    raw_json_text = json.dumps(analysis_text)
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen AI 總參謀長深度解盤指令單</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {{
+            background-color: #0b0f19;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
+            margin: 0; padding: 20px;
+        }}
+        .container {{ max-width: 1150px; margin: 0 auto; }}
+        .header {{
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            border: 1px solid #3b82f6; border-radius: 12px;
+            padding: 24px; margin-bottom: 24px;
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.25);
+        }}
+        h1 {{ margin: 0 0 10px 0; color: #60a5fa; font-size: 24px; }}
+        .timestamp {{ font-size: 13px; color: #94a3b8; }}
+        .briefing-card {{
+            background: #1e293b; border-radius: 12px;
+            border-left: 5px solid #10b981; padding: 28px;
+            line-height: 1.8; font-size: 15px; margin-bottom: 24px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+        }}
+        .briefing-card h1, .briefing-card h2, .briefing-card h3 {{
+            color: #38bdf8; margin-top: 20px; margin-bottom: 10px;
+            border-bottom: 1px solid #334155; padding-bottom: 6px;
+        }}
+        .briefing-card strong {{ color: #fbbf24; }}
+        .briefing-card ul {{ padding-left: 20px; }}
+        .briefing-card li {{ margin-bottom: 8px; }}
+        .table-box {{
+            background: #111827; border-radius: 12px;
+            border: 1px solid #374151; padding: 20px; overflow-x: auto;
+        }}
+        table {{ width: 100%; border-collapse: collapse; font-size: 13px; text-align: right; }}
+        th, td {{ padding: 12px 14px; border-bottom: 1px solid #1f2937; }}
+        th {{ color: #9ca3af; background: #1f2937; }}
+        td:nth-child(1), td:nth-child(2), td:nth-child(3), td:nth-child(9), th:nth-child(1), th:nth-child(2), th:nth-child(3), th:nth-child(9) {{ text-align: left; }}
+        .up {{ color: #ef4444; font-weight: bold; }}
+        .down {{ color: #10b981; font-weight: bold; }}
+        .badge {{ background: #2563eb; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👑 Zen AI 股票戰情室 · 總參謀長每日作戰指令單</h1>
+            <div class="timestamp">⚡ 戰略審計時戳：{now_str} ✕ 避險基金級雙因子交叉論證協議</div>
+        </div>
+
+        <div class="briefing-card" id="briefingContent">
+            載入中...
+        </div>
+
+        <div class="table-box">
+            <h3 style="color: #93c5fd; margin-top: 0;">📊 今日底層專家分 ✕ 法人共振標的雷達</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>代號</th>
+                        <th>名稱</th>
+                        <th>產業分類</th>
+                        <th>成交價</th>
+                        <th>漲跌幅</th>
+                        <th>專家分</th>
+                        <th>投信3日</th>
+                        <th>主力成本</th>
+                        <th>題材概念</th>
+                    </tr>
+                </thead>
+                <tbody>
+"""
+    for c in candidates:
+        chg_cls = "up" if c['change_pct'] > 0 else "down"
+        html_content += f"""
+                    <tr>
+                        <td><span class="badge">{c['code']}</span></td>
+                        <td>{c['name']}</td>
+                        <td style="color:#94a3b8;">{c['industry']}</td>
+                        <td>{c['price']:.2f}</td>
+                        <td class="{chg_cls}">{c['change_pct']:+.2f}%</td>
+                        <td style="color:#38bdf8; font-weight:bold;">{c['expert_score']:.1f}</td>
+                        <td style="color:#f59e0b; font-weight:bold;">{c['trust_3d']:.0f}</td>
+                        <td>{c['main_cost']:.2f}</td>
+                        <td style="color:#cbd5e1; font-size:12px;">{c['concepts'][:30]}...</td>
+                    </tr>
+"""
+    html_content += f"""
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        const rawMarkdown = {raw_json_text};
+        document.getElementById('briefingContent').innerHTML = marked.parse(rawMarkdown);
+    </script>
+</body>
+</html>
+"""
+    with open(OUTPUT_HTML_PATH, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f" -> 作戰大屏看板已產出：{OUTPUT_HTML_PATH}")
+
+# -----------------------------------------------------------------------------
+# 5. Telegram 推播 (防超連結斷行與 HTML 逃逸)
+# -----------------------------------------------------------------------------
+def broadcast_telegram(analysis_text):
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print(" [!] Telegram 未配置 Token 或 Chat ID，略過推播。")
+        return
+    
+    print("[4/4] 擊發 Telegram 旗艦作戰電報...")
+    # 將 Markdown 的 > 引用與粗體略作美化或逃逸
+    safe_text = html.escape(analysis_text[:3800])
+    
+    # 恢復重要 HTML 標籤
+    safe_text = safe_text.replace("&gt; ", "💡 ")
+    
+    msg = (
+        f"👑 <b>【Zen AI 總參謀長 · 每日操盤指令單】</b>\n"
+        f"🕒 <i>{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</i>\n"
+        f"────────────────────\n"
+        f"{safe_text}\n\n"
+        f"🌐 <b><a href=\"https://zen2965.duckdns.org:8888/excelimport/ai_chief_briefing.html\">[點此開啟 總參謀長完整戰備大屏]</a></b>"
+    )
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": msg,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": False
+    }
+    try:
+        r = requests.post(url, json=payload, timeout=12)
+        if r.status_code == 200:
+            print(" -> Telegram 作戰電報發射成功！")
+        else:
+            print(f" [!] Telegram 發射回報: {r.status_code} - {r.text}")
+    except Exception as e:
+        print(f" [!] Telegram 網絡請求異常: {e}")
+
+# -----------------------------------------------------------------------------
+# 主程序
+# -----------------------------------------------------------------------------
+def main():
+    print("=" * 60)
+    print("🚀 【Zen AI 總參謀長】深度解盤引擎出擊！")
+    print("=" * 60)
+    
+    candidates = fetch_quant_candidates()
+    news_list = fetch_morning_news()
+    
+    if not candidates:
+        print(" [!] 未檢出候選股票，流程終止。")
+        return
+
+    briefing = generate_chief_analysis(candidates, news_list)
+    build_html_briefing(briefing, candidates)
+    broadcast_telegram(briefing)
+    
+    print("=" * 60)
+    print("✅ 總參謀長全作戰流程順利圓滿閉環！")
+    print("=" * 60)
+
+if __name__ == "__main__":
+    main()</pre>
 </body>
 </html>
