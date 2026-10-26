@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>myword2 ID 1</title>
-</head>
-<body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
-    <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 1</h2>
-    <hr style="border: 1px solid #334155;">
-    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">所有常用資料表欄位來了,請查收
+<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>所有常用資料表欄位來了,請查收
 
 stockchangedate資料庫
 
@@ -556,6 +547,4 @@ FROM              QuantSqlTemplates
 WHERE          (TemplateID = 151)
 TemplateID	Category	Title	StrategyDesc	CorrectSQL	Unlocks	TargetDB	SortOrder	IsActive	UsageCount	LastUsedDate	CreatedAt	UpdatedAt
 151	核心選股	09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。	--09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。--11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/`cat: "產業類選股", title: "【核心選股】2026 頂級題材 + 強勢共振", sql: `TOP 10cat: "產業類選股", title: "【題材疊加王】多重概念 + 高勝率回測", sql: `TOP 100-- 第一層：先找出符合 3 項以上的股票，並聯集寬表抓取產業分類--群聚效應」 (Cluster Effect)：	/*資料庫:stockchange*/top 100 I.名稱, I.代號, I.漲幅, I.成交價, M.專家實戰總分, M.實戰標籤 FROM dbo.basicinfo I INNER JOIN stockchangedate.dbo.MasterStockAnalysis M ON RTRIM(I.代號) = RTRIM(M.代號) WHERE M.日期 = (SELECT MAX(日期) FROM stockchangedate.dbo.MasterStockAnalysis)               AND I.漲幅 < -4.5 -- 單日跌幅過大，通常是主力出貨或利空 ORDER BY I.漲幅 ASC  /*--09:15 - 09:30：先跑「主流偵測」，看看今天是哪個族群（如：CPO、MOSFET）在帶隊。 --09:30 - 10:30：如果龍頭買不到，跑「聯動補漲」找族群內的二號、三號標的。 --11:00 以後：跑「破線賣點」，檢查手上的股票有沒有因為大盤轉弱而撐不住的，適時獲利了結。*/		stockchange	1080	1	5	2026-10-21 12:07:33.043	2026-10-20 16:32:05.117	2026-10-21 09:24:22.633
-</pre>
-</body>
-</html>
+</pre></body></html>

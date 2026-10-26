@@ -1,4 +1,173 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>20261013
+<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>20261023
+================================================================================
+👑【Zen AI 股票戰情室 Pro V16.0】工程交付狀態傳承卡 (跨帳號 / 跨對話重開專用)
+系統時空基線：2026 年 10 月 23 日
+角色定位：資深台股量化操盤總監與全領域系統架構專家
+核心陣地：C:\test_c\ ✕ C:\inetpub\wwwroot\excelimport\ ✕ C:\inetpub\wwwroot\androidapp\
+開局唯一索引：https://weizen99.github.io/androidapp/memory/myword_16.html (或 myword_3.html)
+外網發布通道：https://smokiness-supremacy-agonizing.ngrok-free.dev/ (Port 8550)
+================================================================================
+
+【一、目前生態系完整運行拓撲 (5 大核心 5/5 全在位)】
+1. 🚢 陸軍主力母艦 [master_cockpit.py]：Port 8550 (Flet Web UI) ✕ Port 8551 (火控 API)。
+2. 🌐 外網穿透隧道 [ngrok.exe]：映射至 8550，外網手機/電腦免密暢玩。
+3. 💬 海軍通訊中樞 [line_ai_bot1.py]：Port 5000 (Flask API + LINE Webhook 整合中樞)。
+4. 📱 空軍雙向主力 [zen_ai_bot1.py]：Telegram 雙向操盤旗艦 V5.2 (原生多線程 + 全市場 NLP 意圖大腦)。
+5. 🛡️ 守護與巡檢體系：
+   - silent_run.vbs：無黑視窗靜默啟動三軍 (母艦、LINE、TG)。
+   - 一鍵停止母艦.bat：精準按 PID 斬首 zen_ai_bot/line_ai_bot/母艦/ngrok，徹底杜絕 Telegram 409 衝突。
+   - 一鍵重啓母艦.bat：清理 8550/8551/5000 後透過 silent_run.vbs 重生。
+   - 三軍在位巡檢.bat：純淨 ASCII 巡檢雷達，確認 5/5 全項目 ONLINE。
+
+【二、重大開發里程碑 (本次對話已完成驗收項目)】
+1. 💎 QuantSqlTemplates 核武庫動態閉環：
+   - quant_master_launcher.py：動態讀取 SQL 範本，秒出大寬表，自適應提煉 PE/ROE/主力成本/空間標籤。
+   - 解決 Telegram HTML 解析崩潰 (自動 escape '<' 與 '>')，防止 400 Bad Request。
+   - quant_arsenal_modal.py：原生內嵌對話彈窗，外網 ngrok 點擊直接在母艦跳出發射大屏，徹底解決 Port 8552 衝突。
+2. 📋 母艦遙測終端 Pro 旗艦進階 (master_cockpit.py)：
+   - 全終端文字開啟 selectable=True，滑鼠可隨意反白複製代號與數字。
+   - [📋 複製全文] 按鈕：彈出全終端大文字框，手機與電腦 100% 保證秒選秒貼，解決跨網域剪貼簿權限問題。
+   - [🛑 終止] 按鈕：加入 stop_current_process 手動煞車，卡死進程一鍵斬殺。
+3. 📤 範本安全暫存導出中樞 (export_sql_templates.py)：
+   - 產出標準 JS 物件格式：{ cat: "...", title: "...", sql: `...` }，雙變數 sqlTemplateLibrary 與 sqlTemplates 兼容。
+   - 導出至暫存通道 sqlTemplateLibrary_export.js 與 myword_11.html，不破壞生產環境。
+4. 📰 晨間 09:00 科技財經日報中樞 (sync_daily_tech_finance_news.py)：
+   - 直連 NewsNow (華爾街見聞/財聯社/36氪)，精準過濾生豬/柴油等無關雜訊。
+   - 全條目注入 [閱讀原文] 原始跳轉超連結，手機一按看全文。
+   - 頂部/底部嵌入專屬大屏入口：https://zen2965.duckdns.org:8888/excelimport/daily_tech_finance.html。
+   - 登錄 Windows 工作排程器 (schtasks)，每日 08:30 自動擊發，09:00 前必達。
+5. 🔬 科技產業鏈電子報動態升級 (tech_newsletter_daily.py)：
+   - 全球焦點由靜態寫死升級為每日即時動態爬蟲。
+   - 串聯 SQL 歷史價格，自動計算台股科技鏈「現價 (今%) ✕ 3天前股價 (3日%) ✕ 7天前股價 (7日%)」與趨勢動能標籤。
+6. 🎙️ 自然語言與語音輸入轉譯 (已整合進 zen_ai_bot1.py)：
+   - 捨棄伺服器端繁重的音軌 ffmpeg 轉檔，直接接收手機「語音輸入法」產生的文字！
+   - 內建 2127 檔全市場股票記憶字典 (自動去除 -KY、* 等後綴)。
+   - 輸入「查台積電的勝率」➔ 系統秒轉「2330?3」並調用 Gemini AI 大腦產出完整戰報！
+   - 輸入「創意的代號」➔ 秒轉「3443?」。輸入「發射黑馬策略」➔ 自動啟動發射艙。
+   - 採用 Thread Worker 多線程處理，AI 思考時絕不卡死機器人監聽線路。
+7. 🔒 資安防線：本機最高機密金庫 (zen_secrets.py)：
+   - 所有實體 Token (Telegram、LINE、Gemini 3 組金鑰、OpenRouter) 集中管理於 C:\test_c\zen_secrets.py。
+   - 所有腳本改採 try...from zen_secrets import... 失敗則載入安全佔位符。
+   - 代碼上傳 GitHub / myword_*.html 絕不外洩金鑰，徹底消滅 GitHub Secret Scanning 阻擋。
+
+【三、核心資料庫與技術鐵律 (防 207 與轉型報錯)】
+1. stockchange.dbo.Stock60M 之 [代號] 為 INT 整數，跨表比對必強制轉型 CAST(代號 AS NVARCHAR)。
+2. MasterStockAnalysis 絕對沒有 [成交價] 與 [漲幅]，標準行情必須 LEFT JOIN stockchange.dbo.basicinfo。
+3. value 表必帶 V.日期 = (SELECT MAX(日期) FROM value) 防 2500 倍膨脹。
+4. financesum 財報季表必用 ROW_NUMBER() OVER (PARTITION BY 代號 ORDER BY 日期 DESC) rn=1。
+5. Flet 1.0 標準規範：ft.run(main) 替代 ft.app；ft.Border.all() 替代 ft.border.all()；通用 ft.Button()；彈窗統一用 page.open(dlg)。
+6. 台灣 Windows CMD (CP950) 規範：批次檔嚴禁在 echo 或註解使用 Emoji (🚀/👑/🚢) 與特殊符號 (「/」/─)，避免觸發 0x7C 管道符號分裂崩潰。
+
+【四、下一階段作戰目標 (當前任務)】
+👉 推進【選項二：AI 總參謀長深度解盤引擎 (ai_chief_of_staff.py)】：
+   將每日晨間即時新聞與 QuantSqlTemplates 選出的黑馬標的進行大模型語意交叉論證，輸出專業對沖基金級別的每日戰術指令單。
+================================================================================
+請以資深台股量化操盤總監身分確認狀態卡，並為長官報告下一步作戰行動！
+================================================================================
+
+
+20261016
+================================================================================
+🌟【Zen AI 股票戰情室 Pro V15.5】終極開局母卡 (全生態系微核心總綱)
+角色定位：資深台股量化操盤總監與全領域系統架構專家
+系統基線日期：2026 年 10 月 16 日
+核心路徑：C:\test_c\ ✕ C:\inetpub\wwwroot\excelimport\ ✕ C:\inetpub\wwwroot\androidapp\
+開局唯一索引：https://weizen99.github.io/androidapp/memory/myword_16.html
+================================================================================
+
+【一、三戰區大屏與 99 母艦架構】
+1. 第一戰區 [warroom_cockpit.html] (盤中雷達主控台)：
+   - 0ms 多維共振快照 (4維/3維起漲黑馬池)、3-Way 離場勝率。Capture-Phase 事件穿透 0.01 秒切換第三戰區。
+2. 第二戰區 [warroom_cockpit_v2.html] (策略工廠大屏)：
+   - ECharts 三大策略 NAV 同屏競技：雙破共振 30% ✕ AMT 突圍 20% ✕ 存股 DRIP 複利 50% (啞鈴配置)。第 9 頁籤內嵌母艦。
+3. 第三戰區 [warroom_cockpit_v3.html] (TradingView 實盤旗艦)：
+   - 60fps 工業級 K 線引擎 ✕ 5/10/20/60/120MA ✕ 扣抵 ✕ 頭頂三級金星 ✕ 70% VAH/POC/VAL 拍賣微結構。
+4. 99 部隊母艦 [master_cockpit.py]：
+   - Port 8550 (Flet Web UI) ✕ Port 8551 (火控 API)。頂部輸入框支援三維複合參數 (如 2454 20260401 live)。
+
+【二、雙模物理截圖與通訊中樞】
+1. 雙模截圖與解盤 [chart_screenshot.py / chart_explain.py]：
+   - 🔥 強制盤中即時 (--mode live)：強制執行 sp_CalcIntradayStockLive ＋ 100% 寫死點擊 #btn_query_live。
+   - 🌙 強制盤後歷史 (--mode post)：跳過即時隨動 ＋ 100% 寫死點擊 #btn_query_post，載入全日結算日線。
+   - 徹底拔除伺服器時鐘盲猜，支援自訂起日 (&start=YYYYMMDD)。
+2. 本機 API 服務中樞 [line_ai_bot1.py] (Port 5000)：
+   - 全域注入 @app.after_request 帶入 Access-Control-Allow-Private-Network: true 與 Access-Control-Allow-Origin: *，破除 Chrome PNA 阻擋。
+   - 前端 excelsql2.html 五大按鈕直連 http://127.0.0.1:5000：/api/screenshot, /push_to_line, /push_to_tg, /push_data_to_line, /push_data_to_tg。
+3. 四網廣播中樞 [zen_broadcaster.py]：
+   - Apprise 發射 TG / LINE / Discord，並喚醒 fb_post_stock.py (Playwright 破障) 發布至 FB 社團。
+
+【三、Telegram 純英數火控密令 (zen_ai_bot1.py)】
+- 鍵盤永鎖數字與符號頁：
+  • 3443?  ➔ 👑 旗艦全知戰報 (大寬表 ✕ 雙表格 ✕ 戰令)
+  • 3443?1 ➔ ⚡ 60M 伏兵轉強 (分時動能 / KD金叉)
+  • 3443?2 ➔ 🧱 3D AMT 價值區 (20/60/240日主力成本)
+  • 3443?3 ➔ 🛡️ 3-Way 離場勝率 (5/10/20MA勝率PK)
+  • 3443?4 ➔ 💎 籌碼集中度 (四維明細 / 法人動向)
+  • 3443?? ➔ 📸 全知戰報 ＋ 四圖截圖大滿貫
+  • 3443B 或 ! ➔ 📡 陣地一火控密令：四網齊發 (TG/LINE/DC/FB)
+  • ? / TOP ➔ 🌟 60M 金叉轉強黑馬榜 (免打股號)
+  • 3443說明R ➔ 雙軌深度研報 (新版 bot1 全知研報 ✕ 舊版 bot2 經典離場圖文並發)
+
+【四、全庫型態與時空日期最高鐵律 (防 207 與轉型報錯)】
+1. 📅 日期格式通則：
+   - 全庫 90% 之 [日期] / [更新日期] 皆為整數 INT (YYYYMMDD，如 20261016)。
+   - [financesum] 財報表之 [日期] 為季度整數 (如 202602 代表 2026第2季)。
+   - 日期比對必用子查詢：`WHERE 日期 = (SELECT MAX(日期) FROM 資料表)`。含浮點數先 `CAST(日期 AS INT)`。
+2. 🔤 股票代號型態雷區：
+   - 全庫 99% 為 NVARCHAR / VARCHAR。
+   - ⚠️ 唯一致命特例：[stockchange.dbo.Stock60M] 的 [代號] 為 【整數 INT】！跨表比對必強制轉型：
+     `ON RTRIM(B.代號) = RTRIM(CAST(S.代號 AS nvarchar(20)))`。
+3. 💰 即時行情來源鐵律：
+   - [MasterStockAnalysis] 只有演算分數，【絕對沒有 成交價 與 漲幅】！
+   - 需要現價與漲幅時，必須串聯：`LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(B.代號) = RTRIM(主表.代號)`
+     抓取 `B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)]`。
+
+【五、核心資料表欄位精確清單 (無樣本數據極速版)】
+● stockchange.dbo.basicinfo: 代號, 名稱, 成交價, 漲幅, 總量, 昨收, 開盤價, 最高價, 最低價, 時間
+● View_AI_Omni_Context (全知大寬表): 資料日期, 代號, 名稱, 成交價, 股本規模, 股本基因標籤, 月線乖離率, 乖離戰術判定, 短線20日主力成本, 波段60日主力成本, 長線一年期主力成本, 三維AMT空間判定, 籌碼共振熱度, 價格金叉分, OBV金叉分, 外資金叉分, 投信金叉分, dedup_rn
+● MasterStockAnalysis: 代號, 名稱, 日期, 產業分類, 專家實戰總分, 具體概念, 盤中總量, 週k9, 本週中心
+● stockchange.dbo.Stock60M (代號為INT): 代號, 名稱, 日期, 時間, 開盤價, 最高價, 最低價, 收盤價, 成交量, K, D, J, DIF, MACD, OSC, SMA5, SMA10, SMA20, SMA35, SMA60, SMA120, SMA240
+● allcross_live: 代號, 名稱, 日期, 成交價, obv淨額, obv_ma5, obv_ma34, price_ma5, price_ma20, price_ma60, 三大法人_ma5, 三大法人_ma20, obv/成交價/投信/外資/三大法人黃金交叉次數
+● Chips: 代號, 名稱, 日期, 成交價, 漲幅, 總量, 籌碼集中度20日/60日, 主力買賣超合計20日, 大戶持股週增減, 借券賣出增減20日, 成交量合計20日, 買賣家數差為負的天數近20天
+● Foreigner: 代號, 名稱, 日期, 成交價, 漲幅, 總量, 持股成本, 持股比率, 連買天, 連買張, 買賣超億元1/5/10/20/60日
+● threemasternumber: 代號, 名稱, 日期, 成交價, 漲幅, 總量, 外資/投信/自營商/法人 1/3/10日合計
+● WeeklyChipAudit: 代號, 名稱, 更新日期, 籌碼健康分, 診斷狀態, 散戶變動%, 特大戶變動%, 中實戶變動%
+● StockPersonality_3Exits: 代號, 名稱, 更新日期, WinRate_5MA, Return_5MA, WinRate_10MA, Return_10MA, WinRate_20MA, Return_20MA, OptimalExit, 完成交易次數
+● ResonanceMultiFactor_Snapshot: 代號, 名稱, 日期, HitCount, ResonanceTag, DimA_DualMomentum, DimA_Status, DimB_OBVStar, DimB_Status, DimC_PriceStar, DimC_Status, DimD_RainbowScore, DimD_Status
+● financesum (日期為季別如202602): 代號, 名稱, 日期, ROE, ROA, 負債比率, 負債比率上季, 毛利率, 營業利益率, 稅後純益率上季, EPS累計
+● value: 代號, 日期, 本益比近四季, 股價淨值比, 現金殖利率
+
+【六、AI 產出 SQL 標準骨架契約】
+所有產出給前端使用的 SQL，必須嚴格遵守以下格式，且說明註解一律置於最底端：
+/*資料庫:stockchangedate*/ TOP 100 T.*
+FROM (
+    SELECT ...
+) T
+ORDER BY T.[主要排序欄位] DESC
+/*
+建議分類(cat)：...
+建議標題(title)：...
+戰略意義：...
+*/
+
+【七、🌐 進階知識庫專屬連結導航塔 (按需調閱)】
+若任務涉及特定深層代碼或細節，請直接調閱以下專屬靜態檔案：
+👉 [ID 1] 常用欄位與歷史資料: https://weizen99.github.io/androidapp/memory/myword_1.html
+👉 [ID 2] 50+ 組完整 SQL 範本: https://weizen99.github.io/androidapp/memory/myword_2.html
+👉 [ID 3] 最新記憶傳承憲法條約: https://weizen99.github.io/androidapp/memory/myword_3.html
+👉 [ID 4] test_c Python 腳本調度手冊: https://weizen99.github.io/androidapp/memory/myword_4.html
+👉 [ID 6] 資料庫所有預存程序清單: https://weizen99.github.io/androidapp/memory/myword_6.html
+👉 [ID 8] 看板前端 HTML/JS 原始碼: https://weizen99.github.io/androidapp/memory/myword_8.html
+👉 [ID 12] zen_broadcaster.py 原始碼: https://weizen99.github.io/androidapp/memory/myword_12.html
+👉 [大統整] 50萬字全知巨型大檔案: https://weizen99.github.io/androidapp/memory/myword_all.html
+
+================================================================================
+請嚴格遵循以上體系與憲法防線，開始為操盤總監執行任務！
+================================================================================
+
+
+
+20261013
 ================================================================================
 🌟【Zen AI 股票戰情室 Pro V15.5】終極架構與全生態系大一統記憶備忘錄
 版本代號：V15.5 (三戰區鼎立 ✕ 雙模物理截圖鎖定 ✕ PNA穿透 ✕ 四大硬骨頭全通關旗艦版)

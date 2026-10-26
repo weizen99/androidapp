@@ -1,4 +1,11 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>20261015
+<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>20261020
+-- 測試 1：搜尋「60」，系統不再自作主張，而是立刻列出所有包含 60 的範本清單！ 在excelsql2要單筆執行 t-sql一起執行
+EXEC sp_RunQuantTemplate @Keyword = N'60';
+
+-- 測試 2：執行第 1 號，股本欄位不再是冷冰冰的 NULL，而是直接印出 [小型輕盈飆股] 或數值！
+EXEC sp_RunQuantTemplate @ID = 68;
+
+20261015
 👑 第一戰區：核心大腦與全知解盤部隊 (AI Explainers)
 這是戰情室的靈魂，負責調用 Google 原廠、OpenRouter 與本地 Ollama 產出戰略報告。
 1. ai_omni_explainer.py (第 100 號部隊：全知大滿貫解盤)
