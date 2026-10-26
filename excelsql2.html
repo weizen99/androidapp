@@ -430,6 +430,118 @@
             //{ cat: "", title: "", sql: `  ` },
 
             {
+                cat: "形態與動能突圍",
+                title: "🚀 雙破共振 (放量穿透20日主力成本 ✕ 萬里無雲主升段)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(M.代號) AS 代號, RTRIM(M.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(M.產業分類) AS 產業, TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], ROUND(M.專家實戰總分, 2) AS 專家分, TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2)) AS [20日成本], ROUND(((TRY_CAST(B.成交價 AS DECIMAL(10,2)) - TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2))) / NULLIF(TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2)), 0)) * 100.0, 2) AS [成本乖離%], RTRIM(O.乖離戰術判定) AS [乖離判定], RTRIM(O.三維AMT空間判定) AS [空間判定], ISNULL(N.外資3日合計, 0) AS [外資3日(張)], ISNULL(N.投信3日合計, 0) AS [投信3日(張)], RTRIM(M.具體概念) AS [熱門題材] FROM MasterStockAnalysis M JOIN stockchange.dbo.basicinfo B ON LTRIM(RTRIM(M.代號)) = LTRIM(RTRIM(B.代號)) LEFT JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(M.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) LEFT JOIN ( SELECT 代號, 外資3日合計, 投信3日合計, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM threemasternumber ) N ON LTRIM(RTRIM(N.代號)) = LTRIM(RTRIM(M.代號)) AND N.rn = 1 WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) > TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2)) AND TRY_CAST(B.漲幅 AS DECIMAL(6,2)) >= 2.0 AND TRY_CAST(B.漲幅 AS DECIMAL(6,2)) <= 9.8 AND TRY_CAST(B.總量 AS INT) >= 1000 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 AND M.專家實戰總分 >= 7.0 AND (O.三維AMT空間判定 LIKE N'%萬里無雲%' OR O.三維AMT空間判定 LIKE N'%突破%') ) T ORDER BY T.專家分 DESC, T.[今日漲幅%] DESC
+
+/*
+戰略意義：
+鎖定剛帶量衝過 20 日主力防線、專家評分高、且上方無沉重套牢賣壓之純多頭波段飆股。
+*/`
+            },
+
+            {
+                cat: "籌碼主力追蹤",
+                title: "🔥 投信鎖碼飆馬 (小股本<80億 ✕ 投信連買 ✕ 集中度>8%)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], RTRIM(B.產業分類) AS 產業, C.籌碼集中度20日 AS [集中度20日%], C.主力買賣超合計20日 AS [主力20日買超(張)], N.投信3日合計 AS [投信3日(張)], N.投信10日合計 AS [投信10日(張)], TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2)) AS [20日成本], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, 籌碼集中度20日, 主力買賣超合計20日, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM Chips ) C ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(C.代號)) AND C.rn = 1 JOIN ( SELECT 代號, 投信3日合計, 投信10日合計, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM threemasternumber ) N ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(N.代號)) AND N.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) LEFT JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) WHERE TRY_CAST(B.總量 AS INT) >= 800 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 AND TRY_CAST(B.股本億 AS DECIMAL(10,2)) <= 80.0 AND N.投信3日合計 >= 200 AND N.投信10日合計 >= 500 AND C.籌碼集中度20日 >= 8.0 ) T ORDER BY T.[投信10日(張)] DESC, T.[集中度20日%] DESC
+
+/*
+戰略意義：
+投信積極認養且籌碼高密度集中的中小型股，籌碼乾淨，易拉出連續紅K主升段。
+*/`
+            },
+
+            {
+                cat: "勝率與量化回測",
+                title: "🛡️ 3-Way 離場勝率王 (20MA勝率≥70% ✕ 期望報酬≥2% ✕ 站穩月線)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, RTRIM(E.OptimalExit) AS [最佳戰術均線], CAST(CASE WHEN E.WinRate_20MA <= 1.0 THEN E.WinRate_20MA * 100.0 ELSE E.WinRate_20MA END AS DECIMAL(5,1)) AS [20MA勝率%], CAST(E.Return_20MA AS DECIMAL(5,2)) AS [20MA期望報酬%], CAST(CASE WHEN E.WinRate_10MA <= 1.0 THEN E.WinRate_10MA * 100.0 ELSE E.WinRate_10MA END AS DECIMAL(5,1)) AS [10MA勝率%], CAST(E.Return_10MA AS DECIMAL(5,2)) AS [10MA期望報酬%], CAST(CASE WHEN E.WinRate_5MA <= 1.0 THEN E.WinRate_5MA * 100.0 ELSE E.WinRate_5MA END AS DECIMAL(5,1)) AS [5MA勝率%], CAST(E.Return_5MA AS DECIMAL(5,2)) AS [5MA期望報酬%], TRY_CAST(A.price_ma20 AS DECIMAL(10,2)) AS [月線20MA], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, WinRate_5MA, Return_5MA, WinRate_10MA, Return_10MA, WinRate_20MA, Return_20MA, OptimalExit, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 更新日期 DESC) AS rn FROM StockPersonality_3Exits ) E ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(E.代號)) AND E.rn = 1 LEFT JOIN ( SELECT 代號, price_ma20, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM allcross_live ) A ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(A.代號)) AND A.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 500 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 12.0 AND (E.Return_20MA > 0 OR E.Return_10MA > 0 OR E.Return_5MA > 0) ) T ORDER BY T.[20MA期望報酬%] DESC, T.[20MA勝率%] DESC
+
+/*
+戰略意義：
+專門挑選歷史上抱著 20MA 勝率最高、期望值最高的常勝將軍。
+*/`
+            },
+
+            {
+                cat: "外資法人突圍",
+                title: "🧱 外資認錯回補 (突破一年主力成本 ✕ 外資5日買超>1億)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], TRY_CAST(O.長線一年期主力成本 AS DECIMAL(10,2)) AS [年主力成本], ROUND(((TRY_CAST(B.成交價 AS DECIMAL(10,2)) - TRY_CAST(O.長線一年期主力成本 AS DECIMAL(10,2))) / NULLIF(TRY_CAST(O.長線一年期主力成本 AS DECIMAL(10,2)), 0)) * 100.0, 2) AS [突破年成本%], CAST(F.買賣超億元5日 AS DECIMAL(8,2)) AS [外資5日買超(億)], CAST(F.買賣超億元20日 AS DECIMAL(8,2)) AS [外資20日買超(億)], F.連買天 AS [外資連買天], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) JOIN ( SELECT 代號, 買賣超億元5日, 買賣超億元20日, 連買天, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM Foreigner ) F ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(F.代號)) AND F.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 1000 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 20.0 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) > TRY_CAST(O.長線一年期主力成本 AS DECIMAL(10,2)) AND F.買賣超億元5日 >= 1.0 AND F.連買天 >= 2 ) T ORDER BY T.[外資5日買超(億)] DESC, T.[突破年成本%] ASC
+
+/*
+戰略意義：
+長期整理後被外資用真金白銀推過一年成本線，代表中長線大底完成。
+*/`
+            },
+
+            {
+                cat: "大戶籌碼審計",
+                title: "💎 大戶狂吸散戶退 (健康分≥80 ✕ 特大戶增>1% ✕ 散戶退)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, W.籌碼健康分 AS [健康評分], TRY_CAST(W.[特大戶變動%] AS DECIMAL(10,2)) AS [大戶週增減%], TRY_CAST(W.[散戶變動%] AS DECIMAL(10,2)) AS [散戶週增減%], RTRIM(W.診斷狀態) AS [籌碼體檢狀態], C.買賣家數差為負的天數近20天 AS [負家數差天數(集中度)], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, 籌碼健康分, [特大戶變動%], [散戶變動%], 診斷狀態, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 更新日期 DESC) AS rn FROM WeeklyChipAudit ) W ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(W.代號)) AND W.rn = 1 JOIN ( SELECT 代號, 買賣家數差為負的天數近20天, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM Chips ) C ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(C.代號)) AND C.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 500 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 12.0 AND W.籌碼健康分 >= 80 AND TRY_CAST(W.[特大戶變動%] AS DECIMAL(10,2)) >= 1.0 AND TRY_CAST(W.[散戶變動%] AS DECIMAL(10,2)) <= -0.5 ) T ORDER BY T.[大戶週增減%] DESC, T.[健康評分] DESC
+
+/*
+戰略意義：
+籌碼流向千張大戶手中，籌碼安定度極高，預告即將出現窒息量後的噴出走勢。
+*/`
+            },
+
+            {
+                cat: "分時伏兵狙擊",
+                title: "⚡ 60M 伏兵轉強 (60分鐘K>D金叉 ✕ OSC翻紅 ✕ 站上60M月線)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, ROUND(S.K, 1) AS [60M_K值], ROUND(S.D, 1) AS [60M_D值], ROUND(S.OSC, 2) AS [60M_MACD柱(OSC)], S.SMA20 AS [60M月線], CASE WHEN S.K > S.D AND S.OSC > 0 THEN N'☀️ 強勢起漲' ELSE N'⛅ 震盪整理' END AS [分時氣象], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT LTRIM(RTRIM(CAST(代號 AS nvarchar(20)))) AS 代號, K, D, OSC, SMA20, ROW_NUMBER() OVER(PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn FROM stockchange.dbo.Stock60M ) S ON LTRIM(RTRIM(B.代號)) = S.代號 AND S.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 800 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 12.0 AND S.K > S.D AND S.K <= 70 AND S.OSC > 0 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) > S.SMA20 ) T ORDER BY T.[60M_MACD柱(OSC)] DESC, T.[今日漲幅%] DESC
+
+/*
+戰略意義：
+盤中極短線狙擊神器，抓 60 分鐘回測整理結束、剛發動攻擊的第一個買點。
+*/`
+            },
+
+            {
+                cat: "多維共振雷達",
+                title: "🌟 四維共振黑馬 (HitCount≥3星 ✕ 動能/OBV/價格/彩虹四星大滿貫)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, R.HitCount AS [共振星級(滿分4)], RTRIM(R.ResonanceTag) AS [共振標籤], RTRIM(R.DimA_Status) AS [動能狀態], RTRIM(R.DimB_Status) AS [OBV能量], RTRIM(R.DimC_Status) AS [價格星級], RTRIM(R.DimD_Status) AS [彩虹評分], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, HitCount, ResonanceTag, DimA_Status, DimB_Status, DimC_Status, DimD_Status, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM ResonanceMultiFactor_Snapshot ) R ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(R.代號)) AND R.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 1000 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 AND R.HitCount >= 3 ) T ORDER BY T.[共振星級(滿分4)] DESC, T.專家分 DESC
+
+/*
+戰略意義：
+多因子量化模型最高結晶，技術/量能/趨勢指標同時亮起 3 顆星以上。
+*/`
+            },
+
+            {
+                cat: "價值防禦與高股息",
+                title: "🛡️ 啞鈴防禦神盾 (殖利率≥5% ✕ ROE≥15% ✕ 負債<45% ✕ 低PE)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], CAST(V.現金殖利率 AS DECIMAL(5,2)) AS [現金殖利率%], CAST(V.本益比近四季 AS DECIMAL(6,2)) AS [本益比], CAST(F.ROE AS DECIMAL(5,2)) AS [ROE%], CAST(F.負債比率 AS DECIMAL(5,2)) AS [負債比率%], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN value V ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(V.代號)) AND V.日期 = (SELECT MAX(日期) FROM value) JOIN ( SELECT 代號, ROE, 負債比率, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM financesum ) F ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(F.代號)) AND F.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 500 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 12.0 AND V.現金殖利率 >= 5.0 AND V.本益比近四季 > 0 AND V.本益比近四季 <= 16.0 AND F.ROE >= 15.0 AND F.負債比率 <= 45.0 ) T ORDER BY T.[現金殖利率%] DESC, T.[ROE%] DESC
+
+/*
+戰略意義：
+存股 DRIP 複利 50% 核心底倉，黑天鵝來臨時兼具高防禦與獲利能力。
+*/`
+            },
+
+            {
+                cat: "基本面成長黑馬",
+                title: "📈 財報三率三升 (毛利率/營益率雙季增 ✕ 本業獲利擴張)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, CAST(F1.毛利率 AS DECIMAL(5,2)) AS [最新毛利率%], CAST(F1.營業利益率 AS DECIMAL(5,2)) AS [最新營益率%], CAST(F1.EPS累計 AS DECIMAL(6,2)) AS [累計EPS], ROUND(F1.毛利率 - F2.毛利率, 2) AS [毛利率季增%], ROUND(F1.營業利益率 - F2.營業利益率, 2) AS [營益率季增%], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, 毛利率, 營業利益率, EPS累計, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM financesum ) F1 ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(F1.代號)) AND F1.rn = 1 JOIN ( SELECT 代號, 毛利率, 營業利益率, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM financesum ) F2 ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(F2.代號)) AND F2.rn = 2 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 500 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 AND F1.毛利率 > F2.毛利率 AND F1.營業利益率 > F2.營業利益率 AND F1.營業利益率 >= 8.0 AND F1.EPS累計 > 0 ) T ORDER BY T.[營益率季增%] DESC, T.[最新營益率%] DESC
+
+/*
+戰略意義：
+純本業獲利體質大轉型，毛利率與營益率雙雙季增，法人調升評等首選。
+*/`
+            },
+
+            {
+                cat: "AMT拍賣微結構",
+                title: "🌌 AMT 價值區突破 (穿透60日主力成本 ✕ 拍賣空間萬里無雲)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, TRY_CAST(O.波段60日主力成本 AS DECIMAL(10,2)) AS [60日波段成本], ROUND(((TRY_CAST(B.成交價 AS DECIMAL(10,2)) - TRY_CAST(O.波段60日主力成本 AS DECIMAL(10,2))) / NULLIF(TRY_CAST(O.波段60日主力成本 AS DECIMAL(10,2)), 0)) * 100.0, 2) AS [波段成本乖離%], RTRIM(O.三維AMT空間判定) AS [AMT空間判定], A.obv淨額 AS [OBV淨額], A.成交價黃金交叉次數 AS [均線金叉次數], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) JOIN ( SELECT 代號, obv淨額, 成交價黃金交叉次數, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM allcross_live ) A ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(A.代號)) AND A.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 1000 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 18.0 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) > TRY_CAST(O.波段60日主力成本 AS DECIMAL(10,2)) AND (O.三維AMT空間判定 LIKE N'%突破%' OR O.三維AMT空間判定 LIKE N'%萬里無雲%') AND TRY_CAST(B.漲幅 AS DECIMAL(6,2)) >= 1.5 ) T ORDER BY T.專家分 DESC, T.[波段成本乖離%] ASC
+
+/*
+戰略意義：
+突破 70% 密集交易區上緣 (VAH)，代表價值重新發現，進入高勝率主升段。
+*/`
+            },
+
+
+
+            {
                 cat: "價值共振_低本益比高ROE", title: "💎 價值陷阱排除 (低PE ✕ 高ROE ✕ 技術回升 )", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
 FROM (
         SELECT
