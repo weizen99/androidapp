@@ -7,7 +7,10 @@
 <body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
     <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 9</h2>
     <hr style="border: 1px solid #334155;">
-    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;"><!DOCTYPE html>
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">2026.11.1
+excelsql2.html (省略範本內容(sqlTemplateLibrary),範本放在myword_2.html)
+
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -23,124 +26,124 @@
     <!-- 確保 ECharts 庫最優先載入 -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
-             body {
-                 font-family: '標楷體';
-                 background-color: #f0f2f5;
-                 padding: 2px;
-             }
+        body {
+            font-family: '標楷體';
+            background-color: #f0f2f5;
+            padding: 2px;
+        }
 
-             .sql-box {
-                 background: #fff;
-                 padding: 2px;
-                 border-radius: 8px;
-                 box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-             }
+        .sql-box {
+            background: #fff;
+            padding: 2px;
+            border-radius: 8px;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
 
-             /* 凍結表頭與 Excel 滾動效果 */
-             .table-wrapper {
-                 height: 95vh; /* 固定高度，產生捲軸 原65vh */
-                 overflow: auto;
-                 margin-top: 20px;
-                 border: 1px solid #dee2e6;
-                 background: #fff;
-             }
+        /* 凍結表頭與 Excel 滾動效果 */
+        .table-wrapper {
+            height: 95vh; /* 固定高度，產生捲軸 原65vh */
+            overflow: auto;
+            margin-top: 20px;
+            border: 1px solid #dee2e6;
+            background: #fff;
+        }
 
-             /* 凍結表頭 CSS */
-             #resultTable thead th {
-                 position: sticky;
-                 top: 0;
-                 z-index: 100;
-                 background-color: #212529 !important;
-                 color: white;
-                 white-space: nowrap;
-             }
+        /* 凍結表頭 CSS */
+        #resultTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #212529 !important;
+            color: white;
+            white-space: nowrap;
+        }
 
-             /* 圖片樣式 */
-             .data-img {
-                 max-width: 400px; /* 你可以根據需求調整成 400px 或 500px */
-                 height: auto;
-                 border-radius: 4px;
-                 cursor: zoom-in;
-                 transition: transform 0.2s;
-             }
+        /* 圖片樣式 */
+        .data-img {
+            max-width: 400px; /* 你可以根據需求調整成 400px 或 500px */
+            height: auto;
+            border-radius: 4px;
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
 
-                 .data-img:hover {
-                     max-width: 600px; /* 移上去時再變大一點 */
-                     transform: scale(2.5);
-                     z-index: 999;
-                     position: relative;
-                 }
+            .data-img:hover {
+                max-width: 600px; /* 移上去時再變大一點 */
+                transform: scale(2.5);
+                z-index: 999;
+                position: relative;
+            }
 
-             .template-section {
-                 background: #f8f9fa;
-                 padding: 15px;
-                 border-radius: 5px;
-                 margin-bottom: 15px;
-                 border: 1px solid #ddd;
-             }
+        .template-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
 
-             /* DataTables 樣式微調 */
-             .dataTables_wrapper .dataTables_filter {
-                 margin-bottom: 10px;
-             }
+        /* DataTables 樣式微調 */
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 10px;
+        }
 
-             .status-msg {
-                 font-weight: bold;
-                 font-size: 1.1rem;
-             }
+        .status-msg {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
 
-             /* ========================================================
+        /* ========================================================
         💡 【全新加入】：頂部深藍選單列美化樣式 (懸停青藍色科技感特效) [1.1]
         ======================================================== */
-             .custom-navbar {
-                 background-color: #213c5a !important; /* 完美對齊您 GitHub 盤中的戰情深藍色 [1.1] */
-                 box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                 padding: 8px 24px;
-             }
+        .custom-navbar {
+            background-color: #213c5a !important; /* 完美對齊您 GitHub 盤中的戰情深藍色 [1.1] */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            padding: 8px 24px;
+        }
 
-                 .custom-navbar .navbar-brand {
-                     font-size: 1.25rem;
-                     color: #ffffff !important;
-                     letter-spacing: 1px;
-                 }
+            .custom-navbar .navbar-brand {
+                font-size: 1.25rem;
+                color: #ffffff !important;
+                letter-spacing: 1px;
+            }
 
-                 .custom-navbar .nav-link {
-                     color: rgba(255,255,255,0.85) !important;
-                     margin-left: 15px;
-                     font-size: 0.95rem;
-                     transition: all 0.25s ease;
-                 }
+            .custom-navbar .nav-link {
+                color: rgba(255,255,255,0.85) !important;
+                margin-left: 15px;
+                font-size: 0.95rem;
+                transition: all 0.25s ease;
+            }
 
-                     .custom-navbar .nav-link:hover {
-                         color: #51e5ff !important; /* 懸停時呈現亮青色（Cyan），大幅提升科技感 [1.1] */
-                         transform: translateY(-1px);
-                     }
+                .custom-navbar .nav-link:hover {
+                    color: #51e5ff !important; /* 懸停時呈現亮青色（Cyan），大幅提升科技感 [1.1] */
+                    transform: translateY(-1px);
+                }
 
-                 .custom-navbar .dropdown-menu {
-                     background-color: #213c5a;
-                     border: 1px solid rgba(255,255,255,0.1);
-                     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-                 }
+            .custom-navbar .dropdown-menu {
+                background-color: #213c5a;
+                border: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            }
 
-                 .custom-navbar .dropdown-item {
-                     color: rgba(255,255,255,0.85) !important;
-                     font-size: 0.9rem;
-                     transition: all 0.2s ease;
-                 }
+            .custom-navbar .dropdown-item {
+                color: rgba(255,255,255,0.85) !important;
+                font-size: 0.9rem;
+                transition: all 0.2s ease;
+            }
 
-                     .custom-navbar .dropdown-item:hover {
-                         background-color: #172d47 !important;
-                         color: #51e5ff !important;
-                     }
-                 /* ========================================================
+                .custom-navbar .dropdown-item:hover {
+                    background-color: #172d47 !important;
+                    color: #51e5ff !important;
+                }
+            /* ========================================================
         💡 【解決選單無法下拉】：純 CSS 懸停（Hover）解鎖機制 [1.1]
         ======================================================== */
-                 .custom-navbar .dropdown:hover .dropdown-menu {
-                     display: block !important;
-                     opacity: 1;
-                     visibility: visible;
-                     margin-top: 0;
-                 }
+            .custom-navbar .dropdown:hover .dropdown-menu {
+                display: block !important;
+                opacity: 1;
+                visibility: visible;
+                margin-top: 0;
+            }
 
 
         /* 🛠️【核心修復】：徹底解決 DataTables 選取/懸停列「黑吃黑看不清」死穴 */
@@ -174,16 +177,261 @@
                 color: #00f2fe !important;
             }
 
+        /* ========================================================================== */
+        /* 🗂️ Zen AI 戰術軍火庫 (中央彈窗版 - 零衝突隔離裝甲) */
+        /* ========================================================================== */
+        .za-btn-arsenal {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: #ffffff !important;
+            border: 1px solid #38bdf8 !important;
+            font-weight: bold;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+            .za-btn-arsenal:hover {
+                background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            }
+
+        .za-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 999990;
+        }
+
+        .za-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            max-width: 95vw;
+            max-height: 85vh;
+            background: #0f172a;
+            border: 2px solid #38bdf8;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            z-index: 999999;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .za-modal-head {
+            background: #1e293b;
+            padding: 15px 20px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .za-modal-title {
+            color: #f59e0b;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .za-btn-close {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+            .za-btn-close:hover {
+                color: #ef4444;
+            }
+
+        .za-modal-tool {
+            padding: 15px 20px;
+            background: #131d2e;
+            border-bottom: 1px solid #334155;
+        }
+
+        .za-search {
+            width: 100%;
+            padding: 10px;
+            background: #090d16;
+            border: 1px solid #334155;
+            color: #fff;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+            .za-search:focus {
+                outline: none;
+                border-color: #38bdf8;
+            }
+
+        .za-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .za-tag {
+            padding: 4px 12px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+            .za-tag.active, .za-tag:hover {
+                background: #0284c7;
+                color: #fff;
+                border-color: #38bdf8;
+            }
+
+        .za-modal-body {
+            padding: 15px 20px;
+            overflow-y: auto;
+            flex: 1;
+            display: grid;
+            gap: 12px;
+            background: #0b1120;
+        }
+
+        .za-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 15px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+            .za-card:hover {
+                border-color: #38bdf8;
+                box-shadow: 0 4px 15px rgba(56,189,248,0.15);
+            }
+
+        .za-card-title {
+            color: #38bdf8;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .za-card-cat {
+            display: inline-block;
+            background: #000;
+            color: #f59e0b;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid #f59e0b;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .za-card-desc {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .za-card-unlock {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-family: Consolas, monospace;
+            margin-bottom: 12px;
+        }
+
+        .za-card-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .za-btn-load {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .za-btn-fire {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .za-btn-load:hover {
+            background: #475569;
+        }
+
+        .za-btn-fire:hover {
+            background: #059669;
+        }
+
+        /* ========================================================================== */
+        /* 💊 戰術場景膠囊按鈕 (Scenario Pills) 樣式 */
+        /* ========================================================================== */
+        .pills-container {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            margin-top: 5px;
+        }
+
+        .pill-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+
+            .pill-btn:hover {
+                background: #334155;
+                color: #fff;
+            }
+
+            .pill-btn.active {
+                background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+                color: #ffffff;
+                border-color: #38bdf8;
+                box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+            }
+
 
 
     </style>
     <script>
         // --- 範本資料庫 ---
-        const sqlTemplateLibrary = [
-省略...
-
- ];
+        const sqlTemplateLibrary = [   省略(檔案太大)  ];
         /*資料庫:stockchange*/
+
 
         /**
 * 輔助函數：自動獲取當前日期往後推算 N 天的標準 YYYYMMDD 字串
@@ -522,19 +770,19 @@
 
 
         // ===========================================================================================================
-            // 🤖 Zen AI 戰情室 Pro V7.0 - 純前端核心控制與 7 維共振 AI 聯動模組 (除錯防護與 Null-Safety 終極版)
-            // =================-->==========================================================================================
+        // 🤖 Zen AI 戰情室 Pro V7.0 - 純前端核心控制與 7 維共振 AI 聯動模組 (除錯防護與 Null-Safety 終極版)
+        // =================-->==========================================================================================
 
 
-            // --- 【1. 面板滑動與背景遮罩控制】 ---
-            // --- 【1. 面板滑動與背景遮罩控制】 ---
-            // --- 【1. 面板滑動與背景遮罩控制】 ---
-            function openAIPanel() {
-                var backdrop = document.getElementById('ai-backdrop');
-                var panel = document.getElementById('ai-panel');
-                if (backdrop) backdrop.style.display = 'block';
-                if (panel) panel.style.right = '0';
-            }
+        // --- 【1. 面板滑動與背景遮罩控制】 ---
+        // --- 【1. 面板滑動與背景遮罩控制】 ---
+        // --- 【1. 面板滑動與背景遮罩控制】 ---
+        function openAIPanel() {
+            var backdrop = document.getElementById('ai-backdrop');
+            var panel = document.getElementById('ai-panel');
+            if (backdrop) backdrop.style.display = 'block';
+            if (panel) panel.style.right = '0';
+        }
 
         function closeAIPanel() {
             var backdrop = document.getElementById('ai-backdrop');
@@ -1447,14 +1695,14 @@
 
 
 
- // 🟢 迴圈的結尾大括號應該在「C. 三大法人」的下方！
-                
+        // 🟢 迴圈的結尾大括號應該在「C. 三大法人」的下方！
+
 
         // ==========================================
         // 5. 初始化與渲染 ECharts 聯動實例
         // ==========================================
         var chartPrice = echarts.init(document.getElementById('html-chart-price'));
-     
+
         // 🟢 請修改為「防禦性寫法」：
         //var chartDom = document.getElementById('html-chart-price'); // 或對應的圖表 ID
         //if (chartDom) {
@@ -1570,7 +1818,7 @@
                     barWidth: '65%', // K 棒寬度飽滿
                     itemStyle: {
                         color: '#ff1744',        // 陽線 (漲/紅K) 填鮮豔大紅 🔥
-                        color0: '#22c55e',       // 陰線 (跌/綠K) 填螢光綠 
+                        color0: '#22c55e',       // 陰線 (跌/綠K) 填螢光綠
                         borderColor: '#ff1744',  // 陽線邊框與上下影線 鮮豔大紅 🔥
                         borderColor0: '#22c55e'  // 陰線邊框與上下影線 螢光綠
                     }
@@ -1692,7 +1940,7 @@
             chartObv.resize();
             chartScore.resize();
         });
-            
+
 
         // 🛠️【一鍵截圖終極尊爵版】：主動確認長官意志，絕不再誤判！
         function triggerScreenshot() {
@@ -2062,10 +2310,10 @@
                         </a>
                     </li>
                     <!--<li class="nav-item">
-        <a class="nav-link" href="https://weizen99.github.io/androidapp/index.html" onclick="$('#sqlTemplates').val('回測').change(); return false;">
-            ⭐ 我的最愛
-        </a>
-    </li>-->
+                        <a class="nav-link" href="https://weizen99.github.io/androidapp/index.html" onclick="$('#sqlTemplates').val('回測').change(); return false;">
+                            ⭐ 我的最愛
+                        </a>
+                    </li>-->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="galleryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             🎨 常用應用
@@ -2120,6 +2368,11 @@
                 </div>
                 <div class="col-sm-9">
                     <label class="form-label fw-bold">📑 選擇 50+ 組 SQL 範本：</label>
+                    <button type="button" class="za-btn-arsenal" onclick="window.zaOpenArsenal()">🗂️ 戰術軍火庫</button>
+                    <!-- 💊 戰術場景膠囊過濾區 -->
+                    <div class="pills-container" id="scenario-pills">
+                        <!-- 膠囊按鈕將由 JS 自動渲染 -->
+                    </div>
                     <select id="sqlTemplates" class="form-select">
                         <option value="">-- 請選擇範本 --</option>
                     </select>
@@ -2473,8 +2726,386 @@
         <div id="html-chart-score" style="width: 100%; height: 300px;"></div>
     </div>
 
+    <script id="za-arsenal-module">
+        (function () {
+            // ⚔️ 武器清單：四大修復版核武
+            const ARSENAL_DB = [
+                {
+                    id: "z1", cat: "多因子旗艦", name: "🔀 三源合成 ✕ POC分價量 + 均分金叉 + 價值防禦",
+                    desc: "【頂級三合一】同屏透視 POC 籌碼中心 ✕ 實戰總分5/10日金叉 ✕ 低PE高殖利率護城河，秒殺假突破！",
+                    unlocks: "解鎖：StockPriceVolume (POC) ✕ ScoreCrossHistory ✕ value",
+                    sql: `/*資料庫:stockchangedate*/ TOP 50 T.*
+FROM (
+            SELECT RTRIM(M.代號) AS 代號, RTRIM(M.名稱) AS 名稱, RTRIM(M.產業分類) AS 產業, B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)], ROUND(M.專家實戰總分, 2) AS 專家分,
+            V.成交價 AS [POC主力成本], V.成交張數 AS [POC成交張數], V.成交佔比 AS [POC佔比%],
+            CASE WHEN B.成交價 >= V.成交價 * 1.02 THEN N'📈 突破主力成本' WHEN B.成交價 <= V.成交價 * 0.98 THEN N'📉 跌破主力成本' ELSE N'⚖️ 貼身成本震盪' END AS [分價量定位],
+            ROUND(C.實戰總分, 1) AS [實戰總分],
+            CASE WHEN C.五日交叉成功 = 1 AND C.十日交叉成功 = 1 THEN N'👑 5/10日雙金叉' WHEN C.五日交叉成功 = 1 THEN N'⚡ 5日短線金叉' ELSE N'— 無交叉' END AS [均分交叉狀態],
+            VAL.本益比近四季 AS [PE(倍)], VAL.股價淨值比 AS [PB(倍)], VAL.現金殖利率 AS [殖利率%],
+            CASE WHEN VAL.本益比近四季 < 15 AND VAL.現金殖利率 >= 4.0 THEN N'👑 低PE ✕ 高殖利率' WHEN VAL.本益比近四季 < 15 THEN N'⭐ 低估值' WHEN VAL.現金殖利率 >= 4.0 THEN N'💰 高股息' ELSE N'一般評價' END AS [價值護城河]
+            FROM MasterStockAnalysis M
+            LEFT JOIN stockchange.dbo.basicinfo B ON RTRIM(B.代號) = RTRIM(M.代號)
+            LEFT JOIN (SELECT 代號, 成交價, 成交張數, 成交佔比, ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 成交佔比 DESC) AS rn FROM StockPriceVolume WHERE 日期 = (SELECT MAX(日期) FROM StockPriceVolume)) V ON RTRIM(V.代號) = RTRIM(M.代號) AND V.rn = 1
+            LEFT JOIN ScoreCrossHistory C ON RTRIM(C.代號) = RTRIM(M.代號) AND C.日期 = (SELECT MAX(日期) FROM ScoreCrossHistory)
+            LEFT JOIN value VAL ON RTRIM(VAL.代號) = RTRIM(M.代號) AND VAL.日期 = (SELECT MAX(日期) FROM value)
+            WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) AND B.總量 >= 500 AND B.成交價 >= 10
+              AND (B.成交價 >= V.成交價 * 1.02 OR C.五日交叉成功 = 1 OR (VAL.本益比近四季 < 15 AND VAL.現金殖利率 >= 4.0))
+) T ORDER BY T.專家分 DESC, T.[POC佔比%] DESC`
+                },
+                {
+                    id: "z2", cat: "多因子旗艦", name: "🌈 四維多因子共振旗艦 (營收✕籌碼✕杜邦✕勝率)",
+                    desc: "【全維度爆發】結合營收年增>15% ✕ 籌碼健康≥90 ✕ 高ROE低負債 ✕ 5MA勝率≥60%。",
+                    unlocks: "解鎖：allcross_live 五大真實金叉 ✕ 3-Way 離場勝率矩陣",
+                    sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+FROM (
+            SELECT RTRIM(M.代號) AS 代號, RTRIM(M.名稱) AS 名稱, M.盤中現價 AS 現價, M.盤中總量 AS [成交量(張)], RTRIM(B.產業分類) AS 產業, B.股本億 AS [股本(億)], ROUND(M.專家實戰總分, 2) AS 專家分, SUB.HitCount AS [共振維度],
+            CASE WHEN SUB.HitCount >= 4 THEN N'🚀 4維滿貫共振' WHEN SUB.HitCount >= 3 THEN N'🔥 3維強共振' ELSE N'✨ 2維起漲' END AS [共振等級],
+            ISNULL(A.obv黃金交叉次數, 0) AS [OBV金叉], ISNULL(A.成交價黃金交叉次數, 0) AS [價格金叉], ISNULL(A.投信黃金交叉次數, 0) AS [投信金叉], ISNULL(A.外資黃金交叉次數, 0) AS [外資金叉], ISNULL(A.三大法人黃金交叉次數, 0) AS [法人金叉],
+            (ISNULL(A.obv黃金交叉次數,0)+ISNULL(A.成交價黃金交叉次數,0)+ISNULL(A.投信黃金交叉次數,0)+ISNULL(A.外資黃金交叉次數,0)+ISNULL(A.三大法人黃金交叉次數,0)) AS [綜合金叉次數],
+            SUB.營收年增 AS [營收年增%], SUB.籌碼分 AS [籌碼健康分], SUB.ROE AS [ROE%], SUB.勝率5MA AS [5MA勝率%], SUB.勝率10MA AS [10MA勝率%], RTRIM(SUB.最佳策略) AS [最佳出場策略]
+            FROM MasterStockAnalysis M JOIN stockchange.dbo.basicinfo B ON RTRIM(M.代號) = RTRIM(B.代號)
+            LEFT JOIN (SELECT 代號, obv黃金交叉次數, 成交價黃金交叉次數, 投信黃金交叉次數, 外資黃金交叉次數, 三大法人黃金交叉次數, ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 日期 DESC) AS rn FROM allcross_live) A ON RTRIM(A.代號) = RTRIM(M.代號) AND A.rn = 1
+            JOIN (SELECT M.代號, (CASE WHEN (SELECT TOP 1 1 FROM View_Realtime_Revenue WHERE RTRIM(代號)=RTRIM(M.代號) AND 交易日期=(SELECT MAX(交易日期) FROM View_Realtime_Revenue) AND TRY_CAST(最新公告營收年增 AS float)>15) IS NOT NULL THEN 1 ELSE 0 END + CASE WHEN (SELECT TOP 1 1 FROM WeeklyChipAudit WHERE RTRIM(代號)=RTRIM(M.代號) AND 更新日期=(SELECT MAX(更新日期) FROM WeeklyChipAudit) AND 籌碼健康分>=90) IS NOT NULL THEN 1 ELSE 0 END + CASE WHEN (SELECT TOP 1 1 FROM financesum WHERE RTRIM(代號)=RTRIM(M.代號) AND ROE>=15 AND 負債比率<50) IS NOT NULL THEN 1 ELSE 0 END + CASE WHEN (SELECT TOP 1 1 FROM StockPersonality_3Exits WHERE RTRIM(代號)=RTRIM(M.代號) AND (WinRate_5MA>=0.60 OR WinRate_5MA>=60.0 OR WinRate_10MA>=0.60 OR WinRate_10MA>=60.0)) IS NOT NULL THEN 1 ELSE 0 END) AS HitCount,
+            (SELECT TOP 1 最新公告營收年增 FROM View_Realtime_Revenue WHERE RTRIM(代號)=RTRIM(M.代號) AND 交易日期=(SELECT MAX(交易日期) FROM View_Realtime_Revenue)) AS 營收年增,
+            (SELECT TOP 1 籌碼健康分 FROM WeeklyChipAudit WHERE RTRIM(代號)=RTRIM(M.代號) AND 更新日期=(SELECT MAX(更新日期) FROM WeeklyChipAudit)) AS 籌碼分,
+            (SELECT TOP 1 ROE FROM financesum WHERE RTRIM(代號)=RTRIM(M.代號) ORDER BY 日期 DESC, 負債比率 ASC) AS ROE,
+            (SELECT TOP 1 CAST(CASE WHEN WinRate_5MA<=1.0 THEN WinRate_5MA*100.0 ELSE WinRate_5MA END AS DECIMAL(5,1)) FROM StockPersonality_3Exits WHERE RTRIM(代號)=RTRIM(M.代號) ORDER BY 更新日期 DESC) AS 勝率5MA,
+            (SELECT TOP 1 CAST(CASE WHEN WinRate_10MA<=1.0 THEN WinRate_10MA*100.0 ELSE WinRate_10MA END AS DECIMAL(5,1)) FROM StockPersonality_3Exits WHERE RTRIM(代號)=RTRIM(M.代號) ORDER BY 更新日期 DESC) AS 勝率10MA,
+            (SELECT TOP 1 OptimalExit FROM StockPersonality_3Exits WHERE RTRIM(代號)=RTRIM(M.代號) ORDER BY 更新日期 DESC) AS 最佳策略 FROM MasterStockAnalysis M WHERE M.日期=(SELECT MAX(日期) FROM MasterStockAnalysis)) SUB ON RTRIM(M.代號)=RTRIM(SUB.代號)
+            WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) AND M.專家實戰總分 >= 6 AND SUB.HitCount >= 2 AND M.盤中總量 >= 500 AND M.盤中現價 >= 10
+) T ORDER BY T.[共振維度] DESC, T.專家分 DESC`
+                },
+                {
+                    id: "z3", cat: "機構籌碼", name: "🏛 法人共振 (外資連買 ✕ 投信自營同步大買)",
+                    desc: "【三方共識標籤化】一眼看破籌碼底牌：三方共識齊買、土洋同步作多、內資合力吃貨！",
+                    unlocks: "解鎖：Foreigner (連買天) ✕ threemasternumber (投信/自營10日真實張數)",
+                    sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+FROM (
+            SELECT RTRIM(M.代號) AS 代號, RTRIM(M.名稱) AS 名稱, M.盤中現價 AS 現價, M.盤中總量 AS [成交量(張)], RTRIM(M.產業分類) AS 產業, B.股本億 AS [股本(億)], ROUND(M.專家實戰總分, 2) AS 專家分,
+            CASE WHEN ISNULL(F.連買天,0)>=3 AND ISNULL(N.投信10日合計,0)>0 AND ISNULL(N.自營商10日合計,0)>0 THEN N'👑 三方共識齊買' WHEN ISNULL(F.連買天,0)>=3 AND ISNULL(N.投信10日合計,0)>0 THEN N'🔥 土洋同步作多' WHEN ISNULL(N.投信10日合計,0)>0 AND ISNULL(N.自營商10日合計,0)>0 THEN N'🚀 內資合力吃貨' WHEN ISNULL(F.連買天,0)>=3 THEN N'🌎 外資波段護航' ELSE N'⭐ 法人偏多' END AS [法人共振標籤],
+            ISNULL(F.連買天,0) AS [外資連買天], ISNULL(N.投信10日合計,0) AS [投信10日(張)], ISNULL(N.自營商10日合計,0) AS [自營10日(張)], (ISNULL(F.連買張,0)+ISNULL(N.投信10日合計,0)+ISNULL(N.自營商10日合計,0)) AS [法人火力合計]
+            FROM MasterStockAnalysis M JOIN stockchange.dbo.basicinfo B ON RTRIM(M.代號) = RTRIM(B.代號)
+            LEFT JOIN (SELECT 代號, 連買天, 連買張, ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 日期 DESC) AS rn FROM Foreigner) F ON RTRIM(F.代號) = RTRIM(M.代號) AND F.rn = 1
+            LEFT JOIN (SELECT 代號, 投信10日合計, 自營商10日合計, ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 日期 DESC) AS rn FROM threemasternumber) N ON RTRIM(N.代號) = RTRIM(M.代號) AND N.rn = 1
+            WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) AND M.專家實戰總分 >= 6 AND M.盤中總量 >= 500 AND M.盤中現價 >= 10 AND (ISNULL(F.連買天,0)>=3 OR ISNULL(N.投信10日合計,0)>0 OR ISNULL(N.自營商10日合計,0)>0)
+) T ORDER BY T.專家分 DESC, T.[法人火力合計] DESC`
+                },
+                {
+                    id: "z4", cat: "價值防禦", name: "💎 價值陷阱排除 (低PE ✕ 高ROE ✕ 技術回升)",
+                    desc: "【排除當機爆發名單】PE<20 ✕ ROE≥15% ✕ 負債<60%，實測 0.15 秒出表：世紀*、鈊象、義隆、大山！",
+                    unlocks: "解鎖：financesum 最新季別 rn=1 ✕ value 評價 ✕ 20日成本",
+                    sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
+FROM (
+            SELECT RTRIM(M.代號) AS 代號, RTRIM(M.名稱) AS 名稱, M.盤中現價 AS 現價, M.盤中總量 AS [成交量(張)], RTRIM(M.產業分類) AS 產業, ROUND(M.專家實戰總分, 2) AS 專家分,
+            CAST(V.本益比近四季 AS DECIMAL(6,2)) AS [本益比], CAST(V.現金殖利率 AS DECIMAL(6,2)) AS [殖利率%], CAST(F.ROE AS DECIMAL(6,2)) AS [ROE%], CAST(F.負債比率 AS DECIMAL(6,2)) AS [負債比%],
+            CASE WHEN V.本益比近四季<15 AND F.ROE>=20 AND F.負債比率<40 THEN N'👑 頂級價值成長' WHEN V.本益比近四季<15 AND F.ROE>=15 THEN N'🔥 便宜績優' WHEN F.ROE>=15 AND F.負債比率<50 THEN N'⭐ 獲利穩健低槓桿' ELSE N'一般價值' END AS [價值成長標籤]
+            FROM MasterStockAnalysis M JOIN stockchange.dbo.basicinfo B ON RTRIM(B.代號) = RTRIM(M.代號)
+            LEFT JOIN value V ON RTRIM(M.代號) = RTRIM(V.代號) AND V.日期 = (SELECT MAX(日期) FROM value)
+            LEFT JOIN (SELECT 代號, ROE, 負債比率, ROW_NUMBER() OVER (PARTITION BY RTRIM(代號) ORDER BY 日期 DESC) AS rn FROM financesum) F ON RTRIM(M.代號) = RTRIM(F.代號) AND F.rn = 1
+            WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) AND F.ROE >= 15 AND V.本益比近四季 > 0 AND V.本益比近四季 < 20 AND F.負債比率 < 60 AND M.專家實戰總分 >= 6 AND M.盤中總量 >= 500 AND M.盤中現價 >= 10
+) T ORDER BY T.[ROE%] DESC, T.[本益比] ASC`
+                }
+            ];
+
+            let currentCat = "全部";
+
+            // ====================================================================
+            // 🌟 魔法融合引擎 (延遲吸收版)：點擊按鈕瞬間才抓取，徹底避開載入時間差！
+            // ====================================================================
+            let hasAbsorbed = false; // 紀錄是否已經吸收過，避免重複吸收
+
+            function autoAbsorbLegacyTemplates() {
+                if (hasAbsorbed) return; // 已經吸收過就跳過
+
+                // 🌟 智慧鎖定：直接找畫面上「選項最多」的下拉選單，絕對不會找錯！
+                const selects = document.querySelectorAll('select');
+                let targetSelect = null;
+                let maxOptions = 0;
+
+                selects.forEach(sel => {
+                    const optCount = sel.querySelectorAll('option').length;
+                    if (optCount > maxOptions) {
+                        maxOptions = optCount;
+                        targetSelect = sel;
+                    }
+                });
+
+                if (!targetSelect || maxOptions === 0) {
+                    console.warn("⚠️ 找不到包含大量範本的下拉選單");
+                    return;
+                }
+
+                let autoId = 100;
+                let currentGroup = "未分類";
+
+                // 掃描所有選項
+                const options = targetSelect.querySelectorAll('option');
+                options.forEach(opt => {
+                    const sqlText = opt.value ? opt.value.trim() : "";
+                    const titleText = opt.text ? opt.text.trim() : "";
+
+                    if (!titleText || titleText.includes('-- 請選擇')) return;
+
+                    // 判斷是否為分類標題
+                    if (!sqlText || sqlText === titleText || (titleText.includes('【') && titleText.includes('】'))) {
+                        if (titleText.includes('【')) {
+                            currentGroup = titleText;
+                        }
+                        return;
+                    }
+
+                    // 建立實體戰術卡片
+                    if (!ARSENAL_DB.some(item => item.name === titleText)) {
+                        ARSENAL_DB.push({
+                            id: "legacy_" + (autoId++),
+                            cat: "經典舊範本",
+                            name: titleText,
+                            tag: "經典",
+                            desc: `📜 來源分類：${currentGroup}`,
+                            unlocks: "原有 SQL 範本自動匯入",
+                            sql: sqlText
+                        });
+                    }
+                });
+
+                hasAbsorbed = true; // 標記已吸收完成
+                console.log("✅ 點擊瞬間吸收完畢！軍火庫卡片總數:", ARSENAL_DB.length);
+            }
+
+            // ====================================================================
+
+            window.zaOpenArsenal = function () {
+                // 🌟 關鍵：在打開抽屜的這一瞬間，執行吸收魔法！保證 100% 抓到資料！
+                autoAbsorbLegacyTemplates();
+
+                document.getElementById('zaOverlay').style.display = 'block';
+                document.getElementById('zaModal').style.display = 'flex';
+                zaRenderTags();
+                zaRenderCards(ARSENAL_DB);
+            };
+
+            window.zaCloseArsenal = function () {
+                // 隱藏視窗與遮罩
+                const overlay = document.getElementById('zaOverlay');
+                const modal = document.getElementById('zaModal');
+                if (overlay) overlay.style.display = 'none';
+                if (modal) modal.style.display = 'none';
+
+                // 🌟 核心修復：關閉時自動清空搜尋框與分類標籤，確保下次打開是全新乾淨狀態！
+                const searchInput = document.getElementById('zaSearch');
+                if (searchInput) {
+                    searchInput.value = ""; // 清空搜尋字串
+                }
+                currentCat = "全部"; // 分類回歸預設
+            };
+
+            window.zaSelectCat = function (cat) {
+                currentCat = cat;
+                zaRenderTags();
+                window.zaFilter();
+            };
+
+            window.zaFilter = function () {
+                const kw = document.getElementById('zaSearch').value.trim().toLowerCase();
+                const res = ARSENAL_DB.filter(item => {
+                    const mCat = (currentCat === "全部" || item.cat === currentCat);
+                    const mKw = (!kw || item.name.toLowerCase().includes(kw) || item.desc.toLowerCase().includes(kw));
+                    return mCat && mKw;
+                });
+                zaRenderCards(res);
+            };
+
+            function zaRenderTags() {
+                const cats = ["全部", "多因子旗艦", "機構籌碼", "價值防禦", "盤中強攻"];
+                document.getElementById('zaTags').innerHTML = cats.map(c =>
+                    `<span class="za-tag ${c === currentCat ? 'active' : ''}" onclick="window.zaSelectCat('${c}')">${c}</span>`
+                ).join('');
+            }
+
+            function zaRenderCards(list) {
+                const box = document.getElementById('zaGrid');
+                if (!list.length) return box.innerHTML = `<div style="text-align:center; color:#64748b; padding:30px;">未找到戰術卡片</div>`;
+                box.innerHTML = list.map(item => `
+                    <div class="za-card">
+                        <div class="za-card-title">${item.name} <span class="za-card-cat">${item.cat}</span></div>
+                        <div class="za-card-desc">${item.desc}</div>
+                        <div class="za-card-unlock">${item.unlocks}</div>
+                        <div class="za-card-actions">
+                            <button class="za-btn-load" onclick="window.zaAction('${item.id}', false)">📝 載入編輯</button>
+                            <button class="za-btn-fire" onclick="window.zaAction('${item.id}', true)">🚀 一鍵發射執行</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            window.zaAction = function (id, autoFire) {
+                const item = ARSENAL_DB.find(t => t.id === id);
+                if (!item) return;
+
+                console.log("🎯 準備載入戰術 SQL:", item.name);
+
+                // 1. 填入原生 Textarea (相容 ASP.NET 常見的 txtSQL 或 txt_sql)
+                const sqlInput = document.getElementById('txtSQL') || document.getElementById('txt_sql') || document.getElementById('sql') || document.querySelector("textarea");
+                if (sqlInput) {
+                    sqlInput.value = item.sql;
+                }
+
+                // 2. 填入高階語法編輯器 (相容 CodeMirror 或 Ace Editor)
+                try {
+                    if (typeof editor !== 'undefined' && typeof editor.setValue === 'function') {
+                        editor.setValue(item.sql);
+                    } else if (window.editor && typeof window.editor.setValue === 'function') {
+                        window.editor.setValue(item.sql);
+                    }
+                } catch (e) {
+                    console.warn("⚠️ 編輯器寫入略過:", e);
+                }
+
+                // 3. 關閉彈窗
+                window.zaCloseArsenal();
+
+                // 4. 一鍵發射：安全尋找並點擊【執行】按鈕
+                if (autoFire) {
+                    setTimeout(() => { // 給予 100ms 緩衝，確保 SQL 已填入
+                        // 尋找常見 ID
+                        let btn = document.getElementById('btn_query') || document.getElementById('btnQuery');
+
+                        // 若找不到 ID，用模糊文字暴力搜尋 (解決原生 JS 不能用 :has-text 的問題)
+                        if (!btn) {
+                            const allBtns = Array.from(document.querySelectorAll('button, input[type="button"], input[type="submit"]'));
+                            btn = allBtns.find(el => (el.textContent && el.textContent.includes('執行')) || (el.value && el.value.includes('執行')));
+                        }
+
+                        if (btn) {
+                            console.log("🚀 找到執行按鈕，發射！");
+                            btn.click();
+                        } else if (typeof executeQuery === 'function') {
+                            executeQuery();
+                        } else {
+                            alert("⚠️ 戰術 SQL 已載入，但找不到【執行】按鈕，請手動點擊畫面上的執行！");
+                        }
+                    }, 100);
+                }
+            };
+        })();
+
+
+        /* ========================================================================== */
+        /* 💊 戰術場景膠囊過濾引擎 (純前端極速縮減下拉選單) */
+        /* ========================================================================== */
+        (function () {
+            // 定義膠囊與對應的關鍵字
+            const SCENARIOS = [
+                { name: "🌟 全部範本", keywords: [] },
+                { name: "🔥 盤中追價", keywords: ["60", "分價量", "多頭", "收盤位置"] },
+                { name: "👑 主力抱團", keywords: ["投信", "自營", "外資", "連買", "三腳鼎", "共振"] },
+                { name: "💎 大戶吸籌", keywords: ["籌碼健康", "散戶", "特大戶", "借券", "吸籌"] },
+                { name: "🛡️ 價值防禦", keywords: ["杜邦", "ROE", "本益比", "殖利率", "存股"] },
+                { name: "🚀 多因子旗艦", keywords: ["全維度", "四維", "共振", "合成", "寬表"] }
+            ];
+
+            let originalSelectHtml = ""; // 備份最原始的 50+ 組完整選單
+            let targetSelect = null;
+
+            // 初始化膠囊
+            function initPills() {
+                // 尋找目標下拉選單
+                const selects = document.querySelectorAll('select');
+                selects.forEach(sel => {
+                    if (sel.innerHTML.includes('請選擇範本')) {
+                        targetSelect = sel;
+                    }
+                });
+
+                if (!targetSelect) return;
+
+                // 🌟 把 50 個選項的原始碼「凍結備份」起來
+                originalSelectHtml = targetSelect.innerHTML;
+
+                // 渲染按鈕
+                const container = document.getElementById('scenario-pills');
+                if (container) {
+                    container.innerHTML = SCENARIOS.map((s, idx) =>
+                        `<button class="pill-btn ${idx === 0 ? 'active' : ''}" onclick="window.filterNativeSelect(${idx}, this)">${s.name}</button>`
+                    ).join('');
+                }
+            }
+
+            // 點擊膠囊時：瞬間過濾下拉選單！
+            window.filterNativeSelect = function (idx, btnEl) {
+                // 1. 切換按鈕亮燈狀態
+                document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+                btnEl.classList.add('active');
+
+                if (!targetSelect) return;
+
+                // 2. 先把 50 個選項全部還原回來
+                targetSelect.innerHTML = originalSelectHtml;
+
+                const scenario = SCENARIOS[idx];
+
+                // 3. 如果是「全部」，就不用過濾，直接結束
+                if (scenario.keywords.length === 0) return;
+
+                // 4. 開始砍掉不符合的選項 (保留 '-- 請選擇 --')
+                const options = Array.from(targetSelect.options);
+                options.forEach(opt => {
+                    const text = opt.text;
+                    if (text.includes('-- 請選擇')) return; // 保留預設值
+
+                    // 檢查是否命中關鍵字
+                    let isMatch = false;
+                    scenario.keywords.forEach(kw => {
+                        if (text.includes(kw) || opt.value.includes(kw)) {
+                            isMatch = true;
+                        }
+                    });
+
+                    // 沒命中且它不是分類標題【】，就把這個 option 刪掉！
+                    if (!isMatch && (!text.includes('【') || !text.includes('】'))) {
+                        opt.remove();
+                    }
+                });
+
+                // 5. 自動清理底下空掉的【分類標題】
+                const remainingOptions = Array.from(targetSelect.options);
+                for (let i = remainingOptions.length - 1; i >= 0; i--) {
+                    const opt = remainingOptions[i];
+                    const text = opt.text;
+                    // 如果這個 option 是【分類標題】
+                    if (text.includes('【') && text.includes('】')) {
+                        // 檢查它下一個是不是也是【標題】或已經到底了，如果是，代表它下面沒有選項，刪掉它！
+                        const nextOpt = remainingOptions[i + 1];
+                        if (!nextOpt || (nextOpt.text.includes('【') && nextOpt.text.includes('】'))) {
+                            opt.remove();
+                        }
+                    }
+                }
+            };
+
+            // 網頁載入後延遲 0.5 秒啟動，確保下拉選單已生成
+            setTimeout(initPills, 500);
+        })();
+
+
+    </script>
+
     <!-- 引入 Apache ECharts 官方 CDN 庫 -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+    <!-- 🗂️ 中央裝備箱 HTML 骨架 -->
+    <div id="zaOverlay" class="za-overlay" onclick="window.zaCloseArsenal()"></div>
+    <div id="zaModal" class="za-modal">
+        <div class="za-modal-head">
+            <h3 class="za-modal-title">🗂️ Zen AI 戰術卡片軍火庫</h3>
+            <button class="za-btn-close" onclick="window.zaCloseArsenal()">&times;</button>
+        </div>
+        <div class="za-modal-tool">
+            <input type="text" id="zaSearch" class="za-search" placeholder="🔍 搜尋戰術 (如: 外資、ROE、60M...)" oninput="window.zaFilter()">
+            <div class="za-tags" id="zaTags"></div>
+        </div>
+        <div class="za-modal-body" id="zaGrid"></div>
+    </div>
 </body>
 </html></pre>
 </body>
