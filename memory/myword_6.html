@@ -1,4 +1,13 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre style='font-family: Consolas, monospace; white-space: pre-wrap;'>20261020
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>myword2 ID 6</title>
+</head>
+<body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
+    <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 6</h2>
+    <hr style="border: 1px solid #334155;">
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">20261020
 -- 測試 1：搜尋「60」，系統不再自作主張，而是立刻列出所有包含 60 的範本清單！ 在excelsql2要單筆執行 t-sql一起執行
 EXEC sp_RunQuantTemplate @Keyword = N'60';
 
@@ -13,8 +22,7 @@ EXEC sp_RunQuantTemplate @ID = 68;
 參數：
 --code <股號>：指定目標股票代號（例如 2330）。
 實戰打法：
-code
-Cmd
+
 python ai_omni_explainer.py --code 3443
 2. chart_explain.py (本地 Ollama 伏兵解盤 ＋ 雙模截圖)
 用途：【圖文一體化模組】。抓取 60M 伏兵特徵、3-Way 離場勝率，調用本機 Ollama (qwen2.5:7b) 產出解盤文字；並同步指揮 Playwright 截下雙 Y 軸圖表，最後將圖文合併推播至 LINE / TG。
@@ -24,8 +32,7 @@ python ai_omni_explainer.py --code 3443
 目標ID：如 Ubeef... (LINE ID) 或 -100... (TG 群組)。
 模式：live (強制盤中)、post (強制盤後)。若未填寫則由時鐘決定 (auto)。
 實戰打法：
-code
-Cmd
+
 python chart_explain.py 2454 20260401 live
 📸 第二戰區：視覺 RPA 與截圖部隊 (Vision & Screenshot)
 完全降服 Playwright 無頭瀏覽器，支援「物理強制鎖定」盤中或盤後模式的截圖樞紐。
@@ -36,8 +43,7 @@ python chart_explain.py 2454 20260401 live
 起日 (8碼)
 --mode live 或 --mode post (決定截圖模式)
 實戰打法：
-code
-Cmd
+
 python chart_screenshot.py 3017 20260101 --mode post
 4. chart_screenshot_live.py / chart_screenshot_post.py (母艦卡片專用薄腳本)
 用途：為 99 部隊母艦的 UI 卡片分流設計的捷徑腳本。它們內部只有 3 行程式碼，負責將接收到的參數強行掛上 --mode live 或 --mode post 後，轉發給核心的 chart_screenshot.py。
@@ -50,8 +56,7 @@ python chart_screenshot.py 3017 20260101 --mode post
 --text <文字>：選填，若有填則不呼叫 AI，直接廣播這段文字。
 --img <路徑>：選填，附加圖片廣播。
 實戰打法：
-code
-Cmd
+
 python zen_broadcaster.py --code 2317
 6. fb_post_stock.py (Facebook 社團發文引擎)
 用途：掛載 C:\test_c\chrome_profile 固化 Session（免登入/破除安全沙盒），利用 Playwright 原生 JS 穿透半透明遮罩，將戰報與圖片發布至 FB 社團。
@@ -59,8 +64,7 @@ python zen_broadcaster.py --code 2317
 --text <文字>：要發布的內文。
 --img <圖片路徑>：要附帶的圖片。
 實戰打法 (通常由 zen_broadcaster.py 在背景自動呼叫)：
-code
-Cmd
+
 python fb_post_stock.py --text "測試發文" --img "C:\test_c\static\chart_2330.png"
 7. master_cockpit.py (99 部隊母艦)
 用途：啟動 Port 8550 (Flet UI 雷達大屏) 與 Port 8551 (跨域火控 API)。具備 STOCK_ARG_ROUTER 參數拆解矩陣，將頂部輸入框的 2454 20260401 live 自動分配給上述各腳本。
@@ -78,19 +82,16 @@ python fb_post_stock.py --text "測試發文" --img "C:\test_c\static\chart_2330
 用途：透過 Playwright 開啟本機 HTTPS 打包系統 (myword2.html?id=X)，擷取動態渲染文字。產出帶有時間戳的純淨 HTML，並自動 git push 上雲端（防覆蓋、不組合）。
 參數：
 [id...] (無限個整數)：指定要抓取的 ID。若不輸入，預設抓取 1 ~ 15。
-實戰打法：
-code
-Cmd
+
+
 python sync_myword_history.py 8 10 12
 11. sync_myword_to_github.py (GitHub 舊版大合併同步)
 用途：將 ID 1~8 抓下來後，合併成一個 50 萬字的 myword_all.html 巨型檔案推上 GitHub。
 參數：無。
 12. test_api_keys.py (金鑰全面健康檢查)
 用途：地毯式掃描 zen_ai_bot1.py 與 ai_omni_explainer.py，找出所有 AQ.、AIza 與 OpenRouter 金鑰，並實時對 Google/OpenRouter 伺服器進行 Ping 測試，回報 200 OK / 503 / 401 狀態。
-參數：無。
-實戰打法：
-code
-Cmd
+
+
 python test_api_keys.py
 💡 總監實戰速查表 (Cheat Sheet)
 長官若要在終端機 (CMD) 手動對單一股票發動終極打擊，請記住這三招最常用的指令：
@@ -211,4 +212,6 @@ dbo	sp_renamediagram	PROCEDURE	2022-09-25 13:46:54.833	2022-09-25 13:46:54.833
 dbo	sp_creatediagram	PROCEDURE	2022-09-25 13:46:54.820	2022-09-25 13:46:54.820
 dbo	sp_helpdiagramdefinition	PROCEDURE	2022-09-25 13:46:54.810	2022-09-25 13:46:54.810
 dbo	sp_helpdiagrams	PROCEDURE	2022-09-25 13:46:54.803	2022-09-25 13:46:54.803
-dbo	sp_upgraddiagrams	PROCEDURE	2022-09-25 13:46:54.700	2022-09-25 13:46:54.700</pre></body></html>
+dbo	sp_upgraddiagrams	PROCEDURE	2022-09-25 13:46:54.700	2022-09-25 13:46:54.700</pre>
+</body>
+</html>
