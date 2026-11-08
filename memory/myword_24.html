@@ -1,0 +1,5384 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>myword2 ID 24</title>
+</head>
+<body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
+    <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 24</h2>
+    <hr style="border: 1px solid #334155;">
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">poem目前巳不使用,其他的都要用到
+
+原流程:讀進來==>整理(刪多餘列)==>寫到資料庫
+
+
+
+讀進excel
+
+Sub 處理dmi及kd及macd_轉檔到讀到poem()
+
+'先把下載的資料彙總到多頭空頭篩選資料表
+
+Call dim多方股_readto多頭空頭篩選結果_excel
+
+Call dim空方股_readto多頭空頭篩選結果_excel
+
+Call kd_readto多頭空頭篩選結果
+
+Call macd1_readto多頭空頭篩選結果
+
+Call macd2_readto多頭空頭篩選結果
+
+Call macd紅棒_readto多頭空頭篩選結果
+
+Call macd綠棒_readto多頭空頭篩選結果
+
+Call macd圖形紅_readto多頭空頭篩選結果
+
+Call macd圖形綠_readto多頭空頭篩選結果
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+'先開啟poem.xls檔案進行讀取及寫入
+
+Call read_巳轉檔之DI表to_poem2_excel
+
+Call readkd_to_poemkd
+
+Call readmacd_to_poemmacd
+
+Call readmacd_to_macd紅棒
+
+Call readmacd_to_macd綠棒
+
+Call readmacd圖_to_poemmacd
+
+MsgBox "巳完成讀取及轉檔(dmi及kd及macd及紅綠棒)"
+
+End Sub
+
+
+
+
+
+整理資料表,會用到的表在裡邊:
+
+Sub 刪除空白列全部selectcase()
+
+'
+
+' Macro1 Macro
+
+'
+
+'
+
+Workbooks("poem.xls").Sheets("poem").Activate    'poem.xls活頁簿底下的poem資料表
+
+Range("B5500").Value = "stop"                    '在b5500儲存格的值變成stop
+
+For Start = 2 To 3800                            '預計不會超過2000筆 (本日1238筆)
+
+Name1 = "b" & Start                              'b2 b3 b4 ....b2000
+
+'Name2 = "c" & Start
+
+'Name3 = "d" & Start
+
+Range(Name1).Select                              '把目前的儲存格選取 b2 b3  ... b200
+
+aaa = ActiveCell.Value                           'aaa = 選取儲存格的內容(值)
+
+Select Case aaa                                 'Select Case  aaa為選取儲存格的內容(值)
+
+    Case "0"                                    '遇到 選取儲存格的內容(值) = 0
+
+    Selection.EntireRow.Delete                  '把這一列刪除
+
+    Start = Start - 1                           'start-1 ,如果沒減1 ,等下到next會加+1,變成沒動
+
+    
+
+    Case ""                                     '遇到 選取儲存格的內容(值) = ""即空白
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case "stop"                                '遇到 選取儲存格的內容(值) = stop 就跳到over
+
+    GoTo over
+
+    
+
+    Case Else
+
+   
+
+    
+
+    End Select
+
+       
+
+Next Start
+
+over:                                                  'over
+
+Selection.EntireRow.Delete                             '把over這一列也刪除
+
+Application.Wait (Now + TimeValue("0:00:5"))          '停五秒   下列五個表也一併做刪除空白列的工作
+
+Call 刪除空白列poem2                                  'poem.xls活頁簿底下的poem2資料表
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列poemkd                                 'poem.xls活頁簿底下的poemkd資料表
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列poemmacd                               'poem.xls活頁簿底下的poemmacd資料表
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列macd紅棒                               'poem.xls活頁簿底下的macd紅棒資料表
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列macd綠棒
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列poemmacd圖                               'poem.xls活頁簿底下的poemmacd圖資料表
+
+'poem.xls活頁簿底下的macd綠棒資料表
+
+MsgBox "巳完成刪除空白列 共六張工作表"
+
+End Sub
+
+
+
+
+
+
+
+
+
+寫到資料庫:
+
+Sub 處理dmi及kd及macd_轉檔到讀到poem後之寫入SQL()
+
+Call write_di_to_SQL
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_kd
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_macd
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_macd紅
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_macd綠
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_macd圖
+
+MsgBox "巳完成SQL之dmi kd macd及紅綠棒的寫入"
+
+End Sub
+
+
+
+
+
+
+
+程式碼:
+
+Sub poem_writeaccessstock11poem()
+
+' Sheets("過濾結果").Range("A1:IV65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\便當\poem1_stock11.mdb"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  
+
+  Worksheets("poem").Activate
+
+  
+
+  For i = 2 To Range("B2").End(xlDown).Row
+
+   'no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+   
+
+  '執行SQL
+
+  
+
+  strQuery = "INSERT INTO [poem]([name1],[mail1],[word1],[時間戳記]) "
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+     
+
+  'MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+ 'MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+  Call writeSQLpoem
+
+  
+
+  MsgBox "巳完成新增共 " & i - 2 & " 筆資料(Access + SQL)"
+
+End Sub
+
+Sub writeSQLpoem()
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  
+
+  With cn
+
+  .Provider = "SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=True;Initial Catalog=poem1_stock11;Data Source=pc048000110;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=PC048000110;Use Encryption for Data=False;Tag with column collation when possible=False"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  
+
+  
+
+  
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  
+
+ 
+
+  'strQuery1 = "DELETE FROM [priceamount]"
+
+    
+
+ ' cn.Execute (strQuery1)
+
+  
+
+  
+
+  Worksheets("poem").Activate
+
+  
+
+  For i = 2 To Range("B2").End(xlDown).Row
+
+   'no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+   
+
+  '執行SQL
+
+  
+
+  strQuery = "INSERT INTO [poem]([name1],[mail1],[word1],[時間戳記]) "
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+     
+
+  'MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+' MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+End Sub
+
+ Sub poem_write_to_access1stock11_poemup()
+
+' Sheets("過濾結果").Range("A1:IV65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\便當\poem1_stock11.mdb"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  
+
+  Worksheets("poem").Activate
+
+  
+
+  For i = 2 To Range("B2").End(xlDown).Row
+
+  ' no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+   
+
+  '執行SQL
+
+  
+
+  strQuery = "INSERT INTO [poemup]([name1],[mail1],[word1],[時間戳記]) "
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+     
+
+  'MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+ 'MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  Call writeSQLpoemup
+
+  
+
+ ' Call write_di
+
+  
+
+  MsgBox "巳完成新增共 " & i - 2 & " 筆資料(Access + SQL)"
+
+End Sub
+
+ Sub write_di_to_SQL()
+
+ 
+
+ 
+
+ Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  
+
+  With cn
+
+  .Provider = "SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=True;Initial Catalog=stockchangedate;Data Source=pc048000110;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=PC048000110;Use Encryption for Data=False;Tag with column collation when possible=False"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  
+
+  
+
+  
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  
+
+ 
+
+  'strQuery1 = "DELETE FROM [priceamount]"
+
+    
+
+ ' cn.Execute (strQuery1)
+
+  
+
+  
+
+  Worksheets("poem2").Activate
+
+  
+
+  
+
+  Dim a As String
+
+  Dim b As Double
+
+  Dim c As Double
+
+  Dim d As Double
+
+  Dim e As Double
+
+  Dim f As Double
+
+  Dim g As Double
+
+  Dim h As Double
+
+  Dim j As String
+
+  Dim k As Double
+
+  
+
+  
+
+  Dim i As Integer
+
+  For i = 2 To Range("c2").End(xlDown).Row
+
+  ' no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+    e = Cells(i, 6).Value
+
+    f = Cells(i, 7).Value
+
+    g = Cells(i, 8).Value
+
+    h = Cells(i, 9).Value
+
+    j = Cells(i, 10).Value
+
+    'm = "20181216"
+
+    k = Cells(i, 11).Value
+
+    
+
+ 
+
+  '執行SQL   SELECT [股票名稱],[股票代號],[正DI],[負DI],[趨向ADX],[正趨百分比],[負趨百分比],[正負DI百分比],[多空],[日期] FROM
+
+  
+
+  strQuery = "INSERT INTO ditable(股票名稱,股票代號,正DI,負DI,趨向ADX,正趨百分比,負趨百分比,正負DI百分比,多空,日期)"
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', " & b & "," & c & "," & d & "," & e & "," & f & "," & g & "," & h & ",'" & j & "'," & k & ")"
+
+     
+
+' MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+' MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+ 
+
+ 
+
+ 
+
+ 
+
+ End Sub
+
+ 
+
+ 
+
+ 
+
+ 
+
+ Sub poem_writesomee_poemup二個一次處理()
+
+' Sheets("過濾結果").Range("A1:IV65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=D:\DZHosts\LocalUser\weizenyan\www.sachi.somee.com\data\poem1_stock11.mdb"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  
+
+  Worksheets("poem").Activate
+
+  
+
+  For i = 2 To Range("B2").End(xlDown).Row
+
+  ' no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+   
+
+  '執行SQL
+
+  
+
+  strQuery = "INSERT INTO [poemup]([name1],[mail1],[word1],[時間戳記]) "
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+     
+
+  'MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+ 'MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  
+
+   Call poem_writesomee_poem
+
+  
+
+  
+
+  MsgBox "巳完成新增共 " & i - 2 & " 筆資料(smoee poemup + poem)"
+
+End Sub
+
+Sub poem_writesomee_poem()
+
+' Sheets("過濾結果").Range("A1:IV65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=D:\DZHosts\LocalUser\weizenyan\www.sachi.somee.com\data\poem1_stock11.mdb"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  
+
+  Worksheets("poem").Activate
+
+  
+
+  For i = 2 To Range("B2").End(xlDown).Row
+
+   'no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+   
+
+  '執行SQL
+
+  
+
+  strQuery = "INSERT INTO [poem]([name1],[mail1],[word1],[時間戳記]) "
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+     
+
+  'MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+ 'MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+ 
+
+  
+
+  'MsgBox "巳完成新增共 " & i - 2 & " 筆資料(Access + SQL)"
+
+End Sub
+
+Sub writeSQLpoemup()
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  
+
+  With cn
+
+  .Provider = "SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=True;Initial Catalog=poem1_stock11;Data Source=pc048000110;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=PC048000110;Use Encryption for Data=False;Tag with column collation when possible=False"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  
+
+  
+
+  
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  
+
+ 
+
+  'strQuery1 = "DELETE FROM [priceamount]"
+
+    
+
+ ' cn.Execute (strQuery1)
+
+  
+
+  
+
+  Worksheets("poem").Activate
+
+  
+
+  For i = 2 To Range("B2").End(xlDown).Row
+
+  ' no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+   
+
+  '執行SQL
+
+  
+
+  strQuery = "INSERT INTO [poemup]([name1],[mail1],[word1],[時間戳記]) "
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+     
+
+  'MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+' MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+End Sub
+
+Sub poem_read巳轉檔之多空頭資料to_poem_excel()
+
+   'Workbooks("綜合評分.xls").Sheets("布林").Select
+
+   Sheets("poem").Range("B1:AL65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\多頭空頭篩選結果.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "B1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT name1,mail1,word1,時間戳記 FROM [布林$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("poem").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("poem").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+      MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+       
+
+End Sub
+
+Sub read_巳轉檔之DI表to_poem2_excel()
+
+   'Workbooks("綜合評分.xls").Sheets("布林").Select
+
+   Sheets("poem2").Range("B1:AL65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\多頭空頭篩選結果.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "B1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT 股票名稱,股票代號,正DI,負DI,趨向ADX,正趨百分比,負趨百分比,正負DI百分比,多空,日期 FROM [布林2$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("poem2").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("poem2").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+      MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+       
+
+End Sub
+
+'多頭空頭
+
+Sub 多頭_excel()
+
+Workbooks.Open Filename:=ThisWorkbook.Path & "\多頭空頭篩選結果.xls"
+
+Workbooks("多頭空頭篩選結果.xls").Activate
+
+   Sheets("1多頭").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\1多頭.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("1多頭").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("1多頭").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+     ' MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 空頭_excel()
+
+   Sheets("2空頭").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\2空頭.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("2空頭").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("2空頭").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+     ' MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 買賣家數差連5日為負是加分_excel()
+
+   Sheets("3買賣家數差連5日為負是加分").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\3買賣家數差連5日為負是加分.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("3買賣家數差連5日為負是加分").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("3買賣家數差連5日為負是加分").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+   '   MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 籌碼集中度創五日高_多_excel()
+
+   Sheets("4籌碼集中度創五日高_多").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\4籌碼集中度創五日高_多.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("4籌碼集中度創五日高_多").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("4籌碼集中度創五日高_多").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 買賣家數差連五正_空_excel()
+
+   Sheets("5買賣家數差連五正_空").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\5買賣家數差連五正_空.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("5買賣家數差連五正_空").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("5買賣家數差連五正_空").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 籌碼集中度創五日低_空_excel()
+
+   Sheets("6籌碼集中度創五日低_空").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\6籌碼集中度創五日低_空.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("6籌碼集中度創五日低_空").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("6籌碼集中度創五日低_空").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+     ' MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 多空趨勢由綠轉紅_excel()
+
+   Sheets("7多空趨勢由綠轉紅").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\7多空趨勢由綠轉紅.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("7多空趨勢由綠轉紅").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("7多空趨勢由綠轉紅").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+   '   MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 多空趨勢由紅轉綠_excel()
+
+   Sheets("8多空趨勢由紅轉綠").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\8多空趨勢由紅轉綠.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("8多空趨勢由紅轉綠").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("8多空趨勢由紅轉綠").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+  '    MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 今天突破12周均線_excel()
+
+   Sheets("9今天突破12周均線").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\9今天突破12周均線.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("9今天突破12周均線").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("9今天突破12周均線").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+     ' MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 今天突破24周均線_excel()
+
+   Sheets("10今天突破24周均線").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\10今天突破24周均線.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("10今天突破24周均線").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("10今天突破24周均線").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+   '   MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub 收盤價創20日新高_excel()
+
+   Sheets("11收盤價創20日新高").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\11收盤價創20日新高.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("11收盤價創20日新高").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("11收盤價創20日新高").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub MACD由負轉正_excel()
+
+   Sheets("12MACD由負轉正").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\12MACD由負轉正.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("12MACD由負轉正").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("12MACD由負轉正").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+   '   MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub MACD由正轉負_excel()
+
+   Sheets("13MACD由正轉負").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\13MACD由正轉負.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("13MACD由正轉負").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("13MACD由正轉負").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+   '   MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+ 
+
+End Sub
+
+Sub 神秘券商_excel()
+
+   
+
+    Sheets("14神秘券商").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\14神秘券商.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("14神秘券商").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("14神秘券商").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  
+
+ 
+
+End Sub
+
+Sub 周多頭_excel()
+
+   Sheets("15週多頭").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\15週多頭20週60週.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("15週多頭").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("15週多頭").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  
+
+  '取後的位置要儲存關閉 只能放在最後一張表後
+
+  
+
+  '放在最後一張表
+
+  ActiveWorkbook.Save
+
+  ActiveWorkbook.Close
+
+End Sub
+
+Sub 多空頭所有資料表一次轉檔處理及read_to_poem()
+
+'先讀取下載檔到多頭空頭篩選表
+
+Call 多頭_excel
+
+Call 空頭_excel
+
+Call 買賣家數差連5日為負是加分_excel
+
+Call 籌碼集中度創五日高_多_excel
+
+Call 買賣家數差連五正_空_excel
+
+Call 籌碼集中度創五日低_空_excel
+
+Call 多空趨勢由綠轉紅_excel
+
+Call 多空趨勢由紅轉綠_excel
+
+Call 今天突破12周均線_excel
+
+Call 今天突破24周均線_excel
+
+Call 收盤價創20日新高_excel
+
+Call MACD由負轉正_excel
+
+Call MACD由正轉負_excel
+
+Call 神秘券商_excel
+
+Call 周多頭_excel
+
+'Call 處理di
+
+'讀取到poem再編輯以利寫入SQL
+
+Call poem_read巳轉檔之多空頭資料to_poem_excel
+
+MsgBox "所有資料的轉檔結果巳完成"
+
+End Sub
+
+Sub dim多方股_readto多頭空頭篩選結果_excel()
+
+Workbooks.Open Filename:=ThisWorkbook.Path & "\多頭空頭篩選結果.xls"
+
+Workbooks("多頭空頭篩選結果.xls").Activate
+
+   Sheets("16dim多方股").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\16dim多方股.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("16dim多方股").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("16dim多方股").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub dim空方股_readto多頭空頭篩選結果_excel()
+
+   Sheets("17dim空方股").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\17dim空方股.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("17dim空方股").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("17dim空方股").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  
+
+  '放在最後一張表
+
+ ' ActiveWorkbook.Save
+
+ ' ActiveWorkbook.Close
+
+End Sub
+
+Sub kd_readto多頭空頭篩選結果()
+
+'Workbooks.Open Filename:=ThisWorkbook.Path & "\多頭空頭篩選結果.xls"
+
+'Workbooks("多頭空頭篩選結果.xls").Activate
+
+   Sheets("18kd值").Range("a1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\18kd值.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("18kd值").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("18kd值").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  
+
+  '放在最後一張表
+
+ 
+
+End Sub
+
+Sub macd1_readto多頭空頭篩選結果()
+
+   Sheets("19macd大於零").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\19macd大於零.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("19macd大於零").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("19macd大於零").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  
+
+  '放在最後一張表
+
+ 
+
+End Sub
+
+Sub macd2_readto多頭空頭篩選結果()
+
+   Sheets("20macd小於零").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\20macd小於零.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("20macd小於零").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("20macd小於零").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  
+
+  '放在最後一張表
+
+  '放在最後一張表
+
+  'ActiveWorkbook.Save
+
+  'ActiveWorkbook.Close
+
+End Sub
+
+Sub macd紅棒_readto多頭空頭篩選結果()
+
+   Sheets("21macd紅棒").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\21macd紅棒.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("21macd紅棒").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("21macd紅棒").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  
+
+  '放在最後一張表
+
+  '放在最後一張表
+
+  'ActiveWorkbook.Save
+
+ ' ActiveWorkbook.Close
+
+End Sub
+
+Sub macd綠棒_readto多頭空頭篩選結果()
+
+   Sheets("22macd綠棒").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\22macd綠棒.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("22macd綠棒").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("22macd綠棒").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+    '  MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+  
+
+  '放在最後一張表
+
+  '放在最後一張表
+
+ 
+
+End Sub
+
+Sub macd圖形紅_readto多頭空頭篩選結果()
+
+   Sheets("23macd紅").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\23macd圖形紅.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("23macd紅").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("23macd紅").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+   '   MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+End Sub
+
+Sub macd圖形綠_readto多頭空頭篩選結果()
+
+   Sheets("24macd綠").Range("A1:k65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\24macd圖形綠.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT * FROM [sheet$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("24macd綠").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("24macd綠").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+   '   MsgBox "轉檔結果巳完成"
+
+        Else
+
+       MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+ActiveWorkbook.Save
+
+  ActiveWorkbook.Close
+
+End Sub
+
+Sub readkd_to_poemkd()
+
+   'Workbooks("綜合評分.xls").Sheets("布林").Select
+
+   Sheets("poemkd").Range("B1:AL65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\多頭空頭篩選結果.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "B1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL  股票名稱    股票代號    k9  d9  週k9    週k9    月k9    月d9    kdmeno  日期
+
+  strQuery = "SELECT 股票名稱,股票代號,k9,d9,週k9,週d9,月k9,月d9,kdmeno,日期 FROM [布林kd$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("poemkd").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("poemkd").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+     ' MsgBox "轉檔結果巳完成"
+
+        Else
+
+      ' MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+       
+
+End Sub
+
+Sub readmacd_to_poemmacd()
+
+   'Workbooks("綜合評分.xls").Sheets("布林").Select
+
+   Sheets("poemmacd").Range("B1:AL65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\多頭空頭篩選結果.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "B1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT 股票名稱,股票代號,macd,macd1,macd2,macd3,macd4,macd5,macdmemo,日期 FROM [布林macd$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("poemmacd").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("poemmacd").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+     ' MsgBox "轉檔結果巳完成"
+
+        Else
+
+     '  MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+       
+
+End Sub
+
+Sub readmacd圖_to_poemmacd()
+
+   'Workbooks("綜合評分.xls").Sheets("布林").Select
+
+   Sheets("poemmacd圖").Range("B1:AL65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\多頭空頭篩選結果.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "B1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT 股票名稱,股票代號,macd,macd1,macd2,macd3,macd4,macd5,macdmemo,日期 FROM [布林macd圖$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("poemmacd圖").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("poemmacd圖").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+     ' MsgBox "轉檔結果巳完成"
+
+        Else
+
+     '  MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+       
+
+End Sub
+
+Sub readmacd_to_macd紅棒()
+
+   'Workbooks("綜合評分.xls").Sheets("布林").Select
+
+   Sheets("macd紅棒").Range("B1:AL65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\多頭空頭篩選結果.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "B1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT 股票代號, 股票名稱,今日MACD, 前日MACD, DIF減MACD, 日期 FROM [macd紅棒$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("macd紅棒").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("macd紅棒").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+     ' MsgBox "轉檔結果巳完成"
+
+        Else
+
+     '  MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+       
+
+End Sub
+
+Sub readmacd_to_macd綠棒()
+
+   'Workbooks("綜合評分.xls").Sheets("布林").Select
+
+   Sheets("macd綠棒").Range("B1:AL65536").ClearContents '清除表格資料
+
+   Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  With cn
+
+  .Provider = "Microsoft.ACE.OLEDB.12.0"
+
+  .ConnectionString = "Data Source=c:\股票stock編輯\多頭空頭\多頭空頭篩選結果.xls" & _
+
+  ";Extended Properties=Excel 12.0;"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  strStartlocation = "B1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  '執行SQL
+
+  strQuery = "SELECT 股票代號, 股票名稱,今日MACD, 前日MACD, DIF減MACD, 日期 FROM [macd綠棒$]"
+
+  Set rs = cn.Execute(strQuery)
+
+  'III) 把數據抄至所需的位置
+
+' MsgBox rs.Fields(lngColCounter).Name
+
+  If rs.Fields.Count > 0 Then
+
+      For lngColCounter = 0 To rs.Fields.Count - 1
+
+          Sheets("macd綠棒").Range(strStartlocation).Offset(0, lngColCounter) = rs.Fields(lngColCounter).Name
+
+      Next lngColCounter
+
+      'III-2 把數據庫資料列表拿出
+
+     Sheets("macd綠棒").Range(strStartlocation).Offset(1, 0).CopyFromRecordset rs
+
+     ' MsgBox "轉檔結果巳完成"
+
+        Else
+
+     '  MsgBox "轉檔結果無資料"
+
+  End If
+
+  'IV) 關掉/清理連接
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+      
+
+       
+
+End Sub
+
+Sub writesql_kd()
+
+ 
+
+ 
+
+ Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  
+
+  With cn
+
+  .Provider = "SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=True;Initial Catalog=stockchangedate;Data Source=pc048000110;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=PC048000110;Use Encryption for Data=False;Tag with column collation when possible=False"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  
+
+  
+
+  
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  
+
+ 
+
+  'strQuery1 = "DELETE FROM [priceamount]"
+
+    
+
+ ' cn.Execute (strQuery1)
+
+  
+
+  
+
+  Worksheets("poemkd").Activate
+
+  
+
+  
+
+  Dim a As String
+
+  Dim b As Double
+
+  Dim c As Double
+
+  Dim d As Double
+
+  Dim e As Double
+
+  Dim f As Double
+
+  Dim g As Double
+
+  Dim h As Double
+
+  Dim j As String
+
+  Dim k As Double
+
+  
+
+  
+
+  Dim i As Integer
+
+  For i = 2 To Range("c2").End(xlDown).Row
+
+  ' no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+    e = Cells(i, 6).Value
+
+    f = Cells(i, 7).Value
+
+    g = Cells(i, 8).Value
+
+    h = Cells(i, 9).Value
+
+    j = Cells(i, 10).Value
+
+    'm = "20181216"
+
+    k = Cells(i, 11).Value
+
+    
+
+ 
+
+  '執行SQL   SELECT [股票名稱],[股票代號],[正DI],[負DI],[趨向ADX],[正趨百分比],[負趨百分比],[正負DI百分比],[多空],[日期] FROM
+
+  
+
+  strQuery = "INSERT INTO [kdtable]([股票名稱],[股票代號],[k9],[d9],[週k9],[週d9],[月k9],[月d9],[kdmeno],[日期])"
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', " & b & "," & c & "," & d & "," & e & "," & f & "," & g & "," & h & ",'" & j & "'," & k & ")"
+
+     
+
+' MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+' MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+ 
+
+ 
+
+ 
+
+ 
+
+ End Sub
+
+Sub writesql_macd()
+
+ 
+
+ 
+
+ Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  
+
+  With cn
+
+  .Provider = "SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=True;Initial Catalog=stockchangedate;Data Source=pc048000110;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=PC048000110;Use Encryption for Data=False;Tag with column collation when possible=False"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  
+
+  
+
+  
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  
+
+ 
+
+  'strQuery1 = "DELETE FROM [priceamount]"
+
+    
+
+ ' cn.Execute (strQuery1)
+
+  
+
+  
+
+  Worksheets("poemmacd").Activate
+
+  
+
+  
+
+  Dim a As String
+
+  Dim b As Double
+
+  Dim c As Double
+
+  Dim d As Double
+
+  Dim e As Double
+
+  Dim f As Double
+
+  Dim g As Double
+
+  Dim h As Double
+
+  Dim j As String
+
+  Dim k As Double
+
+  
+
+  
+
+  Dim i As Integer
+
+  For i = 2 To Range("c2").End(xlDown).Row
+
+  ' no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+    e = Cells(i, 6).Value
+
+    f = Cells(i, 7).Value
+
+    g = Cells(i, 8).Value
+
+    h = Cells(i, 9).Value
+
+    j = Cells(i, 10).Value
+
+    'm = "20181216"
+
+    k = Cells(i, 11).Value
+
+    
+
+ 
+
+  '執行SQL   SELECT [股票名稱],[股票代號],[正DI],[負DI],[趨向ADX],[正趨百分比],[負趨百分比],[正負DI百分比],[多空],[日期] FROM
+
+  
+
+  strQuery = "INSERT INTO [macdtable]([股票名稱],[股票代號],[macd],[macd1],[macd2],[macd3],[macd4],[macd5],[macdmemo],[日期])"
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', " & b & "," & c & "," & d & "," & e & "," & f & "," & g & "," & h & ",'" & j & "'," & k & ")"
+
+     
+
+' MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+' MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+ 
+
+ 
+
+ 
+
+ 
+
+ End Sub
+
+Sub writesql_macd圖()
+
+ 
+
+ 
+
+ Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  
+
+  With cn
+
+  .Provider = "SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=True;Initial Catalog=stockchangedate;Data Source=pc048000110;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=PC048000110;Use Encryption for Data=False;Tag with column collation when possible=False"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  
+
+  
+
+  
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  
+
+ 
+
+  'strQuery1 = "DELETE FROM [priceamount]"
+
+    
+
+ ' cn.Execute (strQuery1)
+
+  
+
+  
+
+  Worksheets("poemmacd圖").Activate
+
+  
+
+  
+
+  Dim a As String
+
+  Dim b As Double
+
+  Dim c As Double
+
+  Dim d As Double
+
+  Dim e As Double
+
+  Dim f As Double
+
+  Dim g As Double
+
+  Dim h As Double
+
+  Dim j As String
+
+  Dim k As Double
+
+  
+
+  
+
+  Dim i As Integer
+
+  For i = 2 To Range("c2").End(xlDown).Row
+
+  ' no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+    e = Cells(i, 6).Value
+
+    f = Cells(i, 7).Value
+
+    g = Cells(i, 8).Value
+
+    h = Cells(i, 9).Value
+
+    j = Cells(i, 10).Value
+
+    'm = "20181216"
+
+    k = Cells(i, 11).Value
+
+    
+
+ 
+
+  '執行SQL   SELECT [股票名稱],[股票代號],[正DI],[負DI],[趨向ADX],[正趨百分比],[負趨百分比],[正負DI百分比],[多空],[日期] FROM
+
+  
+
+  strQuery = "INSERT INTO [macdchartable]([股票名稱],[股票代號],[macd],[macd1],[macd2],[macd3],[macd4],[macd5],[macdmemo],[日期])"
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', " & b & "," & c & "," & d & "," & e & "," & f & "," & g & "," & h & ",'" & j & "'," & k & ")"
+
+     
+
+' MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+' MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+ 
+
+ 
+
+ 
+
+ 
+
+ End Sub
+
+Sub writesql_macd紅()
+
+ 
+
+ 
+
+ Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  
+
+  With cn
+
+  .Provider = "SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=True;Initial Catalog=stockchangedate;Data Source=pc048000110;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=PC048000110;Use Encryption for Data=False;Tag with column collation when possible=False"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  
+
+  
+
+  
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  
+
+ 
+
+  'strQuery1 = "DELETE FROM [priceamount]"
+
+    
+
+ ' cn.Execute (strQuery1)
+
+  
+
+  
+
+  Worksheets("macd紅棒").Activate
+
+  
+
+  
+
+  Dim a As String
+
+  Dim b As Double
+
+  Dim c As Double
+
+  Dim d As Double
+
+  Dim e As Double
+
+  Dim f As Double
+
+  Dim g As Double
+
+  Dim h As Double
+
+  Dim j As String
+
+  Dim k As Double
+
+  
+
+  
+
+  Dim i As Integer
+
+  For i = 2 To Range("c2").End(xlDown).Row
+
+  ' no = Cells(i, 1).Value
+
+    a = Cells(i, 2).Value
+
+    b = Cells(i, 3).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+    e = Cells(i, 6).Value
+
+    k = Cells(i, 7).Value
+
+    
+
+ 
+
+  '執行SQL   SELECT [股票名稱],[股票代號],[正DI],[負DI],[趨向ADX],[正趨百分比],[負趨百分比],[正負DI百分比],[多空],[日期] FROM
+
+  
+
+  strQuery = "INSERT INTO [macdpic]([股票名稱],[股票代號],[今日macd],[明日macd],[DIF減MACD],[日期])"
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', " & b & "," & c & "," & d & "," & e & "," & k & ")"
+
+     
+
+' MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+' MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+ 
+
+ 
+
+ 
+
+ 
+
+ End Sub
+
+Sub writesql_macd綠()
+
+ 
+
+ 
+
+ Dim cn As ADODB.Connection
+
+   Dim rs As ADODB.Recordset
+
+   Dim strDataSrcXlsPath As String
+
+   strDataSrcXlsPath = ThisWorkbook.FullName
+
+  'ThisWorkbook.FullName = 目前檔案的位置
+
+  'I) 以下建立數據庫連接
+
+  Set cn = New ADODB.Connection
+
+  
+
+  With cn
+
+  .Provider = "SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=True;Initial Catalog=stockchangedate;Data Source=pc048000110;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=PC048000110;Use Encryption for Data=False;Tag with column collation when possible=False"
+
+  .Open
+
+  cn.CursorLocation = adUseClient
+
+  End With
+
+  'II-1) 準備SQL
+
+  Dim strQuery As String
+
+  Dim strQueryWorksheet As String
+
+  Dim strStartlocation As String
+
+  Dim lngRowCounter As Long
+
+  
+
+  
+
+  
+
+  strStartlocation = "A1"
+
+  strQueryWorksheet = "Query" '數據查詢頁面位置
+
+  
+
+ 
+
+  'strQuery1 = "DELETE FROM [priceamount]"
+
+    
+
+ ' cn.Execute (strQuery1)
+
+  
+
+  
+
+  Worksheets("macd綠棒").Activate
+
+  
+
+  
+
+  Dim a As String
+
+  Dim b As Double
+
+  Dim c As Double
+
+  Dim d As Double
+
+  Dim e As Double
+
+  Dim f As Double
+
+  Dim g As Double
+
+  Dim h As Double
+
+  Dim j As String
+
+  Dim k As Double
+
+  
+
+  
+
+  Dim i As Integer
+
+  For i = 2 To Range("c2").End(xlDown).Row
+
+  ' no = Cells(i, 1).Value
+
+    a = Cells(i, 3).Value
+
+    b = Cells(i, 2).Value
+
+    c = Cells(i, 4).Value
+
+    d = Cells(i, 5).Value
+
+    e = Cells(i, 6).Value
+
+    k = Cells(i, 7).Value
+
+    
+
+ 
+
+  '執行SQL   SELECT [股票名稱],[股票代號],[正DI],[負DI],[趨向ADX],[正趨百分比],[負趨百分比],[正負DI百分比],[多空],[日期] FROM
+
+  
+
+  strQuery = "INSERT INTO [macdpic]([股票名稱],[股票代號],[今日macd],[明日macd],[DIF減MACD],[日期])"
+
+ ' strQuery = strQuery & "values(" & no & ",'" & a & "', '" & b & "', '" & c & "', " & d & ")"
+
+  strQuery = strQuery & "values('" & a & "', " & b & "," & c & "," & d & "," & e & "," & k & ")"
+
+     
+
+' MsgBox strQuery
+
+  cn.Execute (strQuery)
+
+ Next
+
+' MsgBox "巳完成新增共 " & i - 2 & " 筆資料"
+
+ 
+
+ 
+
+  cn.Close
+
+  'rs.Close
+
+  Set cn = Nothing
+
+  Set rs = Nothing
+
+ 
+
+ 
+
+ 
+
+ 
+
+ End Sub
+
+Sub 處理dmi及kd及macd_轉檔到讀到poem()
+
+'先把下載的資料彙總到多頭空頭篩選資料表
+
+Call dim多方股_readto多頭空頭篩選結果_excel
+
+Call dim空方股_readto多頭空頭篩選結果_excel
+
+Call kd_readto多頭空頭篩選結果
+
+Call macd1_readto多頭空頭篩選結果
+
+Call macd2_readto多頭空頭篩選結果
+
+Call macd紅棒_readto多頭空頭篩選結果
+
+Call macd綠棒_readto多頭空頭篩選結果
+
+Call macd圖形紅_readto多頭空頭篩選結果
+
+Call macd圖形綠_readto多頭空頭篩選結果
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+'先開啟poem.xls檔案進行讀取及寫入
+
+Call read_巳轉檔之DI表to_poem2_excel
+
+Call readkd_to_poemkd
+
+Call readmacd_to_poemmacd
+
+Call readmacd_to_macd紅棒
+
+Call readmacd_to_macd綠棒
+
+Call readmacd圖_to_poemmacd
+
+MsgBox "巳完成讀取及轉檔(dmi及kd及macd及紅綠棒)"
+
+End Sub
+
+Sub 處理dmi及kd及macd_轉檔到讀到poem後之寫入SQL()
+
+Call write_di_to_SQL
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_kd
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_macd
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_macd紅
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_macd綠
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call writesql_macd圖
+
+MsgBox "巳完成SQL之dmi kd macd及紅綠棒的寫入"
+
+End Sub
+
+Sub 刪除空白列全部selectcase()
+
+'
+
+' Macro1 Macro
+
+'
+
+'
+
+Workbooks("poem.xls").Sheets("poem").Activate    'poem.xls活頁簿底下的poem資料表
+
+Range("B5500").Value = "stop"                    '在b5500儲存格的值變成stop
+
+For Start = 2 To 3800                            '預計不會超過2000筆 (本日1238筆)
+
+Name1 = "b" & Start                              'b2 b3 b4 ....b2000
+
+'Name2 = "c" & Start
+
+'Name3 = "d" & Start
+
+Range(Name1).Select                              '把目前的儲存格選取 b2 b3  ... b200
+
+aaa = ActiveCell.Value                           'aaa = 選取儲存格的內容(值)
+
+Select Case aaa                                 'Select Case  aaa為選取儲存格的內容(值)
+
+    Case "0"                                    '遇到 選取儲存格的內容(值) = 0
+
+    Selection.EntireRow.Delete                  '把這一列刪除
+
+    Start = Start - 1                           'start-1 ,如果沒減1 ,等下到next會加+1,變成沒動
+
+    
+
+    Case ""                                     '遇到 選取儲存格的內容(值) = ""即空白
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case "stop"                                '遇到 選取儲存格的內容(值) = stop 就跳到over
+
+    GoTo over
+
+    
+
+    Case Else
+
+   
+
+    
+
+    End Select
+
+       
+
+Next Start
+
+over:                                                  'over
+
+Selection.EntireRow.Delete                             '把over這一列也刪除
+
+Application.Wait (Now + TimeValue("0:00:5"))          '停五秒   下列五個表也一併做刪除空白列的工作
+
+Call 刪除空白列poem2                                  'poem.xls活頁簿底下的poem2資料表
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列poemkd                                 'poem.xls活頁簿底下的poemkd資料表
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列poemmacd                               'poem.xls活頁簿底下的poemmacd資料表
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列macd紅棒                               'poem.xls活頁簿底下的macd紅棒資料表
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列macd綠棒
+
+Application.Wait (Now + TimeValue("0:00:5"))
+
+Call 刪除空白列poemmacd圖                               'poem.xls活頁簿底下的poemmacd圖資料表
+
+'poem.xls活頁簿底下的macd綠棒資料表
+
+MsgBox "巳完成刪除空白列 共六張工作表"
+
+End Sub
+
+Sub 刪除空白列poem2()
+
+'
+
+' Macro1 Macro
+
+'
+
+'
+
+Workbooks("poem.xls").Sheets("poem2").Activate
+
+Range("B2002").Value = "stop"
+
+For Start = 2 To 2000
+
+Name1 = "b" & Start
+
+'Name2 = "c" & Start
+
+'Name3 = "d" & Start
+
+Range(Name1).Select
+
+aaa = ActiveCell.Value
+
+Select Case aaa
+
+    Case "0"
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case ""
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case "stop"
+
+    GoTo over
+
+    
+
+    Case Else
+
+   
+
+    
+
+    End Select
+
+       
+
+Next Start
+
+over:
+
+Selection.EntireRow.Delete
+
+End Sub
+
+Sub 刪除空白列poemkd()
+
+'
+
+' Macro1 Macro
+
+'
+
+'
+
+Workbooks("poem.xls").Sheets("poemkd").Activate
+
+Range("B2002").Value = "stop"
+
+For Start = 2 To 2000
+
+Name1 = "b" & Start
+
+'Name2 = "c" & Start
+
+'Name3 = "d" & Start
+
+Range(Name1).Select
+
+aaa = ActiveCell.Value
+
+Select Case aaa
+
+    Case "0"
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case ""
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case "stop"
+
+    GoTo over
+
+    
+
+    Case Else
+
+   
+
+    
+
+    End Select
+
+       
+
+Next Start
+
+over:
+
+Selection.EntireRow.Delete
+
+End Sub
+
+Sub 刪除空白列poemmacd()
+
+'
+
+' Macro1 Macro
+
+'
+
+'
+
+Workbooks("poem.xls").Sheets("poemmacd").Activate
+
+Range("B2802").Value = "stop"
+
+For Start = 2 To 2800
+
+Name1 = "b" & Start
+
+'Name2 = "c" & Start
+
+'Name3 = "d" & Start
+
+Range(Name1).Select
+
+aaa = ActiveCell.Value
+
+Select Case aaa
+
+    Case "0"
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case ""
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case "stop"
+
+    GoTo over
+
+    
+
+    Case Else
+
+   
+
+    
+
+    End Select
+
+       
+
+Next Start
+
+over:
+
+Selection.EntireRow.Delete
+
+End Sub
+
+Sub 刪除空白列poemmacd圖()
+
+'
+
+' Macro1 Macro
+
+'
+
+'
+
+Workbooks("poem.xls").Sheets("poemmacd圖").Activate
+
+Range("B2802").Value = "stop"
+
+For Start = 2 To 2800
+
+Name1 = "b" & Start
+
+'Name2 = "c" & Start
+
+'Name3 = "d" & Start
+
+Range(Name1).Select
+
+aaa = ActiveCell.Value
+
+Select Case aaa
+
+    Case "0"
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case ""
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case "stop"
+
+    GoTo over
+
+    
+
+    Case Else
+
+   
+
+    
+
+    End Select
+
+       
+
+Next Start
+
+over:
+
+Selection.EntireRow.Delete
+
+End Sub
+
+Sub 刪除空白列macd紅棒()
+
+'
+
+' Macro1 Macro
+
+'
+
+'
+
+Workbooks("poem.xls").Sheets("macd紅棒").Activate
+
+Range("B2002").Value = "stop"
+
+For Start = 2 To 2000
+
+Name1 = "b" & Start
+
+'Name2 = "c" & Start
+
+'Name3 = "d" & Start
+
+Range(Name1).Select
+
+aaa = ActiveCell.Value
+
+Select Case aaa
+
+    Case "0"
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case ""
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case "stop"
+
+    GoTo over
+
+    
+
+    Case Else
+
+   
+
+    
+
+    End Select
+
+       
+
+Next Start
+
+over:
+
+Selection.EntireRow.Delete
+
+End Sub
+
+Sub 刪除空白列macd綠棒()
+
+'
+
+' Macro1 Macro
+
+'
+
+'
+
+Workbooks("poem.xls").Sheets("macd綠棒").Activate
+
+Range("B2002").Value = "stop"
+
+For Start = 2 To 2000
+
+Name1 = "b" & Start
+
+'Name2 = "c" & Start
+
+'Name3 = "d" & Start
+
+Range(Name1).Select
+
+aaa = ActiveCell.Value
+
+Select Case aaa
+
+    Case "0"
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case ""
+
+    Selection.EntireRow.Delete
+
+    Start = Start - 1
+
+    
+
+    Case "stop"
+
+    GoTo over
+
+    
+
+    Case Else
+
+   
+
+    
+
+    End Select
+
+       
+
+Next Start
+
+over:
+
+Selection.EntireRow.Delete
+
+End Sub</pre>
+</body>
+</html>
