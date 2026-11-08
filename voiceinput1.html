@@ -3,376 +3,498 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 語音導覽工作站 Pro</title>
+    <title>Zen AI 語音導覽與極速速記工作站 Pro</title>
+    <!-- 防瀏覽器快取鎖死 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         :root {
-            --primary: #00f2fe;
-            --secondary: #4facfe;
-            --bg: #0b0e14;
-            --card: #1c2128;
-            --text: #adbac7;
-            --danger: #f85149;
-            --success: #2ea043;
+            --bg-color: #0b1120;
+            --card-bg: #0f172a;
+            --card-border: #1e293b;
+            --accent-cyan: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
+            padding: 15px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
         }
 
         .container {
-            width: 95%;
-            max-width: 1000px;
-            background: var(--card);
-            border-radius: 24px;
-            border: 1px solid #444c56;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-            padding: 40px;
-            box-sizing: border-box;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 2.5rem;
-            margin: 0;
-            letter-spacing: -1px;
-        }
-
-        /* 儀表板狀態區 */
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: #22272e;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #444c56;
-            text-align: center;
-        }
-
-        .stat-label { font-size: 0.8rem; color: #768390; text-transform: uppercase; margin-bottom: 5px; }
-        .stat-value { font-size: 1rem; font-weight: bold; color: var(--primary); }
-
-        /* API & 設定區 */
-        .config-bar {
-            background: #22272e;
-            padding: 20px;
-            border-radius: 16px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 25px;
-            border: 1px solid #444c56;
-        }
-
-        input[type="password"] {
-            background: #0d1117;
-            border: 1px solid #444c56;
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            width: 220px;
-            outline: none;
-        }
-
-        .toggle-group { display: flex; gap: 15px; }
-        label { cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
-
-        /* 編輯區 */
-        .editor-wrapper { position: relative; }
-        textarea {
             width: 100%;
-            height: 400px;
-            background: #0d1117;
-            color: #e6edf3;
-            border: 1px solid #444c56;
-            border-radius: 16px;
-            padding: 25px;
-            font-size: 1.1rem;
-            line-height: 1.8;
-            box-sizing: border-box;
-            resize: none;
-            outline: none;
-            transition: all 0.3s;
-        }
-        textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.1); }
-
-        /* 控制按鈕 */
-        .main-controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
+            max-width: 900px;
         }
 
-        button {
-            padding: 14px 28px;
-            border: none;
+        .header-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--card-border);
+            border-left: 5px solid var(--accent-cyan);
             border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1rem;
         }
 
-        .btn-record { background: var(--danger); color: white; }
-        .btn-record.active { background: var(--success); animation: pulse 2s infinite; }
-        .btn-ai { background: var(--primary); color: #0b0e14; }
-        .btn-ai:disabled { background: #444c56; color: #768390; cursor: not-allowed; }
-        .btn-secondary { background: #373e47; color: white; }
-        .btn-secondary:hover { background: #444c56; }
+        .status-badge {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: var(--accent-cyan);
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .mic-control-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            background: #111b2b;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+        }
+
+        .mic-btn {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        .mic-btn.recording {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
 
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 160, 67, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(46, 160, 67, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 160, 67, 0); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
         }
 
-        #log-status {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: var(--primary);
-            font-weight: 500;
+        textarea {
+            width: 100%;
+            height: 140px;
+            background: #090e17;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 16px;
+            line-height: 1.6;
+            padding: 12px;
+            box-sizing: border-box;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-green {
+            background: #166534;
+            color: #bbf7d0;
+            border: 1px solid #22c55e;
+        }
+        .btn-green:hover { background: #15803d; }
+
+        .btn-purple {
+            background: #581c87;
+            color: #e9d5ff;
+            border: 1px solid #a855f7;
+        }
+        .btn-purple:hover { background: #6b21a8; }
+
+        .btn-secondary {
+            background: #1e293b;
+            color: var(--text-sub);
+            border: 1px solid #334155;
+        }
+        .btn-secondary:hover { background: #334155; color: #fff; }
+
+        .toast-msg {
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: bold;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .settings-toggle {
+            color: var(--text-sub);
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .settings-box {
+            display: none;
+            background: #090e17;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #1e293b;
+        }
+
+        .settings-box input {
+            width: 100%;
+            background: #111b2b;
+            border: 1px solid #334155;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .ai-result-box {
+            background: #0d1527;
+            border: 1px solid #3b82f6;
+            border-left: 5px solid var(--accent-purple);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>AI 語音導覽工作站</h1>
+    <!-- 頂部標題卡 -->
+    <div class="header-card">
+        <div>
+            <div class="title">🎙️ Zen AI 極速語音導覽與速記站</div>
+            <div style="color:var(--text-sub); font-size:12px; margin-top:4px;">
+                省額度工作流 • 預設 0 消耗直接複製 • 按需調用 AI 雙星中樞
+            </div>
+        </div>
+        <div class="status-badge" id="workStatus">🟢 就緒 (待命)</div>
     </div>
 
-    <div class="dashboard">
-        <div class="stat-card">
-            <div class="stat-label">目前連線模型</div>
-            <div id="activeModel" class="stat-value">等待啟動...</div>
+    <!-- 核心速記面板 -->
+    <div class="panel">
+        <div class="mic-control-box">
+            <button class="mic-btn" id="toggleMicBtn" onclick="toggleRecording()">
+                <span id="micIcon">🎤</span> <span id="micBtnText">點擊開始語音錄音</span>
+            </button>
+            <div style="font-size:13px; color:var(--text-sub);">
+                💡 電腦端長官亦可直接在下方游標處按 <b style="color:var(--accent-cyan);">Win + H</b> 極速語音打字！
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">導覽狀態</div>
-            <div id="aiStatus" class="stat-value">閒置中</div>
+
+        <textarea id="rawText" placeholder="錄音辨識文字將即時出現在此處，您也可以直接在此手動打字或貼上文字..."></textarea>
+
+        <!-- 一鍵下一關分流操作區 -->
+        <div class="btn-group">
+            <!-- 🌟 首選快速通道：0 額度消耗直接複製 -->
+            <button class="btn-green" onclick="copyRawText()">
+                📋 直接複製文字 (0額度)
+            </button>
+            
+            <!-- 🌟 按需調用：只有長官想潤稿時才手動點擊 -->
+            <button class="btn-purple" id="refineBtn" onclick="triggerAiRefine()">
+                ✨ 啟動 AI 智慧潤稿 (Gemini 3.6)
+            </button>
+
+            <!-- 輔助操作 -->
+            <button class="btn-secondary" onclick="speakText(document.getElementById('rawText').value)">
+                🔊 原文朗讀
+            </button>
+            <button class="btn-secondary" onclick="clearAll()">
+                🗑️ 清空
+            </button>
+
+            <span class="toast-msg" id="copyToast">✅ 已成功複製到剪貼簿！</span>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">字數統計</div>
-            <div id="charCount" class="stat-value">0</div>
+
+        <!-- AI 潤稿成果專屬卡片 (點擊潤稿後才展開) -->
+        <div class="ai-result-box" id="aiResultCard">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="color:#c084fc; font-weight:bold; font-size:14px;">✨ AI 智慧潤稿成果 (已校正錯字、標點與分段)：</span>
+                <button class="btn-green" style="padding:4px 10px; font-size:12px;" onclick="copyAiText()">📋 複製潤稿</button>
+            </div>
+            <div id="aiTextDisplay" style="white-space: pre-wrap; line-height: 1.6; font-size: 15px; color: #f1f5f9;"></div>
+            <div style="margin-top:10px;">
+                <button class="btn-secondary" style="font-size:12px; padding:4px 10px;" onclick="speakText(document.getElementById('aiTextDisplay').innerText)">🔊 朗讀潤稿</button>
+            </div>
         </div>
-    </div>
 
-    <div class="config-bar">
-        <span>🔑 API Key: <input type="password" id="apiKey"></span>
-        <div class="toggle-group">
-            <label><input type="checkbox" id="autoSpeak" checked> 自動朗讀</label>
-            <label><input type="checkbox" id="autoCopy" checked> 自動複製</label>
+        <!-- 摺疊設定區 (設定一次永久記住，不用每次打) -->
+        <div>
+            <span class="settings-toggle" onclick="toggleSettings()">⚙️ 展開/隱藏 Google Gemini 金鑰設定 (輸入一次永久儲存)</span>
+            <div class="settings-box" id="settingsBox">
+                <label style="color:var(--text-sub); font-size:12px;">Google Gemini API Key (可填多組以逗號分隔，自動輪詢，免重打)：</label>
+                <input type="password" id="geminiApiKey" placeholder="AIzaSy... (若留空則使用系統預設或純速記模式)" onchange="saveKey()">
+                <div style="color:#64748b; font-size:11px; margin-top:4px;">
+                    🔒 儲存在您本地瀏覽器 LocalStorage 中，絕不外流。未點擊「啟動 AI 潤稿」前，絕對不會向 Google 發送任何請求。
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div class="editor-wrapper">
-        <textarea id="output" placeholder="錄音前請先輸入指令「換行」、「句號」測試..."></textarea>
-    </div>
-
-    <div id="log-status">準備就緒，請開啟麥克風。</div>
-
-    <div class="main-controls">
-        <button id="recordBtn" class="btn-record">🎤 開始錄音</button>
-        <button id="aiBtn" class="btn-ai">✨ AI 智慧交互</button>
-        <button id="speakBtn" class="btn-secondary">🔊 導覽朗讀</button>
-        <button id="copyBtn" class="btn-secondary">📋 快速複製</button>
-        <button id="saveBtn" class="btn-secondary">💾 匯出存檔</button>
-        <button onclick="clearContent()" class="btn-secondary" style="color:var(--danger)">🗑️ 清除內容</button>
     </div>
 </div>
 
 <script>
-    const output = document.getElementById('output');
-    const recordBtn = document.getElementById('recordBtn');
-    const aiBtn = document.getElementById('aiBtn');
-    const speakBtn = document.getElementById('speakBtn');
-    const logStatus = document.getElementById('log-status');
-    const activeModelStat = document.getElementById('activeModel');
-    const charCountStat = document.getElementById('charCount');
-    const apiKeyInput = document.getElementById('apiKey');
+    // 1. 初始化讀取 LocalStorage Key
+    window.onload = function() {
+        const savedKey = localStorage.getItem("zen_voice_gemini_key") || "";
+        if (savedKey) {
+            document.getElementById("geminiApiKey").value = savedKey;
+        }
+    };
 
-    apiKeyInput.value = localStorage.getItem('gemini_2026_key') || '';
+    function saveKey() {
+        const val = document.getElementById("geminiApiKey").value.trim();
+        localStorage.setItem("zen_voice_gemini_key", val);
+    }
 
-    // --- 1. 語音辨識 STT (Speech to Text) ---
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'zh-TW';
-    recognition.continuous = true;
-    recognition.interimResults = true;
+    function toggleSettings() {
+        const box = document.getElementById("settingsBox");
+        box.style.display = box.style.display === "block" ? "none" : "block";
+    }
 
+    // 2. 語音辨識核心 (Web Speech API)
+    let recognition = null;
     let isRecording = false;
-    recognition.onresult = (e) => {
-        let text = '';
-        for (let i = 0; i < e.results.length; i++) {
-            let t = e.results[i][0].transcript;
-            // 即時語音指令處理
-            t = t.replace(/換行/g, "\n").replace(/句號/g, "。").replace(/逗號/g, "，");
-            if (t.includes("清除內容")) { output.value = ""; return; }
-            text += t;
-        }
-        output.value = text;
-        charCountStat.innerText = text.length;
-        output.scrollTop = output.scrollHeight;
-    };
 
-    recordBtn.onclick = () => {
-        if (!isRecording) {
-            recognition.start();
-            recordBtn.innerHTML = "🛑 停止錄音";
-            recordBtn.classList.add('active');
-            updateLog("🎧 系統正在聆聽並記錄...");
-        } else {
-            recognition.stop();
-            recordBtn.innerHTML = "🎤 開始錄音";
-            recordBtn.classList.remove('active');
-            updateLog("✅ 錄音已安全存檔");
-        }
-        isRecording = !isRecording;
-    };
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRec();
+        recognition.lang = 'zh-TW';
+        recognition.continuous = true;
+        recognition.interimResults = true;
 
-    // --- 2. 專業導覽員語音合成 TTS (Text to Speech) ---
-    function speak(text) {
-        window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'zh-TW';
-        msg.rate = 1.05;  // 稍快一點聽起來比較專業
-        msg.pitch = 1.0;
-        
-        // 嘗試選取更自然的台灣中文聲音 (如果系統支援)
-        const voices = window.speechSynthesis.getVoices();
-        const preferredVoice = voices.find(v => v.lang.includes('zh-TW') || v.name.includes('Yating'));
-        if (preferredVoice) msg.voice = preferredVoice;
+        let finalTranscript = '';
 
-        window.speechSynthesis.speak(msg);
-        updateLog("🔊 導覽員正在為您服務...");
-    }
-    speakBtn.onclick = () => speak(output.value);
+        recognition.onstart = function() {
+            isRecording = true;
+            document.getElementById("toggleMicBtn").classList.add("recording");
+            document.getElementById("micIcon").innerText = "⏹️";
+            document.getElementById("micBtnText").innerText = "正在錄音中 (點擊停止)...";
+            document.getElementById("workStatus").innerText = "🔴 錄音採樣中";
+            document.getElementById("workStatus").style.color = "var(--accent-red)";
+        };
 
-    // --- 3. 穩定多模型智慧切換 AI 核心 ---
-    async function runAI() {
-        const key = apiKeyInput.value.trim();
-        const text = output.value.trim();
-        if (!key || !text) { alert("請檢查 Key 與內容內容"); return; }
-        
-        localStorage.setItem('gemini_2026_key', key);
-        aiBtn.disabled = true;
-        document.getElementById('aiStatus').innerText = "AI 分析中";
-
-        // 智慧模型清單
-        const models = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-pro"];
-        const waitTimes = [2000, 5000, 10000]; 
-        let finalResult = "";
-
-        for (let i = 0; i < models.length; i++) {
-            const modelName = models[i];
-            activeModelStat.innerText = modelName;
-            updateLog(`⏳ 正在連線模型通道: ${modelName}...`);
-
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: "你是一位資深的導覽與速記專家。請潤稿這段內容，修正錯字、自動分段、並補上精確的標點。請維持口語自然的語氣以便朗讀，直接回傳潤稿後的結果：\n\n" + text }] }]
-                    })
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    finalResult = data.candidates[0].content.parts[0].text.trim();
-                    break; // 成功即跳出
-                }
-
-                // 處理 429 請求過快
-                if (response.status === 429) {
-                    updateLog(`⚠️ 流量限制，系統將在 ${waitTimes[i]/1000} 秒後切換模型...`);
-                    await new Promise(r => setTimeout(r, waitTimes[i]));
+        recognition.onresult = function(event) {
+            let interim = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
                 } else {
-                    throw new Error(data.error.message);
-                }
-            } catch (err) {
-                if (i === models.length - 1) {
-                    updateLog("❌ 通訊模組崩潰：" + err.message);
-                    aiBtn.disabled = false;
-                    return;
+                    interim += event.results[i][0].transcript;
                 }
             }
+            document.getElementById("rawText").value = finalTranscript + interim;
+        };
+
+        recognition.onerror = function(event) {
+            console.warn("語音辨識提示:", event.error);
+        };
+
+        recognition.onend = function() {
+            isRecording = false;
+            document.getElementById("toggleMicBtn").classList.remove("recording");
+            document.getElementById("micIcon").innerText = "🎤";
+            document.getElementById("micBtnText").innerText = "點擊開始語音錄音";
+            document.getElementById("workStatus").innerText = "🟢 錄音完成 (可直接複製)";
+            document.getElementById("workStatus").style.color = "var(--accent-green)";
+        };
+    } else {
+        document.getElementById("micBtnText").innerText = "瀏覽器不支援麥克風 (請用 Win+H)";
+    }
+
+    function toggleRecording() {
+        if (!recognition) {
+            alert("您的瀏覽器未開放 Web Speech API，請直接在文字框按鍵盤【Win + H】即可語音輸入！");
+            return;
+        }
+        if (isRecording) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    }
+
+    // 3. 直接複製 (0 額度消耗)
+    function copyRawText() {
+        const text = document.getElementById("rawText").value.trim();
+        if (!text) {
+            alert("目前尚無文字可複製！");
+            return;
+        }
+        navigator.clipboard.writeText(text).then(() => {
+            showToast();
+        });
+    }
+
+    function copyAiText() {
+        const text = document.getElementById("aiTextDisplay").innerText.trim();
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+            showToast();
+        });
+    }
+
+    function showToast() {
+        const toast = document.getElementById("copyToast");
+        toast.style.display = "inline-flex";
+        setTimeout(() => { toast.style.display = "none"; }, 2500);
+    }
+
+    function clearAll() {
+        document.getElementById("rawText").value = "";
+        document.getElementById("aiResultCard").style.display = "none";
+        document.getElementById("aiTextDisplay").innerText = "";
+    }
+
+    // 4. 原生語音朗讀 (TTS)
+    function speakText(text) {
+        if (!text || !window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "zh-TW";
+        utter.rate = 1.0;
+        window.speechSynthesis.speak(utter);
+    }
+
+    // 5. 按需 AI 潤稿 (長官主動點擊才消耗額度)
+    async function triggerAiRefine() {
+        const raw = document.getElementById("rawText").value.trim();
+        if (!raw) {
+            alert("請先輸入或錄製語音內容！");
+            return;
         }
 
-        if (finalResult) {
-            output.value = finalResult;
-            charCountStat.innerText = finalResult.length;
-            updateLog("✅ 智慧交互完成，資料已同步");
-            document.getElementById('aiStatus').innerText = "導覽就緒";
+        const apiKeyInput = document.getElementById("geminiApiKey").value.trim();
+        if (!apiKeyInput) {
+            alert("請先在下方「設定」中填入您的 Google Gemini Key (輸入一次永久儲存)！");
+            toggleSettings();
+            return;
+        }
 
-            // 自動化連動
-            if (document.getElementById('autoSpeak').checked) speak(finalResult);
-            if (document.getElementById('autoCopy').checked) {
-                navigator.clipboard.writeText(finalResult);
+        // 支援多 Key 逗號分隔，隨機輪詢
+        const keyList = apiKeyInput.split(",").map(k => k.trim()).filter(k => k);
+        const activeKey = keyList[Math.floor(Math.random() * keyList.length)];
+
+        const btn = document.getElementById("refineBtn");
+        btn.innerText = "⏳ AI 潤稿中 (Gemini 3.6)...";
+        btn.disabled = true;
+
+        // 🌟 鎖定官方極速主力 3.6 Flash
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${activeKey}`;
+
+        const payload = {
+            contents: [{
+                parts: [{
+                    text: `你是一位資深的台股量化戰情室速記與導覽專家。請潤稿以下口語文字：
+1. 修正同音錯別字與發音模糊詞。
+2. 自動按語意分段，並補上精確的繁體標點符號。
+3. 若提及股票名稱請自動轉為標準格式（例如提到台積電自動註明 2330 台積電）。
+4. 保持口語自然俐落以便朗讀，直接回傳潤稿結果，不要廢話前綴：\n\n${raw}`
+                }]
+            }],
+            generationConfig: { temperature: 0.3 }
+        };
+
+        try {
+            const resp = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (resp.ok) {
+                const data = await resp.json();
+                const refined = data.candidates[0].content.parts[0].text.trim();
+                
+                document.getElementById("aiResultCard").style.display = "block";
+                document.getElementById("aiTextDisplay").innerText = refined;
+                
+                // 自動將潤稿結果推入剪貼簿
+                navigator.clipboard.writeText(refined);
+                showToast();
+            } else {
+                alert(`AI 伺服器回傳異常 (HTTP ${resp.status})，請確認 Key 額度。原文字已保留供直接複製！`);
             }
-        }
-        aiBtn.disabled = false;
-    }
-
-    aiBtn.onclick = runAI;
-
-    // --- 4. 輔助功能 (複製、存檔、清除) ---
-    document.getElementById('copyBtn').onclick = () => {
-        navigator.clipboard.writeText(output.value);
-        updateLog("📋 內容已複製到剪貼簿");
-    };
-
-    document.getElementById('saveBtn').onclick = () => {
-        const blob = new Blob([output.value], { type: 'text/plain' });
-        const a = document.createElement('a');
-        const now = new Date();
-        a.href = URL.createObjectURL(blob);
-        a.download = `AI_Guide_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.txt`;
-        a.click();
-        updateLog("💾 檔案匯出完成");
-    };
-
-    function clearContent() {
-        if (confirm("確定要重設目前的所有內容嗎？")) {
-            output.value = "";
-            charCountStat.innerText = "0";
-            window.speechSynthesis.cancel();
-            updateLog("🗑️ 工作區已清空");
+        } catch (err) {
+            alert("連線異常，請檢查網路。原文字已保留供直接複製！");
+        } finally {
+            btn.innerText = "✨ 啟動 AI 智慧潤稿 (Gemini 3.6)";
+            btn.disabled = false;
         }
     }
-
-    function updateLog(msg) {
-        logStatus.innerText = msg;
-    }
-
-    // 初始化語音清單 (防止某些瀏覽器讀不到)
-    window.speechSynthesis.onvoiceschanged = () => {};
 </script>
-
 </body>
 </html>
