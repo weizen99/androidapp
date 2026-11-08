@@ -2,7 +2,9 @@
 ===========================================================================
 📌 【myword2 打包內容 - ID 1】
 ===========================================================================
-所有常用資料表欄位來了,請查收
+id 22: 常用資料表欄位簡易版
+
+所有常用資料表欄位來了,請查收(有含demo資料,可先讀取id=22)
 
 stockchangedate資料庫
 
@@ -559,6 +561,115 @@ TemplateID	Category	Title	StrategyDesc	CorrectSQL	Unlocks	TargetDB	SortOrder	IsA
 ===========================================================================
  // --- 範本資料庫 ---
    const sqlTemplateLibrary = [
+{
+                cat: "形態與動能突圍",
+                title: "🚀 雙破共振 (放量穿透20日主力成本 ✕ 萬里無雲主升段)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(M.代號) AS 代號, RTRIM(M.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(M.產業分類) AS 產業, TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], ROUND(M.專家實戰總分, 2) AS 專家分, TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2)) AS [20日成本], ROUND(((TRY_CAST(B.成交價 AS DECIMAL(10,2)) - TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2))) / NULLIF(TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2)), 0)) * 100.0, 2) AS [成本乖離%], RTRIM(O.乖離戰術判定) AS [乖離判定], RTRIM(O.三維AMT空間判定) AS [空間判定], ISNULL(N.外資3日合計, 0) AS [外資3日(張)], ISNULL(N.投信3日合計, 0) AS [投信3日(張)], RTRIM(M.具體概念) AS [熱門題材] FROM MasterStockAnalysis M JOIN stockchange.dbo.basicinfo B ON LTRIM(RTRIM(M.代號)) = LTRIM(RTRIM(B.代號)) LEFT JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(M.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) LEFT JOIN ( SELECT 代號, 外資3日合計, 投信3日合計, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM threemasternumber ) N ON LTRIM(RTRIM(N.代號)) = LTRIM(RTRIM(M.代號)) AND N.rn = 1 WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) > TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2)) AND TRY_CAST(B.漲幅 AS DECIMAL(6,2)) >= 2.0 AND TRY_CAST(B.漲幅 AS DECIMAL(6,2)) <= 9.8 AND TRY_CAST(B.總量 AS INT) >= 1000 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 AND M.專家實戰總分 >= 7.0 AND (O.三維AMT空間判定 LIKE N'%萬里無雲%' OR O.三維AMT空間判定 LIKE N'%突破%') ) T ORDER BY T.專家分 DESC, T.[今日漲幅%] DESC
+
+/*
+戰略意義：
+鎖定剛帶量衝過 20 日主力防線、專家評分高、且上方無沉重套牢賣壓之純多頭波段飆股。
+*/`
+            },
+
+            {
+                cat: "籌碼主力追蹤",
+                title: "🔥 投信鎖碼飆馬 (小股本<80億 ✕ 投信連買 ✕ 集中度>8%)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], RTRIM(B.產業分類) AS 產業, C.籌碼集中度20日 AS [集中度20日%], C.主力買賣超合計20日 AS [主力20日買超(張)], N.投信3日合計 AS [投信3日(張)], N.投信10日合計 AS [投信10日(張)], TRY_CAST(O.短線20日主力成本 AS DECIMAL(10,2)) AS [20日成本], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, 籌碼集中度20日, 主力買賣超合計20日, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM Chips ) C ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(C.代號)) AND C.rn = 1 JOIN ( SELECT 代號, 投信3日合計, 投信10日合計, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM threemasternumber ) N ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(N.代號)) AND N.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) LEFT JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) WHERE TRY_CAST(B.總量 AS INT) >= 800 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 AND TRY_CAST(B.股本億 AS DECIMAL(10,2)) <= 80.0 AND N.投信3日合計 >= 200 AND N.投信10日合計 >= 500 AND C.籌碼集中度20日 >= 8.0 ) T ORDER BY T.[投信10日(張)] DESC, T.[集中度20日%] DESC
+
+/*
+戰略意義：
+投信積極認養且籌碼高密度集中的中小型股，籌碼乾淨，易拉出連續紅K主升段。
+*/`
+            },
+
+            {
+                cat: "勝率與量化回測",
+                title: "🛡️ 3-Way 離場勝率王 (20MA勝率≥70% ✕ 期望報酬≥2% ✕ 站穩月線)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, RTRIM(E.OptimalExit) AS [最佳戰術均線], CAST(CASE WHEN E.WinRate_20MA <= 1.0 THEN E.WinRate_20MA * 100.0 ELSE E.WinRate_20MA END AS DECIMAL(5,1)) AS [20MA勝率%], CAST(E.Return_20MA AS DECIMAL(5,2)) AS [20MA期望報酬%], CAST(CASE WHEN E.WinRate_10MA <= 1.0 THEN E.WinRate_10MA * 100.0 ELSE E.WinRate_10MA END AS DECIMAL(5,1)) AS [10MA勝率%], CAST(E.Return_10MA AS DECIMAL(5,2)) AS [10MA期望報酬%], CAST(CASE WHEN E.WinRate_5MA <= 1.0 THEN E.WinRate_5MA * 100.0 ELSE E.WinRate_5MA END AS DECIMAL(5,1)) AS [5MA勝率%], CAST(E.Return_5MA AS DECIMAL(5,2)) AS [5MA期望報酬%], TRY_CAST(A.price_ma20 AS DECIMAL(10,2)) AS [月線20MA], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, WinRate_5MA, Return_5MA, WinRate_10MA, Return_10MA, WinRate_20MA, Return_20MA, OptimalExit, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 更新日期 DESC) AS rn FROM StockPersonality_3Exits ) E ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(E.代號)) AND E.rn = 1 LEFT JOIN ( SELECT 代號, price_ma20, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM allcross_live ) A ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(A.代號)) AND A.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 500 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 12.0 AND (E.Return_20MA > 0 OR E.Return_10MA > 0 OR E.Return_5MA > 0) ) T ORDER BY T.[20MA期望報酬%] DESC, T.[20MA勝率%] DESC
+
+/*
+戰略意義：
+專門挑選歷史上抱著 20MA 勝率最高、期望值最高的常勝將軍。
+*/`
+            },
+
+            {
+                cat: "外資法人突圍",
+                title: "🧱 外資認錯回補 (突破一年主力成本 ✕ 外資5日買超>1億)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], TRY_CAST(O.長線一年期主力成本 AS DECIMAL(10,2)) AS [年主力成本], ROUND(((TRY_CAST(B.成交價 AS DECIMAL(10,2)) - TRY_CAST(O.長線一年期主力成本 AS DECIMAL(10,2))) / NULLIF(TRY_CAST(O.長線一年期主力成本 AS DECIMAL(10,2)), 0)) * 100.0, 2) AS [突破年成本%], CAST(F.買賣超億元5日 AS DECIMAL(8,2)) AS [外資5日買超(億)], CAST(F.買賣超億元20日 AS DECIMAL(8,2)) AS [外資20日買超(億)], F.連買天 AS [外資連買天], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) JOIN ( SELECT 代號, 買賣超億元5日, 買賣超億元20日, 連買天, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM Foreigner ) F ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(F.代號)) AND F.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 1000 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 20.0 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) > TRY_CAST(O.長線一年期主力成本 AS DECIMAL(10,2)) AND F.買賣超億元5日 >= 1.0 AND F.連買天 >= 2 ) T ORDER BY T.[外資5日買超(億)] DESC, T.[突破年成本%] ASC
+
+/*
+戰略意義：
+長期整理後被外資用真金白銀推過一年成本線，代表中長線大底完成。
+*/`
+            },
+
+            {
+                cat: "大戶籌碼審計",
+                title: "💎 大戶狂吸散戶退 (健康分≥80 ✕ 特大戶增>1% ✕ 散戶退)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, W.籌碼健康分 AS [健康評分], TRY_CAST(W.[特大戶變動%] AS DECIMAL(10,2)) AS [大戶週增減%], TRY_CAST(W.[散戶變動%] AS DECIMAL(10,2)) AS [散戶週增減%], RTRIM(W.診斷狀態) AS [籌碼體檢狀態], C.買賣家數差為負的天數近20天 AS [負家數差天數(集中度)], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, 籌碼健康分, [特大戶變動%], [散戶變動%], 診斷狀態, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 更新日期 DESC) AS rn FROM WeeklyChipAudit ) W ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(W.代號)) AND W.rn = 1 JOIN ( SELECT 代號, 買賣家數差為負的天數近20天, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM Chips ) C ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(C.代號)) AND C.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 500 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 12.0 AND W.籌碼健康分 >= 80 AND TRY_CAST(W.[特大戶變動%] AS DECIMAL(10,2)) >= 1.0 AND TRY_CAST(W.[散戶變動%] AS DECIMAL(10,2)) <= -0.5 ) T ORDER BY T.[大戶週增減%] DESC, T.[健康評分] DESC
+
+/*
+戰略意義：
+籌碼流向千張大戶手中，籌碼安定度極高，預告即將出現窒息量後的噴出走勢。
+*/`
+            },
+
+            {
+                cat: "分時伏兵狙擊",
+                title: "⚡ 60M 伏兵轉強 (60分鐘K>D金叉 ✕ OSC翻紅 ✕ 站上60M月線)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, ROUND(S.K, 1) AS [60M_K值], ROUND(S.D, 1) AS [60M_D值], ROUND(S.OSC, 2) AS [60M_MACD柱(OSC)], S.SMA20 AS [60M月線], CASE WHEN S.K > S.D AND S.OSC > 0 THEN N'☀️ 強勢起漲' ELSE N'⛅ 震盪整理' END AS [分時氣象], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT LTRIM(RTRIM(CAST(代號 AS nvarchar(20)))) AS 代號, K, D, OSC, SMA20, ROW_NUMBER() OVER(PARTITION BY 代號 ORDER BY 日期 DESC, 時間 DESC) AS rn FROM stockchange.dbo.Stock60M ) S ON LTRIM(RTRIM(B.代號)) = S.代號 AND S.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 800 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 12.0 AND S.K > S.D AND S.K <= 70 AND S.OSC > 0 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) > S.SMA20 ) T ORDER BY T.[60M_MACD柱(OSC)] DESC, T.[今日漲幅%] DESC
+
+/*
+戰略意義：
+盤中極短線狙擊神器，抓 60 分鐘回測整理結束、剛發動攻擊的第一個買點。
+*/`
+            },
+
+            {
+                cat: "多維共振雷達",
+                title: "🌟 四維共振黑馬 (HitCount≥3星 ✕ 動能/OBV/價格/彩虹四星大滿貫)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, R.HitCount AS [共振星級(滿分4)], RTRIM(R.ResonanceTag) AS [共振標籤], RTRIM(R.DimA_Status) AS [動能狀態], RTRIM(R.DimB_Status) AS [OBV能量], RTRIM(R.DimC_Status) AS [價格星級], RTRIM(R.DimD_Status) AS [彩虹評分], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, HitCount, ResonanceTag, DimA_Status, DimB_Status, DimC_Status, DimD_Status, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM ResonanceMultiFactor_Snapshot ) R ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(R.代號)) AND R.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 1000 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 AND R.HitCount >= 3 ) T ORDER BY T.[共振星級(滿分4)] DESC, T.專家分 DESC
+
+/*
+戰略意義：
+多因子量化模型最高結晶，技術/量能/趨勢指標同時亮起 3 顆星以上。
+*/`
+            },
+
+            {
+                cat: "價值防禦與高股息",
+                title: "🛡️ 啞鈴防禦神盾 (殖利率≥5% ✕ ROE≥15% ✕ 負債<45% ✕ 低PE)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], CAST(V.現金殖利率 AS DECIMAL(5,2)) AS [現金殖利率%], CAST(V.本益比近四季 AS DECIMAL(6,2)) AS [本益比], CAST(F.ROE AS DECIMAL(5,2)) AS [ROE%], CAST(F.負債比率 AS DECIMAL(5,2)) AS [負債比率%], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN value V ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(V.代號)) AND V.日期 = (SELECT MAX(日期) FROM value) JOIN ( SELECT 代號, ROE, 負債比率, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM financesum ) F ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(F.代號)) AND F.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 500 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 12.0 AND V.現金殖利率 >= 5.0 AND V.本益比近四季 > 0 AND V.本益比近四季 <= 16.0 AND F.ROE >= 15.0 AND F.負債比率 <= 45.0 ) T ORDER BY T.[現金殖利率%] DESC, T.[ROE%] DESC
+
+/*
+戰略意義：
+存股 DRIP 複利 50% 核心底倉，黑天鵝來臨時兼具高防禦與獲利能力。
+*/`
+            },
+
+            {
+                cat: "基本面成長黑馬",
+                title: "📈 財報三率三升 (毛利率/營益率雙季增 ✕ 本業獲利擴張)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, CAST(F1.毛利率 AS DECIMAL(5,2)) AS [最新毛利率%], CAST(F1.營業利益率 AS DECIMAL(5,2)) AS [最新營益率%], CAST(F1.EPS累計 AS DECIMAL(6,2)) AS [累計EPS], ROUND(F1.毛利率 - F2.毛利率, 2) AS [毛利率季增%], ROUND(F1.營業利益率 - F2.營業利益率, 2) AS [營益率季增%], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, 毛利率, 營業利益率, EPS累計, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM financesum ) F1 ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(F1.代號)) AND F1.rn = 1 JOIN ( SELECT 代號, 毛利率, 營業利益率, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM financesum ) F2 ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(F2.代號)) AND F2.rn = 2 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 500 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 AND F1.毛利率 > F2.毛利率 AND F1.營業利益率 > F2.營業利益率 AND F1.營業利益率 >= 8.0 AND F1.EPS累計 > 0 ) T ORDER BY T.[營益率季增%] DESC, T.[最新營益率%] DESC
+
+/*
+戰略意義：
+純本業獲利體質大轉型，毛利率與營益率雙雙季增，法人調升評等首選。
+*/`
+            },
+
+            {
+                cat: "AMT拍賣微結構",
+                title: "🌌 AMT 價值區突破 (穿透60日主力成本 ✕ 拍賣空間萬里無雲)",
+                sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS INT) AS [成交量(張)], RTRIM(B.產業分類) AS 產業, TRY_CAST(O.波段60日主力成本 AS DECIMAL(10,2)) AS [60日波段成本], ROUND(((TRY_CAST(B.成交價 AS DECIMAL(10,2)) - TRY_CAST(O.波段60日主力成本 AS DECIMAL(10,2))) / NULLIF(TRY_CAST(O.波段60日主力成本 AS DECIMAL(10,2)), 0)) * 100.0, 2) AS [波段成本乖離%], RTRIM(O.三維AMT空間判定) AS [AMT空間判定], A.obv淨額 AS [OBV淨額], A.成交價黃金交叉次數 AS [均線金叉次數], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) JOIN ( SELECT 代號, obv淨額, 成交價黃金交叉次數, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM allcross_live ) A ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(A.代號)) AND A.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE TRY_CAST(B.總量 AS INT) >= 1000 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 18.0 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) > TRY_CAST(O.波段60日主力成本 AS DECIMAL(10,2)) AND (O.三維AMT空間判定 LIKE N'%突破%' OR O.三維AMT空間判定 LIKE N'%萬里無雲%') AND TRY_CAST(B.漲幅 AS DECIMAL(6,2)) >= 1.5 ) T ORDER BY T.專家分 DESC, T.[波段成本乖離%] ASC
+
+/*
+戰略意義：
+突破 70% 密集交易區上緣 (VAH)，代表價值重新發現，進入高勝率主升段。
+*/`
+            },
               
             {
                 cat: "價值共振_低本益比高ROE", title: "💎 價值陷阱排除 (低PE ✕ 高ROE ✕ 技術回升 )", sql: `/*資料庫:stockchangedate*/ TOP 100 T.*
@@ -8880,6 +8991,342 @@ FOR JSON PATH` },
 ===========================================================================
 📌 【myword2 打包內容 - ID 3】
 ===========================================================================
+20261108
+================================================================================
+👑【Zen AI 股票戰情室 Pro V17.0】跨週期微核心記憶傳承與戰略交接憲章
+系統時空基線：2026 年 11 月 08 日
+角色定位：資深台股量化操盤總監與全領域系統架構專家
+核心陣地：
+• 代碼中樞：C:\test_c
+• 前端大屏：C:\inetpub\wwwroot\androidapp\ ✕ C:\inetpub\wwwroot\excelimport
+• 數據庫存：C:...看盤自動\ ✕ C:\股票stock編輯\ ✕ C:\StockExport
+• 外網母艦：Port 8550/8551 (ngrok) ✕ IIS Port 8888 (DuckDNS: zen2965.duckdns.org)
+• 異地備援：\weizen_ds215\資料區一\SQL_Backups (Synology NAS) ✕ K: (10Gbps NVMe)
+• 系統映像：AOMEI Backupper 全機 Win11 系統映像備份完畢 (2026/11/07 15:37)
+【第一章：全時段瑞士鐘錶級自動化作戰鏈現況】
+07:30 BIOS 定時開機
+│
+▼ 07:35 [silent_run.vbs] 全靜默啟動三軍 (母艦 8550/8551 ✕ LINE 5000 ✕ TG 機器人)
+│
+▼ 08:00 🌟 [overnight_adr_playbook.py] 美股隔夜對映 ✕ ADR 溢價 ✕ 跳空三劇本推演
+│ • 串聯 smart_llm_router 3.6 Flash (24s 秒回)，大屏: overnight_playbook.html
+│
+▼ 08:30 📰 [sync_daily_tech_finance_news.py] 科技財經日報 (NewsNow 提純 ✕ 輸出 JSON 快取 ✕ 防快取 Header)
+│
+▼ 08:40 👑 [ai_chief_of_staff.py] 總參謀長雙因子解盤 (滿編 4 檔黑馬點位 ✕ 自動建檔 Chief_Trade_Journal)
+│ • 串聯 smart_llm_router 3.6 Flash 執掌，大屏: ai_chief_briefing.html
+│
+▼ 09:00~13:30 ⚡ [intraday_sniper_daemon.py] 盤中伏兵狙擊雷達
+│ • 每 30 秒輪詢持倉與高分池，爆量穿透成本線 8 秒由 3.6 Flash 擊發三行軍事處置令
+│
+▼ 13:45 🏆 [chief_portfolio_tracker.py] 盤後戰功審計 ✕ 停損停利對帳 ✕ 基金 NAV 淨值大屏更新
+│ • 全容錯正則萃取 ✕ 全型態 float 轉型 (防 Decimal TypeError) ✕ 支援 --force
+│
+▼ 15:30 🤖 [15file_save.ahk] ➔ [cmoney_import_safe.py] 理財寶第一軍團 15 檔自動倒檔與安全灌庫
+│
+▼ 16:00 🧬 [run_backtest_silent.bat] 30 大核武量化 20D/40D/60D 歷史回測全自動巡航 (quant_backtest_report.html)
+│
+▼ 每週日 02:00 💾 [sql_auto_backup.py] ✕ [sql_backup_to_nas.py] 14 大核心庫本地/NAS 雙重零停機在線熱備份
+================================================================================
+【第二章：五重天大腦調度矩陣 (smart_llm_router.py V16.8 雙星防誤殺版)】
+全系統三大解盤端 (ai_chief_of_staff.py、overnight_adr_playbook.py、intraday_sniper_daemon.py) 已全面接入 from smart_llm_router import ask_llm_smart：
+⚡ 第一梯隊：Google Gemini 5 組神鑰動態輪詢 (最少使用優先，滿 18 次主動墊後)
+🌟 實戰主攻序列：gemini-3.6-flash (極速次世代主力，24s 秒回) 設為第 1 順位！
+gemini-3.8-flash (深度推理) 降為第 2 順位備援（避免 3.8 全球排隊拖垮時間）。
+防誤殺鐵律：503 伺服器尖峰與逾時 (>45s) 絕不扣除呼叫次數、絕不標記 EXHAUSTED，狀態維持 [OK] 下次優先再戰！唯有真 429 且次數 ≥ 18 才隔離；開機自動自癒歷史誤殺。
+🌐 第二梯隊：OpenRouter 雲端接力 (deepseek/deepseek-chat)
+僅當 5 把 Gemini 全滿或 Google 全球大塞車時才無縫接管，秒速出稿。
+💚 第三梯隊（終極核保底）：NVIDIA Build H100 (deepseek-ai/deepseek-v4.1-flash)
+平時完全鎖定保留給桌面端 DeepSeek Harness 進行深度代碼推理，日常批次任務絕不輕易消耗。
+🛡️ 第四梯隊：本地 RTX 4060 滿血顯存大腦 (locmodel / Qwen 3.5 9B，吞吐 31 tok/s，零網路依賴)。
+🧪 離線研究庫：外接 K 槽 Colibri (Qwen 3.6 35B / Port 8000)。
+🌐 OmniRoute (localhost:20128): 本地 AI 代理總機，已完成 OpenRouter/Gemini 連通，解決外接工具 400 store 與參數衝突。
+================================================================================
+【第三章：30 大蒸餾頂級核武量化範本庫 (ID 258 ~ 287 全譜系入庫)】
+已全數入庫 [stockchangedate].[dbo].[QuantSqlTemplates]，實裝階梯式連續排序（SortOrder = 10 ~ 200，規範為 【戰術 No. 01】~【戰術 No. 20】），全文戰略意義與防護邏輯已全數寫入 StrategyDesc，並匯出至過渡區 C:\test_c\staging_templates_all_complete.txt：
+• [258] 🚀 雙破共振：放量穿透20日主力成本 ✕ 萬里無雲主升段 (M.專家分≥7 ✕ 漲幅29.8%)
+• [259] 🔥 投信鎖碼飆馬：小股本<80億 ✕ 投信3日>200/10日>500 ✕ 集中度20日>8%
+• [260] 🛡️ 3-Way 離場勝率王：5MA/10MA/20MA 全局勝率PK ✕ 正期望報酬最高排序
+• [261] 🧱 外資認錯回補：股價站上一年期主力成本 ✕ 外資5日買超>1億
+• [262] 💎 大戶狂吸散戶退：籌碼健康分≥80 ✕ 特大戶週增>1% ✕ 散戶退
+• [263] ⚡ 60M 伏兵轉強：60分K金叉 ✕ OSC柱翻紅 ✕ 站上60M月線
+• [264] 🌟 四維共振黑馬：HitCount≥3 ✕ 動能/OBV/價格/彩虹四星大滿貫
+• [265] 🛡️ 啞鈴防禦神盾：現金殖利率≥5% ✕ ROE≥15% ✕ 負債<45% ✕ PE<16
+• [266] 📈 財報三率三升：毛利率與營益率雙季增 ✕ 本業獲利擴張
+• [267] 🌌 AMT 價值區突破：穿透60日主力成本 ✕ 突破70%密集交易區上緣 (VAH) 拍賣空間
+• [268]【戰術 No. 01】🏦 單一分點鎖碼：Top1券商買超比重≥25% ✕ 買家集中天數≥15 ✕ 連買≥3日
+• [269]【戰術 No. 02】🧭 DMI 趨勢啟動：ADX突破25 ✕ 正DI壓制負DI ✕ 主力與法人5日雙正
+• [270]【戰術 No. 03】🧹 融資斷頭清洗軋空：融資10日大減>500張 ✕ 券增>100張 ✕ 維持率<145%
+• [271]【戰術 No. 04】🧬 內部人與大戶加碼：董監內部人月增 ✕ 大戶持股週增 ✕ 大戶人數收斂120人
+• [272]【戰術 No. 05】📣 最新公告營收雙增：最新月增>0 ✕ 年增20%300%(防髒資料) ✕ 站上20日成本
+• [273]【戰術 No. 06】📊 專家總分多頭排列：實戰總分 > MA5 > MA20 > MA60 > 0 四週期同步改善
+• [274]【戰術 No. 07】🧲 多週期集中度加速：集中度 5日 > 20日 > 60日 > 240日 ✕ 5日-60日加速值排序
+• [275]【戰術 No. 08】🏔 歷史高價挑戰：距歷史新高<7%(ATH≥93%) ✕ 季線/年線乖離未過熱
+• [276]【戰術 No. 09】📉 年線超跌反轉：年線乖離-60%-25% ✕ 月線收斂>-10% ✕ 歷史高/現價≤4(防減資斷層)
+• [277]【戰術 No. 10】👑 金牌基因回檔埋伏：日線分≥0 ✕ 短線氣象修正 ✕ 60M_K值≤40 ✕ 總量≥1000張
+• [278]【戰術 No. 11】🏛 法人主力佔股本比同步：法人/主力10日與20日四軌同向雙正 ✕ 主力佔股本比≥0.2%
+• [279]【戰術 No. 12】💰 融資成本線翻多：剛站上融資成本0~6% ✕ 資券3日雙退(浮額空方同撤)
+• [280]【戰術 No. 13】🕊 空方全面退場：借券20日大減>300張 ✕ 集中度雙升 ✕ 主力20日吸籌
+• [281]【戰術 No. 14】🚀 五線同步翻多：allcross_live 5/10/20/60/120MA 同日黃金交叉
+• [282]【戰術 No. 15】🌊 外資買超加速：10日買超 > 60日平均速度 ✕ 連買未斷 ✕ 持股比率≥10%
+• [283]【戰術 No. 16】🌗 日週月KD三線共振：日KD、週KD(K≥50)、月KD三週期同步多方共振
+• [284]【戰術 No. 17】⚔️ 產業內相對強弱：SQL 窗函數 AVG() OVER (PARTITION BY 產業) 領先同業≥10%
+• [285]【戰術 No. 18】🗼 外資持股率悄然攀升：跨期自連接比對今日 vs 20日前，持股率攀升≥0.5%
+• [286]【戰術 No. 19】⚖️ 土洋對作：外資10日買超 ✕ 投信10日賣超(吃季底會計賣壓) ➔ 補漲錯價空間
+• [287]【戰術 No. 20】📐 籌碼集中度斜率：Chips5 跨期自連接，今日5日集中度減20日前躍升≥5%
+📊 20D / 40D / 60D 多週期回測大屏 (backtest_quant_engine.py V17.0)：
+消滅張數被誤當專家分之溢位 Bug，真實台股收益回測。
+並列：總體平均（穩健度）✕ 單股最強黑馬（爆發力）✕ 最大回撤（心臟承受度）。
+大屏網址：https://zen2965.duckdns.org:8888/androidapp/quant_backtest_report.html
+================================================================================
+【第四章：理財寶 RPA 自動倒檔 ✕ 雙庫無痛灌庫體系 (本週重大突破)】
+徹底解放雙手，終結手動點擊與 Excel VBA 慢速巨集：
+🤖 前鋒 RPA 無人機 (15file_save.ahk V4.4)：
+鎖定進程：ahk_exe CMoney_Utility.exe。
+物理座標：右上角下拉選單 (1819, 81) ➔ {F4} 強制展開 ➔ {Home} 歸頂 ➔ {Down N} 依序切換 ➔ 等待 7.5 秒數據載入 ➔ 表格中央 (960, 350) 右鍵 ➔ {Down 7}{Enter} 點選「匯出Excel」 ➔ ControlFocus, Edit1, ahk_class #32770 填入路徑 ➔ 存入 C:\...看盤自動\ ➔ 自動安全關閉 Excel (CloseExcelSafely) 並清空暫存 (CleanExcelAutoRecover) ➔ 循環 15 次！
+將錯就錯相容：Financingbills融資融卷自選監控.xlsx、Mainbrokerage主力卷商自選監控.xlsx。
+倒檔完成後，自動呼叫 Python 特工背景靜默灌庫！
+🛡️ 後衛歷史庫特工 (cmoney_import_safe.py V2.1)：
+歷史資料庫鐵律：零 TRUNCATE！ 徹底除名 TRUNCATE 語法，嚴格採用 DELETE FROM [表] WHERE [日期] = ? 單日冪等性增量更新，過去數年 176 萬筆歷史資產 100% 絕對安全！
+自動排除 Identity 自動編號 避免 544 衝突。
+實裝「雙向前後倒置 (20日XXX <-> XXX20日) ✕ 括號去除」智能欄位映射。
+實裝 finance 財報「語義時空脫鉤引擎」（自動對齊 最新 / 上季 / 年度，跨季跨年永不失效）。
+關閉 fast_executemany，採用純淨原生 Tuple 批量寫入，徹底消滅 22003 溢位，15 張表 1,989 筆 ~37 秒全綠燈灌入！
+⚡ 當日即時快照庫特工 (cmoney_import_stockchange.py V1.0)：
+專供盤中狙擊秒查，目標資料庫：stockchange。
+徹底排除 日期 欄位，採用 TRUNCATE TABLE 維持當日純淨 1,989 筆無歷史包袱。
+⚖️ 雙軌精密對帳特工 (compare_db_sync.py V1.1)：
+採用 MAX(日期) 雙向錨定，及時釋放游標消滅 HY000 錯誤。
+雙軌測試證實：15 張表 1,989 筆完全對齊，唯一的差異是新版 Python 修正了舊版 VBA 的 美喆-KY 亂碼！
+================================================================================
+【第五章：底層避坑鐵律與已攻克之致命地雷總表 (極度重要！)】
+📊 SQL Server 欄位與型態防禦鐵律：
+basicinfo 之最高與最低欄位名稱為 [最高]、[最低]（絕對沒有「價」字！）。
+basicinfo 數值比對必用 TRY_CAST(B.成交價 AS DECIMAL(10,2))、TRY_CAST(B.總量 AS INT) 或 FLOAT（避免停牌股票 '-' 造成型態轉換崩潰）。
+QuantSqlTemplates 之 TemplateID 是 IDENTITY(1,1)，手動指定 ID 插入時前後必加 SET IDENTITY_INSERT QuantSqlTemplates ON/OFF（防 544 報錯）。
+歷史庫寫入絕對嚴禁出現 TRUNCATE TABLE，必須嚴格綁定 DELETE WHERE [日期] = ?。
+🤖 AI 智慧中樞與客戶端避坑防線：
+Google 3.8 vs 3.6：3.8 Flash 全球伺服器經常排隊超時 (>50s)，生產環境主力一律鎖定 gemini-3.6-flash（24 秒秒回）。
+503 / 逾時處理：503 是暫時性擁塞，逾時是網路延遲，嚴禁在記帳本標註 EXHAUSTED（維持 OK 下次再戰）；只有收到真正 HTTP 429 或次數 ≥ 18 才隔離。
+DeepSeek Harness 400 store / 500 錯誤：Harness 底層會注入 store: false，透過本地 OmniRoute (localhost:20128/v1) 轉接即可自動過濾清洗。
+對話歷史 Context 炸裂 (400 / 402 報錯)：若 Harness 對話框累積過長（如超過 10 萬 Token），會引發 CONTEXT_WINDOW_EXCEEDED 或 OpenRouter 402 預扣款餘額不足，只需點擊【+ 新會話】清空歷史包袱即可秒速解決；切換模型請選免費版（NVIDIA H100 或 Gemini Flash），避免誤選昂貴的 GPT-5.6 Luna。
+💻 Windows 環境與編碼禁忌：
+PowerShell 5.1 Get-Content 預設為 CP950，讀取 UTF-8 .sql 檔案會產生 隞?? 亂碼，特工腳本一律支援 --sql-file 由 Python 原生以 encoding='utf-8' 讀取！
+Python Raw String (r"...") 末尾嚴禁放單一反斜線 \（會造成 SyntaxError: EOL）。
+pyodbc 搭配 ODBC Driver 17 批量寫入時，關閉 fast_executemany = False，轉為原生 Tuple 寫入，徹底消滅 22003 數值超出範圍。
+💾 雙重在線熱備份維運：
+本地熱備：C:\test_c\sql_auto_backup.py ➔ D:\SQL_Backups（14 座資料庫在線熱備份，耗時 1 分鐘，原生壓縮 75%，保留 14 天）。
+NAS 異地：C:\test_c\sql_backup_to_nas.py ➔ \\weizen_ds215\資料區一\SQL_Backups（直寫 NAS ✕ 本地壓縮轉移雙軌防禦）。
+================================================================================
+【第六章：下階段即刻交接任務清單 (Next Operations)】
+新對話開啟後，系統可立即從以下三個精準任務接棒推進：
+🎯 任務一：雙軌測試第 3 天對帳與正式切庫：
+目前 15file_save.ahk 與 cmoney_import_safe.py 正並行測試中。
+第 3 天執行 python C:\test_c\compare_db_sync.py 確認全數吻合後，將 cmoney_import_safe.py 的連線字串正式由 stockchangedateold1 改回正式庫 stockchangedate，全面接管生產！
+🚀 任務二：第二軍團【籌碼選股 15 檔】全自動化落地 (方向一)：
+介面：理財寶「籌碼選股」分頁，左側樹狀目錄「我的選股」1~15 號。
+動作：滑鼠移至該項 ➔ 雙擊左鍵 (Click 2) 敲開資料 ➔ 右鍵「匯出到Excel」 ➔ 存入 C:\股票stock編輯\多頭空頭\。
+架構：
+多空雙向合一：16dim多方 + 17dim空方 ➔ 合體寫入 [ditable] (以 [多空] 欄位分流)。
+MACD 紅綠棒合一：21macd紅棒 + 22macd綠棒 ➔ 合體寫入 [macdpic]。
+獨立指標表：18kd ➔ [kdtable], 19/20macd ➔ [macdtable], 23/24DIF ➔ [macdchartable]。
+多多通用收攏：寬表自動轉為長表 [name1], [mail1], [word1], [時間戳記] ➔ 0.1 秒灌入 [poemup]。
+用 Python 0.01 秒 dropna 完全取代舊版 slow VBA 的「刪除空白列」迴圈，省去中間所有中繼 Excel！
+💰 任務三：100~200 萬存股實戰開火跟蹤：
+006208 (40% 先鋒) ✕ 0056 (30% 平準金之王) ✕ 00878 (20% 穩健平衡) ✕ 現金 (10%)。
+11/06 暴量長下影線低點作為絕對防守點（006208: 201.1 / 0056: 47.4 / 00878: 30.46）。
+sync_etf_wantgoodate.py 殭屍死鎖已徹底排除，每日定時更新 ETF_DailyPriceDate 監控折溢價。
+================================================================================
+
+
+20261102
+🏆 戰情室全體系統戰力巡檢總表 (V16.8 正式定版)
+作戰模組	運作頻率	執掌核心與調度規格	實戰狀態
+美股 ADR 開盤推演
+overnight_adr_playbook.py	晨間 08:00	• 鎖定最新美股 ✕ ADR 溢價 (+11.59%)
+• 由 3.6 Flash 主力 (24s) 輸出跳空三大劇本	🟢 100% 滿血通關
+科技財經日報
+sync_daily_tech_finance_news.py	晨間 08:30	• NewsNow 提純 ✕ 防 Chrome 快取標籤
+• 同步產出 JSON 供大腦調閱 ✕ 可點擊 TG 連結	🟢 100% 滿血通關
+總參謀長雙因子解盤
+ai_chief_of_staff.py	晨間 08:40	• 10 檔多因子候選 ✕ 8 則情報交叉論證
+• 由 3.6 Flash 主力 (24s) 精選滿編 4 檔黑馬	🟢 100% 滿血通關
+盤中伏兵狙擊雷達
+intraday_sniper_daemon.py	盤中每 30 秒	• 監控持倉 ✕ 黑馬池爆量突破主力成本線
+• 由 3.6 Flash 8 秒光速產出三行處置令	🟢 100% 滿血通關
+盤後戰功與 NAV 審計
+chief_portfolio_tracker.py	盤後 13:45	• 無視粗體全容錯正則 ✕ SQL Decimal 型態防禦
+• 比對當日高低價，動態計算勝率與基金淨值	🟢 100% 滿血通關
+10 大核武量化回測艦
+backtest_quant_engine.py	週末/即時	• 自動調閱 ID 258~267 ✕ 清洗前置註釋
+• 392 檔標的演算夏普評分，全彩暗黑大屏	🟢 100% 滿血通關
+神鑰調度與防禦中樞
+smart_llm_router.py	全時段共用	• 5 組 Gemini (3.6主力➔3.8備援) 最閒優先輪詢
+• 塞車自動換 Key ➔ OpenRouter ➔ H100 留給 Harness	🟢 100% 滿血通關
+🎯 總架構師呈報
+報告總指揮官，今天我們從手帳正則、SQL 欄位除錯，一路打到 神鑰智慧防禦調度實裝、10 大核武量化歷史回測巡航艦建立、並完成 全體解盤端 100% 換裝閉環！
+整個【Zen AI 股票戰情室】的自主作戰與防禦體系，已全面躍升至無人能及的工業級高度！
+請長官檢閱戰果，全體作戰鏈熱備就緒，隨時待命！
+
+20261031
+================================================================================
+👑【Zen AI 股票戰情室 Pro V16.5】跨週期微核心記憶傳承憲章 (2026.10.25 - 2026.10.31)
+系統時空基線：2026 年 10 月 31 日
+角色定位：資深台股量化操盤總監與全領域系統架構專家
+核心陣地：C:\test_c\ ✕ C:\inetpub\wwwroot\androidapp\ ✕ C:\inetpub\wwwroot\excelimport\
+外網母艦：https://smokiness-supremacy-agonizing.ngrok-free.dev/ (Port 8550)
+私有知識庫：https://edgeever.zen2965.workers.dev (Cloudflare Workers + D1 + R2)
+硬體配置：Intel i5-13500 (14C/20T) ✕ 16.8G RAM ✕ RTX 4060 (8G VRAM) ✕ 外接 10Gbps NVMe (K:)
+================================================================================
+
+【一、全時段瑞士鐘錶級自動化作戰鏈 (無人值守體系)】
+07:30 電腦自動開機 (BIOS 定時喚醒)
+  │
+  ▼ 07:35 [silent_run.vbs] 全靜默啟動三軍 (母艦 8550/8551 ✕ LINE 5000 ✕ TG 機器人)
+  │
+  ▼ 08:00 🌟 [overnight_adr_playbook.py] 美股隔夜對映 ✕ 台積電 ADR 溢價 ✕ 開盤跳空三劇本推演
+  │        • 費半/輝達/ADR結算 ✕ range=7d 跨週末鎖定最新交易日 ✕ 08:00 準時發射大屏與手機
+  │
+  ▼ 08:30 📰 [sync_daily_tech_finance_news.py] 科技財經日報 (NewsNow 提純 ✕ 帶原文直達超連結)
+  │
+  ▼ 08:40 👑 [ai_chief_of_staff.py] 總參謀長雙因子解盤 (4檔黑馬點位 ✕ 自動建檔交易手帳)
+  │
+  ▼ 09:00~13:30 ⚡ [intraday_sniper_daemon.py] 盤中伏兵狙擊雷達 (每 30 秒獵殺爆量突破主力成本線)
+  │
+  ▼ 13:45 🏆 [chief_portfolio_tracker.py] 盤後戰功審計 ✕ 停損停利對帳 ✕ NAV 淨值大屏更新
+
+================================================================================
+
+【二、五重天神級大腦調度矩陣 (雲端極速 ✕ 超算備援 ✕ 本地斷網保底)】
+在 zen_ai_bot1.py 與 ai_chief_of_staff.py 中實施無縫故障轉移 (Failover)：
+
+1. ⚡ 第一梯隊：Google 原廠 Gemini 3.8 Flash / 3.6 Flash (官方欽點最新主力)
+   - 金庫 5 組神鑰輪詢，掛載 x-goog-api-key 標頭，1~2 秒極速秒回。
+   - 遇 503 伺服器尖峰擁塞啟動「0.1 秒快速跳梯規則」，絕不在同一模型空等。
+2. 💚 第二梯隊：NVIDIA Build H100 滿血超算 (deepseek-ai/deepseek-v4.1-flash)
+   - 解決本地顯存不足痛點！直接免費用黃爸爸遠端 H100 叢集，金融推理邏輯極致強大。
+   - 金庫鎖定 nvapi-... 通行證，經實測 16.3 tok/s 穩定輸出對沖基金戰報。
+3. 🌐 第三梯隊：OpenRouter 雲端備援 (DeepSeek-V3 / Llama-3.3-70B)
+4. 🛡️ 第四梯隊：本地 RTX 4060 滿血顯存大腦 (LocModel / Qwen 3.5 9B)
+   - 實測結論：5.6GB 體積 100% 塞入 4060 顯存，每秒狂飆 31 字 (31 tok/s)，CPU 0% 負擔！
+   - 徹底淘汰需透過 USB 慢速串流的 27B/35B（避免 CPU 100% 過熱與 30 秒吐一字的卡頓）。
+5. 🧪 離線研究庫：外接 K 槽 Colibri (Qwen 3.6 35B / Port 8000) 留作離線實驗室。
+
+================================================================================
+
+【三、10 大蒸餾頂級核武量化範本庫 (ID 258 ~ 267 全數 SSMS 驗收通關)】
+已全數入庫 [stockchangedate].[dbo].[QuantSqlTemplates]，並導出至 myword_11.html 與 myword_17.html：
+
+• [258] 🚀 雙破共振：放量穿透20日主力成本 ✕ 萬里無雲主升段 (M.專家分≥7 ✕ 漲幅2~9.8%)
+• [259] 🔥 投信鎖碼飆馬：小股本<80億 ✕ 投信3日>200/10日>500 ✕ 籌碼集中度20日>8%
+• [260] 🛡️ 3-Way 離場勝率王：5MA/10MA/20MA 全局勝率PK ✕ 正期望報酬最高排序 (德宏、嘉基、尖點)
+• [261] 🧱 外資認錯回補：股價站上一年期主力成本 ✕ 外資5日買超>1億 (緯創、鴻海百億大買)
+• [262] 💎 大戶狂吸散戶退：籌碼健康分≥80 ✕ 特大戶週增>1% ✕ 散戶退 (今國光大戶暴增22.97%)
+• [263] ⚡ 60M 伏兵轉強：60分K金叉 ✕ OSC柱翻紅 ✕ 站上60M月線 (鴻勁、萬海、華航起漲)
+• [264] 🌟 四維共振黑馬：HitCount≥3 ✕ 動能/OBV/價格/彩虹四星大滿貫 (麗臺2465、台泥10萬張漲停)
+• [265] 🛡️ 啞鈴防禦神盾：現金殖利率≥5% ✕ ROE≥15% ✕ 負債<45% ✕ PE<16 (高息避險底倉)
+• [266] 📈 財報三率三升：毛利率與營益率雙季增 ✕ 本業獲利擴張 (旺宏、華邦電、南亞科)
+• [267] 🌌 AMT 價值區突破：穿透60日主力成本 ✕ 突破70%密集交易區上緣 (VAH) 拍賣空間
+
+================================================================================
+
+【四、本週攻克之核心模組清冊與發布端點】
+1. 🏆 總參謀長虛擬帳本與 NAV 對帳 [chief_portfolio_tracker.py]：
+   - 專屬 SQL 表：[Chief_Trade_Journal] (交易手帳) ✕ [Chief_Portfolio_NAV] (淨值走勢)。
+   - 13:45 比對最高/最低價，審計 TP1 達陣 (+16.6%) 或停損 (-7%)，演算累積勝率與基金 NAV。
+   - 大屏注入：https://zen2965.duckdns.org:8888/androidapp/ai_chief_briefing.html
+2. ⚡ 盤中伏兵即時狙擊雷達 [intraday_sniper_daemon.py]：
+   - 09:00~13:30 每 30 秒輪詢，爆量突破成本線 1.5 秒由 3.6 Flash 生成 30 秒三行處置令。
+   - 設置 1500 Max Tokens 解決思考鏈截斷，防疲勞 60 分鐘冷卻，支援 --test 演習模式。
+3. 🌐 晨間 08:00 美股對映與跳空推演 [overnight_adr_playbook.py]：
+   - 抓取費半、NVDA、TSM ADR，精算折合台幣價與溢價率 (+14.31%)。
+   - 注入 BLOCK_NONE 解鎖「血洗、暴跌」等金融敏感詞被攔截之問題。
+   - 大屏看板：https://zen2965.duckdns.org:8888/excelimport/overnight_playbook.html
+4. 📱 Telegram 旗艦機器人 V5.6 [zen_ai_bot1.py]：
+   - 拋棄伺服器端繁重音軌解碼，直接接收手機「語音輸入法」文字！
+   - 內建 2,127 檔股票字典（口語自動剝離 -KY、*），輸入「查台積電勝率」秒轉 2330?3。
+   - 多線程 Thread Worker 背景運算，大腦推論時機器人絕不阻塞裝死。
+5. 📚 私有知識庫 EdgeEver [https://edgeever.zen2965.workers.dev]：
+   - Cloudflare Workers ✕ D1 ✕ R2 物件儲存，永久 0 元運作、資料 100% 私有。
+   - 支援 Markdown、經典三欄與免密公開分享外鏈 (/share/...)。
+6. 🔒 本機機密金庫規約 [C:\test_c\zen_secrets.py]：
+   - 集中封存 TG Token、LINE Token、Gemini 5 組 Key、NVIDIA Key、OpenRouter Key。
+   - 所有腳本動態引用，未配置時載入佔位符，代碼推上 GitHub 100% 絕不外洩與被阻擋。
+
+================================================================================
+
+【五、關鍵避坑與底層架構鐵律 (避免歷史重演)】
+1. 📊 SQL 欄位型態陷阱：
+   - basicinfo 之最高與最低價欄位名稱為 [最高]、[最低]（絕對沒有「價」字！）。
+   - basicinfo 數值多為 VARCHAR，比對必用 TRY_CAST(成交價 AS DECIMAL(10,2))。
+   - WeeklyChipAudit 百分比欄位必加中括號 [特大戶變動%]，型態必用 DECIMAL(10,2) 防 8115 溢位。
+   - Stock60M 之 [代號] 為 INT，跨表比對必強制轉型 CAST(代號 AS NVARCHAR)。
+2. 🤖 Telegram 409 Conflict 致命衝突防線：
+   - 一個 Token 只能有一個進程連線！重啟或手動執行前，必須強制以真實 PID 斬首舊 bot：
+     powershell: Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*zen_ai_bot*' } | ForEach-Object { taskkill /F /PID $_.ProcessId }
+   - 嚴禁用模糊指令誤殺自己 PID 導致程式 0 輸出閃退。
+3. 💻 硬體顯存物理之壁：
+   - RTX 4060 (8G VRAM) 只能跑 ≤9B 模型（滿血 31 字/秒）；跑 27B/35B 必爆顯存落入 CPU 拖垮至 1~2 字/秒。
+   - 大模型推理優先外包給 NVIDIA Build H100 API，零佔用本地硬體。
+4. ⏰ Windows 批次檔編碼禁忌：
+   - CP950 環境下，.bat 檔案嚴禁出現 Emoji (🚀/👑) 或特殊符號 (「/」/─)，避免觸發 0x7C 管道符崩潰。
+================================================================================
+
+
+20261025
+[dbo].[Chief_Trade_Journal]：每一筆推薦標的之開倉、停損、目標價、平倉損益記錄。
+[dbo].[Chief_Portfolio_NAV]：每日投資組合淨值曲線與歷史勝率統計。
+👑【Zen AI 股票戰情室 Pro V16.4】總參謀長虛擬操盤帳本 ✕ NAV 績效審計中樞
+檔案名稱：chief_portfolio_tracker.py
+放置路徑：C:\test_c\chief_portfolio_tracker.py
+核心功能：
+  1. 自動從 ai_chief_briefing.html 或解盤文本萃取推薦標的與進出場點位入庫
+  2. 每日盤後 13:40 自動對帳 (最高價/最低價/收盤價) 審計是否停利/停損
+  3. 計算累積勝率、盈虧比、擬真避險基金 NAV 淨值曲線 (初始值 100.0)
+  4. 一鍵擊發 Telegram 戰功捷報 ✕ 自動將戰功榜注入大屏 HTML 看板！
+
+================================================================================
+👑【Zen AI 股票戰情室 Pro V16.4】盤中 09:00~13:30 即時伏兵狙擊雷達
+檔案名稱：intraday_sniper_daemon.py
+放置路徑：C:\test_c\intraday_sniper_daemon.py
+核心功能：
+  1. 盤中常駐每 30 秒掃描：總參謀長帳本持倉股 ✕ 盤中量化黑馬池
+  2. 監控三大殺傷點：爆量穿透主力成本、達陣第一目標價 (TP1)、停損告急預警
+  3. 調用 Google 原廠 3.6 Flash 在 1.5 秒內產出「30秒極簡處置令」
+  4. 直發 Telegram 警報，支援週末離線模擬演習模式 (--test)
+================================================================================
+
+👑【Zen AI 股票戰情室 Pro V16.4】美股隔夜對映 ✕ 台股 ADR 盤前沙盤推演
+檔案名稱：overnight_adr_playbook.py
+放置路徑：C:\test_c\overnight_adr_playbook.py
+執行時機：每日清晨 08:00 自動執行 (電腦 07:30 開機後準時出擊)
+核心能力：
+  1. 抓取隔夜美股四大指數、費半、輝達(NVDA)與科技巨頭最新收盤行情
+  2. 精算台積電 ADR (TSM) / 聯電 (UMC) 折溢價率與台幣定錨價
+  3. Google 原廠 3.6 Flash 生成【今日開盤劇本預演 ✕ 避震防守令】
+  4. 直發 Telegram ✕ 發布暗黑戰備大屏 HTML
+
+
+⏰ 明晨起全自動運行節奏確認（長官無人值守操盤體系）
+07:30：長官電腦自動開機。
+07:35：silent_run.vbs 靜默無窗喚醒三軍（母艦 ✕ LINE ✕ Telegram）。
+08:00：overnight_adr_playbook.py 自動產出開盤劇本與 ADR 溢價，送達手機與大屏。
+08:30：sync_daily_tech_finance_news.py 自動採集純科技財經要聞。
+08:40：ai_chief_of_staff.py 總參謀長產出今日 4 檔黑馬進出場點位指令單並自動建檔帳本。
+09:00 ~ 13:30：intraday_sniper_daemon.py 盤中狙擊雷達常駐守護，有突破第一時間警報。
+13:45：chief_portfolio_tracker.py 收盤自動對帳，計算當日勝率與 NAV 淨值！
+
+👑Zen AI 晨間 08:00 美股隔夜對映 ✕ 開盤沙盤推演
+https://zen2965.duckdns.org:8888/excelimport/overnight_playbook.html
+
+👑 Zen AI 股票戰情室 · 總參謀長每日作戰指令單
+https://zen2965.duckdns.org:8888/excelimport/ai_chief_briefing.html
+
+👑 Zen AI 晨間 09:00 財經科技日報
+https://zen2965.duckdns.org:8888/excelimport/daily_tech_finance.html
+
+
+
 20261023
 ================================================================================
 👑【Zen AI 股票戰情室 Pro V16.0】工程交付狀態傳承卡 (跨帳號 / 跨對話重開專用)
@@ -9976,6 +10423,7 @@ excelsql2.html ➔ 搜尋程式碼中的 https://smokiness-supremacy-agonizing.n
 ===========================================================================
 📌 【myword2 打包內容 - ID 4】
 ===========================================================================
+
 zen_broadcaster.py --code 3443
 ai_omni_explainer.py --code 2317
 python backfill_price_volume_range.py 20260901 20260904 (區間下載)
@@ -9989,8 +10437,8 @@ CONSTRAINT PK_StockPriceVolume PRIMARY KEY CLUSTERED ([代號], [日期], [成�
 
 # 📁 Zen AI 系統：`C:\test_c\` Python 腳本全景清冊備忘錄
 
-> 🕒 掃描盤點時間：`2026/10/12 00:01:46`  
-> 📊 共盤點到 **105** 支 Python 腳本
+> 🕒 掃描盤點時間：`2026/11/01 13:42:39`  
+> 📊 共盤點到 **134** 支 Python 腳本
 
 ---
 
@@ -10005,104 +10453,133 @@ CONSTRAINT PK_StockPriceVolume PRIMARY KEY CLUSTERED ([代號], [日期], [成�
 | 5 | **`ConceptAutoFiller_Incremental.py`** | 4.4 KB | 2026/06/20 17:07 | `🤖 Ollama本地AI` | 1. 設定區 | 使用您測試成功的連線字串 | 2. 核心邏輯 |  |
 | 6 | **`ConceptAutoFiller_Refresh.py`** | 4.7 KB | 2026/06/20 17:26 | `🤖 Ollama本地AI` | 1. 設定區 | 是否更新已有資料？ (True = 全部重掃, False = 只補缺口 |
 | 7 | **`ConceptAutoFiller_Upgrade.py`** | 4.9 KB | 2026/06/21 14:55 | `🤖 Ollama本地AI` | 1. 設定區 | 2. 核心邏輯 (偵測需升級或補全的股票) |  |
-| 8 | **`ai_omni_explainer.py`** | 14.6 KB | 2026/10/11 11:37 | `🧠 OpenRouter大模型` |  |  | 強制 UTF-8 輸出 |
-| 9 | **`amt_strategy_backtest.py`** | 9.2 KB | 2026/09/30 16:47 | `純數據/運算` | 🏆【Zen AI 策略回測引擎 V3.0：AMT 價值區突圍戰術專用】 | 檔案路徑：C: |
-| 10 | **`auto_push_morning_brief.py`** | 10.3 KB | 2026/10/03 17:59 | `📱 Telegram推播` | 🌅【Zen AI 股票戰情室：每日 08:30 盤前晨會作戰晨報自動廣播中樞 V1.0】  |
-| 11 | **`auto_push_resonance - 複製.py`** | 21.2 KB | 2026/08/26 01:42 | `📱 Telegram推播、🌐 FB社團發文、📸 瀏覽器截圖/RPA、🤖 Ollama本地AI` | 🟢 強制標準輸出使用 UTF-8，徹底杜絕 Windows 排程 CP950 Emoji  |
-| 12 | **`auto_push_resonance.py`** | 20.2 KB | 2026/09/29 21:16 | `📱 Telegram推播、🌐 FB社團發文、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` | 🏆【Zen AI 股票戰情室：每日 13:35 盤後多維共振黑馬 ✕ 暴漲勝率矩陣雙平台自 |
-| 13 | **`autohotkeyruntree.py`** | 7.0 KB | 2026/06/30 10:32 | `純數據/運算` | 【1. 設定區】 | 【2. 核心邏輯】 |
-| 14 | **`autohotkeyruntree1.py`** | 6.4 KB | 2026/06/26 23:05 | `純數據/運算` | 【1. 設定區】 | Windows 權限連線字串 | 【2. 核心邏輯】 |
-| 15 | **`autohotkeyruntree2.py`** | 7.2 KB | 2026/06/29 12:11 | `純數據/運算` | 【1. 設定區】 | 使用 Windows 登入權限 | 【2. 核心邏輯函數】 |
-| 16 | **`autohotkeyruntree3.py`** | 6.9 KB | 2026/06/29 18:16 | `純數據/運算` | 【1. 設定區】 | Windows 權限連線字串 | 【2. 核心邏輯函數】 |
-| 17 | **`autorunyahoo.py`** | 7.2 KB | 2026/07/15 09:31 | `純數據/運算` | 【1. 設定區】 | 採用 Windows 本地驗證 (免 sa 密碼) | 【2. 核心 |
-| 18 | **`autorunyahoo1.py`** | 14.1 KB | 2026/07/21 18:48 | `🎮 Discord通知、💬 LINE通知` | 【1. 設定區】 | 🛠️【核心新增】：手機端雙通道警報金鑰配置 (LINE 已自動為您對 |
-| 19 | **`autorunyahoo2.py`** | 14.3 KB | 2026/08/26 12:42 | `🎮 Discord通知、💬 LINE通知` | 【1. 設定區】 | 🛠️【核心新增】：手機端雙通道警報金鑰配置 (LINE 已自動為您對 |
-| 20 | **`backfill_price_volume_range.py`** | 11.6 KB | 2026/09/05 16:26 | `純數據/運算` | 🏆【Zen AI 全市場分價量表：起訖日區間全自動批次回補引擎 V1.0】 | 支援自由指 |
-| 21 | **`catchdata.py`** | 5.5 KB | 2026/06/01 16:19 | `純數據/運算` | 數值解析邏輯 (延用你已經確認正確的邏輯) --- |
-| 22 | **`changetoapp.py`** | 1.0 KB | 2026/05/01 00:19 | `純數據/運算` | 1. Ūz쥻 HTML | 2.  file:// s۹| vedio1/ | MGfil |
-| 23 | **`chart_explain.py`** | 26.1 KB | 2026/08/24 09:49 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🤖 Ollama本地AI` | 🏆 本檔案為【Zen AI 多模態圖文解盤與雙通道推送工具 V8.60】，支援雙 Y 軸強 |
-| 24 | **`chart_screenshot.py`** | 11.5 KB | 2026/08/24 09:49 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA` | 🏆 本檔案為【純圖片背景自動截圖工具 V8.60】，支援雙 Y 軸最新圖表強刷新、防快取時 |
-| 25 | **`convert.py`** | 7.0 KB | 2026/05/29 21:49 | `純數據/運算` | 設定區域 ================= | 1. 設定你的資料夾路徑 (使用 r 前 |
-| 26 | **`daily_post_generator.py`** | 28.6 KB | 2026/10/01 22:40 | `📱 Telegram推播、🌐 FB社團發文` | 🏆【Zen AI 股票戰情室：每日 8 大社群爆款貼文自動生成器 V1.3 終極版】 |  |
-| 27 | **`discord_alerts.py`** | 4.5 KB | 2026/07/13 10:54 | `🎮 Discord通知` | 填入您剛才複製的 Discord Webhook 網址 |  |  | 依據警報類型設定卡 |
-| 28 | **`discord_alerts1.py`** | 8.3 KB | 2026/07/13 10:45 | `🎮 Discord通知` | 【1. 設定區】 | 請貼上您的 Discord 原始 Webhook 網址 | 【2.  |
-| 29 | **`dividend_strategy_backtest.py`** | 9.6 KB | 2026/10/03 17:04 | `純數據/運算` | 🏆【Zen AI 存股回測引擎 V4.0：雙引擎總報酬流 (DRIP 股息再投入)】 |  |
-| 30 | **`exit_sentinel_daemon.py`** | 8.1 KB | 2026/09/09 16:39 | `📱 Telegram推播` | 🏆【Zen AI 盤中最佳離場守門人 (Exit Sentinel Daemon V1.1 |
-| 31 | **`facset.py`** | 8.4 KB | 2026/07/12 12:44 | `純數據/運算` | 【1. 設定區】 | 【2. 核心資料庫與清單處理】 |
-| 32 | **`fb_comment_responder - 20260910.py`** | 14.2 KB | 2026/09/11 21:59 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` | 🏆【Zen AI Facebook 社團動態自動解盤中樞 V9.0 (焦點強制鎖定 ✕ 雙 |
-| 33 | **`fb_comment_responder.py`** | 19.0 KB | 2026/09/29 21:19 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` | 🏆【Zen AI Facebook 社團動態自動解盤中樞 V11.0 (Post ID 精 |
-| 34 | **`fb_post_stock.py`** | 6.8 KB | 2026/10/11 12:34 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA` |  |  |
-| 35 | **`fetch_yahoo_price_volume.py`** | 4.7 KB | 2026/09/03 10:38 | `純數據/運算` | 🏆【Zen AI 台股上市/上櫃 分價量表 (Volume Profile) 即時抓取器】 |
-| 36 | **`generate_html.py`** | 3.3 KB | 2026/05/01 23:18 | `純數據/運算` | 1. 定義資料夾路徑  folder_path = r'C:\蔡秋鳳'  output_f |
-| 37 | **`gps - 01com3.py`** | 2.3 KB | 2026/05/23 17:12 | `純數據/運算` | 設定藍牙 COM 埠 --- | 請確認你的電腦依然是顯示 COM3 | 建立串口連線 | |
-| 38 | **`gps - 03usb.py`** | 2.4 KB | 2026/05/24 11:06 | `純數據/運算` | 賦予權限 | 先清理舊的 | 新增 (簡化參數避免斷行錯誤) | 開啟 |
-| 39 | **`gps-02com3.py`** | 1.7 KB | 2026/05/23 17:07 | `純數據/運算` | 設定藍牙 COM 埠 --- | ⚠️ 請改成你電腦顯示的 COM 編號 | 格式化 NM |
-| 40 | **`gps-gpsjoystick..py`** | 1.2 KB | 2026/05/25 10:28 | `純數據/運算` | 1. 讓網頁打開時直接載入你的 map.html | 確保 map.html 跟 gps. |
-| 41 | **`gps.py`** | 5.3 KB | 2026/05/27 11:12 | `純數據/運算` | [環境設定] --- | 無線模式使用預設 5037 埠 | [全域變數] --- | 🚀 |
-| 42 | **`gps1 - 三模式.py`** | 3.9 KB | 2026/05/26 17:42 | `純數據/運算` | [環境設定] --- | [全域控制變數] --- |
-| 43 | **`gps1 - 連動map地圖.py`** | 5.5 KB | 2026/05/27 10:59 | `純數據/運算` | [環境設定] --- | [全域控制變數] --- | 強制重啟 5038 埠的伺服器 | |
-| 44 | **`gps1.py`** | 5.5 KB | 2026/05/28 16:17 | `純數據/運算` | [環境設定] --- | [全域控制變數] --- | 強制重啟 5038 埠的伺服器 | |
-| 45 | **`gps_iis.py`** | 5.9 KB | 2026/05/27 13:12 | `純數據/運算` | [設定區] --- | 權限 | 徹底清理並重置 |
-| 46 | **`gps_iisnousb.py`** | 6.0 KB | 2026/05/27 15:29 | `純數據/運算` | [環境設定] --- | 無線 ADB 通常使用預設 5037 埠 | [全域控制變數]  |
-| 47 | **`gps固定位置.py`** | 2.6 KB | 2026/05/26 17:01 | `純數據/運算` | 賦予權限 | 🚀 關鍵動作：先移除所有可能的供應源，再只建立一個 gps |
-| 48 | **`import_all_templates.py`** | 8.8 KB | 2026/08/13 10:46 | `📸 瀏覽器截圖/RPA` | 🏆 本檔案為【50+ 組 SQL 範本 Playwright 動態導入、註解清洗與 AS  |
-| 49 | **`import_all_templates1.py`** | 8.8 KB | 2026/08/13 10:47 | `📸 瀏覽器截圖/RPA` | 🏆 本檔案為【50+ 組 SQL 範本 Playwright 動態導入、註解清洗與 AS  |
-| 50 | **`import_financesum.py`** | 6.6 KB | 2026/08/14 12:39 | `純數據/運算` | 🏆 本腳本為【理財寶/CMoney 財報 Excel 位置對應無痛增量匯入工具 V2.2】 |
-| 51 | **`import_incomesum.py`** | 8.8 KB | 2026/09/04 20:06 | `純數據/運算` | 🏆【Zen AI 營收月報 Excel 自動化匯入工具 V1.1 修正版】 | 嚴格鎖定「 |
-| 52 | **`import_sector_ratio.py`** | 9.4 KB | 2026/09/21 10:01 | `純數據/運算` | 🏆【Zen AI 類股比率盤中自動化匯入與資金流更新工具 V1.0】 | 監控/讀取 C: |
-| 53 | **`init_price_volume_history.py`** | 5.9 KB | 2026/09/03 12:11 | `純數據/運算` | 🏆【Zen AI 股票戰情室：近 20 天歷史分價量表 (Volume Profile)  |
-| 54 | **`line_ai_bot - 舊版.py`** | 33.2 KB | 2026/08/11 17:00 | `📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI` | 🏆 本檔案為【LINE Webhook 轉接與 API 大中台】 (已升級：LINE /  |
-| 55 | **`line_ai_bot - 複製.py`** | 28.3 KB | 2026/07/20 13:56 | `📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI` | 🏆 本檔案為【LINE Webhook 轉接與 API 大中台】 (已升級：LINE /  |
-| 56 | **`line_ai_bot.py`** | 18.8 KB | 2026/09/11 23:47 | `📱 Telegram推播、💬 LINE通知、🧠 OpenRouter大模型` | 🏆【Zen AI LINE Webhook & 網頁推播中台 V5.0 (CORS 萬能放 |
-| 57 | **`line_ai_bot1.py`** | 21.9 KB | 2026/07/19 12:33 | `💬 LINE通知、🤖 Ollama本地AI` | 【1. 設定區】 |
-| 58 | **`line_ai_bot2.py`** | 14.3 KB | 2026/07/18 22:19 | `💬 LINE通知、🤖 Ollama本地AI` | 【1. 設定區】 | 貼上您的 LINE 官方金鑰 | 🛠️【核心填入】：請在此貼上您的個 |
-| 59 | **`line_alerts .py`** | 9.0 KB | 2026/07/18 22:20 | `💬 LINE通知、🤖 Ollama本地AI` | 【1. 設定區】 | 已自動對齊您剛才成功申請的真實 LINE 官方金鑰 |
-| 60 | **`login_fb.py`** | 4.4 KB | 2026/08/26 00:52 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA` | test_fb_post.py - Facebook 發文獨立除錯與即時測試 |
-| 61 | **`login_fb_clean.py`** | 2.6 KB | 2026/09/09 19:40 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA` | 🏆【Zen AI Facebook 真實 Chrome 永久免登入固化工具 (無時間限制版 |
-| 62 | **`loop_engineer.py`** | 5.3 KB | 2026/08/11 13:19 | `🤖 Ollama本地AI` | 【1. 配置區】 | 【2. 提示詞與系統規則設計】 | SYSTEM_PROMPT =  |
-| 63 | **`master_cockpit - new.py`** | 42.6 KB | 2026/10/11 14:08 | `📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` | r |  | 📡 戰情三室實體按鈕直連 API (Port 8551，支援 CORS 跨域 |
-| 64 | **`master_cockpit.py`** | 23.3 KB | 2026/10/11 16:58 | `📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、📸 瀏覽器截圖/RPA、🤖 Ollama本地AI` |  |  |
-| 65 | **`my3.py`** | 1.6 KB | 2025/10/07 10:57 | `純數據/運算` | Word 檔案路徑 === | 從 Word 表格抓資料 === | 忽略表頭，從第2列開 |
-| 66 | **`my4.py`** | 1.3 KB | 2025/10/14 09:37 | `純數據/運算` | Word 檔案路徑 === | 從 Word 表格抓資料 === | 忽略表頭，從第2列開 |
-| 67 | **`myfavor.py`** | 17.3 KB | 2025/03/31 15:45 | `純數據/運算` | 定義 JSON 資料 |
-| 68 | **`myword.py`** | 0.4 KB | 2025/02/08 00:34 | `純數據/運算` | 載入字體設定庫 | 定義字體路徑 | 取得字體檔案的扩展名 |
-| 69 | **`pattern_dual_breakout_engine.py`** | 12.8 KB | 2026/09/18 13:02 | `純數據/運算` | 🏆【Zen AI 雙破共振：下降壓力線 ✕ 嚴格頸線上方回測不破 ✕ 二階中繼 ✕ 1:1 |
-| 70 | **`pattern_scanner_1to1.py`** | 8.4 KB | 2026/09/16 17:17 | `純數據/運算` | 🏆【Zen AI 幾何形態相似度匹配 ✕ 1:1 等距測幅引擎 V3.0 (對齊型態選股軟 |
-| 71 | **`pattern_symmetry_engine.py`** | 13.5 KB | 2026/09/18 12:03 | `純數據/運算` | 🏆【Zen AI 幾何鏡像對稱 ✕ 三級尺度 ✕ 1:1 測幅引擎 V5.0 (旗艦多形態 |
-| 72 | **`phone.py`** | 1.1 KB | 2026/04/29 17:07 | `純數據/運算` | 讀取您原本的 HTML | 1. 將 file://///weizen_ds215/vid |
-| 73 | **`pong.py`** | 4.0 KB | 2025/02/18 20:14 | `純數據/運算` | Initialize pygame | Screen dimensions | Color |
-| 74 | **`portfolio_equity_backtest.py`** | 11.3 KB | 2026/09/20 17:24 | `純數據/運算` | 🏆【Zen AI 量化投資組合資產曲線回測引擎 V2.0 (無最高最低錯誤 ✕ 最近120 |
-| 75 | **`scan_all_scripts.py`** | 5.9 KB | 2026/09/03 09:46 | `📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型、⏰ 排程相關` | 🔍【Zen AI 系統：全目錄 Python 腳本自動掃描與功能解析器】 | 強制 UTF |
-| 76 | **`sql_agent_loop.py`** | 7.1 KB | 2026/08/11 14:36 | `🤖 Ollama本地AI` | 【1. 設定區】 | SQL Server 連線字串 | 【2. 戰情室實體表 Schem |
-| 77 | **`strategy_factory_evaluator.py`** | 2.6 KB | 2026/09/09 16:52 | `📱 Telegram推播` | 🏆【Zen AI 策略工廠生命週期每週評估器 (Strategy Factory Eval |
-| 78 | **`sync_daily_price_volume.py`** | 10.8 KB | 2026/09/05 16:08 | `純數據/運算` | 🏆【Zen AI 雙軌分價量表建檔器 V4.0 正式版：TPEx 全上櫃 32 產業 ✕  |
-| 79 | **`sync_daily_price_volumetest.py`** | 7.3 KB | 2026/09/05 16:01 | `純數據/運算` | 🏆【Zen AI 雙軌分價量表建檔器 V3.3：TPEx 全產業 32 大類別完整抓取】  |
-| 80 | **`sync_etf_wantgoo.py`** | 8.1 KB | 2026/09/25 17:20 | `純數據/運算` | 🏆【Zen AI 全市場 20 檔高配息 ETF 官方直連真・全解析入庫引擎 V4.0】  |
-| 81 | **`sync_etf_wantgoo1.py`** | 4.2 KB | 2026/09/25 19:17 | `純數據/運算` | 🏆【Zen AI 玩股匯入單次先清空】 | 資料表 stockchangedate | 配 |
-| 82 | **`sync_etf_wantgoodate.py`** | 4.6 KB | 2026/09/25 22:18 | `純數據/運算` | 🏆【Zen AI 玩股匯入加上日期,可累積】 | 資料表 ETF_DailyPriceDa |
-| 83 | **`sync_market_derivatives - 複製.py`** | 19.6 KB | 2026/09/25 16:55 | `📱 Telegram推播` | 🏆【Zen AI 衍生性商品 ✕ ETF 智慧採集引擎 V2.5 終極語法安全版】 | 特 |
-| 84 | **`sync_market_derivatives.py`** | 9.1 KB | 2026/10/10 23:03 | `純數據/運算` |  |  | 強制 UTF-8 輸出 | 1. 資料庫連線配置 |
-| 85 | **`sync_stock_threemaster.py`** | 6.1 KB | 2026/09/29 20:19 | `純數據/運算` | 配置區 ================= | 定義完全對齊的中文欄位名稱 (共 11 個 |
-| 86 | **`test_airllm.py`** | 2.1 KB | 2026/09/06 09:56 | `純數據/運算` | 🧪【AirLLM 70B 極限顯存實測腳本】 | 強制 UTF-8 輸出 | 選擇要測試的 |
-| 87 | **`test_api_keys.py`** | 3.4 KB | 2026/10/11 16:21 | `🧠 OpenRouter大模型` |  |  |
-| 88 | **`test_fb_post.py`** | 4.5 KB | 2026/08/26 00:57 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA` | test_fb_post.py - Facebook 發文獨立除錯與即時測試 |
-| 89 | **`top_momentum_backtest.py`** | 10.3 KB | 2026/08/26 12:54 | `純數據/運算` | 🏆【Zen AI 全市場最強暴漲黑馬 ✕ 任意天數/均線離場回測系統 V1.2】 | 理念 |
-| 90 | **`update_notioninfo.py`** | 12.7 KB | 2026/08/25 15:29 | `🤖 Ollama本地AI` | 🏆 本檔案為【Zen AI 產業基因 10~15 標籤極速 5 線程腳本 V5.1】 |  |
-| 91 | **`update_notioninfo_OpenRouter.py`** | 8.9 KB | 2026/09/06 13:46 | `💬 LINE通知、🧠 OpenRouter大模型` | 🏆【Zen AI 產業基因標籤庫：OpenRouter 70B~120B 大模型多線程批次 |
-| 92 | **`vedio1.py`** | 3.3 KB | 2026/05/04 16:41 | `純數據/運算` | 1. 定義資料夾路徑  folder_path = r'C:\蔡秋鳳'  output_f |
-| 93 | **`vedio2.py`** | 1.7 KB | 2026/05/10 22:05 | `純數據/運算` | 1. 指向最上層目錄 (會掃描底下的所有子資料夾) | 2. 走訪所有資料夾與檔案 | 取 |
-| 94 | **`vedio3.py`** | 2.2 KB | 2026/05/01 23:11 | `純數據/運算` | root_path = r'\\weizen_ds215\video' | 分類字典： { |
-| 95 | **`vedio4.py`** | 0.9 KB | 2026/09/03 09:32 | `純數據/運算` | 修改這裡的路徑 | html = f |
-| 96 | **`vedio5.py`** | 1.1 KB | 2026/09/03 09:42 | `純數據/運算` | 修改這裡的路徑 | 確保路徑存在 | html = f |
-| 97 | **`vedio6.py`** | 4.2 KB | 2026/05/04 17:05 | `純數據/運算` | 設定檔案名稱 | 1. 抓取所有連結 | 2. HTML 模板 |
-| 98 | **`vedio7.py`** | 3.2 KB | 2026/05/04 17:08 | `純數據/運算` | 1. 確認輸入與輸出檔名 | 2. 定義您在 NAS 上實際測試成功的資料夾名稱 | 之前 |
-| 99 | **`vedio8.py`** | 9.3 KB | 2026/05/01 11:19 | `純數據/運算` | new_html = <!DOCTYPE html> |
-| 100 | **`vediolink.py`** | 1.8 KB | 2026/05/04 17:12 | `純數據/運算` | 1. 定義路徑 | 2. 抓取 mp4 檔案 | 3. 準備寫入 CSV | 使用 utf |
-| 101 | **`zen_ai_bot.py`** | 21.4 KB | 2026/08/11 16:54 | `📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI` | 🏆 本檔案為【Telegram 雙向對話機器人】 (已完全對齊 LINE 端之 allcr |
-| 102 | **`zen_ai_bot1 - 20261011.py`** | 31.4 KB | 2026/10/11 12:41 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` |  |  | 強制 UTF-8 輸出 |
-| 103 | **`zen_ai_bot1.py`** | 35.4 KB | 2026/10/11 18:16 | `📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` |  |  |
-| 104 | **`zen_ai_bot2.py`** | 41.2 KB | 2026/10/02 12:10 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` | 🏆【Zen AI Telegram 雙向操盤機器人 Pro V3.6 (單一大腦一體化極速 |
-| 105 | **`zen_broadcaster.py`** | 20.9 KB | 2026/10/11 17:22 | `📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、🧠 OpenRouter大模型` |  |  | 強制 UTF-8 輸出 |
+| 8 | **`ai_chief_of_staff.py`** | 22.0 KB | 2026/10/31 10:24 | `📱 Telegram推播、💬 LINE通知、🧠 OpenRouter大模型` |  |  | 0. 金庫金鑰安全提取 (支援 Gemini、NVIDIA、Telegram  |
+| 9 | **`ai_omni_explainer.py`** | 14.6 KB | 2026/10/15 10:31 | `🧠 OpenRouter大模型` |  |  | 強制 UTF-8 輸出 |
+| 10 | **`amt_strategy_backtest.py`** | 9.2 KB | 2026/09/30 16:47 | `純數據/運算` | 🏆【Zen AI 策略回測引擎 V3.0：AMT 價值區突圍戰術專用】 | 檔案路徑：C: |
+| 11 | **`auto_push_morning_brief.py`** | 10.3 KB | 2026/10/03 17:59 | `📱 Telegram推播` | 🌅【Zen AI 股票戰情室：每日 08:30 盤前晨會作戰晨報自動廣播中樞 V1.0】  |
+| 12 | **`auto_push_resonance - 複製.py`** | 21.2 KB | 2026/08/26 01:42 | `📱 Telegram推播、🌐 FB社團發文、📸 瀏覽器截圖/RPA、🤖 Ollama本地AI` | 🟢 強制標準輸出使用 UTF-8，徹底杜絕 Windows 排程 CP950 Emoji  |
+| 13 | **`auto_push_resonance.py`** | 20.2 KB | 2026/09/29 21:16 | `📱 Telegram推播、🌐 FB社團發文、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` | 🏆【Zen AI 股票戰情室：每日 13:35 盤後多維共振黑馬 ✕ 暴漲勝率矩陣雙平台自 |
+| 14 | **`autohotkeyruntree.py`** | 7.0 KB | 2026/06/30 10:32 | `純數據/運算` | 【1. 設定區】 | 【2. 核心邏輯】 |
+| 15 | **`autohotkeyruntree1.py`** | 6.4 KB | 2026/06/26 23:05 | `純數據/運算` | 【1. 設定區】 | Windows 權限連線字串 | 【2. 核心邏輯】 |
+| 16 | **`autohotkeyruntree2.py`** | 7.2 KB | 2026/06/29 12:11 | `純數據/運算` | 【1. 設定區】 | 使用 Windows 登入權限 | 【2. 核心邏輯函數】 |
+| 17 | **`autohotkeyruntree3.py`** | 6.9 KB | 2026/06/29 18:16 | `純數據/運算` | 【1. 設定區】 | Windows 權限連線字串 | 【2. 核心邏輯函數】 |
+| 18 | **`autorunyahoo.py`** | 7.2 KB | 2026/07/15 09:31 | `純數據/運算` | 【1. 設定區】 | 採用 Windows 本地驗證 (免 sa 密碼) | 【2. 核心 |
+| 19 | **`autorunyahoo1.py`** | 14.1 KB | 2026/07/21 18:48 | `🎮 Discord通知、💬 LINE通知` | 【1. 設定區】 | 🛠️【核心新增】：手機端雙通道警報金鑰配置 (LINE 已自動為您對 |
+| 20 | **`autorunyahoo2.py`** | 14.3 KB | 2026/08/26 12:42 | `🎮 Discord通知、💬 LINE通知` | 【1. 設定區】 | 🛠️【核心新增】：手機端雙通道警報金鑰配置 (LINE 已自動為您對 |
+| 21 | **`backfill_price_volume_range.py`** | 11.6 KB | 2026/09/05 16:26 | `純數據/運算` | 🏆【Zen AI 全市場分價量表：起訖日區間全自動批次回補引擎 V1.0】 | 支援自由指 |
+| 22 | **`catchdata.py`** | 5.5 KB | 2026/06/01 16:19 | `純數據/運算` | 數值解析邏輯 (延用你已經確認正確的邏輯) --- |
+| 23 | **`changetoapp.py`** | 1.0 KB | 2026/05/01 00:19 | `純數據/運算` | 1. Ūz쥻 HTML | 2.  file:// s۹| vedio1/ | MGfil |
+| 24 | **`chart_explain.py`** | 23.4 KB | 2026/10/13 17:28 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🤖 Ollama本地AI` | 🏆 本檔案為【Zen AI 多模態圖文解盤與雙通道推送工具 V9.0 大一統版】例:233 |
+| 25 | **`chart_screenshot.py`** | 8.9 KB | 2026/10/13 20:25 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA` | 🏆 本檔案為【Zen AI 精準雙模截圖核心 V9.6】(嚴格服從 mode=live 或 |
+| 26 | **`chart_screenshot_live.py`** | 8.0 KB | 2026/10/13 16:20 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA` | 🏆 本檔案為【Zen AI 盤中即時高解析自動截圖工具】(100% 強制盤中即時，不論時段 |
+| 27 | **`chart_screenshot_post.py`** | 9.4 KB | 2026/10/13 20:04 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA` | 🏆 本檔案為【Zen AI 截圖樞紐旗艦 V9.5】(line_ai_bot 與母艦共用大 |
+| 28 | **`chief_portfolio_tracker.py`** | 18.0 KB | 2026/10/31 14:57 | `📱 Telegram推播` |  |  |
+| 29 | **`convert.py`** | 7.0 KB | 2026/05/29 21:49 | `純數據/運算` | 設定區域 ================= | 1. 設定你的資料夾路徑 (使用 r 前 |
+| 30 | **`daily_post_generator.py`** | 28.6 KB | 2026/10/01 22:40 | `📱 Telegram推播、🌐 FB社團發文` | 🏆【Zen AI 股票戰情室：每日 8 大社群爆款貼文自動生成器 V1.3 終極版】 |  |
+| 31 | **`discord_alerts.py`** | 4.5 KB | 2026/07/13 10:54 | `🎮 Discord通知` | 填入您剛才複製的 Discord Webhook 網址 |  |  | 依據警報類型設定卡 |
+| 32 | **`discord_alerts1.py`** | 8.3 KB | 2026/07/13 10:45 | `🎮 Discord通知` | 【1. 設定區】 | 請貼上您的 Discord 原始 Webhook 網址 | 【2.  |
+| 33 | **`dividend_strategy_backtest.py`** | 9.6 KB | 2026/10/03 17:04 | `純數據/運算` | 🏆【Zen AI 存股回測引擎 V4.0：雙引擎總報酬流 (DRIP 股息再投入)】 |  |
+| 34 | **`exit_sentinel_daemon.py`** | 8.1 KB | 2026/09/09 16:39 | `📱 Telegram推播` | 🏆【Zen AI 盤中最佳離場守門人 (Exit Sentinel Daemon V1.1 |
+| 35 | **`export_10_to_myword11.py`** | 4.6 KB | 2026/10/26 15:48 | `純數據/運算` |  |  |
+| 36 | **`export_sql_templates.py`** | 6.8 KB | 2026/10/23 10:11 | `純數據/運算` |  |  | 🎯 指定暫存發布路徑 (絕不覆蓋正式生產檔 sqlTemplateLibrar |
+| 37 | **`facset.py`** | 8.4 KB | 2026/07/12 12:44 | `純數據/運算` | 【1. 設定區】 | 【2. 核心資料庫與清單處理】 |
+| 38 | **`fb_comment_responder - 20260910.py`** | 14.2 KB | 2026/09/11 21:59 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` | 🏆【Zen AI Facebook 社團動態自動解盤中樞 V9.0 (焦點強制鎖定 ✕ 雙 |
+| 39 | **`fb_comment_responder.py`** | 19.0 KB | 2026/09/29 21:19 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` | 🏆【Zen AI Facebook 社團動態自動解盤中樞 V11.0 (Post ID 精 |
+| 40 | **`fb_post_stock.py`** | 6.8 KB | 2026/10/11 12:34 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA` |  |  |
+| 41 | **`fetch_yahoo_price_volume.py`** | 4.7 KB | 2026/09/03 10:38 | `純數據/運算` | 🏆【Zen AI 台股上市/上櫃 分價量表 (Volume Profile) 即時抓取器】 |
+| 42 | **`generate_html.py`** | 3.3 KB | 2026/05/01 23:18 | `純數據/運算` | 1. 定義資料夾路徑  folder_path = r'C:\蔡秋鳳'  output_f |
+| 43 | **`gps - 01com3.py`** | 2.3 KB | 2026/05/23 17:12 | `純數據/運算` | 設定藍牙 COM 埠 --- | 請確認你的電腦依然是顯示 COM3 | 建立串口連線 | |
+| 44 | **`gps - 03usb.py`** | 2.4 KB | 2026/05/24 11:06 | `純數據/運算` | 賦予權限 | 先清理舊的 | 新增 (簡化參數避免斷行錯誤) | 開啟 |
+| 45 | **`gps-02com3.py`** | 1.7 KB | 2026/05/23 17:07 | `純數據/運算` | 設定藍牙 COM 埠 --- | ⚠️ 請改成你電腦顯示的 COM 編號 | 格式化 NM |
+| 46 | **`gps-gpsjoystick..py`** | 1.2 KB | 2026/05/25 10:28 | `純數據/運算` | 1. 讓網頁打開時直接載入你的 map.html | 確保 map.html 跟 gps. |
+| 47 | **`gps.py`** | 5.3 KB | 2026/05/27 11:12 | `純數據/運算` | [環境設定] --- | 無線模式使用預設 5037 埠 | [全域變數] --- | 🚀 |
+| 48 | **`gps1 - 三模式.py`** | 3.9 KB | 2026/05/26 17:42 | `純數據/運算` | [環境設定] --- | [全域控制變數] --- |
+| 49 | **`gps1 - 連動map地圖.py`** | 5.5 KB | 2026/05/27 10:59 | `純數據/運算` | [環境設定] --- | [全域控制變數] --- | 強制重啟 5038 埠的伺服器 | |
+| 50 | **`gps1.py`** | 5.5 KB | 2026/05/28 16:17 | `純數據/運算` | [環境設定] --- | [全域控制變數] --- | 強制重啟 5038 埠的伺服器 | |
+| 51 | **`gps_iis.py`** | 5.9 KB | 2026/05/27 13:12 | `純數據/運算` | [設定區] --- | 權限 | 徹底清理並重置 |
+| 52 | **`gps_iisnousb.py`** | 6.0 KB | 2026/05/27 15:29 | `純數據/運算` | [環境設定] --- | 無線 ADB 通常使用預設 5037 埠 | [全域控制變數]  |
+| 53 | **`gps固定位置.py`** | 2.6 KB | 2026/05/26 17:01 | `純數據/運算` | 賦予權限 | 🚀 關鍵動作：先移除所有可能的供應源，再只建立一個 gps |
+| 54 | **`import_all_templates.py`** | 8.8 KB | 2026/08/13 10:46 | `📸 瀏覽器截圖/RPA` | 🏆 本檔案為【50+ 組 SQL 範本 Playwright 動態導入、註解清洗與 AS  |
+| 55 | **`import_all_templates1.py`** | 8.8 KB | 2026/08/13 10:47 | `📸 瀏覽器截圖/RPA` | 🏆 本檔案為【50+ 組 SQL 範本 Playwright 動態導入、註解清洗與 AS  |
+| 56 | **`import_financesum.py`** | 6.6 KB | 2026/08/14 12:39 | `純數據/運算` | 🏆 本腳本為【理財寶/CMoney 財報 Excel 位置對應無痛增量匯入工具 V2.2】 |
+| 57 | **`import_incomesum.py`** | 8.8 KB | 2026/09/04 20:06 | `純數據/運算` | 🏆【Zen AI 營收月報 Excel 自動化匯入工具 V1.1 修正版】 | 嚴格鎖定「 |
+| 58 | **`import_myword2_to_sql.py`** | 8.6 KB | 2026/10/20 16:31 | `純數據/運算` |  |  | create_sql = |
+| 59 | **`import_myword2_to_sql2.py`** | 7.3 KB | 2026/10/21 10:28 | `純數據/運算` |  |  | create_sql = |
+| 60 | **`import_sector_ratio.py`** | 9.4 KB | 2026/09/21 10:01 | `純數據/運算` | 🏆【Zen AI 類股比率盤中自動化匯入與資金流更新工具 V1.0】 | 監控/讀取 C: |
+| 61 | **`import_sp_only.py`** | 4.8 KB | 2026/10/21 18:50 | `純數據/運算` |  |  | 1. 提取 <pre> 內的純文字 (若有的話) |
+| 62 | **`init_price_volume_history.py`** | 5.9 KB | 2026/09/03 12:11 | `純數據/運算` | 🏆【Zen AI 股票戰情室：近 20 天歷史分價量表 (Volume Profile)  |
+| 63 | **`inject_10_distilled_templates.py`** | 18.4 KB | 2026/10/26 14:37 | `純數據/運算` |  |  | "sql": /*資料庫:stockchangedate*/ TOP 100  |
+| 64 | **`intraday_sniper_daemon.py`** | 14.6 KB | 2026/10/25 21:45 | `📱 Telegram推播、💬 LINE通知` |  |  |
+| 65 | **`line_ai_bot - 舊版.py`** | 33.2 KB | 2026/08/11 17:00 | `📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI` | 🏆 本檔案為【LINE Webhook 轉接與 API 大中台】 (已升級：LINE /  |
+| 66 | **`line_ai_bot - 複製.py`** | 28.3 KB | 2026/07/20 13:56 | `📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI` | 🏆 本檔案為【LINE Webhook 轉接與 API 大中台】 (已升級：LINE /  |
+| 67 | **`line_ai_bot.py`** | 18.8 KB | 2026/09/11 23:47 | `📱 Telegram推播、💬 LINE通知、🧠 OpenRouter大模型` | 🏆【Zen AI LINE Webhook & 網頁推播中台 V5.0 (CORS 萬能放 |
+| 68 | **`line_ai_bot1.py`** | 24.6 KB | 2026/10/23 21:37 | `📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI` | 🌟 全域啟用 CORS | 🌟【核心關鍵防護】：全自動為所有回應注入 Chrome 私有網 |
+| 69 | **`line_ai_bot2.py`** | 14.3 KB | 2026/07/18 22:19 | `💬 LINE通知、🤖 Ollama本地AI` | 【1. 設定區】 | 貼上您的 LINE 官方金鑰 | 🛠️【核心填入】：請在此貼上您的個 |
+| 70 | **`line_alerts .py`** | 9.0 KB | 2026/07/18 22:20 | `💬 LINE通知、🤖 Ollama本地AI` | 【1. 設定區】 | 已自動對齊您剛才成功申請的真實 LINE 官方金鑰 |
+| 71 | **`login_fb.py`** | 4.4 KB | 2026/08/26 00:52 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA` | test_fb_post.py - Facebook 發文獨立除錯與即時測試 |
+| 72 | **`login_fb_clean.py`** | 2.6 KB | 2026/09/09 19:40 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA` | 🏆【Zen AI Facebook 真實 Chrome 永久免登入固化工具 (無時間限制版 |
+| 73 | **`loop_engineer.py`** | 5.3 KB | 2026/08/11 13:19 | `🤖 Ollama本地AI` | 【1. 配置區】 | 【2. 提示詞與系統規則設計】 | SYSTEM_PROMPT =  |
+| 74 | **`master_cockpit.py`** | 44.0 KB | 2026/10/25 21:54 | `📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` |  |  |
+| 75 | **`my3.py`** | 1.6 KB | 2025/10/07 10:57 | `純數據/運算` | Word 檔案路徑 === | 從 Word 表格抓資料 === | 忽略表頭，從第2列開 |
+| 76 | **`my4.py`** | 1.3 KB | 2025/10/14 09:37 | `純數據/運算` | Word 檔案路徑 === | 從 Word 表格抓資料 === | 忽略表頭，從第2列開 |
+| 77 | **`myfavor.py`** | 17.3 KB | 2025/03/31 15:45 | `純數據/運算` | 定義 JSON 資料 |
+| 78 | **`myword.py`** | 0.4 KB | 2025/02/08 00:34 | `純數據/運算` | 載入字體設定庫 | 定義字體路徑 | 取得字體檔案的扩展名 |
+| 79 | **`overnight_adr_playbook.py`** | 20.4 KB | 2026/10/30 22:12 | `📱 Telegram推播、💬 LINE通知、🧠 OpenRouter大模型` |  |  | 強制 UTF-8 輸出 |
+| 80 | **`pattern_dual_breakout_engine.py`** | 12.8 KB | 2026/09/18 13:02 | `純數據/運算` | 🏆【Zen AI 雙破共振：下降壓力線 ✕ 嚴格頸線上方回測不破 ✕ 二階中繼 ✕ 1:1 |
+| 81 | **`pattern_scanner_1to1.py`** | 8.4 KB | 2026/09/16 17:17 | `純數據/運算` | 🏆【Zen AI 幾何形態相似度匹配 ✕ 1:1 等距測幅引擎 V3.0 (對齊型態選股軟 |
+| 82 | **`pattern_symmetry_engine.py`** | 13.5 KB | 2026/09/18 12:03 | `純數據/運算` | 🏆【Zen AI 幾何鏡像對稱 ✕ 三級尺度 ✕ 1:1 測幅引擎 V5.0 (旗艦多形態 |
+| 83 | **`phone.py`** | 1.1 KB | 2026/04/29 17:07 | `純數據/運算` | 讀取您原本的 HTML | 1. 將 file://///weizen_ds215/vid |
+| 84 | **`pong.py`** | 4.0 KB | 2025/02/18 20:14 | `純數據/運算` | Initialize pygame | Screen dimensions | Color |
+| 85 | **`portfolio_equity_backtest.py`** | 11.3 KB | 2026/09/20 17:24 | `純數據/運算` | 🏆【Zen AI 量化投資組合資產曲線回測引擎 V2.0 (無最高最低錯誤 ✕ 最近120 |
+| 86 | **`quant_arsenal_modal.py`** | 8.8 KB | 2026/10/21 22:22 | `純數據/運算` |  |  | 引入已驗證的執行與發射核心 |
+| 87 | **`quant_master_launcher.py`** | 16.8 KB | 2026/10/21 21:11 | `📱 Telegram推播、💬 LINE通知` |  |  |
+| 88 | **`quant_master_launcher_local.py`** | 24.0 KB | 2026/10/21 21:15 | `📱 Telegram推播、💬 LINE通知` |  |  |
+| 89 | **`restore_and_upgrade.py`** | 6.1 KB | 2026/10/21 23:19 | `純數據/運算` |  |  | 1. 提取乾淨原始碼 |
+| 90 | **`scan_all_scripts.py`** | 5.9 KB | 2026/09/03 09:46 | `📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型、⏰ 排程相關` | 🔍【Zen AI 系統：全目錄 Python 腳本自動掃描與功能解析器】 | 強制 UTF |
+| 91 | **`sql_agent_loop.py`** | 7.1 KB | 2026/08/11 14:36 | `🤖 Ollama本地AI` | 【1. 設定區】 | SQL Server 連線字串 | 【2. 戰情室實體表 Schem |
+| 92 | **`strategy_factory_evaluator.py`** | 2.6 KB | 2026/09/09 16:52 | `📱 Telegram推播` | 🏆【Zen AI 策略工廠生命週期每週評估器 (Strategy Factory Eval |
+| 93 | **`sync_daily_price_volume.py`** | 10.8 KB | 2026/09/05 16:08 | `純數據/運算` | 🏆【Zen AI 雙軌分價量表建檔器 V4.0 正式版：TPEx 全上櫃 32 產業 ✕  |
+| 94 | **`sync_daily_price_volumetest.py`** | 7.3 KB | 2026/09/05 16:01 | `純數據/運算` | 🏆【Zen AI 雙軌分價量表建檔器 V3.3：TPEx 全產業 32 大類別完整抓取】  |
+| 95 | **`sync_daily_tech_finance_news.py`** | 13.6 KB | 2026/10/31 14:40 | `📱 Telegram推播、💬 LINE通知` |  |  |
+| 96 | **`sync_etf_wantgoo.py`** | 8.1 KB | 2026/09/25 17:20 | `純數據/運算` | 🏆【Zen AI 全市場 20 檔高配息 ETF 官方直連真・全解析入庫引擎 V4.0】  |
+| 97 | **`sync_etf_wantgoo1.py`** | 4.2 KB | 2026/09/25 19:17 | `純數據/運算` | 🏆【Zen AI 玩股匯入單次先清空】 | 資料表 stockchangedate | 配 |
+| 98 | **`sync_etf_wantgoodate.py`** | 4.6 KB | 2026/09/25 22:18 | `純數據/運算` | 🏆【Zen AI 玩股匯入加上日期,可累積】 | 資料表 ETF_DailyPriceDa |
+| 99 | **`sync_market_derivatives - 複製.py`** | 19.6 KB | 2026/09/25 16:55 | `📱 Telegram推播` | 🏆【Zen AI 衍生性商品 ✕ ETF 智慧採集引擎 V2.5 終極語法安全版】 | 特 |
+| 100 | **`sync_market_derivatives.py`** | 9.1 KB | 2026/10/10 23:03 | `純數據/運算` |  |  | 強制 UTF-8 輸出 | 1. 資料庫連線配置 |
+| 101 | **`sync_myword_history - 加時間標示.py`** | 4.4 KB | 2026/10/13 23:45 | `📸 瀏覽器截圖/RPA` | 🏆 本工具為【Zen AI myword2 歷史快照旗艦版 V2.0】 | 升級：1. 支 |
+| 102 | **`sync_myword_history.py`** | 5.0 KB | 2026/10/14 10:17 | `📸 瀏覽器截圖/RPA` | 🏆 本工具為【Zen AI myword2 純淨多檔獨立版 V2.5】 | 特點：1. 純 |
+| 103 | **`sync_myword_to_github.py`** | 3.8 KB | 2026/10/16 00:09 | `📸 瀏覽器截圖/RPA` | 🏆 本工具透過 Playwright 渲染抓取本地 HTTPS myword2.html  |
+| 104 | **`sync_stock_threemaster.py`** | 6.1 KB | 2026/09/29 20:19 | `純數據/運算` | 配置區 ================= | 定義完全對齊的中文欄位名稱 (共 11 個 |
+| 105 | **`tech_newsletter_daily.py`** | 18.0 KB | 2026/10/23 17:12 | `📱 Telegram推播、💬 LINE通知` |  |  |
+| 106 | **`test_airllm.py`** | 2.1 KB | 2026/09/06 09:56 | `純數據/運算` | 🧪【AirLLM 70B 極限顯存實測腳本】 | 強制 UTF-8 輸出 | 選擇要測試的 |
+| 107 | **`test_all_sql.py`** | 3.6 KB | 2026/10/20 17:40 | `純數據/運算` |  |  | 強制 UTF-8 輸出 |
+| 108 | **`test_api_keys.py`** | 3.7 KB | 2026/10/25 11:05 | `🧠 OpenRouter大模型` |  |  |
+| 109 | **`test_colibri_35b.py`** | 2.9 KB | 2026/10/29 16:39 | `純數據/運算` |  |  | 模擬戰情室丟給 AI 的真實量化數據 |
+| 110 | **`test_colibri_simple.py`** | 1.1 KB | 2026/10/28 17:20 | `純數據/運算` | 放寬超時至 10 分鐘，直接拿完整結果 |
+| 111 | **`test_fb_post.py`** | 4.5 KB | 2026/08/26 00:57 | `🌐 FB社團發文、📸 瀏覽器截圖/RPA` | test_fb_post.py - Facebook 發文獨立除錯與即時測試 |
+| 112 | **`test_nvidia_api.py`** | 3.5 KB | 2026/10/31 10:06 | `純數據/運算` |  |  | 從金庫加載 |
+| 113 | **`test_tg_voice.py`** | 3.9 KB | 2026/10/23 18:36 | `📱 Telegram推播` |  |  | 1. 自動讀取 Telegram Token |
+| 114 | **`tg_voice_handler.py`** | 5.7 KB | 2026/10/23 19:15 | `📱 Telegram推播` | 無描述註解 |
+| 115 | **`top_momentum_backtest.py`** | 10.3 KB | 2026/08/26 12:54 | `純數據/運算` | 🏆【Zen AI 全市場最強暴漲黑馬 ✕ 任意天數/均線離場回測系統 V1.2】 | 理念 |
+| 116 | **`update_notioninfo.py`** | 12.7 KB | 2026/08/25 15:29 | `🤖 Ollama本地AI` | 🏆 本檔案為【Zen AI 產業基因 10~15 標籤極速 5 線程腳本 V5.1】 |  |
+| 117 | **`update_notioninfo_OpenRouter.py`** | 8.9 KB | 2026/09/06 13:46 | `💬 LINE通知、🧠 OpenRouter大模型` | 🏆【Zen AI 產業基因標籤庫：OpenRouter 70B~120B 大模型多線程批次 |
+| 118 | **`vedio1.py`** | 3.3 KB | 2026/05/04 16:41 | `純數據/運算` | 1. 定義資料夾路徑  folder_path = r'C:\蔡秋鳳'  output_f |
+| 119 | **`vedio2.py`** | 1.7 KB | 2026/05/10 22:05 | `純數據/運算` | 1. 指向最上層目錄 (會掃描底下的所有子資料夾) | 2. 走訪所有資料夾與檔案 | 取 |
+| 120 | **`vedio3.py`** | 2.2 KB | 2026/05/01 23:11 | `純數據/運算` | root_path = r'\\weizen_ds215\video' | 分類字典： { |
+| 121 | **`vedio4.py`** | 0.9 KB | 2026/09/03 09:32 | `純數據/運算` | 修改這裡的路徑 | html = f |
+| 122 | **`vedio5.py`** | 1.1 KB | 2026/09/03 09:42 | `純數據/運算` | 修改這裡的路徑 | 確保路徑存在 | html = f |
+| 123 | **`vedio6.py`** | 4.2 KB | 2026/05/04 17:05 | `純數據/運算` | 設定檔案名稱 | 1. 抓取所有連結 | 2. HTML 模板 |
+| 124 | **`vedio7.py`** | 3.2 KB | 2026/05/04 17:08 | `純數據/運算` | 1. 確認輸入與輸出檔名 | 2. 定義您在 NAS 上實際測試成功的資料夾名稱 | 之前 |
+| 125 | **`vedio8.py`** | 9.3 KB | 2026/05/01 11:19 | `純數據/運算` | new_html = <!DOCTYPE html> |
+| 126 | **`vediolink.py`** | 1.8 KB | 2026/05/04 17:12 | `純數據/運算` | 1. 定義路徑 | 2. 抓取 mp4 檔案 | 3. 準備寫入 CSV | 使用 utf |
+| 127 | **`zen_ai_bot.py`** | 21.4 KB | 2026/08/11 16:54 | `📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI` | 🏆 本檔案為【Telegram 雙向對話機器人】 (已完全對齊 LINE 端之 allcr |
+| 128 | **`zen_ai_bot1 - 20261011.py`** | 31.4 KB | 2026/10/11 12:41 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` |  |  | 強制 UTF-8 輸出 |
+| 129 | **`zen_ai_bot1 - 複製 (2).py`** | 18.9 KB | 2026/10/25 11:40 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` |  |  | 強制 UTF-8 輸出 |
+| 130 | **`zen_ai_bot1.py`** | 25.5 KB | 2026/10/31 10:24 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` |  |  |
+| 131 | **`zen_ai_bot2.py`** | 41.2 KB | 2026/10/02 12:10 | `📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` | 🏆【Zen AI Telegram 雙向操盤機器人 Pro V3.6 (單一大腦一體化極速 |
+| 132 | **`zen_ai_bot3.py`** | 37.1 KB | 2026/10/15 12:31 | `📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型` |  |  |
+| 133 | **`zen_broadcaster.py`** | 18.8 KB | 2026/10/15 11:05 | `📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、🧠 OpenRouter大模型` |  |  |
+| 134 | **`zen_secrets.py`** | 3.0 KB | 2026/10/31 10:03 | `📱 Telegram推播、💬 LINE通知、🧠 OpenRouter大模型` |  |  | 📱 1. Telegram 火控與雙向操盤機器人憑證 | 機器人 Bot To |
 
 ---
 
@@ -10157,691 +10634,895 @@ CONSTRAINT PK_StockPriceVolume PRIMARY KEY CLUSTERED ([代號], [日期], [成�
 - **🧩 核心主要函式**：`get_stocks_to_upgrade, ask_ollama_v2, clean_and_insert`
 - **📏 檔案大小與修改時間**：4.9 KB（修改於 2026/06/21 14:55）
 
-### 8. 📄 `ai_omni_explainer.py`
+### 8. 📄 `ai_chief_of_staff.py`
+- **📝 頂部功能描述**： |  | 0. 金庫金鑰安全提取 (支援 Gemini、NVIDIA、Telegram 自動掛載)
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、🧠 OpenRouter大模型
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, MasterStockAnalysis`
+- **🧩 核心主要函式**：`get_db_connection, fetch_quant_candidates, fetch_morning_news, generate_chief_analysis, build_html_briefing`
+- **📏 檔案大小與修改時間**：22.0 KB（修改於 2026/10/31 10:24）
+
+### 9. 📄 `ai_omni_explainer.py`
 - **📝 頂部功能描述**： |  | 強制 UTF-8 輸出
 - **⚙️ 技術與外部特性**：🧠 OpenRouter大模型
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`auto_detect_tokens, fetch_omni_data, build_strict_prompt, call_gemini_official, call_openrouter_fallback`
-- **📏 檔案大小與修改時間**：14.6 KB（修改於 2026/10/11 11:37）
+- **📏 檔案大小與修改時間**：14.6 KB（修改於 2026/10/15 10:31）
 
-### 9. 📄 `amt_strategy_backtest.py`
+### 10. 📄 `amt_strategy_backtest.py`
 - **📝 頂部功能描述**：🏆【Zen AI 策略回測引擎 V3.0：AMT 價值區突圍戰術專用】 | 檔案路徑：C:\test_c\amt_strategy_backtest.py | 配置區=================
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo`
 - **🧩 核心主要函式**：`run_amt_backtest`
 - **📏 檔案大小與修改時間**：9.2 KB（修改於 2026/09/30 16:47）
 
-### 10. 📄 `auto_push_morning_brief.py`
+### 11. 📄 `auto_push_morning_brief.py`
 - **📝 頂部功能描述**：🌅【Zen AI 股票戰情室：每日 08:30 盤前晨會作戰晨報自動廣播中樞 V1.0】 | 檔案名稱：auto_push_morning_brief.py | 執行時機：每個交易日 08:30 (開盤前半小時由 Windows 排程自動觸發) | 核心任務：彙整外資期貨底牌 ✕ 今日重大總經事件 ✕ 土洋作帳狙擊名單 ➔ 推播至 Telegram 戰情室
 - **⚙️ 技術與外部特性**：📱 Telegram推播
-- **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis, incomesum, basicinfo`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, MasterStockAnalysis, incomesum`
 - **🧩 核心主要函式**：`get_futures_status, get_macro_calendar, get_morning_hot_targets, send_tg_message, main`
 - **📏 檔案大小與修改時間**：10.3 KB（修改於 2026/10/03 17:59）
 
-### 11. 📄 `auto_push_resonance - 複製.py`
+### 12. 📄 `auto_push_resonance - 複製.py`
 - **📝 頂部功能描述**：🟢 強制標準輸出使用 UTF-8，徹底杜絕 Windows 排程 CP950 Emoji 編碼錯誤 | 🛠️【1. 設定區】 | Telegram 設定 ---
 - **⚙️ 技術與外部特性**：📱 Telegram推播、🌐 FB社團發文、📸 瀏覽器截圖/RPA、🤖 Ollama本地AI
-- **🗄️ 涉及資料庫/資料表**：`ResonanceMultiFactor_Snapshot, allcross_live, MasterStockAnalysis, StockPersonality_3Exits`
+- **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis, allcross_live, ResonanceMultiFactor_Snapshot, StockPersonality_3Exits`
 - **🧩 核心主要函式**：`get_top_resonance_stocks, get_stock_explain_data, generate_explanation_with_pk, send_telegram_text, send_telegram_photo`
 - **📏 檔案大小與修改時間**：21.2 KB（修改於 2026/08/26 01:42）
 
-### 12. 📄 `auto_push_resonance.py`
+### 13. 📄 `auto_push_resonance.py`
 - **📝 頂部功能描述**：🏆【Zen AI 股票戰情室：每日 13:35 盤後多維共振黑馬 ✕ 暴漲勝率矩陣雙平台自動推播廣播器 V3.7】 | 檔案名稱：auto_push_resonance.py | 核心用途：台股交易日 13:35 盤後全自動化「雙平台」圖文廣播中樞。 | 執行時機：Windows 工作排程器每日 13:35 (或透過 run_auto_push.bat 自動執行)。
 - **⚙️ 技術與外部特性**：📱 Telegram推播、🌐 FB社團發文、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
 - **🗄️ 涉及資料庫/資料表**：`ResonanceMultiFactor_Snapshot, StockPersonality_3Exits`
 - **🧩 核心主要函式**：`clean_fb_profile_lock, refresh_snapshot, get_top_surge_stocks, get_cb_ssf_alert_text, send_tg_message`
 - **📏 檔案大小與修改時間**：20.2 KB（修改於 2026/09/29 21:16）
 
-### 13. 📄 `autohotkeyruntree.py`
+### 14. 📄 `autohotkeyruntree.py`
 - **📝 頂部功能描述**：【1. 設定區】 | 【2. 核心邏輯】
 - **⚙️ 技術與外部特性**：純數據/運算
-- **🗄️ 涉及資料庫/資料表**：`stock60m, basicinfo, Stock60M`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, stock60m, Stock60M`
 - **🧩 核心主要函式**：`get_db_name, update_stock60m_db, parse_time, process_file, on_created`
 - **📏 檔案大小與修改時間**：7.0 KB（修改於 2026/06/30 10:32）
 
-### 14. 📄 `autohotkeyruntree1.py`
+### 15. 📄 `autohotkeyruntree1.py`
 - **📝 頂部功能描述**：【1. 設定區】 | Windows 權限連線字串 | 【2. 核心邏輯】
 - **⚙️ 技術與外部特性**：純數據/運算
-- **🗄️ 涉及資料庫/資料表**：`stock60m, basicinfo, Stock60M`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, stock60m, Stock60M`
 - **🧩 核心主要函式**：`get_db_name, update_stock60m, parse_xq_time, process_file, on_created`
 - **📏 檔案大小與修改時間**：6.4 KB（修改於 2026/06/26 23:05）
 
-### 15. 📄 `autohotkeyruntree2.py`
+### 16. 📄 `autohotkeyruntree2.py`
 - **📝 頂部功能描述**：【1. 設定區】 | 使用 Windows 登入權限 | 【2. 核心邏輯函數】
 - **⚙️ 技術與外部特性**：純數據/運算
-- **🗄️ 涉及資料庫/資料表**：`stock60m, basicinfo, Stock60M`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, stock60m, Stock60M`
 - **🧩 核心主要函式**：`get_db_name, update_stock60m, parse_xq_time, process_file, on_created`
 - **📏 檔案大小與修改時間**：7.2 KB（修改於 2026/06/29 12:11）
 
-### 16. 📄 `autohotkeyruntree3.py`
+### 17. 📄 `autohotkeyruntree3.py`
 - **📝 頂部功能描述**：【1. 設定區】 | Windows 權限連線字串 | 【2. 核心邏輯函數】
 - **⚙️ 技術與外部特性**：純數據/運算
-- **🗄️ 涉及資料庫/資料表**：`stock60m, basicinfo, Stock60M`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, stock60m, Stock60M`
 - **🧩 核心主要函式**：`get_db_name, update_stock60m1_db, parse_time, process_file, on_created`
 - **📏 檔案大小與修改時間**：6.9 KB（修改於 2026/06/29 18:16）
 
-### 17. 📄 `autorunyahoo.py`
+### 18. 📄 `autorunyahoo.py`
 - **📝 頂部功能描述**：【1. 設定區】 | 採用 Windows 本地驗證 (免 sa 密碼) | 【2. 核心資料庫與清單處理】
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo, Stock60M`
 - **🧩 核心主要函式**：`get_target_stocks, get_db_name, calculate_indicators, sync_single_stock, main`
 - **📏 檔案大小與修改時間**：7.2 KB（修改於 2026/07/15 09:31）
 
-### 18. 📄 `autorunyahoo1.py`
+### 19. 📄 `autorunyahoo1.py`
 - **📝 頂部功能描述**：【1. 設定區】 | 🛠️【核心新增】：手機端雙通道警報金鑰配置 (LINE 已自動為您對齊) [Operational Manual]
 - **⚙️ 技術與外部特性**：🎮 Discord通知、💬 LINE通知
 - **🗄️ 涉及資料庫/資料表**：`basicinfo, Stock60M`
 - **🧩 核心主要函式**：`get_target_stocks, get_db_name, get_stock_alert_details, push_to_line, push_to_discord`
 - **📏 檔案大小與修改時間**：14.1 KB（修改於 2026/07/21 18:48）
 
-### 19. 📄 `autorunyahoo2.py`
+### 20. 📄 `autorunyahoo2.py`
 - **📝 頂部功能描述**：【1. 設定區】 | 🛠️【核心新增】：手機端雙通道警報金鑰配置 (LINE 已自動為您對齊) [Operational Manual]
 - **⚙️ 技術與外部特性**：🎮 Discord通知、💬 LINE通知
 - **🗄️ 涉及資料庫/資料表**：`View_AI_Elite_Radar, basicinfo, Stock60M`
 - **🧩 核心主要函式**：`get_target_stocks, get_db_name, get_stock_alert_details, push_to_line, push_to_discord`
 - **📏 檔案大小與修改時間**：14.3 KB（修改於 2026/08/26 12:42）
 
-### 20. 📄 `backfill_price_volume_range.py`
+### 21. 📄 `backfill_price_volume_range.py`
 - **📝 頂部功能描述**：🏆【Zen AI 全市場分價量表：起訖日區間全自動批次回補引擎 V1.0】 | 支援自由指定起訖日 (例: 20260701 20260831)，自動過濾假日並批次寫入 StockPriceVolume | 強制 UTF-8 輸出 | 🛠️【1. 設定區】
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo, allcross_live`
 - **🧩 核心主要函式**：`get_actual_trading_days, sync_tpex_single_day, sync_twse_all_range, main`
 - **📏 檔案大小與修改時間**：11.6 KB（修改於 2026/09/05 16:26）
 
-### 21. 📄 `catchdata.py`
+### 22. 📄 `catchdata.py`
 - **📝 頂部功能描述**：數值解析邏輯 (延用你已經確認正確的邏輯) ---
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`parse_stock_num, format_with_sign, get_data, build_static_html`
 - **📏 檔案大小與修改時間**：5.5 KB（修改於 2026/06/01 16:19）
 
-### 22. 📄 `changetoapp.py`
+### 23. 📄 `changetoapp.py`
 - **📝 頂部功能描述**：1. Ūz쥻 HTML | 2.  file:// s۹| vedio1/ | MGfile://///weizen_ds215/video/ | Gvedio1/
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`encode_url`
 - **📏 檔案大小與修改時間**：1.0 KB（修改於 2026/05/01 00:19）
 
-### 23. 📄 `chart_explain.py`
-- **📝 頂部功能描述**：🏆 本檔案為【Zen AI 多模態圖文解盤與雙通道推送工具 V8.60】，支援雙 Y 軸強刷新、分數自動備援與圖文一體化發送！ [Database Architecture, Operational Manual] | 【1. 設定區】 | 【2. 資料庫實時撈取與視覺化信號判定 (已修復縮放與對齊 3Exits 快照)】
+### 24. 📄 `chart_explain.py`
+- **📝 頂部功能描述**：🏆 本檔案為【Zen AI 多模態圖文解盤與雙通道推送工具 V9.0 大一統版】例:2330 20260101 live(post) | 支援：強制盤中即時(--mode live)、強制盤後歷史(--mode post)、自訂起日、Qwen-7B 視覺解說與圖文一體發送 | 【1. 設定區】
 - **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🤖 Ollama本地AI
 - **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis, allcross_live, StockPersonality_3Exits`
 - **🧩 核心主要函式**：`get_detailed_explain_data, build_visual_signals, generate_chart_explanation, send_image_and_text_to_line, send_image_to_telegram`
-- **📏 檔案大小與修改時間**：26.1 KB（修改於 2026/08/24 09:49）
+- **📏 檔案大小與修改時間**：23.4 KB（修改於 2026/10/13 17:28）
 
-### 24. 📄 `chart_screenshot.py`
-- **📝 頂部功能描述**：🏆 本檔案為【純圖片背景自動截圖工具 V8.60】，支援雙 Y 軸最新圖表強刷新、防快取時間戳記與智慧按鈕點擊！ [Database Architecture, Operational Manual] | 🛠️【設定區】 | 🛠️【已修正】：補上資料庫連線字串定義，確保預存程序順暢執行 [Database Architecture]
+### 25. 📄 `chart_screenshot.py`
+- **📝 頂部功能描述**：🏆 本檔案為【Zen AI 精準雙模截圖核心 V9.6】(嚴格服從 mode=live 或 mode=post 指令)
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`send_image_to_line, send_image_to_telegram, clean_old_screenshots, capture_and_push, parse_arguments`
+- **📏 檔案大小與修改時間**：8.9 KB（修改於 2026/10/13 20:25）
+
+### 26. 📄 `chart_screenshot_live.py`
+- **📝 頂部功能描述**：🏆 本檔案為【Zen AI 盤中即時高解析自動截圖工具】(100% 強制盤中即時，不論時段)
 - **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`send_image_to_line, send_image_to_telegram, clean_old_screenshots, capture_and_push`
-- **📏 檔案大小與修改時間**：11.5 KB（修改於 2026/08/24 09:49）
+- **📏 檔案大小與修改時間**：8.0 KB（修改於 2026/10/13 16:20）
 
-### 25. 📄 `convert.py`
+### 27. 📄 `chart_screenshot_post.py`
+- **📝 頂部功能描述**：🏆 本檔案為【Zen AI 截圖樞紐旗艦 V9.5】(line_ai_bot 與母艦共用大一統核心)
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`send_image_to_line, send_image_to_telegram, clean_old_screenshots, capture_and_push, parse_arguments`
+- **📏 檔案大小與修改時間**：9.4 KB（修改於 2026/10/13 20:04）
+
+### 28. 📄 `chief_portfolio_tracker.py`
+- **📝 頂部功能描述**： | 
+- **⚙️ 技術與外部特性**：📱 Telegram推播
+- **🗄️ 涉及資料庫/資料表**：`basicinfo`
+- **🧩 核心主要函式**：`get_db, ensure_tables_exist, ingest_signals_from_briefing, audit_active_positions, calculate_portfolio_metrics`
+- **📏 檔案大小與修改時間**：18.0 KB（修改於 2026/10/31 14:57）
+
+### 29. 📄 `convert.py`
 - **📝 頂部功能描述**：設定區域 ================= | 1. 設定你的資料夾路徑 (使用 r 前綴可以避免 Windows 反斜線轉義問題) | 2. 設定原始 JSON 檔名 | 3. 設定輸出的 HTML 檔名
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`markdown_to_html, code_block_repl, process_gemini_json`
 - **📏 檔案大小與修改時間**：7.0 KB（修改於 2026/05/29 21:49）
 
-### 26. 📄 `daily_post_generator.py`
+### 30. 📄 `daily_post_generator.py`
 - **📝 頂部功能描述**：🏆【Zen AI 股票戰情室：每日 8 大社群爆款貼文自動生成器 V1.3 終極版】 | 每天自動產生 8 種不同維度的吸睛貼文草稿，供管理員隨選隨貼！ | 強制 UTF-8 輸出 | 🛠️【1. 設定區】
 - **⚙️ 技術與外部特性**：📱 Telegram推播、🌐 FB社團發文
-- **🗄️ 涉及資料庫/資料表**：`View_AI_Elite_Radar, incomesum, MasterStockAnalysis, basicinfo, StockPersonality_3Exits, Chips5`
+- **🗄️ 涉及資料庫/資料表**：`StockPersonality_3Exits, View_AI_Elite_Radar, basicinfo, Chips5, financesum, MasterStockAnalysis`
 - **🧩 核心主要函式**：`generate_post_chips, generate_post_eps, generate_post_revenue, generate_post_backtest, generate_post_60m`
 - **📏 檔案大小與修改時間**：28.6 KB（修改於 2026/10/01 22:40）
 
-### 27. 📄 `discord_alerts.py`
+### 31. 📄 `discord_alerts.py`
 - **📝 頂部功能描述**：填入您剛才複製的 Discord Webhook 網址 |  |  | 依據警報類型設定卡片邊條顏色 (Buy = 亮綠藍色, Risk = 紅色)
 - **⚙️ 技術與外部特性**：🎮 Discord通知
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`send_discord_alert`
 - **📏 檔案大小與修改時間**：4.5 KB（修改於 2026/07/13 10:54）
 
-### 28. 📄 `discord_alerts1.py`
+### 32. 📄 `discord_alerts1.py`
 - **📝 頂部功能描述**：【1. 設定區】 | 請貼上您的 Discord 原始 Webhook 網址 | 【2. 格式化與發送模組】
 - **⚙️ 技術與外部特性**：🎮 Discord通知
 - **🗄️ 涉及資料庫/資料表**：`basicinfo, Stock60M`
 - **🧩 核心主要函式**：`send_discord_alert, run_alerts_check`
 - **📏 檔案大小與修改時間**：8.3 KB（修改於 2026/07/13 10:45）
 
-### 29. 📄 `dividend_strategy_backtest.py`
+### 33. 📄 `dividend_strategy_backtest.py`
 - **📝 頂部功能描述**：🏆【Zen AI 存股回測引擎 V4.0：雙引擎總報酬流 (DRIP 股息再投入)】 | 檔案路徑：C:\test_c\dividend_strategy_backtest.py | 核心任務：模擬「高殖利率+高成長」雙引擎策略的長期持有與股息再投入(複利)效應。 | 寫入目標：Strategy_Backtest_Summary, Strategy_Backtest_DailyNAV, Strategy_Backtest_Trades (回測編號 = 3)
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo`
 - **🧩 核心主要函式**：`run_dividend_backtest`
 - **📏 檔案大小與修改時間**：9.6 KB（修改於 2026/10/03 17:04）
 
-### 30. 📄 `exit_sentinel_daemon.py`
+### 34. 📄 `exit_sentinel_daemon.py`
 - **📝 頂部功能描述**：🏆【Zen AI 盤中最佳離場守門人 (Exit Sentinel Daemon V1.1 實戰防轟炸版)】 | 檔案路徑：C:\test_c\exit_sentinel_daemon.py | 核心亮點： | 1. 啟動立即強制執行一輪：隨時隨地啟動即測，盤後也能驗證警報！
 - **⚙️ 技術與外部特性**：📱 Telegram推播
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`send_tg_alert, scan_exit_sentinel, main`
 - **📏 檔案大小與修改時間**：8.1 KB（修改於 2026/09/09 16:39）
 
-### 31. 📄 `facset.py`
+### 35. 📄 `export_10_to_myword11.py`
+- **📝 頂部功能描述**： | 
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`escape_sql_for_template_literal, export_10_distilled_templates`
+- **📏 檔案大小與修改時間**：4.6 KB（修改於 2026/10/26 15:48）
+
+### 36. 📄 `export_sql_templates.py`
+- **📝 頂部功能描述**： |  | 🎯 指定暫存發布路徑 (絕不覆蓋正式生產檔 sqlTemplateLibrary.js 與 myword_2.html) | 防止 JS Template Literal 反引號與字串插值符號爆炸
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`escape_sql_for_template_literal, format_single_template_js, export_all`
+- **📏 檔案大小與修改時間**：6.8 KB（修改於 2026/10/23 10:11）
+
+### 37. 📄 `facset.py`
 - **📝 頂部功能描述**：【1. 設定區】 | 【2. 核心資料庫與清單處理】
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo`
 - **🧩 核心主要函式**：`get_target_stocks, get_db_name, parse_eps_text, process_stock_estimates, main`
 - **📏 檔案大小與修改時間**：8.4 KB（修改於 2026/07/12 12:44）
 
-### 32. 📄 `fb_comment_responder - 20260910.py`
+### 38. 📄 `fb_comment_responder - 20260910.py`
 - **📝 頂部功能描述**：🏆【Zen AI Facebook 社團動態自動解盤中樞 V9.0 (焦點強制鎖定 ✕ 雙重發布驗證版)】 | 檔案路徑：C:\test_c\fb_comment_responder.py | 🛠️【1. 系統配置區】
 - **⚙️ 技術與外部特性**：🌐 FB社團發文、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`load_replied_cache, save_replied_cache, parse_stock_command, extract_clean_author, build_fb_comment_text`
 - **📏 檔案大小與修改時間**：14.2 KB（修改於 2026/09/11 21:59）
 
-### 33. 📄 `fb_comment_responder.py`
+### 39. 📄 `fb_comment_responder.py`
 - **📝 頂部功能描述**：🏆【Zen AI Facebook 社團動態自動解盤中樞 V11.0 (Post ID 精準防重複定稿版)】 | 檔案路徑：C:\test_c\fb_comment_responder.py | 核心革命： | 1. 採用 Facebook 貼文專屬 Post ID 作為唯一防重複身分證，徹底終結重複回覆死循環！
 - **⚙️ 技術與外部特性**：🌐 FB社團發文、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`load_replied_cache, save_replied_cache, parse_stock_command, extract_clean_author, get_cb_ssf_alert_text_fb`
 - **📏 檔案大小與修改時間**：19.0 KB（修改於 2026/09/29 21:19）
 
-### 34. 📄 `fb_post_stock.py`
+### 40. 📄 `fb_post_stock.py`
 - **📝 頂部功能描述**： | 
 - **⚙️ 技術與外部特性**：🌐 FB社團發文、📸 瀏覽器截圖/RPA
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`clean_fb_profile_lock, post_to_fb_group`
 - **📏 檔案大小與修改時間**：6.8 KB（修改於 2026/10/11 12:34）
 
-### 35. 📄 `fetch_yahoo_price_volume.py`
+### 41. 📄 `fetch_yahoo_price_volume.py`
 - **📝 頂部功能描述**：🏆【Zen AI 台股上市/上櫃 分價量表 (Volume Profile) 即時抓取器】 | 支援台股所有上市 (.TW) 與上櫃 (.TWO) 股票 | 強制 UTF-8 輸出 | 
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`get_yahoo_price_volume`
 - **📏 檔案大小與修改時間**：4.7 KB（修改於 2026/09/03 10:38）
 
-### 36. 📄 `generate_html.py`
+### 42. 📄 `generate_html.py`
 - **📝 頂部功能描述**：1. 定義資料夾路徑  folder_path = r'C:\蔡秋鳳'  output_filename = 'vedio_1.html' | 檢查路徑是否存在 | 2. 使用 os.walk 抓取所有子資料夾內的 mp4 檔案 | 取得檔案的絕對路徑
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`generate_video_html`
 - **📏 檔案大小與修改時間**：3.3 KB（修改於 2026/05/01 23:18）
 
-### 37. 📄 `gps - 01com3.py`
+### 43. 📄 `gps - 01com3.py`
 - **📝 頂部功能描述**：設定藍牙 COM 埠 --- | 請確認你的電腦依然是顯示 COM3 | 建立串口連線 | 格式化 NMEA 座標 (度分格式)
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`get_nmea, to_nmea_coord, index, teleport`
 - **📏 檔案大小與修改時間**：2.3 KB（修改於 2026/05/23 17:12）
 
-### 38. 📄 `gps - 03usb.py`
+### 44. 📄 `gps - 03usb.py`
 - **📝 頂部功能描述**：賦予權限 | 先清理舊的 | 新增 (簡化參數避免斷行錯誤) | 開啟
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`init_provider, location_locking_thread, index, teleport`
 - **📏 檔案大小與修改時間**：2.4 KB（修改於 2026/05/24 11:06）
 
-### 39. 📄 `gps-02com3.py`
+### 45. 📄 `gps-02com3.py`
 - **📝 頂部功能描述**：設定藍牙 COM 埠 --- | ⚠️ 請改成你電腦顯示的 COM 編號 | 格式化 NMEA 數據
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`get_nmea, to_nmea_coord, index, teleport`
 - **📏 檔案大小與修改時間**：1.7 KB（修改於 2026/05/23 17:07）
 
-### 40. 📄 `gps-gpsjoystick..py`
+### 46. 📄 `gps-gpsjoystick..py`
 - **📝 頂部功能描述**：1. 讓網頁打開時直接載入你的 map.html | 確保 map.html 跟 gps.py 放在同一個資料夾 | 2. 接收來自網頁的座標並執行 ADB | 執行你測試成功的指令
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`index, teleport`
 - **📏 檔案大小與修改時間**：1.2 KB（修改於 2026/05/25 10:28）
 
-### 41. 📄 `gps.py`
+### 47. 📄 `gps.py`
 - **📝 頂部功能描述**：[環境設定] --- | 無線模式使用預設 5037 埠 | [全域變數] --- | 🚀 精準過濾無線 IP 裝置，避開 mDNS 雜訊
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`get_wireless_device, init_provider, location_locking_thread, index, get_status`
 - **📏 檔案大小與修改時間**：5.3 KB（修改於 2026/05/27 11:12）
 
-### 42. 📄 `gps1 - 三模式.py`
+### 48. 📄 `gps1 - 三模式.py`
 - **📝 頂部功能描述**：[環境設定] --- | [全域控制變數] ---
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`init_provider, location_locking_thread, index, teleport`
 - **📏 檔案大小與修改時間**：3.9 KB（修改於 2026/05/26 17:42）
 
-### 43. 📄 `gps1 - 連動map地圖.py`
+### 49. 📄 `gps1 - 連動map地圖.py`
 - **📝 頂部功能描述**：[環境設定] --- | [全域控制變數] --- | 強制重啟 5038 埠的伺服器 | 🚀 [新增] 等待手機上線邏輯 (最多等 10 秒)
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`init_provider, location_locking_thread, index, get_status, teleport`
 - **📏 檔案大小與修改時間**：5.5 KB（修改於 2026/05/27 10:59）
 
-### 44. 📄 `gps1.py`
+### 50. 📄 `gps1.py`
 - **📝 頂部功能描述**：[環境設定] --- | [全域控制變數] --- | 強制重啟 5038 埠的伺服器 | 🚀 [新增] 等待手機上線邏輯 (最多等 10 秒)
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`init_provider, location_locking_thread, index, get_status, teleport`
 - **📏 檔案大小與修改時間**：5.5 KB（修改於 2026/05/28 16:17）
 
-### 45. 📄 `gps_iis.py`
+### 51. 📄 `gps_iis.py`
 - **📝 頂部功能描述**：[設定區] --- | 權限 | 徹底清理並重置
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`init_provider, location_locking_thread, home, teleport, get_status`
 - **📏 檔案大小與修改時間**：5.9 KB（修改於 2026/05/27 13:12）
 
-### 46. 📄 `gps_iisnousb.py`
+### 52. 📄 `gps_iisnousb.py`
 - **📝 頂部功能描述**：[環境設定] --- | 無線 ADB 通常使用預設 5037 埠 | [全域控制變數] --- | 🚀 核心修正：精準抓取無線 IP 裝置，避開 mDNS (adb-tls) 雜訊
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`get_wireless_device, init_provider, location_locking_thread, home, get_status`
 - **📏 檔案大小與修改時間**：6.0 KB（修改於 2026/05/27 15:29）
 
-### 47. 📄 `gps固定位置.py`
+### 53. 📄 `gps固定位置.py`
 - **📝 頂部功能描述**：賦予權限 | 🚀 關鍵動作：先移除所有可能的供應源，再只建立一個 gps
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`init_provider, location_locking_thread, index, teleport`
 - **📏 檔案大小與修改時間**：2.6 KB（修改於 2026/05/26 17:01）
 
-### 48. 📄 `import_all_templates.py`
+### 54. 📄 `import_all_templates.py`
 - **📝 頂部功能描述**：🏆 本檔案為【50+ 組 SQL 範本 Playwright 動態導入、註解清洗與 AS 別名括號化工具 V4.6】 | 內建「註解自動清洗器」與「AS 別名 [ ] 自動包覆器」，防止 SSMS 複製斷行死鎖與括號 (%) 語法剖析失敗！ [1.1, 2.1] | 關閉 self-signed SSL 憑證警告 | 【1. 設定區】
 - **⚙️ 技術與外部特性**：📸 瀏覽器截圖/RPA
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`remove_sql_comments, auto_bracket_sql_aliases, fetch_dynamic_content_via_playwright, main`
 - **📏 檔案大小與修改時間**：8.8 KB（修改於 2026/08/13 10:46）
 
-### 49. 📄 `import_all_templates1.py`
+### 55. 📄 `import_all_templates1.py`
 - **📝 頂部功能描述**：🏆 本檔案為【50+ 組 SQL 範本 Playwright 動態導入、註解清洗與 AS 別名括號化工具 V4.6】 | 內建「註解自動清洗器」與「AS 別名 [ ] 自動包覆器」，防止 SSMS 複製斷行死鎖與括號 (%) 語法剖析失敗！ [1.1, 2.1] | 關閉 self-signed SSL 憑證警告 | 【1. 設定區】
 - **⚙️ 技術與外部特性**：📸 瀏覽器截圖/RPA
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`remove_sql_comments, auto_bracket_sql_aliases, fetch_dynamic_content_via_playwright, main`
 - **📏 檔案大小與修改時間**：8.8 KB（修改於 2026/08/13 10:47）
 
-### 50. 📄 `import_financesum.py`
+### 56. 📄 `import_financesum.py`
 - **📝 頂部功能描述**：🏆 本腳本為【理財寶/CMoney 財報 Excel 位置對應無痛增量匯入工具 V2.2】 | 已修正 6 位數 YYYYMM (202602) 表頭解析漏洞，日期 100% 精準對齊！ | 🛠️【設定區】 | 徹底打掉 '--'、'-'、'未公佈'、空格等非數字字元，100% 防範 float() 轉型崩潰
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`FinanceSum, financesum, financesum1`
 - **🧩 核心主要函式**：`clean_float, clean_code, parse_date_from_header, import_financesum_excel`
 - **📏 檔案大小與修改時間**：6.6 KB（修改於 2026/08/14 12:39）
 
-### 51. 📄 `import_incomesum.py`
+### 57. 📄 `import_incomesum.py`
 - **📝 頂部功能描述**：🏆【Zen AI 營收月報 Excel 自動化匯入工具 V1.1 修正版】 | 嚴格鎖定「(最新)」欄位，排除「(上月)」，精準處理已公告 200+ 筆與未公告 (0/NULL) | 強制 UTF-8 輸出 | 🛠️【1. 設定區】
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`incomesum`
 - **🧩 核心主要函式**：`clean_float, clean_code, clean_str, find_target_excel_and_date, import_incomesum_to_db`
 - **📏 檔案大小與修改時間**：8.8 KB（修改於 2026/09/04 20:06）
 
-### 52. 📄 `import_sector_ratio.py`
+### 58. 📄 `import_myword2_to_sql.py`
+- **📝 頂部功能描述**： |  | create_sql =
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`ensure_table_exists, parse_all_database_blocks, main`
+- **📏 檔案大小與修改時間**：8.6 KB（修改於 2026/10/20 16:31）
+
+### 59. 📄 `import_myword2_to_sql2.py`
+- **📝 頂部功能描述**： |  | create_sql =
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`ensure_table_exists, parse_all_database_blocks, main`
+- **📏 檔案大小與修改時間**：7.3 KB（修改於 2026/10/21 10:28）
+
+### 60. 📄 `import_sector_ratio.py`
 - **📝 頂部功能描述**：🏆【Zen AI 類股比率盤中自動化匯入與資金流更新工具 V1.0】 | 監控/讀取 C:\StockExport\類股比率.xlsx ➔ 精準清洗 ➔ MERGE 至 stockchangedate.dbo.類股比率 | 支援盤中一鍵手動執行 或 --watch 自動巡航 | 強制 UTF-8 輸出
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`clean_float, clean_str, map_excel_columns, import_sector_ratio_to_db, watch_mode`
 - **📏 檔案大小與修改時間**：9.4 KB（修改於 2026/09/21 10:01）
 
-### 53. 📄 `init_price_volume_history.py`
+### 61. 📄 `import_sp_only.py`
+- **📝 頂部功能描述**： |  | 1. 提取 <pre> 內的純文字 (若有的話)
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`extract_js_sp_templates, main`
+- **📏 檔案大小與修改時間**：4.8 KB（修改於 2026/10/21 18:50）
+
+### 62. 📄 `init_price_volume_history.py`
 - **📝 頂部功能描述**：🏆【Zen AI 股票戰情室：近 20 天歷史分價量表 (Volume Profile) 批次回補工具】 | 強制 UTF-8 輸出
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`View_AI_Elite_Radar, basicinfo`
 - **🧩 核心主要函式**：`get_target_stock_list, fetch_and_save_stock_20d_pv, main`
 - **📏 檔案大小與修改時間**：5.9 KB（修改於 2026/09/03 12:11）
 
-### 54. 📄 `line_ai_bot - 舊版.py`
+### 63. 📄 `inject_10_distilled_templates.py`
+- **📝 頂部功能描述**： |  | "sql": /*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(M.代號) AS 代號, RTRIM(M.名稱) AS 名稱, B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)], RTRIM(M.產業分類) AS 產業, B.股本億 AS [股本(億)], ROUND(M.專家實戰總分, 2) AS 專家分, O.短線20日主力成本 AS [20日成本], ROUND(((B.成交價 - O.短線20日主力成本) / NULLIF(O.短線20日主力成本, 0)) * 100, 2) AS [成本乖離%], RTRIM(O.乖離戰術判定) AS [乖離判定], RTRIM(O.三維AMT空間判定) AS [空間判定], ISNULL(N.外資3日合計, 0) AS [外資3日(張)], ISNULL(N.投信3日合計, 0) AS [投信3日(張)], RTRIM(M.具體概念) AS [熱門題材] FROM MasterStockAnalysis M JOIN stockchange.dbo.basicinfo B ON LTRIM(RTRIM(M.代號)) = LTRIM(RTRIM(B.代號)) LEFT JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(M.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) LEFT JOIN ( SELECT 代號, 外資3日合計, 投信3日合計, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM threemasternumber ) N ON LTRIM(RTRIM(N.代號)) = LTRIM(RTRIM(M.代號)) AND N.rn = 1 WHERE M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) AND B.成交價 > O.短線20日主力成本 AND B.漲幅 >= 2.0 AND B.漲幅 <= 9.5 AND B.總量 >= 1000 AND B.成交價 >= 15 AND M.專家實戰總分 >= 7.0 AND (O.三維AMT空間判定 LIKE N'%萬里無雲%' OR O.三維AMT空間判定 LIKE N'%突破%') ) T ORDER BY T.專家分 DESC, T.[今日漲幅%] DESC | "sql": /*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(B.代號) AS 代號, RTRIM(B.名稱) AS 名稱, B.成交價 AS 現價, B.漲幅 AS [今日漲幅%], B.總量 AS [成交量(張)], B.股本億 AS [股本(億)], RTRIM(B.產業分類) AS 產業, C.籌碼集中度20日 AS [集中度20日%], C.主力買賣超合計20日 AS [主力20日買超(張)], N.投信3日合計 AS [投信3日(張)], N.投信10日合計 AS [投信10日(張)], O.短線20日主力成本 AS [20日成本], ROUND(M.專家實戰總分, 2) AS 專家分 FROM stockchange.dbo.basicinfo B JOIN ( SELECT 代號, 籌碼集中度20日, 主力買賣超合計20日, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM Chips ) C ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(C.代號)) AND C.rn = 1 JOIN ( SELECT 代號, 投信3日合計, 投信10日合計, ROW_NUMBER() OVER(PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM threemasternumber ) N ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(N.代號)) AND N.rn = 1 LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) LEFT JOIN View_AI_Omni_Context O ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(O.代號)) AND O.資料日期 = (SELECT MAX(資料日期) FROM View_AI_Omni_Context) WHERE B.總量 >= 800 AND B.成交價 >= 15 AND B.股本億 <= 80 AND N.投信3日合計 >= 200 AND N.投信10日合計 >= 500 AND C.籌碼集中度20日 >= 8.0 ) T ORDER BY T.[投信10日(張)] DESC, T.[集中度20日%] DESC
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`ResonanceMultiFactor_Snapshot, StockPersonality_3Exits, basicinfo, Stock60M, financesum, MasterStockAnalysis`
+- **🧩 核心主要函式**：`main`
+- **📏 檔案大小與修改時間**：18.4 KB（修改於 2026/10/26 14:37）
+
+### 64. 📄 `intraday_sniper_daemon.py`
+- **📝 頂部功能描述**： | 
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, MasterStockAnalysis`
+- **🧩 核心主要函式**：`get_db, is_market_trading_time, get_monitoring_pool, generate_sniper_verdict, send_sniper_telegram_alert`
+- **📏 檔案大小與修改時間**：14.6 KB（修改於 2026/10/25 21:45）
+
+### 65. 📄 `line_ai_bot - 舊版.py`
 - **📝 頂部功能描述**：🏆 本檔案為【LINE Webhook 轉接與 API 大中台】 (已升級：LINE / Telegram 獨立四按鈕分流 API ✕ 盤中 allcross_live 精準讀取！) [Database Architecture, Operational Manual] | 資料庫連線字串 - 請與您原本的檔案保持一致 |  | 
 - **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI
-- **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis, basicinfo, allcross_live, Stock60M`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, MasterStockAnalysis, allcross_live, Stock60M`
 - **🧩 核心主要函式**：`handle_stock_code_lookup, send_text_to_telegram, get_allcross_ma_values, query_kd_cross_stocks, query_and_ai_analyze`
 - **📏 檔案大小與修改時間**：33.2 KB（修改於 2026/08/11 17:00）
 
-### 55. 📄 `line_ai_bot - 複製.py`
+### 66. 📄 `line_ai_bot - 複製.py`
 - **📝 頂部功能描述**：🏆 本檔案為【LINE Webhook 轉接與 API 大中台】 (已升級：LINE / Telegram 獨立四按鈕分流 API 接口！) | 【1. 設定區】：已對齊您的 LINE 金鑰與 Telegram 金鑰
 - **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI
-- **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis, basicinfo, Stock60M`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, MasterStockAnalysis, Stock60M`
 - **🧩 核心主要函式**：`send_text_to_telegram, get_allcross_ma_values, query_kd_cross_stocks, query_and_ai_analyze, callback`
 - **📏 檔案大小與修改時間**：28.3 KB（修改於 2026/07/20 13:56）
 
-### 56. 📄 `line_ai_bot.py`
+### 67. 📄 `line_ai_bot.py`
 - **📝 頂部功能描述**：🏆【Zen AI LINE Webhook & 網頁推播中台 V5.0 (CORS 萬能放行 ✕ 綠色截圖按鈕終極修復版)】 | 檔案路徑：C:\test_c\line_ai_bot.py
 - **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、🧠 OpenRouter大模型
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`handle_preflight, add_cors_headers, build_data_card_text, build_master_full_report, callback`
 - **📏 檔案大小與修改時間**：18.8 KB（修改於 2026/09/11 23:47）
 
-### 57. 📄 `line_ai_bot1.py`
-- **📝 頂部功能描述**：【1. 設定區】
-- **⚙️ 技術與外部特性**：💬 LINE通知、🤖 Ollama本地AI
-- **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis, basicinfo, Stock60M`
-- **🧩 核心主要函式**：`get_allcross_ma_values, query_kd_cross_stocks, query_and_ai_analyze, callback, get_source_id`
-- **📏 檔案大小與修改時間**：21.9 KB（修改於 2026/07/19 12:33）
+### 68. 📄 `line_ai_bot1.py`
+- **📝 頂部功能描述**：🌟 全域啟用 CORS | 🌟【核心關鍵防護】：全自動為所有回應注入 Chrome 私有網路 (PNA) 與跨域許可 Header！
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, MasterStockAnalysis, Stock60M`
+- **🧩 核心主要函式**：`add_cors_headers, send_text_to_telegram, get_allcross_ma_values, query_kd_cross_stocks, query_and_ai_analyze`
+- **📏 檔案大小與修改時間**：24.6 KB（修改於 2026/10/23 21:37）
 
-### 58. 📄 `line_ai_bot2.py`
+### 69. 📄 `line_ai_bot2.py`
 - **📝 頂部功能描述**：【1. 設定區】 | 貼上您的 LINE 官方金鑰 | 🛠️【核心填入】：請在此貼上您的個人 U 開頭 LINE ID
 - **⚙️ 技術與外部特性**：💬 LINE通知、🤖 Ollama本地AI
-- **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis, basicinfo, Stock60M`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, MasterStockAnalysis, Stock60M`
 - **🧩 核心主要函式**：`query_kd_cross_stocks, query_and_ai_analyze, callback, get_source_id, handle_message`
 - **📏 檔案大小與修改時間**：14.3 KB（修改於 2026/07/18 22:19）
 
-### 59. 📄 `line_alerts .py`
+### 70. 📄 `line_alerts .py`
 - **📝 頂部功能描述**：【1. 設定區】 | 已自動對齊您剛才成功申請的真實 LINE 官方金鑰
 - **⚙️ 技術與外部特性**：💬 LINE通知、🤖 Ollama本地AI
-- **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis, basicinfo, Stock60M`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, MasterStockAnalysis, Stock60M`
 - **🧩 核心主要函式**：`query_kd_cross_stocks, query_and_ai_analyze, callback, handle_message`
 - **📏 檔案大小與修改時間**：9.0 KB（修改於 2026/07/18 22:20）
 
-### 60. 📄 `login_fb.py`
+### 71. 📄 `login_fb.py`
 - **📝 頂部功能描述**：test_fb_post.py - Facebook 發文獨立除錯與即時測試
 - **⚙️ 技術與外部特性**：🌐 FB社團發文、📸 瀏覽器截圖/RPA
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`test_post`
 - **📏 檔案大小與修改時間**：4.4 KB（修改於 2026/08/26 00:52）
 
-### 61. 📄 `login_fb_clean.py`
+### 72. 📄 `login_fb_clean.py`
 - **📝 頂部功能描述**：🏆【Zen AI Facebook 真實 Chrome 永久免登入固化工具 (無時間限制版)】 | 檔案路徑：C:\test_c\login_fb_clean.py | 關鍵：調用本機 channel='chrome' 並抹除 automation 特徵
 - **⚙️ 技術與外部特性**：🌐 FB社團發文、📸 瀏覽器截圖/RPA
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`main`
 - **📏 檔案大小與修改時間**：2.6 KB（修改於 2026/09/09 19:40）
 
-### 62. 📄 `loop_engineer.py`
+### 73. 📄 `loop_engineer.py`
 - **📝 頂部功能描述**：【1. 配置區】 | 【2. 提示詞與系統規則設計】 | SYSTEM_PROMPT = | 
 - **⚙️ 技術與外部特性**：🤖 Ollama本地AI
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`verify_code, extract_python_code, run_loop_engineering`
 - **📏 檔案大小與修改時間**：5.3 KB（修改於 2026/08/11 13:19）
 
-### 63. 📄 `master_cockpit - new.py`
-- **📝 頂部功能描述**：r |  | 📡 戰情三室實體按鈕直連 API (Port 8551，支援 CORS 跨域)
+### 74. 📄 `master_cockpit.py`
+- **📝 頂部功能描述**： | 
 - **⚙️ 技術與外部特性**：📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
 - **🗄️ 涉及資料庫/資料表**：`incomesum, financesum`
-- **🧩 核心主要函式**：`do_OPTIONS, do_GET, start_mini_api_server, do_OPTIONS, do_GET`
-- **📏 檔案大小與修改時間**：42.6 KB（修改於 2026/10/11 14:08）
-
-### 64. 📄 `master_cockpit.py`
-- **📝 頂部功能描述**： | 
-- **⚙️ 技術與外部特性**：📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、📸 瀏覽器截圖/RPA、🤖 Ollama本地AI
-- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`do_OPTIONS, do_GET, start_mini_api_server, main, evaluate_critical_info`
-- **📏 檔案大小與修改時間**：23.3 KB（修改於 2026/10/11 16:58）
+- **📏 檔案大小與修改時間**：44.0 KB（修改於 2026/10/25 21:54）
 
-### 65. 📄 `my3.py`
+### 75. 📄 `my3.py`
 - **📝 頂部功能描述**：Word 檔案路徑 === | 從 Word 表格抓資料 === | 忽略表頭，從第2列開始 | 若表格有三欄就擷取三欄，否則合併所有欄位成單行
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`無`
 - **📏 檔案大小與修改時間**：1.6 KB（修改於 2025/10/07 10:57）
 
-### 66. 📄 `my4.py`
+### 76. 📄 `my4.py`
 - **📝 頂部功能描述**：Word 檔案路徑 === | 從 Word 表格抓資料 === | 忽略表頭，從第2列開始 | 若表格有三欄就擷取三欄，否則合併所有欄位成單行
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`無`
 - **📏 檔案大小與修改時間**：1.3 KB（修改於 2025/10/14 09:37）
 
-### 67. 📄 `myfavor.py`
+### 77. 📄 `myfavor.py`
 - **📝 頂部功能描述**：定義 JSON 資料
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo`
 - **🧩 核心主要函式**：`無`
 - **📏 檔案大小與修改時間**：17.3 KB（修改於 2025/03/31 15:45）
 
-### 68. 📄 `myword.py`
+### 78. 📄 `myword.py`
 - **📝 頂部功能描述**：載入字體設定庫 | 定義字體路徑 | 取得字體檔案的扩展名
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`main`
 - **📏 檔案大小與修改時間**：0.4 KB（修改於 2025/02/08 00:34）
 
-### 69. 📄 `pattern_dual_breakout_engine.py`
+### 79. 📄 `overnight_adr_playbook.py`
+- **📝 頂部功能描述**： |  | 強制 UTF-8 輸出
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、🧠 OpenRouter大模型
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`fetch_yahoo_market_quote, get_overnight_market_data, generate_playbook_with_gemini, broadcast_telegram_playbook, build_html_playbook`
+- **📏 檔案大小與修改時間**：20.4 KB（修改於 2026/10/30 22:12）
+
+### 80. 📄 `pattern_dual_breakout_engine.py`
 - **📝 頂部功能描述**：🏆【Zen AI 雙破共振：下降壓力線 ✕ 嚴格頸線上方回測不破 ✕ 二階中繼 ✕ 1:1 測幅 V7.0】 | 檔案路徑：C:\test_c\pattern_dual_breakout_engine.py | 核心革命： | 1. 嚴格鎖定【回測必須在頸線之上不破 (Close >= Neckline - 1% 且 <= Neckline + 3.5%)】！
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo`
 - **🧩 核心主要函式**：`find_pivots, calculate_downtrend_line, detect_strict_patterns, run_dual_breakout_scanner`
 - **📏 檔案大小與修改時間**：12.8 KB（修改於 2026/09/18 13:02）
 
-### 70. 📄 `pattern_scanner_1to1.py`
+### 81. 📄 `pattern_scanner_1to1.py`
 - **📝 頂部功能描述**：🏆【Zen AI 幾何形態相似度匹配 ✕ 1:1 等距測幅引擎 V3.0 (對齊型態選股軟體標準)】 | 檔案路徑：C:\test_c\pattern_similarity_scanner.py | 核心演算法： | 1. 20 ~ 30 根 K 線滑動視窗 (Sliding Window)。
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo`
 - **🧩 核心主要函式**：`calculate_similarity, run_similarity_scanner`
 - **📏 檔案大小與修改時間**：8.4 KB（修改於 2026/09/16 17:17）
 
-### 71. 📄 `pattern_symmetry_engine.py`
+### 82. 📄 `pattern_symmetry_engine.py`
 - **📝 頂部功能描述**：🏆【Zen AI 幾何鏡像對稱 ✕ 三級尺度 ✕ 1:1 測幅引擎 V5.0 (旗艦多形態校準版)】 | 檔案路徑：C:\test_c\pattern_symmetry_engine.py | 核心革命： | 1. 新增【看漲上升三角旗形 (Ascending Triangle)】：專門精準捕捉如 2520 冠德之收斂突破！
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo`
 - **🧩 核心主要函式**：`find_pivots, detect_ascending_triangle, detect_w_bottom, detect_cup_handle_strict, run_symmetry_scanner`
 - **📏 檔案大小與修改時間**：13.5 KB（修改於 2026/09/18 12:03）
 
-### 72. 📄 `phone.py`
+### 83. 📄 `phone.py`
 - **📝 頂部功能描述**：讀取您原本的 HTML | 1. 將 file://///weizen_ds215/video/ 替換為相對路徑 vedio_link/ | 這樣手機才能透過 HTTP 協定存取影片 | 2. 優化影片標籤：加入 preload="none" (按了才載入) 和 playsinline (手機直接在網頁播，不跳全螢幕)
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`無`
 - **📏 檔案大小與修改時間**：1.1 KB（修改於 2026/04/29 17:07）
 
-### 73. 📄 `pong.py`
+### 84. 📄 `pong.py`
 - **📝 頂部功能描述**：Initialize pygame | Screen dimensions | Colors | Player
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`draw_text, reset_game`
 - **📏 檔案大小與修改時間**：4.0 KB（修改於 2025/02/18 20:14）
 
-### 74. 📄 `portfolio_equity_backtest.py`
+### 85. 📄 `portfolio_equity_backtest.py`
 - **📝 頂部功能描述**：🏆【Zen AI 量化投資組合資產曲線回測引擎 V2.0 (無最高最低錯誤 ✕ 最近120天精準版)】 | 檔案路徑：C:\test_c\portfolio_equity_backtest.py
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`StockPersonality_3Exits`
 - **🧩 核心主要函式**：`run_portfolio_backtest`
 - **📏 檔案大小與修改時間**：11.3 KB（修改於 2026/09/20 17:24）
 
-### 75. 📄 `scan_all_scripts.py`
+### 86. 📄 `quant_arsenal_modal.py`
+- **📝 頂部功能描述**： |  | 引入已驗證的執行與發射核心
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`open_quant_arsenal_dialog, on_dropdown_change, on_run_click, on_launch_click, close_modal`
+- **📏 檔案大小與修改時間**：8.8 KB（修改於 2026/10/21 22:22）
+
+### 87. 📄 `quant_master_launcher.py`
+- **📝 頂部功能描述**： | 
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`auto_detect_tg_credentials, get_connection, get_all_templates, run_template, escape_tg`
+- **📏 檔案大小與修改時間**：16.8 KB（修改於 2026/10/21 21:11）
+
+### 88. 📄 `quant_master_launcher_local.py`
+- **📝 頂部功能描述**： | 
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`auto_detect_tg_credentials, get_border_all, get_border_side, create_button, create_text_button`
+- **📏 檔案大小與修改時間**：24.0 KB（修改於 2026/10/21 21:15）
+
+### 89. 📄 `restore_and_upgrade.py`
+- **📝 頂部功能描述**： |  | 1. 提取乾淨原始碼
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`run_script, run_script, clear_console, clear_console, copy_all_console`
+- **📏 檔案大小與修改時間**：6.1 KB（修改於 2026/10/21 23:19）
+
+### 90. 📄 `scan_all_scripts.py`
 - **📝 頂部功能描述**：🔍【Zen AI 系統：全目錄 Python 腳本自動掃描與功能解析器】 | 強制 UTF-8 輸出
 - **⚙️ 技術與外部特性**：📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型、⏰ 排程相關
-- **🗄️ 涉及資料庫/資料表**：`View_AI_Elite_Radar, incomesum, ResonanceMultiFactor_Snapshot, MasterStockAnalysis, financesum1, basicinfo`
+- **🗄️ 涉及資料庫/資料表**：`ResonanceMultiFactor_Snapshot, StockPersonality_3Exits, View_AI_Elite_Radar, basicinfo, Chips5, financesum`
 - **🧩 核心主要函式**：`analyze_script, main`
 - **📏 檔案大小與修改時間**：5.9 KB（修改於 2026/09/03 09:46）
 
-### 76. 📄 `sql_agent_loop.py`
+### 91. 📄 `sql_agent_loop.py`
 - **📝 頂部功能描述**：【1. 設定區】 | SQL Server 連線字串 | 【2. 戰情室實體表 Schema 指引（提供給 AI 的正確知識）】
 - **⚙️ 技術與外部特性**：🤖 Ollama本地AI
 - **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis`
 - **🧩 核心主要函式**：`extract_sql, auto_correct_sql_loop`
 - **📏 檔案大小與修改時間**：7.1 KB（修改於 2026/08/11 14:36）
 
-### 77. 📄 `strategy_factory_evaluator.py`
+### 92. 📄 `strategy_factory_evaluator.py`
 - **📝 頂部功能描述**：🏆【Zen AI 策略工廠生命週期每週評估器 (Strategy Factory Evaluator)】 | 檔案路徑：C:\test_c\strategy_factory_evaluator.py
 - **⚙️ 技術與外部特性**：📱 Telegram推播
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`run_factory_evaluation`
 - **📏 檔案大小與修改時間**：2.6 KB（修改於 2026/09/09 16:52）
 
-### 78. 📄 `sync_daily_price_volume.py`
+### 93. 📄 `sync_daily_price_volume.py`
 - **📝 頂部功能描述**：🏆【Zen AI 雙軌分價量表建檔器 V4.0 正式版：TPEx 全上櫃 32 產業 ✕ Yahoo 上市補齊】 | 每天盤後自動將全市場分價量寫入 stockchangedate.dbo.StockPriceVolume | 強制 UTF-8 輸出 | 🛠️【1. 設定區】
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`basicinfo`
 - **🧩 核心主要函式**：`sync_tpex_otc_volume_profile, sync_yahoo_twse_volume_profile, main`
 - **📏 檔案大小與修改時間**：10.8 KB（修改於 2026/09/05 16:08）
 
-### 79. 📄 `sync_daily_price_volumetest.py`
+### 94. 📄 `sync_daily_price_volumetest.py`
 - **📝 頂部功能描述**：🏆【Zen AI 雙軌分價量表建檔器 V3.3：TPEx 全產業 32 大類別完整抓取】 | 遍歷 01~37 全產業，一次抓回 800+ 檔上櫃股票所有價位與張數 | 強制 UTF-8 輸出 | 🛠️【1. 設定區】
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`sync_tpex_otc_volume_profile, main`
 - **📏 檔案大小與修改時間**：7.3 KB（修改於 2026/09/05 16:01）
 
-### 80. 📄 `sync_etf_wantgoo.py`
+### 95. 📄 `sync_daily_tech_finance_news.py`
+- **📝 頂部功能描述**： | 
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`auto_detect_tg_credentials, fetch_source_news, build_morning_brief, launch_telegram, main`
+- **📏 檔案大小與修改時間**：13.6 KB（修改於 2026/10/31 14:40）
+
+### 96. 📄 `sync_etf_wantgoo.py`
 - **📝 頂部功能描述**：🏆【Zen AI 全市場 20 檔高配息 ETF 官方直連真・全解析入庫引擎 V4.0】 | 修正重點：修復 JSON 解包空陣列問題 ✕ 20 檔全部抓取 ✕ 1 秒極速同步 | 全市場 20 檔核心高股息與權值 ETF
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`clean_float, sync_all_etf_data`
 - **📏 檔案大小與修改時間**：8.1 KB（修改於 2026/09/25 17:20）
 
-### 81. 📄 `sync_etf_wantgoo1.py`
+### 97. 📄 `sync_etf_wantgoo1.py`
 - **📝 頂部功能描述**：🏆【Zen AI 玩股匯入單次先清空】 | 資料表 stockchangedate | 配置區 =================
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`scrape_etf_data, upload_to_sql`
 - **📏 檔案大小與修改時間**：4.2 KB（修改於 2026/09/25 19:17）
 
-### 82. 📄 `sync_etf_wantgoodate.py`
+### 98. 📄 `sync_etf_wantgoodate.py`
 - **📝 頂部功能描述**：🏆【Zen AI 玩股匯入加上日期,可累積】 | 資料表 ETF_DailyPriceDate | 配置區 ================= | 使用 ODBC Driver 17
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`scrape_etf_data, upload_to_sql`
 - **📏 檔案大小與修改時間**：4.6 KB（修改於 2026/09/25 22:18）
 
-### 83. 📄 `sync_market_derivatives - 複製.py`
+### 99. 📄 `sync_market_derivatives - 複製.py`
 - **📝 頂部功能描述**：🏆【Zen AI 衍生性商品 ✕ ETF 智慧採集引擎 V2.5 終極語法安全版】 | 特性：全面消除三引號截斷 ✕ 368萬筆最新日秒級查詢 (0.03秒) ✕ 317檔 CB ✕ etf.html 3秒入庫
 - **⚙️ 技術與外部特性**：📱 Telegram推播
 - **🗄️ 涉及資料庫/資料表**：`basicinfo`
 - **🧩 核心主要函式**：`clean_float, get_latest_trading_dates, fetch_tpex_cb_data, fetch_taifex_ssf_data, sync_cb_ssf_to_db`
 - **📏 檔案大小與修改時間**：19.6 KB（修改於 2026/09/25 16:55）
 
-### 84. 📄 `sync_market_derivatives.py`
+### 100. 📄 `sync_market_derivatives.py`
 - **📝 頂部功能描述**： |  | 強制 UTF-8 輸出 | 1. 資料庫連線配置
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`fetch_taifex_ssf, update_db_ssf_monitor`
 - **📏 檔案大小與修改時間**：9.1 KB（修改於 2026/10/10 23:03）
 
-### 85. 📄 `sync_stock_threemaster.py`
+### 101. 📄 `sync_myword_history - 加時間標示.py`
+- **📝 頂部功能描述**：🏆 本工具為【Zen AI myword2 歷史快照旗艦版 V2.0】 | 升級：1. 支援單一指定 ID (如 python sync_myword_history.py 10)  2. 預設擴展 1~15  3. 超時放寬至 60 秒
+- **⚙️ 技術與外部特性**：📸 瀏覽器截圖/RPA
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`run_history_sync`
+- **📏 檔案大小與修改時間**：4.4 KB（修改於 2026/10/13 23:45）
+
+### 102. 📄 `sync_myword_history.py`
+- **📝 頂部功能描述**：🏆 本工具為【Zen AI myword2 純淨多檔獨立版 V2.5】 | 特點：1. 純淨檔名 (myword_{id}.html)  2. 自動輸出 GitHub 與本機對照連結  3. 強制暫停防止閃退
+- **⚙️ 技術與外部特性**：📸 瀏覽器截圖/RPA
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`run_clean_sync`
+- **📏 檔案大小與修改時間**：5.0 KB（修改於 2026/10/14 10:17）
+
+### 103. 📄 `sync_myword_to_github.py`
+- **📝 頂部功能描述**：🏆 本工具透過 Playwright 渲染抓取本地 HTTPS myword2.html (id=1~8) 並同步至 GitHub | 🌟 對齊長官真實的 HTTPS 8888 網址 | 開啟瀏覽器 (忽略 HTTPS 憑證錯誤)
+- **⚙️ 技術與外部特性**：📸 瀏覽器截圖/RPA
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`run_sync`
+- **📏 檔案大小與修改時間**：3.8 KB（修改於 2026/10/16 00:09）
+
+### 104. 📄 `sync_stock_threemaster.py`
 - **📝 頂部功能描述**：配置區 ================= | 定義完全對齊的中文欄位名稱 (共 11 個) ---
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`clean_number, scrape_institutional_data, upload_to_sql`
 - **📏 檔案大小與修改時間**：6.1 KB（修改於 2026/09/29 20:19）
 
-### 86. 📄 `test_airllm.py`
+### 105. 📄 `tech_newsletter_daily.py`
+- **📝 頂部功能描述**： | 
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知
+- **🗄️ 涉及資料庫/資料表**：`basicinfo`
+- **🧩 核心主要函式**：`auto_detect_tg_credentials, fetch_dynamic_tech_headlines, fetch_stock_multi_horizon_prices, generate_brief, format_html_for_tg`
+- **📏 檔案大小與修改時間**：18.0 KB（修改於 2026/10/23 17:12）
+
+### 106. 📄 `test_airllm.py`
 - **📝 頂部功能描述**：🧪【AirLLM 70B 極限顯存實測腳本】 | 強制 UTF-8 輸出 | 選擇要測試的 70B 模型 (第一次執行會由 HuggingFace 自動下載模型權重約 35GB) | 可選模型：
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`無`
 - **📏 檔案大小與修改時間**：2.1 KB（修改於 2026/09/06 09:56）
 
-### 87. 📄 `test_api_keys.py`
+### 107. 📄 `test_all_sql.py`
+- **📝 頂部功能描述**： |  | 強制 UTF-8 輸出
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`run_all_tests`
+- **📏 檔案大小與修改時間**：3.6 KB（修改於 2026/10/20 17:40）
+
+### 108. 📄 `test_api_keys.py`
 - **📝 頂部功能描述**： | 
 - **⚙️ 技術與外部特性**：🧠 OpenRouter大模型
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
-- **🧩 核心主要函式**：`scan_keys_from_bot, test_google_key, test_openrouter_key`
-- **📏 檔案大小與修改時間**：3.4 KB（修改於 2026/10/11 16:21）
+- **🧩 核心主要函式**：`無`
+- **📏 檔案大小與修改時間**：3.7 KB（修改於 2026/10/25 11:05）
 
-### 88. 📄 `test_fb_post.py`
+### 109. 📄 `test_colibri_35b.py`
+- **📝 頂部功能描述**： |  | 模擬戰情室丟給 AI 的真實量化數據
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`無`
+- **📏 檔案大小與修改時間**：2.9 KB（修改於 2026/10/29 16:39）
+
+### 110. 📄 `test_colibri_simple.py`
+- **📝 頂部功能描述**：放寬超時至 10 分鐘，直接拿完整結果
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`無`
+- **📏 檔案大小與修改時間**：1.1 KB（修改於 2026/10/28 17:20）
+
+### 111. 📄 `test_fb_post.py`
 - **📝 頂部功能描述**：test_fb_post.py - Facebook 發文獨立除錯與即時測試
 - **⚙️ 技術與外部特性**：🌐 FB社團發文、📸 瀏覽器截圖/RPA
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`test_post`
 - **📏 檔案大小與修改時間**：4.5 KB（修改於 2026/08/26 00:57）
 
-### 89. 📄 `top_momentum_backtest.py`
+### 112. 📄 `test_nvidia_api.py`
+- **📝 頂部功能描述**： |  | 從金庫加載
+- **⚙️ 技術與外部特性**：純數據/運算
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`無`
+- **📏 檔案大小與修改時間**：3.5 KB（修改於 2026/10/31 10:06）
+
+### 113. 📄 `test_tg_voice.py`
+- **📝 頂部功能描述**： |  | 1. 自動讀取 Telegram Token
+- **⚙️ 技術與外部特性**：📱 Telegram推播
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`get_tg_token, handle_message`
+- **📏 檔案大小與修改時間**：3.9 KB（修改於 2026/10/23 18:36）
+
+### 114. 📄 `tg_voice_handler.py`
+- **📝 頂部功能描述**：無描述註解
+- **⚙️ 技術與外部特性**：📱 Telegram推播
+- **🗄️ 涉及資料庫/資料表**：`basicinfo`
+- **🧩 核心主要函式**：`download_tg_voice, speech_to_text, parse_intent`
+- **📏 檔案大小與修改時間**：5.7 KB（修改於 2026/10/23 19:15）
+
+### 115. 📄 `top_momentum_backtest.py`
 - **📝 頂部功能描述**：🏆【Zen AI 全市場最強暴漲黑馬 ✕ 任意天數/均線離場回測系統 V1.2】 | 理念：市場永遠是對的！追隨最強勢資金，以量化勝率與期望值科學操盤！ | 強制 UTF-8 輸出 | 🛠️【1. 設定區】
 - **⚙️ 技術與外部特性**：純數據/運算
-- **🗄️ 涉及資料庫/資料表**：`ResonanceMultiFactor_Snapshot, allcross_live`
+- **🗄️ 涉及資料庫/資料表**：`allcross_live, ResonanceMultiFactor_Snapshot`
 - **🧩 核心主要函式**：`get_top_surging_stocks, run_momentum_event_backtest, calc_stats, main`
 - **📏 檔案大小與修改時間**：10.3 KB（修改於 2026/08/26 12:54）
 
-### 90. 📄 `update_notioninfo.py`
+### 116. 📄 `update_notioninfo.py`
 - **📝 頂部功能描述**：🏆 本檔案為【Zen AI 產業基因 10~15 標籤極速 5 線程腳本 V5.1】 | 內建「野村研報 Nomura 專家庫」＋「5 線程並行 Ollama 10+ 標籤大擴充」！ | 1. 設定區 | 👑 連線池設置：允許最大 10 個並發連線，確保 5 線程寫入暢通
 - **⚙️ 技術與外部特性**：🤖 Ollama本地AI
 - **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis`
 - **🧩 核心主要函式**：`insert_nomura_expert_stocks, get_stocks_to_upgrade, ask_ollama_v3, clean_and_insert, process_batch`
 - **📏 檔案大小與修改時間**：12.7 KB（修改於 2026/08/25 15:29）
 
-### 91. 📄 `update_notioninfo_OpenRouter.py`
+### 117. 📄 `update_notioninfo_OpenRouter.py`
 - **📝 頂部功能描述**：🏆【Zen AI 產業基因標籤庫：OpenRouter 70B~120B 大模型多線程批次擴充引擎 V6.0】 | 全面改採 OpenRouter 頂級大模型三級輪詢，徹底告別 7B 小模型幻覺！ | 強制 UTF-8 輸出 | 🛠️【1. 設定區】
 - **⚙️ 技術與外部特性**：💬 LINE通知、🧠 OpenRouter大模型
 - **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis`
 - **🧩 核心主要函式**：`get_stocks_to_upgrade, ask_openrouter_fallback, clean_and_insert, process_batch`
 - **📏 檔案大小與修改時間**：8.9 KB（修改於 2026/09/06 13:46）
 
-### 92. 📄 `vedio1.py`
+### 118. 📄 `vedio1.py`
 - **📝 頂部功能描述**：1. 定義資料夾路徑  folder_path = r'C:\蔡秋鳳'  output_filename = 'vedio_1.html' | 檢查路徑是否存在 | 2. 使用 os.walk 抓取所有子資料夾內的 mp4 檔案 | 取得檔案的絕對路徑
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`generate_video_html`
 - **📏 檔案大小與修改時間**：3.3 KB（修改於 2026/05/04 16:41）
 
-### 93. 📄 `vedio2.py`
+### 119. 📄 `vedio2.py`
 - **📝 頂部功能描述**：1. 指向最上層目錄 (會掃描底下的所有子資料夾) | 2. 走訪所有資料夾與檔案 | 取得資料夾名稱作為分類 (例如: 其他, 旅遊, 教學)
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`generate_categorized_csv`
 - **📏 檔案大小與修改時間**：1.7 KB（修改於 2026/05/10 22:05）
 
-### 94. 📄 `vedio3.py`
+### 120. 📄 `vedio3.py`
 - **📝 頂部功能描述**：root_path = r'\\weizen_ds215\video' | 分類字典： { "分類名": [檔案連結列表] } | html_start =
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`generate_pretty_html`
 - **📏 檔案大小與修改時間**：2.2 KB（修改於 2026/05/01 23:11）
 
-### 95. 📄 `vedio4.py`
+### 121. 📄 `vedio4.py`
 - **📝 頂部功能描述**：修改這裡的路徑 | html = f
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`無`
 - **📏 檔案大小與修改時間**：0.9 KB（修改於 2026/09/03 09:32）
 
-### 96. 📄 `vedio5.py`
+### 122. 📄 `vedio5.py`
 - **📝 頂部功能描述**：修改這裡的路徑 | 確保路徑存在 | html = f
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`無`
 - **📏 檔案大小與修改時間**：1.1 KB（修改於 2026/09/03 09:42）
 
-### 97. 📄 `vedio6.py`
+### 123. 📄 `vedio6.py`
 - **📝 頂部功能描述**：設定檔案名稱 | 1. 抓取所有連結 | 2. HTML 模板
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`convert`
 - **📏 檔案大小與修改時間**：4.2 KB（修改於 2026/05/04 17:05）
 
-### 98. 📄 `vedio7.py`
+### 124. 📄 `vedio7.py`
 - **📝 頂部功能描述**：1. 確認輸入與輸出檔名 | 2. 定義您在 NAS 上實際測試成功的資料夾名稱 | 之前我們用的是 vedio1，請確認您的 NAS 上該資料夾名稱 | 抓取原始檔名 (處理 file:// 格式)
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`convert_html`
 - **📏 檔案大小與修改時間**：3.2 KB（修改於 2026/05/04 17:08）
 
-### 99. 📄 `vedio8.py`
+### 125. 📄 `vedio8.py`
 - **📝 頂部功能描述**：new_html = <!DOCTYPE html>
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`convert`
 - **📏 檔案大小與修改時間**：9.3 KB（修改於 2026/05/01 11:19）
 
-### 100. 📄 `vediolink.py`
+### 126. 📄 `vediolink.py`
 - **📝 頂部功能描述**：1. 定義路徑 | 2. 抓取 mp4 檔案 | 3. 準備寫入 CSV | 使用 utf-8-sig 編碼，Excel 打開才不會亂碼
 - **⚙️ 技術與外部特性**：純數據/運算
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`generate_video_csv`
 - **📏 檔案大小與修改時間**：1.8 KB（修改於 2026/05/04 17:12）
 
-### 101. 📄 `zen_ai_bot.py`
+### 127. 📄 `zen_ai_bot.py`
 - **📝 頂部功能描述**：🏆 本檔案為【Telegram 雙向對話機器人】 (已完全對齊 LINE 端之 allcross_live & 數據產出日期診斷功能) | 資料庫連線字串 - 請與您原本的檔案保持一致 |  | 
 - **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、🤖 Ollama本地AI
-- **🗄️ 涉及資料庫/資料表**：`MasterStockAnalysis, basicinfo, allcross_live, Stock60M`
+- **🗄️ 涉及資料庫/資料表**：`basicinfo, MasterStockAnalysis, allcross_live, Stock60M`
 - **🧩 核心主要函式**：`handle_stock_code_lookup, get_db_name, query_kd_cross_stocks, get_allcross_ma_values, query_and_ai_analyze`
 - **📏 檔案大小與修改時間**：21.4 KB（修改於 2026/08/11 16:54）
 
-### 102. 📄 `zen_ai_bot1 - 20261011.py`
+### 128. 📄 `zen_ai_bot1 - 20261011.py`
 - **📝 頂部功能描述**： |  | 強制 UTF-8 輸出
 - **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
-- **🗄️ 涉及資料庫/資料表**：`StockPersonality_3Exits, View_AI_Elite_Radar, allcross_live, Chips5`
+- **🗄️ 涉及資料庫/資料表**：`View_AI_Elite_Radar, Chips5, allcross_live, StockPersonality_3Exits`
 - **🧩 核心主要函式**：`auto_detect_tokens, extract_pure_code, send_to_line, fetch_complete_stock_data, build_tactical_prompt`
 - **📏 檔案大小與修改時間**：31.4 KB（修改於 2026/10/11 12:41）
 
-### 103. 📄 `zen_ai_bot1.py`
-- **📝 頂部功能描述**： | 
-- **⚙️ 技術與外部特性**：📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
-- **🗄️ 涉及資料庫/資料表**：`StockPersonality_3Exits, View_AI_Elite_Radar, allcross_live, Chips5`
-- **🧩 核心主要函式**：`auto_detect_tokens, extract_pure_code, send_to_line, fetch_complete_stock_data, build_tactical_prompt`
-- **📏 檔案大小與修改時間**：35.4 KB（修改於 2026/10/11 18:16）
+### 129. 📄 `zen_ai_bot1 - 複製 (2).py`
+- **📝 頂部功能描述**： |  | 強制 UTF-8 輸出
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
+- **🗄️ 涉及資料庫/資料表**：`StockPersonality_3Exits, basicinfo, View_AI_Elite_Radar, Chips5, allcross_live`
+- **🧩 核心主要函式**：`auto_detect_tokens, load_global_stock_dict, parse_natural_language_intent, extract_pure_code, send_to_line`
+- **📏 檔案大小與修改時間**：18.9 KB（修改於 2026/10/25 11:40）
 
-### 104. 📄 `zen_ai_bot2.py`
+### 130. 📄 `zen_ai_bot1.py`
+- **📝 頂部功能描述**： | 
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
+- **🗄️ 涉及資料庫/資料表**：`StockPersonality_3Exits, basicinfo, View_AI_Elite_Radar, Chips5, allcross_live`
+- **🧩 核心主要函式**：`load_global_stock_dict, parse_natural_language_intent, extract_pure_code, send_to_line, fetch_complete_stock_data`
+- **📏 檔案大小與修改時間**：25.5 KB（修改於 2026/10/31 10:24）
+
+### 131. 📄 `zen_ai_bot2.py`
 - **📝 頂部功能描述**：🏆【Zen AI Telegram 雙向操盤機器人 Pro V3.6 (單一大腦一體化極速深度版)】 | 檔案名稱：zen_ai_bot2.py:加入第# 4. | 核心優化： | 1. 一體化單次大腦呼叫：深度伏兵戰術 ＋ 四大圖表解盤一次產出，速度提升 50%！
 - **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
-- **🗄️ 涉及資料庫/資料表**：`ResonanceMultiFactor_Snapshot, View_AI_Elite_Radar, MasterStockAnalysis, StockPersonality_3Exits, Chips5, allcross_live`
+- **🗄️ 涉及資料庫/資料表**：`ResonanceMultiFactor_Snapshot, StockPersonality_3Exits, View_AI_Elite_Radar, Chips5, MasterStockAnalysis, allcross_live`
 - **🧩 核心主要函式**：`clean_stock_code, send_to_line, call_ollama_local, call_openrouter_5tier_fallback, generate_ai_analysis`
 - **📏 檔案大小與修改時間**：41.2 KB（修改於 2026/10/02 12:10）
 
-### 105. 📄 `zen_broadcaster.py`
-- **📝 頂部功能描述**： |  | 強制 UTF-8 輸出
+### 132. 📄 `zen_ai_bot3.py`
+- **📝 頂部功能描述**： | 
+- **⚙️ 技術與外部特性**：📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、📸 瀏覽器截圖/RPA、🧠 OpenRouter大模型
+- **🗄️ 涉及資料庫/資料表**：`View_AI_Elite_Radar, Chips5, allcross_live, StockPersonality_3Exits`
+- **🧩 核心主要函式**：`auto_detect_tokens, extract_pure_code, send_to_line, fetch_complete_stock_data, build_tactical_prompt`
+- **📏 檔案大小與修改時間**：37.1 KB（修改於 2026/10/15 12:31）
+
+### 133. 📄 `zen_broadcaster.py`
+- **📝 頂部功能描述**： | 
 - **⚙️ 技術與外部特性**：📱 Telegram推播、🌐 FB社團發文、🎮 Discord通知、💬 LINE通知、🧠 OpenRouter大模型
 - **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
 - **🧩 核心主要函式**：`auto_detect_tokens, fetch_omni_data, build_strict_prompt, call_gemini_official, call_openrouter_fallback`
-- **📏 檔案大小與修改時間**：20.9 KB（修改於 2026/10/11 17:22）
+- **📏 檔案大小與修改時間**：18.8 KB（修改於 2026/10/15 11:05）
+
+### 134. 📄 `zen_secrets.py`
+- **📝 頂部功能描述**： |  | 📱 1. Telegram 火控與雙向操盤機器人憑證 | 機器人 Bot Token (zen_ai_bot1 / zen_ai_bot2 / quant_master_launcher 通用)
+- **⚙️ 技術與外部特性**：📱 Telegram推播、💬 LINE通知、🧠 OpenRouter大模型
+- **🗄️ 涉及資料庫/資料表**：`無直接資料庫操作`
+- **🧩 核心主要函式**：`無`
+- **📏 檔案大小與修改時間**：3.0 KB（修改於 2026/10/31 10:03）
+
 
 
 
@@ -10938,6 +11619,13 @@ CONSTRAINT PK_StockPriceVolume PRIMARY KEY CLUSTERED ([代號], [日期], [成�
 ===========================================================================
 📌 【myword2 打包內容 - ID 6】
 ===========================================================================
+
+
+
+🧬 【Zen AI 戰情室】30 大核武量化歷史回測巡航艦 V16.5
+python backtest_quant_engine.py
+模擬過去 1~3 個月 => 60天的買賣回測。
+
 20261020
 -- 測試 1：搜尋「60」，系統不再自作主張，而是立刻列出所有包含 60 的範本清單！ 在excelsql2要單筆執行 t-sql一起執行
 EXEC sp_RunQuantTemplate @Keyword = N'60';
@@ -10953,8 +11641,7 @@ EXEC sp_RunQuantTemplate @ID = 68;
 參數：
 --code <股號>：指定目標股票代號（例如 2330）。
 實戰打法：
-code
-Cmd
+
 python ai_omni_explainer.py --code 3443
 2. chart_explain.py (本地 Ollama 伏兵解盤 ＋ 雙模截圖)
 用途：【圖文一體化模組】。抓取 60M 伏兵特徵、3-Way 離場勝率，調用本機 Ollama (qwen2.5:7b) 產出解盤文字；並同步指揮 Playwright 截下雙 Y 軸圖表，最後將圖文合併推播至 LINE / TG。
@@ -10964,8 +11651,7 @@ python ai_omni_explainer.py --code 3443
 目標ID：如 Ubeef... (LINE ID) 或 -100... (TG 群組)。
 模式：live (強制盤中)、post (強制盤後)。若未填寫則由時鐘決定 (auto)。
 實戰打法：
-code
-Cmd
+
 python chart_explain.py 2454 20260401 live
 📸 第二戰區：視覺 RPA 與截圖部隊 (Vision & Screenshot)
 完全降服 Playwright 無頭瀏覽器，支援「物理強制鎖定」盤中或盤後模式的截圖樞紐。
@@ -10976,8 +11662,7 @@ python chart_explain.py 2454 20260401 live
 起日 (8碼)
 --mode live 或 --mode post (決定截圖模式)
 實戰打法：
-code
-Cmd
+
 python chart_screenshot.py 3017 20260101 --mode post
 4. chart_screenshot_live.py / chart_screenshot_post.py (母艦卡片專用薄腳本)
 用途：為 99 部隊母艦的 UI 卡片分流設計的捷徑腳本。它們內部只有 3 行程式碼，負責將接收到的參數強行掛上 --mode live 或 --mode post 後，轉發給核心的 chart_screenshot.py。
@@ -10990,8 +11675,7 @@ python chart_screenshot.py 3017 20260101 --mode post
 --text <文字>：選填，若有填則不呼叫 AI，直接廣播這段文字。
 --img <路徑>：選填，附加圖片廣播。
 實戰打法：
-code
-Cmd
+
 python zen_broadcaster.py --code 2317
 6. fb_post_stock.py (Facebook 社團發文引擎)
 用途：掛載 C:\test_c\chrome_profile 固化 Session（免登入/破除安全沙盒），利用 Playwright 原生 JS 穿透半透明遮罩，將戰報與圖片發布至 FB 社團。
@@ -10999,8 +11683,7 @@ python zen_broadcaster.py --code 2317
 --text <文字>：要發布的內文。
 --img <圖片路徑>：要附帶的圖片。
 實戰打法 (通常由 zen_broadcaster.py 在背景自動呼叫)：
-code
-Cmd
+
 python fb_post_stock.py --text "測試發文" --img "C:\test_c\static\chart_2330.png"
 7. master_cockpit.py (99 部隊母艦)
 用途：啟動 Port 8550 (Flet UI 雷達大屏) 與 Port 8551 (跨域火控 API)。具備 STOCK_ARG_ROUTER 參數拆解矩陣，將頂部輸入框的 2454 20260401 live 自動分配給上述各腳本。
@@ -11018,19 +11701,16 @@ python fb_post_stock.py --text "測試發文" --img "C:\test_c\static\chart_2330
 用途：透過 Playwright 開啟本機 HTTPS 打包系統 (myword2.html?id=X)，擷取動態渲染文字。產出帶有時間戳的純淨 HTML，並自動 git push 上雲端（防覆蓋、不組合）。
 參數：
 [id...] (無限個整數)：指定要抓取的 ID。若不輸入，預設抓取 1 ~ 15。
-實戰打法：
-code
-Cmd
+
+
 python sync_myword_history.py 8 10 12
 11. sync_myword_to_github.py (GitHub 舊版大合併同步)
 用途：將 ID 1~8 抓下來後，合併成一個 50 萬字的 myword_all.html 巨型檔案推上 GitHub。
 參數：無。
 12. test_api_keys.py (金鑰全面健康檢查)
 用途：地毯式掃描 zen_ai_bot1.py 與 ai_omni_explainer.py，找出所有 AQ.、AIza 與 OpenRouter 金鑰，並實時對 Google/OpenRouter 伺服器進行 Ping 測試，回報 200 OK / 503 / 401 狀態。
-參數：無。
-實戰打法：
-code
-Cmd
+
+
 python test_api_keys.py
 💡 總監實戰速查表 (Cheat Sheet)
 長官若要在終端機 (CMD) 手動對單一股票發動終極打擊，請記住這三招最常用的指令：
@@ -11157,36 +11837,20 @@ dbo	sp_upgraddiagrams	PROCEDURE	2022-09-25 13:46:54.700	2022-09-25 13:46:54.700
 ===========================================================================
 📌 【myword2 打包內容 - ID 7】
 ===========================================================================
-https://weizen99.github.io/androidapp/memory/info/memoinfo.html (最後一版記憶傳承web版)
 
-新版(python 轉打包系統至weizen99.github)
-1.sync_myword_to_github.py(範圍+合併)+一鍵同步到GitHub.bat 2.sync_myword_history.py 10(單筆id) + 一鍵獨立歷史同步.bat
-記憶傳承+SQL常用欄位+所有的預存程序+python用途+範本內容(excelsql2.html內)
-https://weizen99.github.io/androidapp/memory/myword_1.html  (常用資料表欄位)
-https://weizen99.github.io/androidapp/memory/myword_2.html (範本內容)
-https://weizen99.github.io/androidapp/memory/myword_3.html (最新記憶傳承)
-https://weizen99.github.io/androidapp/memory/myword_4.html (test_c下的python用途)
-https://weizen99.github.io/androidapp/memory/myword_5.html (較舊記憶傳承)
-https://weizen99.github.io/androidapp/memory/myword_6.html (所有的預存程序)
-https://weizen99.github.io/androidapp/memory/myword_7.html (開局記憶傳承連結靜態網頁)
-https://weizen99.github.io/androidapp/memory/myword_all.html (myword_1~myword_6合併)
-
-舊版
-weizen99.github
-記憶傳承+SQL常用欄位+所有的預存程序+python用途+範本內容(excelsql2.html內)
-https://weizen99.github.io/androidapp/memory/最新記憶傳承.html
-https://weizen99.github.io/androidapp/memory/常用欄位.html
-https://weizen99.github.io/androidapp/memory/所有的預存程序.html
-https://weizen99.github.io/androidapp/memory/test_c下的python用途.html
-https://weizen99.github.io/androidapp/memory/excelsql2_範本內容.html
-https://weizen99.github.io/androidapp/memory/主要網頁.html
+github記憶傳承+SQL常用欄位+所有的預存程序+python用途+範本內容(excelsql2.html內)
+👉 [ID 1] 常用欄位純淨規格: https://weizen99.github.io/androidapp/memory/myword_1.html
+👉 [ID 2] 50+ 組完整 SQL 範本庫: https://weizen99.github.io/androidapp/memory/myword_2.html
+👉 [ID 3] 最新記憶傳承憲法條約: https://weizen99.github.io/androidapp/memory/myword_3.html
+👉 [ID 4] test_c Python 腳本調度手冊: https://weizen99.github.io/androidapp/memory/myword_4.html
+👉 [ID 6] 資料庫所有預存程序清單: https://weizen99.github.io/androidapp/memory/myword_6.html
+👉 [ID 8] 看板前端 HTML/JS 原始碼: https://weizen99.github.io/androidapp/memory/myword_8.html
+👉 [ID 9] 主網頁excelsql2.html 原始碼: https://weizen99.github.io/androidapp/memory/myword_9.html
+👉 [ID 10] 開局總綱 (本母卡線上版): https://weizen99.github.io/androidapp/memory/myword_10.html
 
 
-記憶傳承+SQL常用欄位+所有的預存程序+python用途+範本內容(excelsql2.html內)
+本地端記憶傳承+SQL常用欄位+所有的預存程序+python用途+範本內容(excelsql2.html內)
+👉 [ID 1] 常用欄位純淨規格: https://zen2965.duckdns.org:8888/androidapp/memory/myword_1.html
+👉 其餘同上只是前面改為 https://zen2965.duckdns.org:8888/  (https://weizen99.github.io/)
 
-https://zen2965.duckdns.org:8888/androidapp/memory/最新記憶傳承.html
-https://zen2965.duckdns.org:8888/androidapp/memory/常用欄位.html
-https://zen2965.duckdns.org:8888/androidapp/memory/所有的預存程序.html
-https://zen2965.duckdns.org:8888/androidapp/memory/test_c下的python用途.html
-https://zen2965.duckdns.org:8888/androidapp/memory/excelsql2.html 範本內容.html
 </pre></body></html>
