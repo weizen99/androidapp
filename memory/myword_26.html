@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>myword2 ID 26</title>
+</head>
+<body style="background-color: #0f172a; color: #f8fafc; padding: 20px;">
+    <h2 style="color: #38bdf8;">📌 myword2 打包內容 - ID 26</h2>
+    <hr style="border: 1px solid #334155;">
+    <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;">加入綜合評分:位置在基本資料的下二格=>16file
+
+15file_save.ahk
+#Persistent
+#NoEnv
+SetTitleMatchMode, 2
+CoordMode, Mouse, Screen
+
+; =========================================================================
+; 🤖 Zen AI 盤中自動化 RPA 倒檔旗艦版 V4.4 (卷商/融卷精準對齊版)
+; 1. 存檔目錄鎖定：C:\...看盤自動
+; 2. 嚴格採用長官現有檔名：融資融卷、主力卷商
+; 3. 1:1 選單完全對應，F4 展開 ➔ Home 歸頂 ➔ Down 依序切換
+; 4. 倒檔完成後，自動呼叫 Python 將 15 檔數據秒速灌入資料庫
+; =========================================================================
+
+; 🎯 依據長官校正後的真實 1:1 直列清單 (選單名稱|存檔檔名)
+ExportList =
+(
+籌碼集中度|Chips五燈籌碼自選監控.xlsx
+主力(Top15)|Mainbrokerage主力卷商自選監控.xlsx
+大戶、內部人|insiderbiger大戶內部人自選監控.xlsx
+法人買賣超(億元)|threemastervalue三大法人買賣超金額自選監控.xlsx
+法人買賣超(張)|threemasternumber三大法人買賣超張數自選監控.xlsx
+外資|Foreigner外資自選監控.xlsx
+投信|Investment投信自選監控.xlsx
+融資融券|Financingbills融資融卷自選監控.xlsx
+股價乖離與新高|goodrate股價乖離與新高自選監控.xlsx
+成交量變化|amountchange成交量變化自選監控.xlsx
+營收|income營收自選監控.xlsx
+重點財務比率|finance重點財務自選監控.xlsx
+價值評估|value價值自選監控.xlsx
+基本資訊|basicinfo基本資訊自選監控.xlsx
+15秒看籌碼|Chips籌碼自選監控.xlsx
+)
+
+; ----------------------------------------------------------
+; 緊急停止 ( Esc ) 
+; ----------------------------------------------------------
+$Esc:: 
+    ToolTip
+    MsgBox, 48, Zen AI 系統, 🛑 腳本已中斷執行 (Esc)! , 1.5
+    Reload
+return
+
+; -------------------------------------------------------------------------
+; 🚀 F9：15 檔全自動無人巡航倒檔
+; -------------------------------------------------------------------------
+F9::
+    SoundBeep, 900, 150
+    Sleep, 80
+    SoundBeep, 900, 150
+    Sleep, 80
+    SoundBeep, 900, 150
+
+    TrayTip, 🤖 Zen AI 全自動倒檔, 正在啟動 15 檔精確對齊倒檔作業..., 5, 1
+
+    ; 🌟 目錄鎖定長官指定的 C:\...看盤自動
+    TargetDir := "C:\...看盤自動"
+    if !FileExist(TargetDir)
+        FileCreateDir, %TargetDir%
+
+    ; 逐行解析 15 檔清單
+    Loop, Parse, ExportList, `n, `r
+    {
+        if (A_LoopField = "")
+            continue
+
+        ; 切分選單名稱與存檔檔名
+        StringSplit, ItemArr, A_LoopField, |
+        menuName := ItemArr1
+        fileName := ItemArr2
+        currIndex := A_Index
+
+        ToolTip, ⏳ [%currIndex%/15] 正在處理：【%menuName%】...
+        
+        CloseExcelSafely()
+        CleanExcelAutoRecover()
+        Sleep, 300
+
+        TargetFile := TargetDir . "\" . fileName
+
+        if (WinExist("ahk_exe CMoney_Utility.exe") or WinExist("理財寶"))
+        {
+            WinActivate 
+            Sleep, 500
+
+            ; 👉 A. 點擊右上角下拉選單 (1819, 81)
+            Click, 1819, 81
+            Sleep, 400
+
+            ; 👉 B. 🌟 強制展開下拉清單
+            Send, {F4}
+            Sleep, 600
+
+            ; 👉 C. 回頂端 (第 1 檔: 籌碼集中度)，依序向下移動
+            Send, {Home}
+            Sleep, 300
+            
+            DownSteps := currIndex - 1
+            if (DownSteps > 0) {
+                Send, {Down %DownSteps%}
+                Sleep, 300
+            }
+            Send, {Enter}
+
+            ; 👉 D. 🌟 充裕等待數據載入 (7.5 秒，確保籌碼欄位完全刷新)
+            ToolTip, ⏳ [%currIndex%/15] 【%menuName%】正在自雲端載入數據 (7.5 秒)...
+            Sleep, 7500 
+
+            ; 👉 E. 表格中央點擊右鍵
+            Click, Right, 960, 350
+            Sleep, 1000 
+
+            ; 👉 F. 選擇匯出 Excel (向下 7 次按 Enter)
+            Send, {Down 7}
+            Sleep, 400
+            Send, {Enter}
+
+            ; 👉 G. 等待另存新檔視窗 (最多等 15 秒)
+            WinWait, ahk_class #32770, , 15
+            if ErrorLevel {
+                ToolTip, ⚠️ 【%menuName%】未偵測到存檔視窗，跳過...
+                continue
+            }
+            
+            WinActivate, ahk_class #32770
+            Sleep, 600
+            ControlFocus, Edit1, ahk_class #32770
+            Send, ^a{Delete}
+            Sleep, 300
+            
+            Clipboard := TargetFile
+            ClipWait, 1
+            Send, ^v 
+            Sleep, 600
+            Send, {Enter}
+            
+            ; 👉 H. 處理覆蓋確認框
+            Sleep, 1200
+            if (WinExist("確認另存新檔") or WinExist("ahk_class #32770", "取代")) {
+                WinActivate
+                Send, {Left}{Enter}
+            }
+
+            ; 👉 I. 等待 Excel 彈出並優雅關閉
+            WinWait, ahk_exe EXCEL.EXE, , 25
+            if !ErrorLevel {
+                Sleep, 2000
+                CloseExcelSafely()
+            }
+            
+            Sleep, 1000
+        }
+    }
+
+    ; 15 檔全部完成長嗶 2 聲
+    SoundBeep, 1200, 300
+    Sleep, 100
+    SoundBeep, 1200, 300
+    ToolTip, ✅ 15 檔真實數據全部匯出完畢！正在啟動 Python 自動灌庫...
+
+    ; 🌟 倒檔完畢，無縫自動觸發 Python 將 15 個 Excel 灌入 stockchangedateold1
+    ; =========================================================================
+    ; 🚀 雙庫齊發：先灌歷史庫 (保留歷史)，再灌即時快照庫 (純當日快照)
+    ; =========================================================================
+    ToolTip, ⏳ 正在安全寫入【歷史走勢庫 (stockchangedateold1)】...
+    RunWait, python C:\test_c\cmoney_import_safe.py, C:\test_c, Hide
+
+    ToolTip, ⏳ 正在安全寫入【當日快照庫 (stockchange)】...
+    RunWait, python C:\test_c\cmoney_import_stockchange.py, C:\test_c, Hide
+
+    ToolTip, 🏆 恭喜長官！【歷史庫 ✕ 當日快照庫】雙庫 30 張資料表全數自動更新完畢！
+    Sleep, 5000
+    ToolTip
+return
+
+
+; =========================================================================
+; 🛡️ 工具函式：正常安全關閉 Excel (不觸發未儲存崩潰復原)
+; =========================================================================
+CloseExcelSafely() {
+    try {
+        xl := ComObjActive("Excel.Application")
+        xl.DisplayAlerts := false
+        xl.Quit()
+        Sleep, 500
+    } catch {
+        WinClose, ahk_exe EXCEL.EXE
+        Sleep, 500
+    }
+    if WinExist("ahk_exe EXCEL.EXE") {
+        WinKill, ahk_exe EXCEL.EXE
+    }
+}
+
+CleanExcelAutoRecover() {
+    AutoRecoverDir := A_AppData . "\Microsoft\Excel"
+    if InStr(FileExist(AutoRecoverDir), "D") {
+        FileDelete, %AutoRecoverDir%\*.*
+    }
+    UnsavedDir := A_LocalAppData . "\Microsoft\Office\UnsavedFiles"
+    if InStr(FileExist(UnsavedDir), "D") {
+        FileDelete, %UnsavedDir%\*.*
+    }
+}</pre>
+</body>
+</html>
