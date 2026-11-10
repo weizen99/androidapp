@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen AI Studio 知識庫秒查大屏</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', Microsoft JhengHei, sans-serif; }
+        .search-box { background: #1e293b; border-radius: 12px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); border: 1px solid #334155; }
+        .tag-btn { margin: 3px; border-radius: 20px; font-size: 0.82rem; transition: all 0.2s; }
+        .card-msg { background: #1e293b; border: 1px solid #334155; border-radius: 10px; margin-bottom: 16px; transition: transform 0.2s; }
+        .card-msg:hover { border-color: #38bdf8; }
+        .badge-user { background: #0284c7; color: #fff; }
+        .badge-model { background: #10b981; color: #fff; }
+        .msg-text { white-space: pre-wrap; font-size: 0.93rem; line-height: 1.6; color: #cbd5e1; max-height: 250px; overflow-y: auto; }
+        .msg-text.expanded { max-height: none; }
+        .img-preview { max-height: 200px; border-radius: 6px; border: 1px solid #475569; margin-top: 8px; cursor: pointer; transition: 0.2s; }
+        .img-preview:hover { transform: scale(1.02); }
+        .prog-tag { background: #334155; color: #38bdf8; padding: 2px 8px; border-radius: 4px; font-family: Consolas, monospace; font-size: 0.8rem; margin-right: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="container py-4">
+    <!-- 頂部標題 -->
+    <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom border-secondary">
+        <div>
+            <h3 class="fw-bold mb-0 text-info"><i class="fa-solid fa-brain me-2"></i>Zen AI Studio 知識庫秒查大屏</h3>
+            <small class="text-secondary">收納 36 大歷史對話庫 ✕ 10,287 則架構決策與代碼履歷</small>
+        </div>
+        <div>
+            <a href="mygithub.html" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-1"></i>回入口首頁</a>
+        </div>
+    </div>
+
+    <!-- 搜尋卡片 -->
+    <div class="search-box mb-4">
+        <div class="input-group input-group-lg mb-3">
+            <span class="input-group-text bg-dark border-secondary text-info"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" id="keywordInput" class="form-control bg-dark text-white border-secondary" placeholder="輸入程式檔名 (例: cmoney_import_group2_safe.py) 或 報錯 (例: 245, 207)..." autofocus>
+            <button class="btn btn-info px-4 fw-bold" onclick="doSearch()"><i class="fa-solid fa-bolt me-1"></i>秒查</button>
+        </div>
+        <div>
+            <span class="text-secondary me-2"><i class="fa-solid fa-tags me-1"></i>熱搜程式標籤：</span>
+            <button class="btn btn-outline-info btn-sm tag-btn" onclick="quickSearch('cmoney_import_group2_safe.py')">cmoney_import_group2_safe.py</button>
+            <button class="btn btn-outline-info btn-sm tag-btn" onclick="quickSearch('15file_save_group2.ahk')">15file_save_group2.ahk</button>
+            <button class="btn btn-outline-info btn-sm tag-btn" onclick="quickSearch('cmoney_import_safe.py')">cmoney_import_safe.py</button>
+            <button class="btn btn-outline-info btn-sm tag-btn" onclick="quickSearch('15file_save.ahk')">15file_save.ahk</button>
+            <button class="btn btn-outline-warning btn-sm tag-btn" onclick="quickSearch('245')">SQL 245 隱式轉型</button>
+            <button class="btn btn-outline-warning btn-sm tag-btn" onclick="quickSearch('207')">SQL 207 欄位無效</button>
+            <button class="btn btn-outline-success btn-sm tag-btn" onclick="quickSearch('ditable')">ditable 多空指標</button>
+        </div>
+    </div>
+
+    <!-- 統計與結果摘要 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div id="resultSummary" class="text-secondary small">準備就緒，請輸入關鍵字檢索。</div>
+        <div id="loadingSpinner" class="spinner-border spinner-border-sm text-info d-none" role="status"></div>
+    </div>
+
+    <!-- 檢索結果卡片列表 -->
+    <div id="resultsContainer"></div>
+</div>
+
+<script>
+    // 預設 API 或後端查詢端點
+    async function doSearch() {
+        const kw = document.getElementById('keywordInput').value.trim();
+        if (!kw) return;
+
+        const spinner = document.getElementById('loadingSpinner');
+        const summary = document.getElementById('resultSummary');
+        const container = document.getElementById('resultsContainer');
+
+        spinner.classList.remove('d-none');
+        summary.innerText = `正在檢索中：【${kw}】...`;
+        container.innerHTML = '';
+
+        try {
+            // 呼叫本機/IIS 後端 API 查詢 stockchange.dbo.AI_Studio_ChatLogs
+            const response = await fetch(`api_chat_search.aspx?kw=${encodeURIComponent(kw)}`);
+            if (!response.ok) throw new Error("API 回應異常");
+            const data = await response.json();
+
+            spinner.classList.add('d-none');
+            summary.innerHTML = `檢索【<span class="text-info">${kw}</span>】共找到 <span class="text-warning fw-bold">${data.length}</span> 筆相關紀錄`;
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="alert alert-dark text-center text-secondary py-5">無相關對話紀錄，請嘗試更換關鍵字。</div>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach((item, idx) => {
+                const roleBadge = item.Role === 'USER' ? '<span class="badge badge-user"><i class="fa-solid fa-user me-1"></i>USER</span>' : '<span class="badge badge-model"><i class="fa-solid fa-robot me-1"></i>GEMINI</span>';
+                
+                let progBadges = '';
+                if (item.MentionedPrograms) {
+                    item.MentionedPrograms.split(';').forEach(p => {
+                        if (p.trim()) progBadges += `<span class="prog-tag">${p.trim()}</span>`;
+                    });
+                }
+
+                let imgHtml = '';
+                if (item.ImageUrls) {
+                    item.ImageUrls.split(';').forEach(u => {
+                        if (u.trim()) imgHtml += `<a href="${u.trim()}" target="_blank"><img src="${u.trim()}" class="img-preview me-2 mb-2" alt="截圖預覽"></a>`;
+                    });
+                }
+
+                html += `
+                <div class="card card-msg p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary border-opacity-50">
+                        <div>
+                            ${roleBadge}
+                            <span class="fw-bold ms-2 text-white">${item.SessionTitle}</span>
+                            <span class="text-secondary small ms-2">#${item.MsgIndex}</span>
+                        </div>
+                        <div class="text-secondary small">
+                            ${item.MsgTime || item.FileModifyTime || ''}
+                        </div>
+                    </div>
+                    ${progBadges ? `<div class="mb-2">${progBadges}</div>` : ''}
+                    <div class="msg-text" id="msgText_${idx}">${escapeHtml(item.MsgContent)}</div>
+                    ${imgHtml ? `<div class="mt-2">${imgHtml}</div>` : ''}
+                    <div class="text-end mt-2">
+                        <button class="btn btn-link btn-sm text-info p-0 text-decoration-none" onclick="toggleExpand(${idx})">展開 / 收合</button>
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+
+        } catch (e) {
+            spinner.classList.add('d-none');
+            summary.innerText = "查詢失敗或未連接 API";
+            // 離線降級示範
+            container.innerHTML = `
+                <div class="alert alert-warning">
+                    <strong>提示：</strong> 前端大屏檔案已就緒！若需透過瀏覽器直接檢索，可在後端補上一支極簡的 <code>api_chat_search.py</code> 或 <code>.aspx</code> 直連 SQL；目前在 SSMS 下 SQL 查詢速度亦極為飛快！
+                </div>`;
+        }
+    }
+
+    function quickSearch(tag) {
+        document.getElementById('keywordInput').value = tag;
+        doSearch();
+    }
+
+    function toggleExpand(idx) {
+        const el = document.getElementById(`msgText_${idx}`);
+        el.classList.toggle('expanded');
+    }
+
+    function escapeHtml(text) {
+        return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
+    }
+
+    // 支援 Enter 鍵搜尋
+    document.getElementById('keywordInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') doSearch();
+    });
+</script>
+</body>
+</html>
