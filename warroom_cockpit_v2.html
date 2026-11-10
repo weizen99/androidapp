@@ -85,19 +85,28 @@
 </head>
 <body>
     <div class="container-fluid mt-3">
-        <!-- 🌟 頂部主控列 (已合併所有戰區跳轉與母艦按鈕) -->
+        <!-- 🌟 頂部主控列 (已加入頂端全宇宙雙榜 ✕ 30大核武巡航，一字排開絕不壓迫視野) -->
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <h3 class="mb-0 text-info"><i class="fa-solid fa-satellite-dish"></i> Zen AI 戰情室 V12.0 (第二戰區：策略工廠 ✕ 3大淨值曲線全景)</h3>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
+                <!-- 👑 頂端巡航首選：全宇宙雙榜大屏 -->
+                <a href="https://zen2965.duckdns.org:8888/androidapp/quant_resonance_board.html" target="_blank" class="btn btn-warning btn-sm text-dark fw-bold shadow-sm">
+                    <i class="fa-solid fa-crown"></i> 🌟 全宇宙雙榜大屏
+                </a>
+                <!-- 🧬 頂端巡航：30大核武回測風雲榜 -->
+                <a href="https://zen2965.duckdns.org:8888/androidapp/quant_backtest_report.html" target="_blank" class="btn btn-danger btn-sm text-white fw-bold shadow-sm">
+                    <i class="fa-solid fa-dna"></i> 🧬 30大核武回測
+                </a>
+                <!-- 原版戰區跳轉 -->
                 <a href="warroom_cockpit.html" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-compass"></i> 📲第一戰情室</a>
                 <a href="warroom_cockpit_v3.html" class="btn btn-outline-info btn-sm"><i class="fa-solid fa-chart-candlestick"></i> 🛸第三戰區 (TradingView)</a>
-                <a href="excelsql2.html" class="btn btn-outline-info btn-sm"><i class="fa-solid fa-database"></i> 📲excelsql2</a>
+                <a href="excelsql2.html" class="btn btn-outline-info btn-sm"><i class="fa-solid fa-database"></i> 📊 範本籌碼總部</a>
                 <a href="https://smokiness-supremacy-agonizing.ngrok-free.dev" target="_blank" class="btn btn-warning btn-sm text-dark fw-bold"><i class="fa-solid fa-rocket"></i> 99 部隊母艦</a>
             </div>
         </div>
 
-        <!-- 🌟 九大頁籤導航 (長官原版 8 頁籤 + 99 部隊母艦) -->
-        <ul class="nav nav-tabs" id="v2Tab" role="tablist">
+        <!-- 🌟 原版單列頁籤導航 (徹底去除重複 ul，加入 flex-nowrap 單行排開，絕不換行折疊！) -->
+        <ul class="nav nav-tabs flex-nowrap mb-2" id="v2Tab" role="tablist" style="overflow-x: auto; white-space: nowrap;">
             <li class="nav-item"><button class="nav-link active" id="factory-tab" data-bs-toggle="tab" data-bs-target="#factory" type="button"><i class="fa-solid fa-industry"></i> 策略工廠與淨值曲線</button></li>
             <li class="nav-item"><button class="nav-link" id="sentinel-tab" data-bs-toggle="tab" data-bs-target="#sentinel" type="button"><i class="fa-solid fa-shield-halved"></i> 離場守門人全景</button></li>
             <li class="nav-item"><button class="nav-link" id="amt-tab" data-bs-toggle="tab" data-bs-target="#amt" type="button"><i class="fa-solid fa-layer-group"></i> AMT 拍賣與幾何</button></li>
@@ -109,7 +118,7 @@
             <li class="nav-item"><button class="nav-link text-warning" id="mothership-tab" data-bs-toggle="tab" data-bs-target="#mothership" type="button"><i class="fa-solid fa-microchip"></i> 🛸 99 部隊指揮母艦</button></li>
         </ul>
 
-        <!-- 🌟 內容區塊 -->
+        <!-- 🌟 內容區塊 (乾淨單層結構，內容 100% 正常浮現！) -->
         <div class="tab-content mt-2" id="v2TabContent">
 
             <!-- 1. 策略工廠與淨值曲線 (三大圖形全景對比) -->
@@ -120,7 +129,6 @@
                             <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2 py-2">
                                 <span><i class="fa-solid fa-chart-line"></i> 投資組合歷史資產淨值曲線 (Portfolio Equity Curve)</span>
                                 <div class="d-flex gap-2">
-                                    <!-- 🟢 核心升級：預設【三大策略全景同屏競技 (3線同框)】，亦可單獨切換 -->
                                     <select id="strategySelect" class="form-select form-select-sm bg-dark text-info border-info shadow-sm custom-select-arrow" data-bs-theme="dark" style="width: auto; min-width: 320px; font-weight: 600; cursor: pointer;" onchange="loadEquityCurve()">
                                         <option value="all" class="text-warning fw-bold">🌟 三大策略全景對比 (3 條淨值曲線同屏競技)</option>
                                         <option value="1" class="text-light">🟢 策略 1：雙破共振 1:1 測幅 (短線波段 30%)</option>
@@ -165,7 +173,7 @@
                                     </div>
                                 </div>
 
-                                <!-- ECharts 容器：支援 3 線同屏對抗！ -->
+                                <!-- ECharts 容器 -->
                                 <div id="equityChart" style="width: 100%; height: 360px;"></div>
 
                                 <!-- 動態戰術情報面板 -->
@@ -262,7 +270,7 @@
                 </div>
             </div>
 
-            <!-- 9. 🛸 99 部隊指揮母艦 (新增第 9 頁籤，大一統集成) -->
+            <!-- 9. 🛸 99 部隊指揮母艦 -->
             <div class="tab-pane fade" id="mothership" role="tabpanel">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
