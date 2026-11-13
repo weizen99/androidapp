@@ -9,7 +9,64 @@
     <hr style="border: 1px solid #334155;">
     <pre style="font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-all; line-height: 1.5;"> // --- 範本資料庫 ---
    const sqlTemplateLibrary = [
+
 {
+    cat: "外資籌碼-外資成本護城河",
+    title: "🛡 外資成本線防禦突圍 (結合外資成本防線、大戶週增與集中度收斂)",
+    sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(FR.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS FLOAT) AS [成交量(張)], TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], RTRIM(B.產業分類) AS 產業, ROUND(FR.持股成本, 2) AS [外資持股成本], ROUND((TRY_CAST(B.成交價 AS DECIMAL(10,2)) / NULLIF(FR.持股成本, 0) - 1) * 100.0, 2) AS [距外資成本%], ROUND(FR.持股比率, 2) AS [外資持股比率%], TRY_CAST(FR.連買天 AS INT) AS [外資連買天], ROUND(C.大戶持股週增減, 3) AS [大戶週增減%], ROUND(C.籌碼集中度20日, 2) AS [集中度20日%], ROUND(M.專家實戰總分, 2) AS 專家分 FROM ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.Foreigner ) FR JOIN stockchange.dbo.basicinfo B ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(FR.代號)) JOIN ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.Chips ) C ON LTRIM(RTRIM(C.代號)) = LTRIM(RTRIM(FR.代號)) AND C.rn = 1 LEFT JOIN ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.MasterStockAnalysis ) M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.rn = 1 WHERE FR.rn = 1 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) BETWEEN FR.持股成本 * 1.00 AND FR.持股成本 * 1.08 AND FR.持股比率 >= 8.0 AND C.大戶持股週增減 >= 0.5 AND C.籌碼集中度20日 > 0 AND TRY_CAST(B.總量 AS FLOAT) >= 800 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 ) T ORDER BY T.[大戶週增減%] DESC, T.[距外資成本%] ASC
+
+/*
+戰略意義:
+鎖定外資重倉持股（持股比率>=8%）且股價剛站穩外資成本線上方0~8%的防線位置，並透過Chips確認本土大戶週增>=0.5%且20日籌碼集中度翻正，捕捉機構與大戶雙重護盤、下檔風險有限的波段起漲點。
+*/`
+},
+
+{
+    cat: "籌碼類-低維持率軋空",
+    title: "🔥 融資逆勢抗跌軋空 (鎖定融資維持率低位、高券資比與主力逆勢吸籌)",
+    sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(FI.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS FLOAT) AS [成交量(張)], TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], RTRIM(B.產業分類) AS 產業, ROUND(FI.融資維持率, 2) AS [融資維持率%], ROUND(FI.券資比, 2) AS [券資比%], ROUND(FI.資增減近10日, 0) AS [資增減10日], ROUND(FI.券增減近10日, 0) AS [券增減10日], ROUND(C.主力買賣超合計20日, 0) AS [主力買超20日], ROUND(C.籌碼集中度20日, 2) AS [集中度20日%], ROUND(M.專家實戰總分, 2) AS 專家分 FROM ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.Financingbills ) FI JOIN stockchange.dbo.basicinfo B ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(FI.代號)) JOIN ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.Chips ) C ON LTRIM(RTRIM(C.代號)) = LTRIM(RTRIM(FI.代號)) AND C.rn = 1 LEFT JOIN ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.MasterStockAnalysis ) M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.rn = 1 WHERE FI.rn = 1 AND FI.融資維持率 BETWEEN 135.0 AND 162.0 AND FI.券資比 >= 8.0 AND C.主力買賣超合計20日 > 0 AND C.籌碼集中度20日 > 0 AND TRY_CAST(B.總量 AS FLOAT) >= 800 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 ) T ORDER BY T.[券資比%] DESC, T.[集中度20日%] DESC
+
+/*
+戰略意義:
+專抓融資維持率處於135%~162%低位階（散戶不敢追價）且券資比>=8%的個股，搭配主力20日逆勢淨買超與籌碼集中度翻正，篩選出主力低檔吃貨護盤、具備高券資比軋空燃料的轉折火藥庫。
+*/`
+},
+
+{
+    cat: "多維共振-籌碼與金叉",
+    title: "⚡ 籌碼集中度突圍金叉 (結合60日集中度收斂、賣壓天數遞減與價格/OBV雙金叉)",
+    sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(C.代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS FLOAT) AS [成交量(張)], TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], RTRIM(B.產業分類) AS 產業, ROUND(C.籌碼集中度20日, 2) AS [集中度20日%], ROUND(C.籌碼集中度60日, 2) AS [集中度60日%], TRY_CAST(C.買賣家數差為負的天數近20天 AS INT) AS [賣壓天數20日], A.成交價黃金交叉次數 AS [價格金叉次數], A.obv黃金交叉次數 AS [OBV金叉次數], A.三大法人黃金交叉次數 AS [法人金叉次數], ROUND(M.專家實戰總分, 2) AS 專家分 FROM ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.Chips ) C JOIN stockchange.dbo.basicinfo B ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(C.代號)) JOIN ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(CAST(代號 AS NVARCHAR(20)))) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.allcross_live ) A ON LTRIM(RTRIM(CAST(A.代號 AS NVARCHAR(20)))) = LTRIM(RTRIM(C.代號)) AND A.rn = 1 LEFT JOIN ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.MasterStockAnalysis ) M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.rn = 1 WHERE C.rn = 1 AND C.籌碼集中度60日 >= 2.0 AND C.籌碼集中度20日 > C.籌碼集中度60日 AND TRY_CAST(C.買賣家數差為負的天數近20天 AS INT) >= 10 AND A.成交價黃金交叉次數 >= 1 AND A.obv黃金交叉次數 >= 1 AND TRY_CAST(B.總量 AS FLOAT) >= 800 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 ) T ORDER BY T.[集中度20日%] DESC, T.[價格金叉次數] DESC
+
+/*
+戰略意義:
+將中長期籌碼沉澱（60日集中度>=2%且20日加速收斂、近20日至少10天買賣家數差為負）與盤中即時技術面點火（價格與OBV能量潮同步黃金交叉）結合，精準捕捉主力吸籌完畢後正式發動的第一根突破訊號。
+*/`
+},
+
+{
+    cat: "外資籌碼-法人主力點火",
+    title: "🤝 外資重倉遇上法人主力點火 (外資持股、10日買超與法人主力佔股本比翻正)",
+    sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(W.股票代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS FLOAT) AS [成交量(張)], TRY_CAST(B.股本億 AS DECIMAL(10,2)) AS [股本(億)], RTRIM(W.產業分類) AS 產業, ROUND(FR.持股比率, 2) AS [外資持股比率%], ROUND(FR.買賣超億元10日, 2) AS [外資10日億], ROUND(W.[三大法人佔股本比%一天], 3) AS [法人佔股本比%], ROUND(W.[主力佔股本比%一天], 3) AS [主力佔股本比%], ROUND(W.集中度20日, 2) AS [集中度20日%], W.站均 AS [站上均線數], ROUND(M.專家實戰總分, 2) AS 專家分 FROM ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(股票代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.winnewdate ) W JOIN stockchange.dbo.basicinfo B ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(W.股票代號)) JOIN ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.Foreigner ) FR ON LTRIM(RTRIM(FR.代號)) = LTRIM(RTRIM(W.股票代號)) AND FR.rn = 1 LEFT JOIN ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.MasterStockAnalysis ) M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.rn = 1 WHERE W.rn = 1 AND FR.持股比率 >= 8.0 AND FR.買賣超億元10日 > 0 AND W.[三大法人佔股本比%一天] >= 0.02 AND W.[主力佔股本比%一天] > 0 AND W.集中度20日 > 0 AND W.站均 >= 3 AND TRY_CAST(B.總量 AS FLOAT) >= 800 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 ) T ORDER BY T.[法人佔股本比%] DESC, T.[外資持股比率%] DESC
+
+/*
+戰略意義:
+鎖定外資持股比率>=8%且近10日穩定買超的籌碼安定股，當單日三大法人佔股本比>=0.02%且主力佔股本比同步翻正、站上至少3條均線時，代表外資鎖底倉加上內資主力點火拉抬，屬於穩健型主升段接力策略。
+*/`
+},
+
+{
+    cat: "量價結構-強勢收最高",
+    title: "👑 實體長紅光頭突圍 (漲幅強勢、極短上影線且多頭排列)",
+    sql: `/*資料庫:stockchangedate*/ TOP 100 T.* FROM ( SELECT RTRIM(W.股票代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.最高 AS DECIMAL(10,2)) AS 當日最高, TRY_CAST(B.最低 AS DECIMAL(10,2)) AS 當日最低, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], ROUND((TRY_CAST(B.最高 AS DECIMAL(10,2)) - TRY_CAST(B.成交價 AS DECIMAL(10,2))) / NULLIF(TRY_CAST(B.成交價 AS DECIMAL(10,2)), 0) * 100.0, 2) AS [上影線幅度%], TRY_CAST(B.總量 AS FLOAT) AS [成交量(張)], ROUND(W.[三大法人佔股本比%一天], 3) AS [法人佔股本比%], ROUND(W.[主力佔股本比%一天], 3) AS [主力佔股本比%], W.站均 AS [站上均線數], RTRIM(W.產業分類) AS 產業, ROUND(M.專家實戰總分, 2) AS 專家分 FROM ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(股票代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.winnewdate ) W JOIN stockchange.dbo.basicinfo B ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(W.股票代號)) LEFT JOIN ( SELECT *, ROW_NUMBER() OVER (PARTITION BY LTRIM(RTRIM(代號)) ORDER BY 日期 DESC) AS rn FROM stockchangedate.dbo.MasterStockAnalysis ) M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.rn = 1 WHERE W.rn = 1 AND TRY_CAST(B.漲幅 AS DECIMAL(6,2)) >= 3.0 AND TRY_CAST(B.最高 AS DECIMAL(10,2)) > TRY_CAST(B.最低 AS DECIMAL(10,2)) AND (TRY_CAST(B.最高 AS DECIMAL(10,2)) - TRY_CAST(B.成交價 AS DECIMAL(10,2))) / NULLIF(TRY_CAST(B.成交價 AS DECIMAL(10,2)), 0) <= 0.008 AND W.[三大法人佔股本比%一天] > 0 AND W.[主力佔股本比%一天] > 0 AND W.集中度20日 > 0 AND W.站均 >= 4 AND TRY_CAST(B.總量 AS FLOAT) >= 1000 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 ) T ORDER BY T.[今日漲幅%] DESC, T.[主力佔股本比%] DESC
+
+/*
+戰略意義:
+篩選當日漲幅>=3%且收盤價緊貼當日最高價（上影線<=0.8%）的光頭長紅強勢股，同時要求三大法人佔股本比、主力佔股本比與20日集中度全數為正且站上4條均線，杜絕拉高出貨假突破，鎖定隔日具強勁續攻慣性的表態領頭羊。
+*/`
+},
+
+
+
                  {
         cat: "籌碼類-佔股本比同步", title: "🏛 法人與主力同步加碼 (10日/20日雙正 ✕ 主力佔股本比≥0.2% ✕ 四軌同向)", sql: `/*資料庫:stockchangedate*/TOP 100 RTRIM(W.股票代號) AS 代號, RTRIM(B.名稱) AS 名稱, TRY_CAST(B.成交價 AS DECIMAL(10,2)) AS 現價, TRY_CAST(B.漲幅 AS DECIMAL(6,2)) AS [今日漲幅%], TRY_CAST(B.總量 AS FLOAT) AS [成交量(張)], ROUND(W.[三大法人佔股本比%一天], 3) AS [三大法人佔股本比%], ROUND(W.[主力佔股本比%一天], 3) AS [主力佔股本比%], ROUND(W.法人五天, 3) AS [法人5日], ROUND(W.主力五天, 3) AS [主力5日], ROUND(W.法人十天, 3) AS [法人10日], ROUND(W.主力十天, 3) AS [主力10日], ROUND(W.法人二十天, 3) AS [法人20日], ROUND(W.主力二十天, 3) AS [主力20日], ROUND(W.集中度20日, 2) AS [集中度20日%], W.站均 AS [站上均線數], RTRIM(W.產業分類) AS 產業, ROUND(M.專家實戰總分, 2) AS 專家分 FROM winnewdate W JOIN stockchange.dbo.basicinfo B ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(W.股票代號)) LEFT JOIN MasterStockAnalysis M ON LTRIM(RTRIM(B.代號)) = LTRIM(RTRIM(M.代號)) AND M.日期 = (SELECT MAX(日期) FROM MasterStockAnalysis) WHERE W.日期 = (SELECT MAX(日期) FROM winnewdate) AND W.法人十天 > 0 AND W.主力十天 > 0 AND W.法人二十天 > 0 AND W.主力二十天 > 0 AND W.[主力佔股本比%一天] >= 0.2 AND TRY_CAST(B.總量 AS FLOAT) >= 800 AND TRY_CAST(B.成交價 AS DECIMAL(10,2)) >= 15.0 ORDER BY W.[主力佔股本比%一天] DESC, W.法人二十天 DESC
 
