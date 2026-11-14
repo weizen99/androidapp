@@ -56,13 +56,13 @@ protected void Page_Load(object sender, EventArgs e)
                         CONVERT(varchar, FileModifyTime, 120) AS FileModifyTime
                     FROM dbo.AI_Studio_ChatLogs
                     WHERE SessionTitle = @kw
-                    ORDER BY MsgIndex ASC";
+                    order by [FileModifyTime] desc,MsgIndex desc";
             }
             else
             {
-                // 模式 B：一般關鍵字全文檢索 (TOP 200)
+                // 模式 B：一般關鍵字全文檢索 (TOP 2000)
                 sql = @"
-                    SELECT TOP 200 
+                    SELECT TOP 2000 
                         SessionTitle, MsgIndex, Role, MsgTime, 
                         MentionedPrograms, ImageUrls, MsgContent,
                         CONVERT(varchar, FileModifyTime, 120) AS FileModifyTime
@@ -70,7 +70,7 @@ protected void Page_Load(object sender, EventArgs e)
                     WHERE MentionedPrograms LIKE @kwLike 
                        OR MsgContent LIKE @kwLike 
                        OR SessionTitle LIKE @kwLike
-                    ORDER BY FileModifyTime DESC, MsgIndex ASC";
+                    order by [FileModifyTime] desc,MsgIndex desc";
             }
 
             using (SqlCommand cmd = new SqlCommand(sql, conn))

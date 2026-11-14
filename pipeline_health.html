@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作戰鏈心跳儀表板 - ZEN AI PRO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #070d17;
+            --bg-card: #0f172a;
+            --bg-inner: #1e293b;
+            --border-color: #334155;
+            --text-muted: #94a3b8;
+            --accent-cyan: #38bdf8;
+            --status-success: #10b981;
+            --status-running: #38bdf8;
+            --status-pending: #64748b;
+            --status-failed: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: #f1f5f9;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .header-title-box { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .logo-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(14, 165, 233, 0.3));
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: var(--accent-cyan);
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px 22px;
+            height: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+        .stat-title { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+        .stat-value { font-size: 1.85rem; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+
+        .node-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.25s ease;
+        }
+        .node-card:hover { border-color: rgba(56, 189, 248, 0.5); transform: translateY(-2px); }
+
+        .badge-status {
+            padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .badge-SUCCESS { background: rgba(16, 185, 129, 0.15); color: var(--status-success); border: 1px solid rgba(16, 185, 129, 0.35); }
+        .badge-RUNNING { background: rgba(56, 189, 248, 0.15); color: var(--status-running); border: 1px solid rgba(56, 189, 248, 0.35); animation: pulse 2s infinite; }
+        .badge-PENDING { background: rgba(100, 116, 139, 0.15); color: var(--status-pending); border: 1px solid rgba(100, 116, 139, 0.3); }
+        .badge-FAILED { background: rgba(239, 68, 68, 0.15); color: var(--status-failed); border: 1px solid rgba(239, 68, 68, 0.35); }
+
+        .info-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(51, 65, 85, 0.7);
+        }
+        .info-item-label { font-size: 0.75rem; color: var(--text-muted); }
+        .info-item-val { font-size: 0.95rem; font-weight: 600; color: #e2e8f0; font-family: Consolas, monospace; }
+
+        @keyframes pulse {
+            0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" style="max-width: 1100px;">
+    <!-- 頂部標題區 -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div class="header-title-box mb-0">
+            <div class="logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div>
+                <h4 class="fw-bold mb-1 text-white">作戰鏈心跳儀表板</h4>
+                <div class="small text-secondary">ZEN AI 股票戰情室 PRO · PIPELINE HEALTH MONITOR</div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-dark border border-secondary px-3 py-2 text-info" id="bizDateBadge">
+                <i class="fa-regular fa-calendar me-1"></i> <span id="bizDateText">載入中...</span>
+            </span>
+            <button class="btn btn-outline-info btn-sm px-3 shadow-sm" onclick="fetchPipelineStatus()">
+                <i class="fa-solid fa-rotate me-1"></i> 手動刷新
+            </button>
+            <a href="quant_resonance_board.html" class="btn btn-outline-secondary btn-sm px-3">
+                <i class="fa-solid fa-arrow-left me-1"></i> 回雙榜大屏
+            </a>
+        </div>
+    </div>
+
+    <!-- 4 大核心 KPI 統計卡片 -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-title"><i class="fa-solid fa-circle-check text-info me-1"></i> 完成節點</div>
+                <div class="stat-value text-info" id="statCompleted">-- / --</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-title"><i class="fa-solid fa-wave-square text-warning me-1"></i> 鏈路狀態</div>
+                <div class="stat-value" id="statChain">--</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-title"><i class="fa-solid fa-stopwatch text-success me-1"></i> 總耗時</div>
+                <div class="stat-value text-success" id="statDuration">--</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-title"><i class="fa-solid fa-clock-rotate-left text-secondary me-1"></i> 最後更新</div>
+                <div class="stat-value text-white fs-4 mt-1" id="statLastUpdate">--:--:--</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 錯誤警報橫幅 (若有) -->
+    <div id="errorBanner" class="alert alert-danger d-none mb-4" role="alert"></div>
+
+    <!-- 節點清單容器 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-bold text-white mb-0"><i class="fa-solid fa-list-check me-2 text-info"></i>今日作戰節點進程</h6>
+        <span class="small text-muted" id="autoRefreshText">每 10 秒自動更新</span>
+    </div>
+    
+    <div id="nodesContainer">
+        <div class="text-center py-5 text-secondary">
+            <div class="spinner-border spinner-border-sm text-info mb-2" role="status"></div>
+            <div>正在與本機 SQL Server 心跳中樞握手...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function formatDuration(ms) {
+        if (!ms || ms <= 0) return "--";
+        const sec = Math.round(ms / 1000);
+        if (sec < 60) return `${sec} 秒`;
+        const min = Math.floor(sec / 60);
+        const remSec = sec % 60;
+        return `${min} 分 ${remSec} 秒`;
+    }
+
+    async function fetchPipelineStatus() {
+        const errorBanner = document.getElementById('errorBanner');
+        try {
+            // 🌟 核心關鍵：採用同站台相對路徑，支援 HTTP/HTTPS 自適應，零 CORS、零 404！
+            const res = await fetch("https://zen2965.duckdns.org:8888/androidapp/api_pipeline_health.aspx?t=" + new Date().getTime());
+            if (!res.ok) throw new Error(`HTTP 狀態碼異常: ${res.status}`);
+            
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+
+            errorBanner.classList.add('d-none');
+
+            // 1. 更新頂部卡片
+            document.getElementById('bizDateText').innerText = data.bizDate || '--';
+            document.getElementById('statCompleted').innerText = `${data.completedCount} / ${data.totalCount}`;
+            document.getElementById('statDuration').innerText = formatDuration(data.totalDurationMs);
+            document.getElementById('statLastUpdate').innerText = (data.lastUpdated || '').split(' ')[1] || '--:--:--';
+
+            const statChain = document.getElementById('statChain');
+            if (data.chainStatus === 'SUCCESS') {
+                statChain.innerHTML = '<span class="text-success"><i class="fa-solid fa-check-double me-1"></i>全線全勝</span>';
+            } else if (data.chainStatus === 'RUNNING') {
+                statChain.innerHTML = '<span class="text-info"><i class="fa-solid fa-spinner fa-spin me-1"></i>執行中</span>';
+            } else if (data.chainStatus === 'FAILED') {
+                statChain.innerHTML = '<span class="text-danger"><i class="fa-solid fa-circle-exclamation me-1"></i>異常阻斷</span>';
+            } else {
+                statChain.innerHTML = '<span class="text-secondary">待命中</span>';
+            }
+
+            // 2. 渲染各節點
+            const container = document.getElementById('nodesContainer');
+            if (!data.nodes || data.nodes.length === 0) {
+                container.innerHTML = '<div class="alert alert-dark text-center">目前無作用中的作戰節點。</div>';
+                return;
+            }
+
+            let html = '';
+            data.nodes.forEach(n => {
+                let badgeClass = `badge-${n.status}`;
+                let statusIcon = 'fa-clock';
+                let statusText = '待執行';
+                if (n.status === 'SUCCESS') { statusIcon = 'fa-circle-check'; statusText = '執行成功'; }
+                else if (n.status === 'RUNNING') { statusIcon = 'fa-spinner fa-spin'; statusText = '正在執行'; }
+                else if (n.status === 'FAILED') { statusIcon = 'fa-triangle-exclamation'; statusText = '失敗中斷'; }
+
+                let dependsText = n.dependsOn ? `<span class="badge bg-dark border border-secondary text-secondary ms-2">前置依賴: ${n.dependsOn}</span>` : '';
+
+                html += `
+                <div class="node-card">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="fs-5 fw-bold text-white">${n.label}</span>
+                            <span class="text-secondary small ms-2 font-monospace">[${n.jobKey}]</span>
+                            ${dependsText}
+                        </div>
+                        <div>
+                            <span class="badge-status ${badgeClass}">
+                                <i class="fa-solid ${statusIcon}"></i> ${statusText}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="info-grid">
+                        <div>
+                            <div class="info-item-label">計畫開火</div>
+                            <div class="info-item-val">${n.planStart || '--:--'}</div>
+                        </div>
+                        <div>
+                            <div class="info-item-label">完成時間</div>
+                            <div class="info-item-val">${(n.finishedAt || '').split(' ')[1] || (n.status === 'RUNNING' ? '運算中...' : '--:--:--')}</div>
+                        </div>
+                        <div>
+                            <div class="info-item-label">實際耗時</div>
+                            <div class="info-item-val">${formatDuration(n.durationMs)}</div>
+                        </div>
+                        <div>
+                            <div class="info-item-label">處理筆數</div>
+                            <div class="info-item-val text-info">${n.rowsAffected ? n.rowsAffected.toLocaleString() + ' 筆' : '--'}</div>
+                        </div>
+                    </div>
+                    ${n.message && n.message !== 'OK' ? `<div class="mt-2 pt-2 text-warning small font-monospace"><i class="fa-solid fa-circle-info me-1"></i>${n.message}</div>` : ''}
+                </div>`;
+            });
+
+            container.innerHTML = html;
+
+        } catch (err) {
+            errorBanner.classList.remove('d-none');
+            errorBanner.innerHTML = `<i class="fa-solid fa-triangle-exclamation me-2"></i>無法連線至心跳 API (<code>api_pipeline_health.aspx</code>)：${err.message}`;
+        }
+    }
+
+    // 初始化載入
+    fetchPipelineStatus();
+    // 每 10 秒自動輪詢更新心跳
+    setInterval(fetchPipelineStatus, 10000);
+</script>
+</body>
+</html>
